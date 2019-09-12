@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <properties resource="config.properties"/>
+
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+        <property name="useMapperCommentGenerator" value="true"/>
+        <property name="suppressAllComments	" value="false"/>
+        <property name="suppressDate" value="false"/>
+
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
+            <property name="caseSensitive" value="true"/>
+        </plugin>
+        <plugin type="com.pgmmers.radar.mybatis.plugins.ModelRenamePlugin">
+            <property name="postFix" value="PO"></property>
+        </plugin>
+
+        <jdbcConnection driverClass="${jdbc.driverClass}"
+                        connectionURL="${jdbc.url}"
+                        userId="${jdbc.user}"
+                        password="${jdbc.password}">
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="com.pgmmers.radar.model"
+                            targetProject="src/main/java"/>
+
+        <sqlMapGenerator targetPackage="mapping"
+                         targetProject="src/main/resources"/>
+
+        <javaClientGenerator targetPackage="com.pgmmers.radar.mapper"
+                             targetProject="src/main/java"
+                             type="XMLMAPPER"/>
+
+
+        <table tableName="USERS" domainObjectName="User">
+            <generatedKey column="ID" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="ENGINE_MODEL" domainObjectName="Model" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+        <table tableName="ENGINE_FIELD" domainObjectName="Field" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+        <table tableName="ENGINE_ABSTRACTION" domainObjectName="Abstraction" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+        <table tableName="ENGINE_ACTIVATION" domainObjectName="Activation" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+        <table tableName="ENGINE_DATA_LISTS" domainObjectName="DataLists" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+
+        <table tableName="ENGINE_DATA_LIST_META" domainObjectName="DataListMeta" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+        <table tableName="ENGINE_DATA_LIST_RECORDS" domainObjectName="DataListRecord" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>     
+
+        <table tableName="ENGINE_RULE" domainObjectName="Rule" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+        <table tableName="ENGINE_RULE_HISTORY" domainObjectName="RuleHistory" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+        <table tableName="ENGINE_PRE_ITEM" domainObjectName="PreItem" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+        <table tableName="DATA_MOBLE_INFO" domainObjectName="MobileInfo" selectByExampleQueryId="false">
+        <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
+        
+    </context>
+</generatorConfiguration>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pgmmers.radar.mapper.DataListRecordMapper">
+  <resultMap id="BaseResultMap" type="com.pgmmers.radar.model.DataListRecordPO">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="DATA_LIST_ID" jdbcType="BIGINT" property="dataListId" />
+    <result column="DATA_RECORD" jdbcType="VARCHAR" property="dataRecord" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+</mapper>

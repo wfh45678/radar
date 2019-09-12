@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pgmmers.radar.mapper.RuleHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.pgmmers.radar.model.RuleHistoryPO">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="RULE_ID" jdbcType="BIGINT" property="ruleId" />
+    <result column="MERCHANT_CODE" jdbcType="VARCHAR" property="merchantCode" />
+    <result column="LABEL" jdbcType="VARCHAR" property="label" />
+    <result column="INIT_SCORE" jdbcType="INTEGER" property="initScore" />
+    <result column="BASE_NUM" jdbcType="INTEGER" property="baseNum" />
+    <result column="OPERATOR" jdbcType="VARCHAR" property="operator" />
+    <result column="ABSTRACTION_NAME" jdbcType="VARCHAR" property="abstractionName" />
+    <result column="RATE" jdbcType="INTEGER" property="rate" />
+    <result column="RULE_DEFINITION" jdbcType="VARCHAR" property="ruleDefinition" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+</mapper>

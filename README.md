@@ -12,7 +12,8 @@
   现在使用Springboot进行升级，并删除了很多本地化功能，只保留风控引擎核心，更具通用型，二次开发成本低。
 
 ## 项目架构
-前后端分离，单页面应用
+
+前后端分离架构
 后端采用： SpringBoot + Mysql +  MongoDB + Redis + Groovy 
 ---
 前端采用： React(SPA) 
@@ -45,9 +46,17 @@ Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动�
 ### Rule: 规则
 在计算 abstraction 和 activation 之前，需要先检查数据是否正常，检查就是按照rule 进行检测。
 
+---
 ## Manual
+### 模型配置
 ![主页](https://github.com/wfh45678/radar/blob/master/resources/images/01.png)
 ![构建模型](https://github.com/wfh45678/radar/blob/master/resources/images/08.png)
+
+### 系统API对接
+![引擎API](https://github.com/wfh45678/radar/blob/master/resources/images/09.png)
+![事件提交](https://github.com/wfh45678/radar/blob/master/resources/images/09.png)
+---
+
 ## Contact to
 Copyright by feihu wang,
 Any Question mail to wfh45678@163.com , qq 240159429 

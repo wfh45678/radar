@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pgmmers.radar.mapper.ModelMapper">
+  <resultMap id="BaseResultMap" type="com.pgmmers.radar.model.ModelPO">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="GUID" jdbcType="VARCHAR" property="guid" />
+    <result column="MODEL_NAME" jdbcType="VARCHAR" property="modelName" />
+    <result column="LABEL" jdbcType="VARCHAR" property="label" />
+    <result column="ENTITY_NAME" jdbcType="VARCHAR" property="entityName" />
+    <result column="ENTRY_NAME" jdbcType="VARCHAR" property="entryName" />
+    <result column="REFERENCE_DATE" jdbcType="VARCHAR" property="referenceDate" />
+    <result column="FIELD_VALIDATE" jdbcType="BIT" property="fieldValidate" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="TEMPLATE" jdbcType="BIT" property="template" />
+    <result column="DASHBOARD_URL" jdbcType="VARCHAR" property="dashboardUrl" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+</mapper>

@@ -1,0 +1,69 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/radar?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
+    username: root
+    password: 456132
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 8
+      min-idle: 1
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runsMillis: 60000
+      min-evictable-idle-timeMillis: 300000
+      validation-query: select 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-open-prepared-statements: 20
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat,wall
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      use-global-data-source-stat: true
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    #开发配置为false,避免修改模板还要重启服务器
+    cache: false
+    prefix: classpath:/templates
+  redis:
+    host: 127.0.0.1
+    #password:
+    timeout: 2000ms
+    database: 0  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
+    lettuce:
+      pool:
+        max-active: 30 #最大连接数（使用负值表示没有限制） 默认 8
+        max-wait: -1ms #最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+        max-idle: 10  #最大空闲连接 默认 8
+        min-idle: 0
+
+mybatis:
+  mapper-locations: classpath*:mapping/*.xml
+mapper:
+  mappers:
+    - tk.mybatis.mapper.common.Mapper
+  not-empty: false
+mongodb:
+  url: mongodb://localhost:27017/radar
+mobile:
+  info:
+    path: D:/soft/moble_info.csv
+ip2region:
+  db:
+    path: D:/soft/ip2region.db
+elksearch:
+  server: localhost
+  url: http://localhost:9200
+logging:
+  level:
+    root: info
+    com.pgmmers.radar: info
+    com.pgmmers.radar.mapper: debug
+sys:
+  conf:
+    app: admin
+    entity-duplicate-insert: false
+    mongo-restore-days: 93
