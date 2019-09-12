@@ -1,7 +1,7 @@
 # 风控引擎（Radar）
 ## 项目介绍
 ## 实时风控引擎，实时可配置，规则配置即时生效。
-### a real-time risk analysis engine, real-time update the config, real-time effect, anti-fraud transaction  is perfect, project code  is Radar, like the code, Radar like an eyes which look the transaction automatic. 
+### a real-time risk analysis engine, real-time update risk rule, real-time effect, anti-fraud transaction  is perfect, project code  is Radar, like the code, Radar like an eyes which look the transaction automatic. 
 
 ## 背景
   伴随着移动互联网的高速发展，羊毛党快速崛起，从一平台到另一个平台，所过之处一地鸡毛，这还不是最可怕的，
@@ -61,5 +61,5 @@ Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动�
 ---
 
 ## Contact to
-Copyright by FEIHU WANG,
-Any Question mail to wfh45678@163.com , QQ 240159429 
+
+ Mail to wfh45678@163.com , QQ 240159429 
