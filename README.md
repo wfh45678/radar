@@ -14,6 +14,7 @@
 ## 项目架构
 前后端分离，单页面应用
 后端采用： SpringBoot + Mysql +  MongoDB + Redis + Groovy 
+---
 前端采用： React(SPA) 
 
 ## 技术选型
