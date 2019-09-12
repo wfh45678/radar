@@ -51,13 +51,15 @@ Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动�
 ## Manual
 ### 模型配置
 ![主页](https://github.com/wfh45678/radar/blob/master/resources/images/01.png)
+![字段管理](https://github.com/wfh45678/radar/blob/master/resources/images/03.png)
+![规则管理](https://github.com/wfh45678/radar/blob/master/resources/images/07.png)
 ![构建模型](https://github.com/wfh45678/radar/blob/master/resources/images/08.png)
 
-### 系统API对接
-![引擎API](https://github.com/wfh45678/radar/blob/master/resources/images/09.png)
+### 三方系统对接风控EngineAPI
+![API DOC](https://github.com/wfh45678/radar/blob/master/resources/images/09.png)
 ![事件提交](https://github.com/wfh45678/radar/blob/master/resources/images/10.png)
 ---
 
 ## Contact to
-Copyright by feihu wang,
-Any Question mail to wfh45678@163.com , qq 240159429 
+Copyright by FEIHU WANG,
+Any Question mail to wfh45678@163.com , QQ 240159429 
