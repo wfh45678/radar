@@ -14,9 +14,10 @@
 ## 项目架构
 
 前后端分离架构
-后端采用： SpringBoot + Mysql +  MongoDB + Redis + Groovy 
----
-前端采用： React(SPA) 
+
+后端技术框架： SpringBoot + Mysql +  MongoDB + Redis + Groovy 
+
+前端技术框架： React(SPA) 
 
 ## 技术选型
 Springboot：笔者是java 出生， 选择 Springboot 理所当然，全家桶确实方便。
@@ -54,7 +55,7 @@ Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动�
 
 ### 系统API对接
 ![引擎API](https://github.com/wfh45678/radar/blob/master/resources/images/09.png)
-![事件提交](https://github.com/wfh45678/radar/blob/master/resources/images/09.png)
+![事件提交](https://github.com/wfh45678/radar/blob/master/resources/images/10.png)
 ---
 
 ## Contact to
