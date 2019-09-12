@@ -39,12 +39,17 @@ Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动�
 特征工程，例如用户小时交易次数，IP 一天交易金额，设备一小时交易次数。。。
 ### Adaptation: 机器学习模型适配器
  使用训练好的机器学习模型，进行检测
-### Activation: 反应堆
+### Activation: 策略（翻译不恰当）
 一个模型可以定义多个 activation,每个activation都可以独立配置规则，
 例如，用户注册行为， 可以定义：异常注册， 垃圾注册， 可以输出多个activation。
 ### Rule: 规则
 在计算 abstraction 和 activation 之前，需要先检查数据是否正常，检查就是按照rule 进行检测。
 
+## Manual
+![主页](https://github.com/wfh45678/radar/blob/master/resources/images/01.png)
+![新建模型](https://github.com/wfh45678/radar/blob/master/resources/images/02.png)
+![字段列表](https://github.com/wfh45678/radar/blob/master/resources/images/03.png)
+![预处理字段](https://github.com/wfh45678/radar/blob/master/resources/images/04.png)
 ## Contact to
 Copyright by feihu wang,
 Any Question mail to wfh45678@163.com , qq 240159429 
