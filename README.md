@@ -47,9 +47,7 @@ Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动�
 
 ## Manual
 ![主页](https://github.com/wfh45678/radar/blob/master/resources/images/01.png)
-![新建模型](https://github.com/wfh45678/radar/blob/master/resources/images/02.png)
-![字段列表](https://github.com/wfh45678/radar/blob/master/resources/images/03.png)
-![预处理字段](https://github.com/wfh45678/radar/blob/master/resources/images/04.png)
+![构建模型](https://github.com/wfh45678/radar/blob/master/resources/images/08.png)
 ## Contact to
 Copyright by feihu wang,
 Any Question mail to wfh45678@163.com , qq 240159429 
