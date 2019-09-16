@@ -49,6 +49,17 @@ Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动�
 
 ---
 ## Manual
+### 安装部署
+    
+    mvn install 
+    # 运行服务端 
+    cd radar-admin 
+    java -jar radar-admin.jar
+    # 运行引擎端
+    cd radar-engine
+    java -jar radar-engine.jar
+
+
 ### 模型配置
 ![主页](https://github.com/wfh45678/radar/blob/master/resources/images/01.png)
 ![字段管理](https://github.com/wfh45678/radar/blob/master/resources/images/03.png)
