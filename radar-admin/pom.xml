@@ -49,13 +49,11 @@
         <dependency>
             <groupId>tk.mybatis</groupId>
             <artifactId>mapper</artifactId>
-            <version>4.0.3</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/tk.mybatis/mapper-spring-boot-starter -->
         <dependency>
             <groupId>tk.mybatis</groupId>
             <artifactId>mapper-spring-boot-starter</artifactId>
-            <version>2.0.3</version>
         </dependency>
 
         <dependency>
@@ -86,10 +84,6 @@
             <groupId>com.pgmmers</groupId>
             <artifactId>radar-service-impl</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>tk.mybatis</groupId>
-            <artifactId>mapper</artifactId>
         </dependency>
 
         <dependency>

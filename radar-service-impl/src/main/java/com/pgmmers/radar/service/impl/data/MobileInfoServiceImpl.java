@@ -45,7 +45,7 @@ public class MobileInfoServiceImpl implements MobileInfoService {
         int count = 0;
         try {
             Path p = FileSystems.getDefault().getPath(mobileInfoFilePath);
-            List<String> lines = Files.readAllLines(p, Charset.defaultCharset());
+            List<String> lines = Files.readAllLines(p, Charset.forName("UTF-8"));
             List<MobileInfoVO> mobileInfoVOList = lines.stream().map(line -> {
                 String[] info = line.split(",");
                 MobileInfoVO mobile = new MobileInfoVO();
@@ -62,7 +62,8 @@ public class MobileInfoServiceImpl implements MobileInfoService {
                 mobileMap.put(mobileInfoVO.getMobile(), mobileInfoVO);
             }
             count = mobileInfoVOList.size();
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
+            logger.error("", ex);
             throw new RuntimeException("mobile info load error");
         } finally {
             long cost = System.currentTimeMillis() - begin;
