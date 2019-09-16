@@ -59,7 +59,8 @@ Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动�
     cd radar-engine
     java -jar radar-engine.jar
 
-
+Admin Web: http://localhost:8080  
+admin/123456
 ### 模型配置
 ![主页](https://github.com/wfh45678/radar/blob/master/resources/images/01.png)
 ![字段管理](https://github.com/wfh45678/radar/blob/master/resources/images/03.png)
