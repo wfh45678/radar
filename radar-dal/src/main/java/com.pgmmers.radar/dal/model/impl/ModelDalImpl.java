@@ -296,8 +296,33 @@ public class ModelDalImpl implements ModelDal {
 		Example example = new Example(ModelPO.class);
 		example.createCriteria().andIn("id", Arrays.asList(id));
 		int count = modelMapper.deleteByExample(example);
-		// TODO 删除关联子表
-		return count;
+		// 删除关联子表
+        example = new Example(FieldPO.class);
+        example.createCriteria().andIn("modelId", Arrays.asList(id));
+        fieldMapper.deleteByExample(example);
+
+        example = new Example(PreItemPO.class);
+        example.createCriteria().andIn("modelId", Arrays.asList(id));
+        preItemMapper.deleteByExample(example);
+
+        example = new Example(DataListsPO.class);
+        example.createCriteria().andIn("modelId", Arrays.asList(id));
+        dataListMapper.deleteByExample(example);
+
+        example = new Example(AbstractionPO.class);
+        example.createCriteria().andIn("modelId", Arrays.asList(id));
+        abstractionMapper.deleteByExample(example);
+
+        example = new Example(ActivationPO.class);
+        example.createCriteria().andIn("modelId", Arrays.asList(id));
+        activationMapper.deleteByExample(example);
+
+        example = new Example(RulePO.class);
+        example.createCriteria().andIn("modelId", Arrays.asList(id));
+        ruleMapper.deleteByExample(example);
+
+
+        return count;
 	}
 	
 	@Override
