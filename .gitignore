@@ -1,1 +1,8 @@
 /note.txt
+/radar-admin/target
+/radar-commons/target
+/radar-dal/target
+/radar-dao/target
+/radar-engine/target
+/radar-service/target
+/radar-service-impl/target
