@@ -1,7 +1,9 @@
 # 风控引擎（Radar）
 ## 项目介绍
-### 实时风控引擎，实时可配置，规则配置即时生效。 开箱即用！！！开箱即用！！！开箱即用！！！
-### a real-time risk analysis engine, real-time update risk rule, real-time effect, anti-fraud transaction  is perfect, project code  is Radar, like the code, Radar like an eyes which look the transaction automatic. 
+ 实时风控引擎，实时可配置，规则配置即时生效。 开箱即用！！！开箱即用！！！开箱即用！！！  
+ A real-time risk analysis engine,which can update risk rule in real-time and  make it effective immediately.   
+ It admirably applies to the anti-fraud application.  
+ The project code called Radar,  like the code,  monitor the transaction at the back. 
 
 ## 背景
   伴随着移动互联网的高速发展，羊毛党快速崛起，从一平台到另一个平台，所过之处一地鸡毛，这还不是最可怕的，
@@ -20,7 +22,7 @@
 前端技术框架： React(SPA) 
 
 ## 技术选型
-Springboot：笔者是java 出生， 选择 Springboot 理所当然，全家桶确实方便。
+Springboot：笔者是java 出生， 选择 Springboot 理所当然，方便自己， 也方便其他Java使用者进行扩展。
 
 mysql ： 本项目中关系数据库的作用不大，主要用于存放 风险模型的元信息。
 
@@ -71,7 +73,11 @@ admin/123456
 ![API DOC](https://github.com/wfh45678/radar/blob/master/resources/images/09.png)
 ![事件提交](https://github.com/wfh45678/radar/blob/master/resources/images/10.png)
 ---
+## 未完待续
+
+* 支持机器学习模型
+* 数据分析子项目
 
 ## Contact to
 
- Mail to wfh45678@163.com , QQ 240159429 
+ Copyright by xwf, mail to wfh45678@163.com , QQ 240159429 
