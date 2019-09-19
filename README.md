@@ -17,21 +17,23 @@
 
 前后端分离架构
 
-后端技术框架： SpringBoot + Mysql +  MongoDB + Redis + Groovy 
+后端技术框架： SpringBoot + Mysql +  MongoDB + Redis + Groovy + Swagger
 
 前端技术框架： React(SPA) 
 
 ## 技术选型
-Springboot：笔者是java 出生， 选择 Springboot 理所当然，方便自己， 也方便其他Java使用者进行扩展。
+* Springboot：笔者是java 出生， 选择 Springboot 理所当然，方便自己， 也方便其他Java使用者进行扩展。
 
-mysql ： 本项目中关系数据库的作用不大，主要用于存放 风险模型的元信息。
+* Mysql ： 本项目中关系数据库的作用不大，主要用于存放 风险模型的元信息。
 
-MongoDB： 用于存放事件JSON， 提供基本统计学计算（例如：max, min, sum, avg, ），
+* MongoDB： 用于存放事件JSON， 提供基本统计学计算（例如：max, min, sum, avg, ），
 复杂的统计学概念（sd,variance, etc...）在内存中计算。
 
-Redis： 提供缓存支持
+* Redis： 提供缓存支持，利用发布订阅特性监听配置更新
 
-Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动态配置，即时生效。
+* Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动态配置，即时生效。
+
+* Swagger:  Rest API 管理
 
 ## 名词解释
 ### Model: 模型
@@ -80,4 +82,4 @@ admin/123456
 
 ## Contact to
 
- Copyright by xwf, mail to wfh45678@163.com , QQ 240159429 
+ Copyright by XWF, mail to wfh45678@163.com , QQ 240159429 
