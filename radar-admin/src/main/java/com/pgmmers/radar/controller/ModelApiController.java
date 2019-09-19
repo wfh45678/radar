@@ -7,6 +7,7 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.vo.admin.UserVO;
 import com.pgmmers.radar.vo.model.ModelVO;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/services/v1/model")
+@Api(value = "ModelApi", description = "模型管理接口相关操作",  tags = {"模型API"})
 public class ModelApiController  {
 
     public static Logger logger = LoggerFactory.getLogger(ModelApiController.class);

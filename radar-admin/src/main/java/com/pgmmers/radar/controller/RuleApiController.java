@@ -8,6 +8,7 @@ import com.pgmmers.radar.service.model.RuleService;
 import com.pgmmers.radar.vo.admin.UserVO;
 import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.RuleVO;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 @RestController
 @RequestMapping("/services/v1/rule")
+@Api(value = "RuleApi", description = "规则管理接口操作",  tags = {"规则管理API"})
 public class RuleApiController {
 
     @Autowired

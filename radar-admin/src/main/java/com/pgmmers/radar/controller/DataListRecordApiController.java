@@ -5,11 +5,13 @@ import com.pgmmers.radar.dal.bean.DataListRecordQuery;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.DataListsService;
 import com.pgmmers.radar.vo.model.DataListRecordVO;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/services/v1/datalistrecord")
+@Api(value = "DataListRecordApi", description = "列表内容维护接口相关操作",  tags = {"列表内容API"})
 public class DataListRecordApiController {
 
     @Autowired

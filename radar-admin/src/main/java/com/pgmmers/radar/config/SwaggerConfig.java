@@ -27,7 +27,7 @@ public class SwaggerConfig {
 
     private ApiInfo buildApiInf(){
         return new ApiInfoBuilder()
-                .title("Risk Engine API")
+                .title("Risk Admin API")
                 .description("risk engine api documentation")
                 .termsOfServiceUrl("http://radar.pgmmer.top")
                 .contact(new Contact("xwf", "http://radar.pgmmer.top", "xxx@163.com"))

@@ -7,6 +7,7 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.util.RandomValidateCode;
 import com.pgmmers.radar.vo.common.PluginVO;
 
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/services/v1/common")
+@Api(value = "CommonApi", description = "公用相关操作",  tags = {"公用API"})
 public class CommonApiController {
 
     public static Logger logger = LoggerFactory.getLogger(CommonApiController.class);

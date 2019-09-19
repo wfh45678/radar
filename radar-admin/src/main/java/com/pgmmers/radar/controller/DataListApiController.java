@@ -5,11 +5,13 @@ import com.pgmmers.radar.dal.bean.DataListQuery;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.DataListsService;
 import com.pgmmers.radar.vo.model.DataListsVO;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/services/v1/datalist")
+@Api(value = "DataListsApi", description = "黑白名单列表接口相关操作",  tags = {"数据列表API"})
 public class DataListApiController {
 
     @Autowired

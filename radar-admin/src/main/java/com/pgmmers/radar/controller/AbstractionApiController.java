@@ -13,6 +13,7 @@ import com.pgmmers.radar.service.model.PreItemService;
 import com.pgmmers.radar.vo.model.AbstractionVO;
 import com.pgmmers.radar.vo.model.FieldVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
+import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 @RestController
 @RequestMapping("/services/v1/abstraction")
+@Api(value = "AbstractionApi", description = "特征管理相关操作",  tags = {"特征API"})
 public class AbstractionApiController {
 
     @Autowired

@@ -21,6 +21,7 @@ import com.pgmmers.radar.vo.model.ActivationVO;
 import com.pgmmers.radar.vo.model.FieldVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import com.pgmmers.radar.vo.model.RuleVO;
+import io.swagger.annotations.Api;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +36,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+/**
+ * 以后会独立拆分到分析子项目里面去。
+ * @author  feihu.wang
+ */
+@Deprecated
 @RestController
 @RequestMapping("/services/v1/event")
+@Api(value = "EventApi", description = "事件信息检索接口相关操作",  tags = {"事件信息检索分析API"}, hidden = true)
 public class EventApiController {
 
     @Autowired

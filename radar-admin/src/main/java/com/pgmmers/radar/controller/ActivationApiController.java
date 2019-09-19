@@ -11,6 +11,7 @@ import com.pgmmers.radar.service.engine.vo.DataColumnInfo;
 import com.pgmmers.radar.service.enums.DataType;
 import com.pgmmers.radar.service.model.*;
 import com.pgmmers.radar.vo.model.*;
+import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 @RestController
 @RequestMapping("/services/v1/activation")
+@Api(value = "ActivationApi", description = "策略集管理相关操作",  tags = {"策略集API"})
 public class ActivationApiController {
 
     @Autowired

@@ -6,6 +6,7 @@ import com.pgmmers.radar.service.admin.UserService;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.util.CryptUtils;
 import com.pgmmers.radar.vo.admin.UserVO;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/services/v1")
+@Api(value = "SysLoginAPI", description = "用户登录相关操作接口",  tags = {"用户登录相关API"})
 public class SysLoginApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(SysLoginApiController.class);

@@ -4,11 +4,13 @@ import com.pgmmers.radar.dal.bean.FieldQuery;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.FieldService;
 import com.pgmmers.radar.vo.model.FieldVO;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/services/v1/field")
+@Api(value = "FieldApi", description = "字段管理接口相关操作",  tags = {"字段管理API"})
 public class FieldApiController {
 
     @Autowired
