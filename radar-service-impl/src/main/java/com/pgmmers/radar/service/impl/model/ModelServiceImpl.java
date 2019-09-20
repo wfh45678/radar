@@ -153,6 +153,12 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
     public CommonResult delete(Long[] id) {
         CommonResult result = new CommonResult();
         ModelVO model = modelDal.getModelById(id[0]);
+        if (model.getTemplate()) {
+            result.setCode("701");
+            result.setSuccess(false);
+            result.setMsg("系统模板禁止删除！");
+            return result;
+        }
         int count = modelDal.delete(id);
         if (count > 0) {
             result.setSuccess(true);
