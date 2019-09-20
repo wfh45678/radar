@@ -46,35 +46,21 @@
 ### Adaptation: 机器学习模型适配器
  使用训练好的机器学习模型，进行检测
 ### Activation: 激活点
-一个模型可以定义多个 activation（相当于不同维度的检测报告）,每个activation都可以独立配置规则，
+概念类似于机器学习里面的 (Activation Function)， 一个模型可以定义多个 activation（相当于不同维度的检测报告）,每个activation都可以独立配置规则，单独打分。
 例如，用户注册行为， 可以定义：异常注册， 垃圾注册， 可以输出多个activation。
 ### Rule: 规则
 在计算 abstraction 和 activation 之前，需要先检查数据是否正常，检查就是按照rule 配置进行检测。
 
 ---
-## Manual
-### 安装部署
-    
-    mvn install 
-    # 运行服务端 
-    cd radar-admin 
-    java -jar radar-admin.jar
-    # 运行引擎端
-    cd radar-engine
-    java -jar radar-engine.jar
+## 演示入口
+演示Demo只提供管理端配置功能，暂时不提供引擎计算功能。  
 
-Admin Web: http://localhost:8080  
+[Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top
 admin/123456
-### 模型配置
-![主页](https://github.com/wfh45678/radar/blob/master/resources/images/01.png)
-![字段管理](https://github.com/wfh45678/radar/blob/master/resources/images/03.png)
-![规则管理](https://github.com/wfh45678/radar/blob/master/resources/images/07.png)
-![构建模型](https://github.com/wfh45678/radar/blob/master/resources/images/08.png)
 
-### 三方系统对接风控EngineAPI
-![API DOC](https://github.com/wfh45678/radar/blob/master/resources/images/09.png)
-![事件提交](https://github.com/wfh45678/radar/blob/master/resources/images/10.png)
----
+## [使用帮助](https://github.com/wfh45678/radar/wiki/manual)
+
+
 ## 未完待续
 
 * 支持机器学习模型
