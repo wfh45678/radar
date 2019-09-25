@@ -63,7 +63,7 @@ https://github.com/wfh45678/radar/wiki/manual
 
 ## 未完待续
 ### 小迭代
-* 集成内存redis版本，本地调试的时候就不用再单独部署redis
+* 集成嵌入式redis版本，本地调试的时候就不用再单独部署redis
 * 集成 JWT(JSON WEB TOKEN)，前后端分离标准化
 ### 重大特性
 * 支持机器学习模型
