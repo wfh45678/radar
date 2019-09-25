@@ -29,7 +29,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (uri.startsWith("/services")&& !uri.contains("/merchant") && !uri.contains("/common")) {
 
             if (user == null) {
-                logger.info("session expired, redirect to index.html");
+                logger.info("session expired.");
                 return true;
             }
         }
