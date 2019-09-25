@@ -58,11 +58,14 @@
 [Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top
 admin/123456
 
-## [使用帮助](https://github.com/wfh45678/radar/wiki/manual)
-
+## [帮助手册](https://github.com/wfh45678/radar/wiki/manual)
+https://github.com/wfh45678/radar/wiki/manual
 
 ## 未完待续
-
+### 小迭代
+* 集成内存redis版本，本地调试的时候就不用再单独部署redis
+* 集成 JWT(JSON WEB TOKEN)，前后端分离标准化
+### 重大特性
 * 支持机器学习模型
 * 数据分析子项目
 
