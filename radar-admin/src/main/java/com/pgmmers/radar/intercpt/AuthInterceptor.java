@@ -10,6 +10,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * 目前这个类是预留的， session 这一块，后续会考虑升级成 JWB(JSON WEB TOKEN).
+ * @author feihu.wang
+ */
 public class AuthInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
