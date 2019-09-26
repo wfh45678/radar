@@ -21,6 +21,9 @@
 
 前端技术框架： React(SPA) 
 
+### 架构图
+![系统架构](https://github.com/wfh45678/radar/blob/master/resources/images/architect.jpg)
+
 ## 技术选型
 * Springboot：笔者是java 出生， 选择 Springboot 理所当然，方便自己， 也方便其他Java使用者进行扩展。
 
