@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class GroovyScriptUtil {
 
-    public static Map<String, GroovyObject> passedClassMap = new HashMap<String, GroovyObject>();
+    public static Map<String, GroovyObject> passedClassMap = new HashMap<>();
 
     public static GroovyClassLoader groovyClassLoader;
 

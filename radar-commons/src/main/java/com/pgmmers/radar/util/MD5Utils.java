@@ -11,7 +11,6 @@ import java.util.Random;
  * <p>MD5Utils class.</p>
  *
  * @author linguibao
- * @version $Id: $Id
  */
 public class MD5Utils {
 

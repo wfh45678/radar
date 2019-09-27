@@ -14,10 +14,10 @@ public class MobileLocationUtil {
 		String jsonResult = get(httpUrl, httpArg);
 		System.out.println(jsonResult);
 
-
 	}
 
 	public static String getLocation(String mobile) {
+		//TODO: 需要重新寻找手机号码段API 通道.
         String httpUrl = "http://apis.baidu.com/apistore/mobilenumber/mobilenumber";
         String httpArg = "phone=" + mobile;
         String jsonResult = get(httpUrl, httpArg);

@@ -75,8 +75,8 @@ public class MobileInfoServiceImpl implements MobileInfoService {
     public MobileInfoVO getMobileInfoByMobile(String mobile) {
         MobileInfoVO vo = mobileMap.get(mobile);
         if (vo == null) {
-            new Thread() {
-                public void run() {
+            // 如果当前系统没有该号码段，则需要通过第三方API 获取 改号码段信息。
+            new Thread(() -> {
                     String result = MobileLocationUtil.getLocation(mobile);
                     JSONObject json = JSONObject.parseObject(result);
                     String retMsg = json.getString("retMsg");
@@ -97,8 +97,7 @@ public class MobileInfoServiceImpl implements MobileInfoService {
                             mobileMap.put(info.getMobile(), info);
                         }
                     }
-                }
-            };
+            });//.start();
         }
         return vo;
     }
