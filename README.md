@@ -1,6 +1,6 @@
 # 风控引擎（Radar）
 ## 项目介绍
- 实时风控引擎，实时可配置，规则配置即时生效。 开箱即用！！！开箱即用！！！开箱即用！！！  
+ 实时风控引擎，可视化编辑，规则配置即时生效。 开箱即用！！！开箱即用！！！开箱即用！！！  
  A real-time risk analysis engine,which can update risk rule in real-time and  make it effective immediately.   
  It admirably applies to the anti-fraud application.  
  The project code called Radar,  like the code,  monitor the transaction at the back. 
@@ -40,7 +40,10 @@
 
 ## 名词解释
 ### Model: 模型
- 用户行为事件， 例如：注册，登录，购买，提现。。。
+  用户行为事件， 例如：注册，登录，购买，提现。。。
+### 模型三要素 
+  也就是事件行为三要素，风控系统的核心定义：事件流水ID(例如：交易流水号)，实体ID（例如：userId），事件发生时间（例如：交易时间）,
+  简单来说就是谁什么时候做了什么事。
 ### PreItem: 预处理 
  像IP，手机号码段等事件属性，可能无法直接计算，通过预处理插件 转换成 其他格式，
   例如:ip 可以通过IP 插件变成位置和地址
@@ -69,8 +72,8 @@ https://github.com/wfh45678/radar/wiki/manual
 * 集成嵌入式redis版本，本地调试的时候就不用再单独部署redis
 * 集成 JWT(JSON WEB TOKEN)，前后端分离标准化
 ### 重大特性
-* 支持机器学习模型
-* 数据分析子项目
+* 支持机器学习
+* 数据分析平台
 
 ## Contact to
 
