@@ -137,7 +137,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         int count = modelDal.save(model);
         if (count > 0) {
         	if(StringUtils.isEmpty(model.getModelName())){
-        		model.setModelName("model"+model.getId());
+        		model.setModelName("model" + model.getId());
         		modelDal.save(model);
         	}
         	
@@ -181,19 +181,8 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
                 .getCollection(uri.getCollection()).drop();
         client.getDatabase(uri.getDatabase()).createCollection(
                 uri.getCollection());
-        List<IndexModel> indexes = new ArrayList<IndexModel>();
+        List<IndexModel> indexes = new ArrayList<>();
 
-//        Document entryKeys = new Document();
-//        entryKeys.put(modelVO.getEntryName(), 1);
-//        IndexModel entryIndex = new IndexModel(entryKeys);
-//
-//        Document entityKeys = new Document();
-//        entityKeys.put(modelVO.getEntityName(), 1);
-//        IndexModel entityIndex = new IndexModel(entityKeys);
-//
-//        Document reffDateKeys = new Document();
-//        reffDateKeys.put(modelVO.getReferenceDate(), 1);
-//        IndexModel reffenceIndex = new IndexModel(reffDateKeys);
         
         if (fields == null) {
             result.setMsg("请先为模型配置字段");
@@ -226,7 +215,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         JSONObject total = buildEsMappingJson(fields, items);
 
         // execute
-        boolean isCreated = true;
+        boolean isCreated;
         isCreated = searchService.createIndex(modelVO.getGuid().toLowerCase(), modelVO.getModelName().toLowerCase(), "radar", total.toJSONString());
         logger.info("index mapping:{} is create {}", total.toJSONString(), isCreated);
         if (isCreated) {
@@ -303,7 +292,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
     @Override
 	public CommonResult copy(Long id,String merchantCode,String name,String label) {
-		ModelVO model=modelDal.getModelById(id);
+		ModelVO model = modelDal.getModelById(id);
 		model.setModelName(name);
 		model.setLabel(label);
 		model.setCode(merchantCode);
@@ -328,7 +317,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         int count = modelDal.copy(model);
         if (count > 0) {
         	if(StringUtils.isEmpty(model.getModelName())){
-        		model.setModelName("model_"+model.getId());
+        		model.setModelName("model_" + model.getId());
         		modelDal.save(model);
         	}
         	
@@ -342,7 +331,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
 	public String convertFieldType2ElasticType(String fieldType) {
         FieldType type = Enum.valueOf(FieldType.class, fieldType);
-        String tmp = "string";
+        String tmp;
         switch (type) {
         case STRING:
             tmp = "string";

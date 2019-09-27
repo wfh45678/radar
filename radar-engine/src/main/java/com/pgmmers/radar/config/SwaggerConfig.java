@@ -30,7 +30,7 @@ public class SwaggerConfig {
                 .title("Risk Engine API")
                 .description("risk engine api documentation")
                 .termsOfServiceUrl("http://radar.pgmmer.top")
-                .contact(new Contact("xwf", "http://radar.pgmmer.top", "xxx@163.com"))
+                .contact(new Contact("wfh", "http://radar.pgmmer.top", "wfh45678@163.com"))
                 .build();
     }
 }

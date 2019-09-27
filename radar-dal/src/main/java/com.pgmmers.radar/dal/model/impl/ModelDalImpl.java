@@ -267,7 +267,7 @@ public class ModelDalImpl implements ModelDal {
 			listVO.add(modelVO);
 		}
 
-		PageResult<ModelVO> pageResult = new PageResult<ModelVO>(page.getPageNum(), page.getPageSize(),
+		PageResult<ModelVO> pageResult = new PageResult<>(page.getPageNum(), page.getPageSize(),
 				(int) page.getTotal(), listVO);
 		return pageResult;
 	}
