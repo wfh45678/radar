@@ -11,9 +11,7 @@ public class PluginVO {
 
     // private JSONArray meta;
 
-    public PluginVO() {
 
-    }
 
     public PluginVO(PluginType plugin) {
         this.key = plugin.getKey();

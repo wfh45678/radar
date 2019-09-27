@@ -7,7 +7,6 @@ import java.util.List;
  * <p>PageVO class.</p>
  *
  * @author zhang
- * @version $Id: $Id
  */
 public class PageVO<T> {
 
