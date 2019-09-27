@@ -114,10 +114,10 @@ public class EventApiController {
         String[] activations = query.getActivations();
         String[] rules = query.getRules();
 
-        Map<String, String> fieldIdMap = new HashMap<String, String>();
-        Map<String, String> itemsIdMap = new HashMap<String, String>();
-        Map<String, String> actIdMap = new HashMap<String, String>();
-        Map<String, String> ruleIdMap = new HashMap<String, String>();
+        Map<String, String> fieldIdMap = new HashMap<>();
+        Map<String, String> itemsIdMap = new HashMap<>();
+        Map<String, String> actIdMap = new HashMap<>();
+        Map<String, String> ruleIdMap = new HashMap<>();
 
         for (int i = 0; i < fieldIds.length; i++) {
             fieldIdMap.put(fieldIds[i], "");
