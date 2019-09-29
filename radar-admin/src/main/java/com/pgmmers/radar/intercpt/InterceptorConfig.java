@@ -4,7 +4,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-@Configuration
+/**
+ * 接口验证,session 过期验证。
+ */
+//@Configuration
 public class InterceptorConfig extends WebMvcConfigurerAdapter {
 
     // 注册拦截器
