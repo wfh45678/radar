@@ -8,3 +8,11 @@
 /radar-service-impl/target
 .idea
 /*.iml
+*.iml
+/radar-admin/radar-admin.iml
+/radar-commons/radar-commons.iml
+/radar-dal/radar-dal.iml
+/radar-dao/radar-dao.iml
+/radar-engine/radar-engine.iml
+/radar-service/radar-service.iml
+/radar-service-impl/radar-service-impl.iml
