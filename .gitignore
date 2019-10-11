@@ -6,3 +6,5 @@
 /radar-engine/target
 /radar-service/target
 /radar-service-impl/target
+.idea
+/*.iml

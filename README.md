@@ -17,7 +17,7 @@
 
 前后端分离架构
 
-后端技术框架： SpringBoot + Mysql +  MongoDB + Redis + Groovy + Swagger
+后端技术框架： SpringBoot + Mybatis + tkMapper + Mysql +  MongoDB + Redis + Groovy + Swagger
 
 前端技术框架： React(SPA) 
 
@@ -26,6 +26,8 @@
 
 ## 技术选型
 * Springboot：笔者是java 出生， 选择 Springboot 理所当然，方便自己， 也方便其他Java使用者进行扩展。
+
+* Mybatis + tkMapper： 持久层框架， tkMapper 提供mapper 通用模板功能，减少重复代码的生成。
 
 * Mysql ： 本项目中关系数据库的作用不大，主要用于存放 风险模型的元信息。
 
