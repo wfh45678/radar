@@ -79,4 +79,8 @@ https://github.com/wfh45678/radar/wiki/manual
 
 ## Contact to
 
- Copyright by XWF, mail to wfh45678@163.com , QQ 240159429 
+ 微信（nicedream7758）扫码加群一起交流  
+ Mail to wfh45678@163.com   
+ ![系统模块](http://www.pgmmer.top/radar/wx3.jpg)
+ 
+ Copyright by XWF
