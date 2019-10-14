@@ -80,7 +80,7 @@ https://github.com/wfh45678/radar/wiki/manual
 ## Contact to
 
  微信（nicedream7758）扫码加群一起交流  
- Mail to wfh45678@163.com   
+ 如果喜欢本项目，可以点一下star支持一下, 让更多人看到，谢谢！   
  ![系统模块](http://www.pgmmer.top/radar/wx3.jpg)
  
  Copyright by XWF
