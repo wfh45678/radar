@@ -73,6 +73,7 @@ https://github.com/wfh45678/radar/wiki/manual
 ### 小迭代
 * 集成嵌入式redis版本，本地调试的时候就不用再单独部署redis
 * 集成 JWT(JSON WEB TOKEN)，前后端分离标准化
+* 插件配置管理，可以集成其他中间件的数据能力
 ### 重大特性
 * 支持机器学习
 * 数据分析平台
@@ -81,6 +82,6 @@ https://github.com/wfh45678/radar/wiki/manual
 
  微信（nicedream7758）扫码加群一起交流  
  如果喜欢本项目，可以点一下star支持一下, 让更多人看到，谢谢！   
- ![系统模块](http://www.pgmmer.top/radar/wx3.jpg)
+ ![微信交流群](http://www.pgmmer.top/radar/wxgroup.png)
  
  Copyright by XWF
