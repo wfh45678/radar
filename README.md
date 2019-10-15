@@ -1,9 +1,18 @@
 # 风控引擎（Radar）
 ## 项目介绍
- 实时风控引擎，可视化编辑，规则配置即时生效。 开箱即用！！！开箱即用！！！开箱即用！！！  
- A real-time risk analysis engine,which can update risk rule in real-time and  make it effective immediately.   
- It admirably applies to the anti-fraud application.  
- The project code called Radar,  like the code,  monitor the transaction at the back. 
+ 一款基于java语言，使用Springboot + Mongodb + Groovy 等框架搭建实时风控引擎，适用于反欺诈应用场景。  
+A real-time risk analysis engine,which can update risk rule in real-time and make it effective immediately.  
+It applies to the anti-fraud application perfectly. 
+The project code called Radar, like the code, monitor the transaction at the back.
+## 项目特点
+
+ * 实时风控，特殊场景可以做到100ms内响应
+ * 可视化编辑，丰富的运算符、计算规则灵活
+ * 支持中文，易用性更强
+ * 自定义规则引擎，更加灵活，支持复杂多变的场景
+ * 特性插件化，快速接入其它数据能力
+ * Nosql，易扩展，高性能
+ * 配置简单，开箱即用！
 
 ## 背景
   伴随着移动互联网的高速发展，羊毛党快速崛起，从一平台到另一个平台，所过之处一地鸡毛，这还不是最可怕的，
@@ -29,14 +38,14 @@
 
 * Mybatis + tkMapper： 持久层框架， tkMapper 提供mapper 通用模板功能，减少重复代码的生成。
 
-* Mysql ： 本项目中关系数据库的作用不大，主要用于存放 风险模型的元信息。
+* Mysql ： 本项目中关系数据库，主要用于存放 风险模型的元信息。
 
 * MongoDB： 用于存放事件JSON， 提供基本统计学计算（例如：max, min, sum, avg, ），
 复杂的统计学概念（sd,variance, etc...）在内存中计算。
 
-* Redis： 提供缓存支持，利用发布订阅特性监听配置更新
+* Redis： 提供缓存支持，Engine 利用发布订阅特性监听管理端相关配置的更新
 
-* Groovy： 脚本引擎，风控规则最后都生成 groovy 脚本， 可以动态配置，即时生效。
+* Groovy： 规则引擎，风控规则最后都生成 groovy 脚本， 实时编辑，动态生成，即时生效。
 
 * Swagger:  Rest API 管理
 
