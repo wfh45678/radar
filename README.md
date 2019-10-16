@@ -87,6 +87,7 @@ https://github.com/wfh45678/radar/wiki/manual
 * 集成嵌入式redis版本，本地调试的时候就不用再单独部署redis
 * 集成 JWT(JSON WEB TOKEN)，前后端分离标准化
 * 插件配置管理，可以集成其他中间件的数据能力
+* 特征（abstraction）的提取基于flink 的实现，以应对实时性要求更高的情况。
 ### 重大特性
 * 支持机器学习
 * 数据分析平台
