@@ -10,6 +10,7 @@ export var FetchUtil=function(url,method,param,callback,done=()=>{}){
 		credentials: 'include'
 	};
 	let hide=null;
+	console.log(param,'=====')
 	if(method!='GET'){
 		config.method=method;
 		config.headers={"Content-Type": "application/json"};
