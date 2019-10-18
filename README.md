@@ -99,4 +99,4 @@ https://github.com/wfh45678/radar/wiki/manual
  独乐乐不如众乐乐，微信（nicedream7758）扫码加群一起交流  
  ![微信交流群](http://www.pgmmer.top/radar/wxgroup.png)
  
- Copyright by XWF
+ Copyright © XWF
