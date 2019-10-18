@@ -31,7 +31,7 @@ export default class Abstraction extends React.Component{
 				searchIntervalValue:abstraction.searchIntervalValue,
 				functionField:abstraction.functionField,
 				comment:abstraction.comment,
-				ruleDefinition:abstraction.ruleDefinition==undefined?null:JSON.parse(abstraction.ruleDefinition),
+				ruleDefinition:abstraction.ruleDefinition==undefined?null:abstraction.ruleDefinition,
 				ruleScript:abstraction.ruleScript
 			}
 		}
