@@ -108,7 +108,7 @@ export default class Login extends React.Component{
         return (
             <div className="middleBox" onKeyDown={this.handleKeyDown}>
                 <Card>
-                    <h2 style={{textAlign:"center",paddingBottom:10,borderBottom:"1px dashed #ececec"}}><Icon type="lock" />&nbsp;&nbsp;反欺诈系统管理平台</h2>
+                    <h2 style={{textAlign:"center",paddingBottom:10,borderBottom:"1px dashed #ececec"}}><Icon type="lock" />&nbsp;&nbsp;风控引擎管理平台</h2>
                     <Form horizontal style={{marginTop:30}}>
                         <FormItem {...formItemLayout} label="用户名">
                             <Input size="large" type="text" name="username" value={this.state.username} onChange={this.handleChange}/>
@@ -128,7 +128,7 @@ export default class Login extends React.Component{
 
                         <FormItem wrapperCol={{ span: 13, offset: 7 }}>
                             <div style={this.state.showMsg?{display:"block"}:{display:"none"}}><Alert message={this.state.msg} type="error" /></div>
-                            <Button type="primary" onClick={this.handleLogin}>登录</Button>
+                            <Button type="primary" onClick={this.handleLogin}>登录</Button> &nbsp;&nbsp;&nbsp;&nbsp;<Button type="primary">注册</Button>
                         </FormItem> 	                                      
                     </Form>
                 </Card>
