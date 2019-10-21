@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 统计模块.
- * @author wangfeihu
+ * 统计模块. 用于特征的提取。
+ * @author feihu.wang
  *
  */
 public interface AggregateCommand {
