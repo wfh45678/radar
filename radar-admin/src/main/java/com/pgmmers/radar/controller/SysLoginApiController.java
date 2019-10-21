@@ -69,6 +69,15 @@ public class SysLoginApiController {
         ret.setSuccess(true);
         return ret;
 	}
-    
-    
+
+    /**
+     * 注册接口
+     * @param request
+     * @return
+     */
+    @GetMapping("/merchant/regist")
+    public CommonResult regist(HttpServletRequest request) {
+        CommonResult ret = new CommonResult();
+        return ret;
+    }
 }
