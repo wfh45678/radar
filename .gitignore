@@ -17,3 +17,4 @@
 /radar-service/radar-service.iml
 /radar-service-impl/radar-service-impl.iml
 webapp/node_modules/
+.project

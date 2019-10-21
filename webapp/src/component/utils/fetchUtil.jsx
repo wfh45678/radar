@@ -1,6 +1,6 @@
 import {Modal,message} from 'antd';
 import 'whatwg-fetch';
-import 'es6-promise/dist/es6-promise.min.js';
+// import 'es6-promise/dist/es6-promise.min.js';
 import 'fetch-ie8/fetch.js';
 
 export var fetchVersion='/services/v1';

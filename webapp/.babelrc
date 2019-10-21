@@ -1,5 +1,8 @@
 {
-  "presets": ["es2015", "stage-0", "react"],
-  "plugins": [["antd", [{ "libraryName": "antd" }]]]
+  presets: ['@babel/env', '@babel/preset-react'],
+  plugins: [
+    ['@babel/plugin-proposal-decorators', { legacy: true }],
+    ['@babel/plugin-proposal-class-properties', { loose: true }],
+    "@babel/plugin-proposal-export-default-from",
+  ]
 }
-
