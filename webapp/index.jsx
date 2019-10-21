@@ -33,6 +33,8 @@ import 'animate.css/animate.min.css';
 
 import './main.less';
 
+
+
 class NotFound extends React.Component{
   render() {
     return (
