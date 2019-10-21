@@ -78,6 +78,7 @@ public class SysLoginApiController {
     @GetMapping("/merchant/regist")
     public CommonResult regist(HttpServletRequest request) {
         CommonResult ret = new CommonResult();
+        ret.setSuccess(true);
         return ret;
     }
 }
