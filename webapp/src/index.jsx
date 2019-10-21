@@ -33,8 +33,6 @@ import 'animate.css/animate.min.css';
 
 import './main.less';
 
-
-
 class NotFound extends React.Component{
   render() {
     return (
@@ -57,7 +55,7 @@ class Welcome extends React.Component{
       <div>
         <div className="ibox">
           <div className="ibox-content">
-              <h2>欢迎登录风控引擎管理平台！</h2>
+              <h2>欢迎登录反欺诈系统管理平台！</h2>               
           </div>
         </div>
       </div>
@@ -80,7 +78,7 @@ class AppRoutes extends React.Component{
   render() {
     return (
       <Router history={hashHistory}>
-        <Route path="/" component={App}>
+        <Route path="/" component={App} >
           <IndexRedirect to="login"/>
           <Route path="/welcome" component={Welcome}>
           </Route>

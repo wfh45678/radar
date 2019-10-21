@@ -26,7 +26,7 @@ export default class Rule extends React.Component{
 				operator:rule.operator,
 				abstractionName:rule.abstractionName,
 				rate:rule.rate,
-				ruleDefinition:rule.ruleDefinition==undefined?null:JSON.parse(rule.ruleDefinition),
+				ruleDefinition:rule.ruleDefinition==undefined?null:rule.ruleDefinition,
 				scripts:rule.scripts
 			}
 		}
