@@ -52,7 +52,7 @@ public class SysLoginApiController {
         Optional<List<UserVO>> list = userService.list(loginName, encrypt);
         if (list.isPresent()) {
             List<UserVO> users = list.get();
-            if(users.size() >= 0) {
+            if(users.size() > 0) {
                 session.setAttribute("user", users.get(0));
                 ret.setSuccess(true);
             } else
