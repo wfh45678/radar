@@ -13,4 +13,6 @@ public interface UserService {
     CommonResult query(UserQuery query);
 
     Optional<List<UserVO>> list(String userName, String passwd);
+
+    Integer insert(UserVO userVO);
 }

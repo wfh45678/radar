@@ -10,4 +10,6 @@ public interface UserDal {
      PageResult<UserPO> query(UserQuery query);
 
      List<UserPO> list(String name, String pass);
+
+     Integer insert(UserPO userPO);
 }
