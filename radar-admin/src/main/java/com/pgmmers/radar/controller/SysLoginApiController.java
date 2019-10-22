@@ -79,7 +79,7 @@ public class SysLoginApiController {
      * @param request
      * @return
      */
-    @GetMapping("/merchant/regist")
+    @PostMapping("/merchant/regist")
     public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha, HttpServletRequest request) {
         CommonResult ret = new CommonResult();
         ret.setSuccess(false);
