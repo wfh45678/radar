@@ -7,6 +7,7 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.util.CryptUtils;
 import com.pgmmers.radar.vo.admin.UserVO;
 import io.swagger.annotations.Api;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,13 +36,11 @@ public class SysLoginApiController {
     @PostMapping("/merchant/login")
     public CommonResult login(String loginName, String passwd, String captcha, HttpServletRequest request) {
         CommonResult ret = new CommonResult();
-
-
+        ret.setSuccess(false);
         HttpSession session = request.getSession(true);
-        String sourceCaptcha = (String) session.getAttribute("captcha");
-        session.removeAttribute("captcha");
-        if (captcha == null || !captcha.equalsIgnoreCase(sourceCaptcha) ) {
-            ret.setMsg("验证码无效");
+        String checkResult = checkParam(loginName, passwd, captcha, session);
+        if(!StringUtils.isEmpty(checkResult)){
+            ret.setMsg(checkResult);
             return ret;
         }
 
@@ -80,9 +80,52 @@ public class SysLoginApiController {
      * @return
      */
     @GetMapping("/merchant/regist")
-    public CommonResult regist(HttpServletRequest request) {
+    public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha, HttpServletRequest request) {
         CommonResult ret = new CommonResult();
+        ret.setSuccess(false);
+
+        HttpSession session = request.getSession(true);
+        String checkResult = checkParam(loginName, passwd, captcha, session);
+        if(!StringUtils.isEmpty(checkResult)){
+            ret.setMsg(checkResult);
+            return ret;
+        }
+        if(!passwd.equals(verifyPasswd)){
+            ret.setMsg("新密码和确认密码输入不一致,请重新输入!");
+            return ret;
+        }
+        String encrypt = CryptUtils.sha(passwd, loginName).toUpperCase();
+        UserVO userVO = new UserVO();
+        userVO.setUserName(loginName);
+        userVO.setPasswd(encrypt);
+        userVO.setStatus("1");
+        userVO.setCreateTime(new Date());
+        userVO.setUpdateTime(new Date());
+        Integer integer = userService.insert(userVO);
+        if (integer < 1) {
+            ret.setMsg("注册失败");
+            return ret;
+        }
         ret.setSuccess(true);
+        ret.setMsg("注册成功");
         return ret;
+    }
+
+    private String checkParam(String loginName, String passwd, String captcha, HttpSession session){
+        if(StringUtils.isEmpty(loginName)){
+            return "登录名称不能为空";
+        }
+        if(StringUtils.isEmpty(passwd)){
+            return "密码不能为空";
+        }
+        if(StringUtils.isEmpty(captcha)){
+            return "验证码不能为空";
+        }
+        String sourceCaptcha = (String) session.getAttribute("captcha");
+        session.removeAttribute("captcha");
+        if (captcha == null || !captcha.equalsIgnoreCase(sourceCaptcha) ) {
+            return "验证码无效";
+        }
+        return "";
     }
 }

@@ -1,10 +1,8 @@
 package com.pgmmers.radar.dal.model.impl;
 
 
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-
 import com.pgmmers.radar.dal.bean.PageResult;
 import com.pgmmers.radar.dal.bean.UserQuery;
 import com.pgmmers.radar.dal.model.UserDal;
@@ -53,6 +51,12 @@ public class UserDalImpl implements UserDal {
         example.createCriteria().andEqualTo("userName", name).andEqualTo("passwd",pass);
         List<UserPO> list = userMapper.selectByExample(example);
         return list;
+    }
+
+    @Override
+    public Integer insert(UserPO userPO) {
+        Integer integer = userMapper.insert(userPO);
+        return integer;
     }
 
 }
