@@ -44,4 +44,11 @@ public class UserServiceImpl implements UserService {
         return Optional.ofNullable(users);
     }
 
+    @Override
+    public Integer insert(UserVO userVO) {
+        UserPO userPO = new UserPO();
+        BeanUtils.copyProperties(userVO, userPO);
+        Integer integer = userDal.insert(userPO);
+        return integer;
+    }
 }
