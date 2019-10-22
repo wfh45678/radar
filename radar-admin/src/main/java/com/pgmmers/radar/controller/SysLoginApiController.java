@@ -52,8 +52,12 @@ public class SysLoginApiController {
         Optional<List<UserVO>> list = userService.list(loginName, encrypt);
         if (list.isPresent()) {
             List<UserVO> users = list.get();
-            session.setAttribute("user", users.get(0));
-            ret.setSuccess(true);
+            if(users.size() >= 0) {
+                session.setAttribute("user", users.get(0));
+                ret.setSuccess(true);
+            } else
+                ret.setMsg("用户名和密码错误！");
+
         } else {
             ret.setMsg("用户名和密码错误！");
         }
