@@ -78,11 +78,11 @@ public class SysLoginApiController {
      * 注册接口
      * @param request
      * @return
+     * @author xushuai
      */
     @PostMapping("/merchant/regist")
     public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha, HttpServletRequest request) {
         CommonResult ret = new CommonResult();
-        ret.setSuccess(false);
 
         HttpSession session = request.getSession(true);
         String checkResult = checkParam(loginName, passwd, captcha, session);
