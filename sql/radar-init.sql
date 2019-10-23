@@ -679,7 +679,7 @@ INSERT INTO `engine_rule_history` VALUES ('7', '99', 'admin', 'IP归属地不在
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
-  `ID` bigint(20) NOT NULL,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `USER_NAME` varchar(32) DEFAULT NULL,
   `PASSWD` varchar(64) DEFAULT NULL,
   `CODE` varchar(64) DEFAULT NULL,
