@@ -79,12 +79,14 @@ The project code called Radar, like the code, monitor the transaction at the bac
 [Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top
 admin/123456
 
-## [帮助手册](https://github.com/wfh45678/radar/wiki/manual)
-https://github.com/wfh45678/radar/wiki/manual
+## [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)
+使用手册里面有大量的图片，为了方便使用故推荐码云的wiki 链接,  
+https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 
 ## 未完待续
 ### 小迭代
 * React 版本升级
+* 用户注册功能，以后演示环境支持多租户
 * 集成嵌入式redis版本，本地调试的时候就不用再单独部署redis
 * 集成 JWT(JSON WEB TOKEN)，前后端分离标准化
 * 插件配置管理，可以集成其他中间件的数据能力
