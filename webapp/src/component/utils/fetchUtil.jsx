@@ -7,17 +7,19 @@ export var fetchVersion='/services/v1';
 
 export var FetchUtil=function(url,method,param,callback,done=()=>{}){
 	let config={
-		credentials: 'include'
+		credentials: 'include',
+		headers:{
+			"x-auth-token": localStorage.getItem('x-auth-token')
+		}
 	};
 	let hide=null;
 	console.log(param,'=====')
 	if(method!='GET'){
 		config.method=method;
-		config.headers={"Content-Type": "application/json"};
+		config.headers['Content-Type']="application/json"
 		config.body=param;
 		hide = message.loading('正在执行中...', 0);
 	}
-
 	return fetch(fetchVersion+url,config)
 	        .then((res) => {
 	        	if(method!='GET'){hide();}
@@ -37,7 +39,7 @@ export var FetchUtil=function(url,method,param,callback,done=()=>{}){
 	            } 
 	        })
 	        .then((data)=>{
-				if(!data.success&&data.code==600){
+				if(!data.success&&data.code.indexOf('60')!==-1){
 					if(window.modal==undefined){
 						window.modal=Modal.error({
 							title: '您尚未登录',
