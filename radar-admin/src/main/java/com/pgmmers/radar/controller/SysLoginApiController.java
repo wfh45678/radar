@@ -80,7 +80,7 @@ public class SysLoginApiController {
 	public CommonResult logout(HttpServletRequest request) {
 		CommonResult ret = new CommonResult();
         String accessToken = contextHolder.getAttributeByType("x-auth-token", String.class);
-        tokenService.logout(accessToken);
+        tokenService.addTokenBlacklist(accessToken);
         request.getSession(true).invalidate();
         ret.setSuccess(true);
         return ret;
