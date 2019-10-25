@@ -62,7 +62,7 @@ public class JsonWebTokenService {
     }
 
     /**
-     * 退出登录加入黑名单
+     * 退出登录token 失效。
      * @param token
      * @return
      * @author xushuai

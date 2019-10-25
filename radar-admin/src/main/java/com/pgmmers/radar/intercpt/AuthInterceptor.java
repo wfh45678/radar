@@ -1,11 +1,14 @@
 package com.pgmmers.radar.intercpt;
 
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
+import com.pgmmers.radar.service.common.CommonResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,6 +21,7 @@ import java.util.Map;
  * 目前这个类是预留的， session 这一块，后续会考虑升级成 JWB(JSON WEB TOKEN).
  * @author feihu.wang
  */
+@Component
 public class AuthInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
@@ -35,32 +39,47 @@ public class AuthInterceptor implements HandlerInterceptor {
         logger.info("Interceptor preHandle, {}", method.getMethod().getName());
         String uri = request.getRequestURI();
         logger.info("uri:{}", uri);
+        CommonResult result = new CommonResult();
         Map<String, Object> additionalProperties = Maps.newHashMap();
-    //    Object user = request.getSession().getAttribute("user");
         if (uri.startsWith("/services") && !uri.contains("/merchant/login") && !uri.contains("/merchant/regist") && !uri.contains("/common")) {
-            //            if (user == null) {
-//                logger.info("session expired.");
-//                return true;
-//            }
             Context context = new Context();
-            String accessToken = request.getHeader("X-Access-Token");
+            String accessToken = request.getHeader("x-auth-token");
             if(StringUtils.isEmpty(accessToken)) {
-                accessToken = request.getParameter("Header-Access-Token");
+                accessToken = request.getParameter("x-auth-token");
             }
             if (StringUtils.isEmpty(accessToken)) {
-                throw new RuntimeException("无token，请重新登录");
+                result.setCode("601");
+                result.setMsg("无token，请重新登录");
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json; charset=utf-8");
+                response.getWriter().write(JSON.toJSONString(result));
+                return false;
             }
-            if(tokenService.existsTokenBlacklist(accessToken)){
-                throw new RuntimeException("token已登出失效,请重新登录");
+            if (tokenService.existsTokenBlacklist(accessToken)) {
+                result.setCode("602");
+                result.setMsg("token失效,请重新登录");
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json; charset=utf-8");
+                response.getWriter().write(JSON.toJSONString(result));
+                return false;
             }
-            TokenBody result = tokenService.validateToken(accessToken);
-            context.setUsername(result.getSubject());
-            context.setDisplayName(result.getDisplayName());
-            context.setOperationName("");
-            additionalProperties.put("X-Access-Token", accessToken);
-            context.setAttributes(additionalProperties);
-            contextHolder.putContext(context);
-            return true;
+            try {
+                TokenBody tokenBody = tokenService.validateToken(accessToken);
+                context.setUsername(tokenBody.getSubject());
+                context.setDisplayName(tokenBody.getDisplayName());
+                context.setOperationName("");
+                additionalProperties.put("x-auth-token", accessToken);
+                context.setAttributes(additionalProperties);
+                contextHolder.putContext(context);
+            } catch (Exception e) {
+                logger.error("token 解析失败", e);
+                result.setCode("603");
+                result.setMsg("token解析失败,请重新获取");
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json; charset=utf-8");
+                response.getWriter().write(JSON.toJSONString(result));
+                return false;
+            }
         }
         return true;
     }

@@ -20,6 +20,7 @@ import java.util.List;
 
 
 //@Service
+@Deprecated
 public class RedisServiceImpl implements RedisService {
     public static Logger logger = LoggerFactory.getLogger(RedisServiceImpl.class);
 
