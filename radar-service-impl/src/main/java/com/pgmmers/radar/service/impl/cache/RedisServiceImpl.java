@@ -229,7 +229,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public boolean contains(String token) {
-        String value = get(token);
-        return value.equals(token);
+        return jedisPool.getResource().exists(token);
     }
 }

@@ -127,7 +127,6 @@ public class RedisTemplateServiceImpl implements RedisService {
 
     @Override
     public boolean contains(String token) {
-        String value = (String) get(token);
-        return value.equals(token);
+        return stringRedisTemplate.hasKey(token);
     }
 }
