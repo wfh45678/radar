@@ -67,7 +67,7 @@ public class JsonWebTokenService {
      * @return
      * @author xushuai
      */
-    public void logout(String token) {
+    public void addTokenBlacklist(String token) {
         try {
             //加入黑名单
             if (token != null) {
