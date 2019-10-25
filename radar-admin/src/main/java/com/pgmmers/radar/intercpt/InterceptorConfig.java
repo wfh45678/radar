@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 /**
  * 接口验证,session 过期验证。
  */
-//@Configuration
+@Configuration
 public class InterceptorConfig extends WebMvcConfigurerAdapter {
 
     // 注册拦截器
@@ -15,7 +15,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
 
         registry.addInterceptor(new AuthInterceptor()).addPathPatterns("/services/**");
-        super.addInterceptors(registry);
+     //   super.addInterceptors(registry);
     }
 
 }
