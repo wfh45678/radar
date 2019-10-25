@@ -2,6 +2,9 @@ package com.pgmmers.radar.controller;
 
 
 import com.pgmmers.radar.dal.bean.UserQuery;
+import com.pgmmers.radar.intercpt.ContextHolder;
+import com.pgmmers.radar.intercpt.JsonWebTokenService;
+import com.pgmmers.radar.intercpt.TokenBody;
 import com.pgmmers.radar.service.admin.UserService;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.util.CryptUtils;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +36,11 @@ public class SysLoginApiController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    ContextHolder contextHolder;
+
+    @Autowired
+    private JsonWebTokenService tokenService;
 
     @PostMapping("/merchant/login")
     public CommonResult login(String loginName, String passwd, String captcha, HttpServletRequest request) {
@@ -54,10 +63,12 @@ public class SysLoginApiController {
             List<UserVO> users = list.get();
             if(users.size() > 0) {
                 session.setAttribute("user", users.get(0));
+                String token = tokenService.createToken(new TokenBody(users.get(0).getUserName(), "", "",
+                        2 * 3600, new HashMap<>()));
+                ret.setMsg(token);
                 ret.setSuccess(true);
             } else
                 ret.setMsg("用户名和密码错误！");
-
         } else {
             ret.setMsg("用户名和密码错误！");
         }
@@ -68,7 +79,8 @@ public class SysLoginApiController {
     @GetMapping("/merchant/logout")
 	public CommonResult logout(HttpServletRequest request) {
 		CommonResult ret = new CommonResult();
-
+        String accessToken = contextHolder.getAttributeByType("X-Access-Token", String.class);
+        tokenService.logout(accessToken);
         request.getSession(true).invalidate();
         ret.setSuccess(true);
         return ret;
@@ -99,6 +111,7 @@ public class SysLoginApiController {
         userVO.setUserName(loginName);
         userVO.setPasswd(encrypt);
         userVO.setStatus("1");
+        userVO.setCode(loginName);
         userVO.setCreateTime(new Date());
         userVO.setUpdateTime(new Date());
         Integer integer = userService.insert(userVO);

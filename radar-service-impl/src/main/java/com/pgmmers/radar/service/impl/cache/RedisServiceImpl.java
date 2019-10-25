@@ -225,4 +225,10 @@ public class RedisServiceImpl implements RedisService {
     public void subscribe(byte[] channel, SubscribeHandle2 handle) {
 
     }
+
+    @Override
+    public boolean contains(String token) {
+        String value = get(token);
+        return value.equals(token);
+    }
 }
