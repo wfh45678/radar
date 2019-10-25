@@ -65,7 +65,7 @@ public class SysLoginApiController {
                 session.setAttribute("user", users.get(0));
                 String token = tokenService.createToken(new TokenBody(users.get(0).getUserName(), "", "",
                         2 * 3600, new HashMap<>()));
-                ret.setMsg(token);
+                ret.getData().put("x-auth-token", token);
                 ret.setSuccess(true);
             } else
                 ret.setMsg("用户名和密码错误！");
@@ -79,7 +79,7 @@ public class SysLoginApiController {
     @GetMapping("/merchant/logout")
 	public CommonResult logout(HttpServletRequest request) {
 		CommonResult ret = new CommonResult();
-        String accessToken = contextHolder.getAttributeByType("X-Access-Token", String.class);
+        String accessToken = contextHolder.getAttributeByType("x-auth-token", String.class);
         tokenService.logout(accessToken);
         request.getSession(true).invalidate();
         ret.setSuccess(true);
