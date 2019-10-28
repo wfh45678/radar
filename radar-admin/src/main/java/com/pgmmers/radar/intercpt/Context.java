@@ -12,6 +12,7 @@ public class Context implements Serializable {
     private String username;
     private String displayName;
     private String operationName;
+    private String code;
     private Map<String, Object> attributes;
 
     public Context() {
@@ -47,6 +48,14 @@ public class Context implements Serializable {
 
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String toString() {

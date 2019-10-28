@@ -24,7 +24,7 @@ public class ContextHolder {
     }
 
     public Context getContext() {
-        Context ctx = (Context)this.contextThreadLocal.get();
+        Context ctx = this.contextThreadLocal.get();
         if (ctx == null) {
             ctx = new Context();
             this.contextThreadLocal.set(ctx);

@@ -62,9 +62,12 @@ public class SysLoginApiController {
         if (list.isPresent()) {
             List<UserVO> users = list.get();
             if(users.size() > 0) {
-                session.setAttribute("user", users.get(0));
-                String token = tokenService.createToken(new TokenBody(users.get(0).getUserName(), "", "",
-                        2 * 3600, new HashMap<>()));
+                String token = tokenService.createToken(new TokenBody(users.get(0).getUserName(), users.get(0).getUserName(), "",
+                        2 * 3600, new HashMap<String, Object>(){
+                    {
+                        put("code", users.get(0).getCode());
+                    }
+                }));
                 ret.getData().put("x-auth-token", token);
                 ret.setSuccess(true);
             } else
@@ -81,7 +84,6 @@ public class SysLoginApiController {
 		CommonResult ret = new CommonResult();
         String accessToken = contextHolder.getAttributeByType("x-auth-token", String.class);
         tokenService.addTokenBlacklist(accessToken);
-        request.getSession(true).invalidate();
         ret.setSuccess(true);
         return ret;
 	}

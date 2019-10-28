@@ -68,6 +68,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 context.setUsername(tokenBody.getSubject());
                 context.setDisplayName(tokenBody.getDisplayName());
                 context.setOperationName("");
+                context.setCode((String)tokenBody.getAdditionalProperties().get("code"));
                 additionalProperties.put("x-auth-token", accessToken);
                 context.setAttributes(additionalProperties);
                 contextHolder.putContext(context);
