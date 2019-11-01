@@ -20,6 +20,7 @@ import java.util.List;
 
 
 //@Service
+@Deprecated
 public class RedisServiceImpl implements RedisService {
     public static Logger logger = LoggerFactory.getLogger(RedisServiceImpl.class);
 
@@ -224,5 +225,10 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void subscribe(byte[] channel, SubscribeHandle2 handle) {
 
+    }
+
+    @Override
+    public boolean contains(String token) {
+        return jedisPool.getResource().exists(token);
     }
 }

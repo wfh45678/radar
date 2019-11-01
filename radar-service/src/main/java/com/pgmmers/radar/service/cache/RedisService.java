@@ -76,4 +76,5 @@ public interface RedisService {
 
     void subscribe(byte[] channel, SubscribeHandle2 handle);
 
+    boolean contains(String token);
 }

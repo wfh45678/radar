@@ -7,16 +7,15 @@ import './Index.less';
 import {FetchUtil} from './utils/fetchUtil';
 
 export default class Index extends React.Component{
-
     constructor(props){
         super(props);
 
     }
-
     handleLogout=()=>{
       FetchUtil('/merchant/logout','GET','',
             (data) => {
                 window.location.href="#/login";
+                localStorage.setItem('x-auth-token','')
             });
     }
 

@@ -71,6 +71,7 @@ export default class Login extends React.Component{
 	        })
 	        .then((data)=>{
                 if(data.success){
+                    localStorage.setItem('x-auth-token',data.data['x-auth-token'])
                     window.location.href="#/modelList";
                 }
                 else{
@@ -109,7 +110,7 @@ export default class Login extends React.Component{
             <div className="middleBox" onKeyDown={this.handleKeyDown}>
                 <Card>
                     <h2 style={{textAlign:"center",paddingBottom:10,borderBottom:"1px dashed #ececec"}}><Icon type="lock" />&nbsp;&nbsp;风控引擎管理平台</h2>
-                    <Form horizontal style={{marginTop:30}}>
+                    <Form layout={'horizontal'}  style={{marginTop:30}}>
                         <FormItem {...formItemLayout} label="用户名">
                             <Input size="large" type="text" name="username" value={this.state.username} onChange={this.handleChange}/>
                         </FormItem>

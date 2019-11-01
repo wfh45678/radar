@@ -2,6 +2,7 @@ package com.pgmmers.radar.controller;
 
 import com.pgmmers.radar.dal.bean.RuleHistoryQuery;
 import com.pgmmers.radar.dal.bean.RuleQuery;
+import com.pgmmers.radar.intercpt.ContextHolder;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.model.RuleService;
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/services/v1/rule")
 @Api(value = "RuleApi", description = "规则管理接口操作",  tags = {"规则管理API"})
@@ -24,6 +25,9 @@ public class RuleApiController {
         
     @Autowired
     private ModelService modelService;
+
+    @Autowired
+    private ContextHolder contextHolder;
 
     @GetMapping("/{id}")
     public CommonResult get(@PathVariable Long id) {
@@ -43,9 +47,9 @@ public class RuleApiController {
 
     @PutMapping
     public CommonResult save(@RequestBody RuleVO rule, HttpServletRequest request) {
-    	HttpSession session = request.getSession();
-        UserVO user = (UserVO) session.getAttribute("user");
-        return ruleService.save(rule, user.getUserName());
+//    	HttpSession session = request.getSession();
+//        UserVO user = (UserVO) session.getAttribute("user");
+        return ruleService.save(rule, contextHolder.getContext().getUsername());
     }
 
     @DeleteMapping

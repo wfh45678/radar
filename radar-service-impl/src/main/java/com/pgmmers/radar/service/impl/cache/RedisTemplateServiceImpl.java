@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -124,5 +123,10 @@ public class RedisTemplateServiceImpl implements RedisService {
         }, channel);
         logger.info("subscribe success! channel={}",  new String(channel));
 
+    }
+
+    @Override
+    public boolean contains(String token) {
+        return stringRedisTemplate.hasKey(token);
     }
 }

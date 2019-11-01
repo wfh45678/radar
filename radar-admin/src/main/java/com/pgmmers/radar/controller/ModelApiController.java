@@ -3,6 +3,7 @@ package com.pgmmers.radar.controller;
 
 import com.pgmmers.radar.dal.bean.ModelQuery;
 import com.pgmmers.radar.enums.StatusType;
+import com.pgmmers.radar.intercpt.ContextHolder;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.vo.admin.UserVO;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/services/v1/model")
@@ -26,6 +26,8 @@ public class ModelApiController  {
     @Autowired
     private ModelService modelService;
 
+    @Autowired
+    private ContextHolder contextHolder;
 
     @GetMapping("/{id}")
     public CommonResult get(@PathVariable Long id) {
@@ -40,15 +42,15 @@ public class ModelApiController  {
 
     @GetMapping("/list")
 	public CommonResult list(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        UserVO user = (UserVO) session.getAttribute("user");
+//        HttpSession session = request.getSession();
+//        UserVO user = (UserVO) session.getAttribute("user");
         CommonResult result = new CommonResult();
-        if (user == null) {
-            result.setMsg("session已过期");
-            return result;
-        }
+//        if (user == null) {
+//            result.setMsg("session已过期");
+//            return result;
+//        }
         result.setSuccess(true);
-        result.getData().put("modelList",  modelService.listModel(user.getCode(), null));
+        result.getData().put("modelList",  modelService.listModel(contextHolder.getContext().getCode(), null));
         return result;
 	}
 
@@ -64,22 +66,24 @@ public class ModelApiController  {
     public CommonResult query(@RequestBody ModelQuery query, HttpServletRequest request) {
 	    CommonResult result = new CommonResult();
 
-        HttpSession session = request.getSession();
-        UserVO user = (UserVO) session.getAttribute("user");
-        if (user == null) {
-            result.setMsg("session已过期");
-            return result;
-        }
-        query.setMerchantCode(user.getCode());
+//        HttpSession session = request.getSession();
+//        UserVO user = (UserVO) session.getAttribute("user");
+//        if (user == null) {
+//            result.setMsg("session已过期");
+//            return result;
+//        }
+//        query.setMerchantCode(user.getCode());
+        query.setMerchantCode(contextHolder.getContext().getCode());
         return modelService.query(query);
     }
 
 
     @PutMapping
     public CommonResult save(@RequestBody ModelVO model, HttpServletRequest request) {
-    	HttpSession session = request.getSession();
-        UserVO user = (UserVO) session.getAttribute("user");
-        model.setCode(user.getCode());
+//    	HttpSession session = request.getSession();
+//        UserVO user = (UserVO) session.getAttribute("user");
+//        model.setCode(user.getCode());
+        model.setCode(contextHolder.getContext().getCode());
         return modelService.save(model);
     }
 
@@ -118,9 +122,9 @@ public class ModelApiController  {
 
     @PostMapping("/copy")
 	public CommonResult copy(@RequestBody ModelVO model, HttpServletRequest request) {
-    	HttpSession session = request.getSession();
-        UserVO user = (UserVO) session.getAttribute("user");
-        return modelService.copy(model.getId(), user.getCode(), model.getModelName(), model.getLabel());
+//    	HttpSession session = request.getSession();
+//        UserVO user = (UserVO) session.getAttribute("user");
+        return modelService.copy(model.getId(), contextHolder.getContext().getCode(), model.getModelName(), model.getLabel());
 	}
 
     @GetMapping("/list/template")
