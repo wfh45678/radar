@@ -80,12 +80,12 @@ The project code called Radar, like the code, monitor the transaction at the bac
 admin/123456
 
 ## [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)
-使用手册里面有大量的图片，为了方便使用故推荐码云的wiki 链接,  
+使用手册里面有大量的图片，为了方便使用，故推荐码云的wiki 链接,  
 https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 
 ## 未完待续
 ### 小迭代
-* React 版本升级
+* React 版本升级（v15.0.0）
 * 用户注册功能，以后演示环境支持多租户
 * 集成嵌入式redis版本，本地调试的时候就不用再单独部署redis
 * 集成 JWT(JSON WEB TOKEN)，前后端分离标准化
@@ -97,8 +97,8 @@ https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 
 ## Contact to
 
- 如果喜欢本项目，点下star支持一下, 让更多人看到，谢谢！   
- 独乐乐不如众乐乐，微信（nicedream7758）扫码加群一起交流  
- ![微信交流群](http://www.pgmmer.top/radar/wxgroup.png)
+ 如果喜欢本项目，Star支持一下, 让更多人了解本项目，谢谢！   
+ 独乐乐不如众乐乐，微信扫码或手动（nicedream7758）加群一起嗨！ 
+ ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)
  
  Copyright by XWF
