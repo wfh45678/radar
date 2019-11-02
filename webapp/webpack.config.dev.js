@@ -26,7 +26,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     disableHostCheck: true, //  新增该配置项
     proxy: [{
         context: ["/services/v1/"],
-        target: "http://10.50.3.218:8080",
+        target: "http://104.128.89.231:8080",
         changeOrigin: true,
         secure: false,
         onProxyRes: function (proxyRes, req, res) { //
