@@ -1,5 +1,5 @@
 -- developers of radar
-CREATE TABLE `contributors` (
+CREATE TABLE `contribute_info` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `NAME` varchar(30) NOT NULL COMMENT '功能名称',
   `CONTENT` varchar(200) NOT NULL COMMENT '功能描叙',
