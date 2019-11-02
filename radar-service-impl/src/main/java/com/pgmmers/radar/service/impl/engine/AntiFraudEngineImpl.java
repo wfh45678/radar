@@ -60,6 +60,12 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
         // 2. list abstraction 
         List<AbstractionVO> abstractions = abstractionService.listAbstraction(modelId);
 
+        // 排除没有的定义 abstraction 的情况。
+        if (abstractions == null || abstractions.size() == 0) {
+            data.put("abstractions", result.getAbstractionMap());
+            result.setSuccess(true);
+            return result;
+        }
         // 3. 按 script 的条件， 分别统计 abstraction
         for (AbstractionVO abs : abstractions) {
 
