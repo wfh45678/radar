@@ -47,7 +47,7 @@ public class SysLoginApiController {
         CommonResult ret = new CommonResult();
         ret.setSuccess(false);
         HttpSession session = request.getSession(true);
-        String checkResult = checkParam(loginName, passwd, captcha, session);
+        String checkResult = checkParam(loginName, passwd, passwd, captcha, session);
         if(!StringUtils.isEmpty(checkResult)){
             ret.setMsg(checkResult);
             return ret;
@@ -96,17 +96,22 @@ public class SysLoginApiController {
      */
     @PostMapping("/merchant/regist")
     public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha, HttpServletRequest request) {
-        CommonResult ret = new CommonResult();
+        CommonResult result = new CommonResult();
 
         HttpSession session = request.getSession(true);
-        String checkResult = checkParam(loginName, passwd, captcha, session);
+        String checkResult = checkParam(loginName, passwd, verifyPasswd, captcha, session);
         if(!StringUtils.isEmpty(checkResult)){
-            ret.setMsg(checkResult);
-            return ret;
+            result.setMsg(checkResult);
+            return result;
         }
-        if(!passwd.equals(verifyPasswd)){
-            ret.setMsg("新密码和确认密码输入不一致,请重新输入!");
-            return ret;
+
+        // 校验账号的唯一性
+        UserQuery userQuery = new UserQuery();
+        userQuery.setUserName(loginName);
+        CommonResult userResult = userService.query(userQuery);
+        if (userResult.isSuccess()) {
+            result.setMsg("用户名已经存在！");
+            return result;
         }
         String encrypt = CryptUtils.sha(passwd, loginName).toUpperCase();
         UserVO userVO = new UserVO();
@@ -118,15 +123,15 @@ public class SysLoginApiController {
         userVO.setUpdateTime(new Date());
         Integer integer = userService.insert(userVO);
         if (integer < 1) {
-            ret.setMsg("注册失败");
-            return ret;
+            result.setMsg("注册失败");
+            return result;
         }
-        ret.setSuccess(true);
-        ret.setMsg("注册成功");
-        return ret;
+        result.setSuccess(true);
+        result.setMsg("注册成功");
+        return result;
     }
 
-    private String checkParam(String loginName, String passwd, String captcha, HttpSession session){
+    private String checkParam(String loginName, String passwd,String verifyPasswd, String captcha, HttpSession session){
         if(StringUtils.isEmpty(loginName)){
             return "登录名称不能为空";
         }
@@ -140,6 +145,9 @@ public class SysLoginApiController {
         session.removeAttribute("captcha");
         if (captcha == null || !captcha.equalsIgnoreCase(sourceCaptcha) ) {
             return "验证码无效";
+        }
+        if(!passwd.equals(verifyPasswd)){
+            return "新密码和确认密码输入不一致,请重新输入!";
         }
         return "";
     }

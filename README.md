@@ -1,17 +1,18 @@
 # 风控引擎（Radar）
 ## 项目介绍
- 一款基于java语言，使用Springboot + Mongodb + Groovy 等框架搭建实时风控引擎，适用于反欺诈应用场景。  
+ 一款基于java语言，使用Springboot + Mongodb + Groovy 等框架搭建的轻量级实时风控引擎，适用于反欺诈应用场景，极简的配置，真正做到了开箱即用。     
+ 通过学习本项目能快速了解**风险的定义**，进而**量化风险** ，最后达到**集中管理风险**的目的。   
 A real-time risk analysis engine,which can update risk rule in real-time and make it effective immediately.  
 It applies to the anti-fraud application perfectly. 
 The project code called Radar, like the code, monitor the transaction at the back.
 ## 项目特点
 
  * 实时风控，特殊场景可以做到100ms内响应
- * 可视化编辑，丰富的运算符、计算规则灵活
+ * 可视化规则编辑器，丰富的运算符、计算规则灵活
  * 支持中文，易用性更强
  * 自定义规则引擎，更加灵活，支持复杂多变的场景
- * 特性插件化，快速接入其它数据能力
- * Nosql，易扩展，高性能
+ * 插件化的设计，快速接入其它数据能力平台
+ * NoSQL，易扩展，高性能
  * 配置简单，开箱即用！
 
 ## 背景
@@ -57,7 +58,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
   简单来说就是谁什么时候做了什么事。（who, when, what）
 ### PreItem: 预处理 
  像经纬度，IP，手机号码段等事件属性，可能无法直接计算，通过预处理插件 转换成 其他格式，
- 例如:经纬度，ip 可以通过对应插件变成位置和地址，手机号码可以通过插件获取关联征信信息等。  
+ 例如:经纬度，ip 可以通过对应插件变成位置和地址，手机号码可以通过插件获取其它系统的用户画像信息等。  
 ### Abstraction: 特征
 特征工程，例如用户小时交易次数，IP 一天交易金额，设备一小时交易次数。。。
 ### Adaptation: 机器学习模型适配器
@@ -67,22 +68,26 @@ The project code called Radar, like the code, monitor the transaction at the bac
 例如，用户注册行为， 可以定义：异常注册， 垃圾注册， 可以输出多个activation。
 ### Rule: 规则
 在计算 abstraction 和 activation 之前，需要先检查数据是否正常，检查就是按照rule 配置进行检测。
-### 插件
- 为了通用性，项目自身并不提供关联数据能力，但是通过扩展插件来获得其它系统或者中间数据功能，
- 目前项目自带手机号码和IP地址转换两款插件，理论上可以通过插件可以集成任何其它数据的能力，
- 例如：如果商户自身带有内部征信，可以自定义一个插件用过用户ID来获取征信数据。
+### Plugin：插件
+ 为了通用性，项目自身并不提供敏感数据能力，但是通过扩展插件来获得其它系统或者中间数据功能，
+ 目前项目自带手机号码段和IP地址转换两款插件，理论上可以通过扩展插件集成任何其它数据的能力，
+ 例如：如果商户自身带有内部用户画像，可以自定义一个插件用过用户ID来获取用户画像数据。
 
 ---
-## 演示入口
-演示Demo只提供管理端配置功能，暂时不提供引擎计算功能。  
-
-[Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top
-admin/123456
 
 ## [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)
 使用手册里面有大量的图片，为了方便使用，故推荐码云的wiki 链接,  
 https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 
+
+## 演示入口
+演示Demo只提供管理端配置功能，暂时不提供引擎计算功能。
+通过管理端能够快速了解系统是怎么从风险的定义到风险的量化再到风险的集中管理的整个工作流程。  
+为了更好的体验，请花一分钟观看 [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)  
+[Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top
+admin/123456
+
+---
 ## 未完待续
 ### 小迭代
 * React 版本升级（v15.0.0）

@@ -6,7 +6,7 @@ const FormItem = Form.Item;
 import './Login.less';
 import {fetchVersion} from './utils/fetchUtil';
 import {trim} from './utils/validateUtil';
-
+import Register from './register';
 export default class Login extends React.Component{
 
     state={
@@ -129,7 +129,7 @@ export default class Login extends React.Component{
 
                         <FormItem wrapperCol={{ span: 13, offset: 7 }}>
                             <div style={this.state.showMsg?{display:"block"}:{display:"none"}}><Alert message={this.state.msg} type="error" /></div>
-                            <Button type="primary" onClick={this.handleLogin}>登录</Button> &nbsp;&nbsp;&nbsp;&nbsp;<Button type="primary">注册</Button>
+                            <Button type="primary" onClick={this.handleLogin}>登录</Button> &nbsp;&nbsp;&nbsp;&nbsp;<Register/>
                         </FormItem> 	                                      
                     </Form>
                 </Card>
