@@ -23,6 +23,13 @@ The project code called Radar, like the code, monitor the transaction at the bac
   Radar 应景而生，Radar本来是笔者前公司的一个内部项目，公司现在不复存在，考虑到项目本身的价值，
   现在使用Springboot进行改造，并删除了很多本地化功能，只保留风控引擎核心，更具通用型，二次开发成本低。
 
+## 项目初衷
+我们知道企业做大后，会有很多产品线，而几乎每一个产品都需要做风险控制，通常我们都是把风险控制的逻辑写在相应的业务功能代码里，
+大量重复的风控逻辑代码耦合在我们的业务逻辑里面，随着时间的累积，代码会变得异常复杂，会给后期的维护造成巨大的人力成本和风险。
+
+所以风险的集中化管理势在必行，只有通过一个统一的管理平台，使用规则引擎，采用可视化配置的形式，
+平台化管理不同产品的风控策略才是一种更好的方式, 而这正是Radar的初衷。
+
 ## 项目架构
 
 前后端分离架构
@@ -81,17 +88,16 @@ https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 
 
 ## 演示入口
-演示Demo只提供管理端配置功能，暂时不提供引擎计算功能。
+演示Demo只提供管理端配置功能，暂时不提供引擎计算功能。  
 通过管理端能够快速了解系统是怎么从风险的定义到风险的量化再到风险的集中管理的整个工作流程。  
 为了更好的体验，请花一分钟观看 [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)  
-[Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top
-admin/123456
-
+[Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top   
+账号密码：test/123456  
+建议大家自行注册用户，避免使用同样的测试账号受干扰
 ---
 ## 未完待续
 ### 小迭代
 * React 版本升级（v15.0.0）
-* 用户注册功能，以后演示环境支持多租户
 * 集成嵌入式redis版本，本地调试的时候就不用再单独部署redis
 * 集成 JWT(JSON WEB TOKEN)，前后端分离标准化
 * 插件配置管理，可以集成其他中间件的数据能力
@@ -100,10 +106,13 @@ admin/123456
 * 支持机器学习
 * 数据分析平台
 
+## 致谢
+感恩 XWF 团队，感谢参入的每一位小伙伴，后续征得同意后会一一列出名字。
+
 ## Contact to
 
  如果喜欢本项目，Star支持一下, 让更多人了解本项目，谢谢！   
  独乐乐不如众乐乐，微信扫码或手动（nicedream7758）加群一起嗨！   
  ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)
  
- Copyright © XWF
+ Copyright © WFH
