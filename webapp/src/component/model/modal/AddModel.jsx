@@ -149,7 +149,7 @@ export default class AddModel extends React.Component{
 
 		return (
 			<span>
-				<Button onClick={this.showModal} type="primary">新增</Button>
+				<Button onClick={this.showModal} type="primary">新建模型</Button>
 				<Modal title="编辑模型" visible={this.state.visible} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
                     <Form horizontal form={this.props.form}>
 						<FormItem required={true} {...formItemLayout} label="模型名：" help={validate.label.help} validateStatus={validate.label.status}>
@@ -165,20 +165,21 @@ export default class AddModel extends React.Component{
                             </Row>
                         </FormItem>
 
-                        <FormItem {...formItemLayout} label="模板：">
+                        <FormItem required={true} {...formItemLayout} label="模板：">
                         	<Row>
 								<Col span={20}>
                             		<Select value={this.state.templateId} onChange={this.handleSelect.bind(this,'templateId')}>
-                            			<Option value="">新建模型</Option>
+                            			
                             			{
                             				this.state.templateList.map((info,index)=>{
                             					return <Option key={index} value={info.id+''}>{'[系统]'+info.label}</Option>
                             				})
                             			}
+                            			<Option value="999">新建模型</Option>
                             		</Select>
                             	</Col>
                             	<Col span={2} offset={1}>
-		                            <Tooltip placement="right" title={'可选择从模板一键创建模型，也可不选择模板而自行创建模型'}>
+		                            <Tooltip placement="right" title={'建议使用模板一键创建模型，熟悉后可自行创建模型'}>
 		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
 		                            </Tooltip>
                             	</Col>
