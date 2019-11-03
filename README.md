@@ -93,8 +93,8 @@ https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 为了更好的体验，请花一分钟观看 [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)  
 [Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top   
 账号密码：test/123456  
-建议大家自行注册用户，避免使用同样的测试账号受干扰
----
+建议大家自行注册用户，避免使用同样的测试账号受干扰.   
+
 ## 未完待续
 ### 小迭代
 * React 版本升级（v15.0.0）
