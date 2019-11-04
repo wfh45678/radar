@@ -137,6 +137,11 @@ public class AntiFraudServiceImpl implements AntiFraudService {
                 Long millis = Long.parseLong(jsonInfo.get(sourceField[0]).toString());
                 transfer = pluginService.getSensitiveTime(millis);
                 break;
+            case DATEFORMAT:
+                String  formatStr = item.getArgs();
+                millis = Long.parseLong(jsonInfo.get(sourceField[0]).toString());
+                transfer = pluginService.formatDate(millis, formatStr);
+                break;
             default:
 
             }
