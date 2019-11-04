@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +45,7 @@ public class SysLoginApiController {
     public CommonResult login(String loginName, String passwd, String captcha, HttpServletRequest request) {
         CommonResult ret = new CommonResult();
         ret.setSuccess(false);
-        HttpSession session = request.getSession(true);
-        String checkResult = checkParam(loginName, passwd, passwd, captcha, session);
+        String checkResult = checkParam(loginName, passwd, passwd, captcha, request);
         if(!StringUtils.isEmpty(checkResult)){
             ret.setMsg(checkResult);
             return ret;
@@ -98,8 +96,7 @@ public class SysLoginApiController {
     public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha, HttpServletRequest request) {
         CommonResult result = new CommonResult();
 
-        HttpSession session = request.getSession(true);
-        String checkResult = checkParam(loginName, passwd, verifyPasswd, captcha, session);
+        String checkResult = checkParam(loginName, passwd, verifyPasswd, captcha, request);
         if(!StringUtils.isEmpty(checkResult)){
             result.setMsg(checkResult);
             return result;
@@ -131,7 +128,7 @@ public class SysLoginApiController {
         return result;
     }
 
-    private String checkParam(String loginName, String passwd,String verifyPasswd, String captcha, HttpSession session){
+    private String checkParam(String loginName, String passwd, String verifyPasswd, String captcha, HttpServletRequest request){
         if(StringUtils.isEmpty(loginName)){
             return "登录名称不能为空";
         }
@@ -141,8 +138,8 @@ public class SysLoginApiController {
         if(StringUtils.isEmpty(captcha)){
             return "验证码不能为空";
         }
-        String sourceCaptcha = (String) session.getAttribute("captcha");
-        session.removeAttribute("captcha");
+        String sourceCaptcha = (String) request.getSession(true).getAttribute("captcha");
+        request.getSession().removeAttribute("captcha");
         if (captcha == null || !captcha.equalsIgnoreCase(sourceCaptcha) ) {
             return "验证码无效";
         }
