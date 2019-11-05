@@ -76,7 +76,7 @@ public class AbstractionApiController {
 	            if (StringUtils.isNoneBlank(pt.getType())) {
 	                ds.addChildren(preItem.getLabel(), preItem.getDestField(), pt.getType());
 	            } else {
-	                List<DataColumnInfo> children = new ArrayList<DataColumnInfo>();
+	                List<DataColumnInfo> children = new ArrayList<>();
 	                JSONArray array = JSONArray.parseArray(pt.getMeta());
 	                for (int i = 0; i < array.size(); i++) {
 	                    JSONObject obj = array.getJSONObject(i);

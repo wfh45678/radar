@@ -71,16 +71,6 @@ public class CommonApiController {
             logger.error("get captcha error", e);
         }
     }
-
-    /**
-     * 获取代码贡献历史。
-     * @return
-     */
-    @GetMapping("/getContributorInfo")
-    public CommonResult getContributorInfo() {
-        CommonResult result = new CommonResult();
-        //TODO:
-        return result;
-    }
+    
 
 }
