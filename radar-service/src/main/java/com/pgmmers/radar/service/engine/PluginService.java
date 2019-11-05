@@ -4,6 +4,10 @@ import com.pgmmers.radar.service.engine.vo.Location;
 
 import java.util.List;
 
+/**
+ * 插件接口，radar 通过插件机制获取其它系统相关数据。
+ * @author  feihu.wang
+ */
 public interface PluginService {
 
      Location ip2location(String ip);
@@ -45,7 +49,7 @@ public interface PluginService {
      */
      Location mobile2location(String mobile);
     
-     String getSensitiveTime(Long timemills);
+     String getSensitiveTime(Long timeMills);
 
-     String formatDate(Long timemills, String format);
+     String formatDate(Long timeMills, String format);
 }

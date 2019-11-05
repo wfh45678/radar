@@ -168,9 +168,12 @@ export default class AddPreItem extends React.Component{
         	isValidated=false;
         }
         if(!this.state.args){
-        	validate.args.help='请输入截取字段位数';
         	validate.args.status='warning';
         	if(this.state.plugin=='SUBSTRING'){
+        		validate.args.help='请输入截取字段位数';
+	        	isValidated=false;
+	        } else if (this.state.plugin=='DATEFORMAT') {
+	        	validate.args.help='请输入日期格式化字符串';
 	        	isValidated=false;
 	        }
         }
@@ -255,7 +258,19 @@ export default class AddPreItem extends React.Component{
 		                            </Tooltip>
                             	</Col>
                             </Row>
-	                    </FormItem>        	                                      
+	                    </FormItem>    
+	                    <FormItem required={true} {...formItemLayout} label="格式化字符串" style={plugin=='DATEFORMAT'?{}:{display:"none"}} help={validate.args.help} validateStatus={validate.args.status}>
+							<Row>
+								<Col span={20}>
+									<Input type="text" name="args" value={this.state.args} onChange={this.handleChange}/>
+                            	</Col>
+                            	<Col span={2} offset={1}>
+		                            <Tooltip placement="right" title={'日期格式化字符串，例如:yyyyMMdd HH:mm:ss'}>
+		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            </Tooltip>
+                            	</Col>
+                            </Row>
+	                    </FormItem>   	                                      
                     </Form>
                 </Modal>
             </span>    
