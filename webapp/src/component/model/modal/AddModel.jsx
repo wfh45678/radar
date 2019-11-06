@@ -68,7 +68,7 @@ export default class AddModel extends React.Component{
 			    content: '请确认表单内容输入正确',
 			  });
 		}
-		else if(this.state.templateId!=""){
+		else if(this.state.templateId !="-999"){
 			var param={};
 			param.id=this.state.templateId;
 	        param.modelName='';
@@ -175,7 +175,7 @@ export default class AddModel extends React.Component{
                             					return <Option key={index} value={info.id+''}>{'[系统]'+info.label}</Option>
                             				})
                             			}
-                            			<Option value="999">新建模型</Option>
+                            			<Option value="-999">新建模型</Option>
                             		</Select>
                             	</Col>
                             	<Col span={2} offset={1}>
