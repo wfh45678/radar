@@ -175,6 +175,9 @@ export default class AddPreItem extends React.Component{
 	        } else if (this.state.plugin=='DATEFORMAT') {
 	        	validate.args.help='请输入日期格式化字符串';
 	        	isValidated=false;
+	        } else if (this.state.plugin=='RESTUTIL') {
+	        	validate.args.help='请输入url';
+	        	isValidated=false;
 	        }
         }
 
@@ -270,7 +273,19 @@ export default class AddPreItem extends React.Component{
 		                            </Tooltip>
                             	</Col>
                             </Row>
-	                    </FormItem>   	                                      
+	                    </FormItem>  
+	                    <FormItem required={true} {...formItemLayout} label="RestUtil" style={plugin=='RESTUTIL'?{}:{display:"none"}} help={validate.args.help} validateStatus={validate.args.status}>
+							<Row>
+								<Col span={20}>
+									<Input type="text" name="args" value={this.state.args} onChange={this.handleChange}/>
+                            	</Col>
+                            	<Col span={2} offset={1}>
+		                            <Tooltip placement="right" title={'Rest url, like http://xxx/getSth'}>
+		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            </Tooltip>
+                            	</Col>
+                            </Row>
+	                    </FormItem>                                      
                     </Form>
                 </Modal>
             </span>    
