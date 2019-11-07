@@ -49,4 +49,6 @@ public interface DataListsService {
      Map<String, Object> getDataListMap(Long modelId);
 
      CommonResult batchImportData(List<DataListsVO> list, Long modelId);
+
+     CommonResult batchImportDataRecord(List<DataListRecordVO> list, Long dataListId);
 }
