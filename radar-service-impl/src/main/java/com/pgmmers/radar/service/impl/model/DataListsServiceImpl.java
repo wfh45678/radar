@@ -279,4 +279,27 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
         Map<String, Object> listMap = dataListRecordCacheMap.get(modelId);
         return listMap;
     }
+
+    @Override
+    public CommonResult batchImportData(List<DataListsVO> list, Long modelId) {
+        CommonResult result = new CommonResult();
+        for (DataListsVO data : list) {
+            data.setStatus(1);
+            data.setName("");
+            data.setModelId(modelId);
+            int count = dataListDal.save(data);
+            if (count > 0) {
+                if(StringUtils.isEmpty(data.getName())){
+                    data.setName("dataList_"+data.getId());
+                    dataListDal.save(data);
+                }
+                // 通知更新
+                data.setOpt("new");
+                cacheService.publishDataList(data);
+            }
+        }
+        result.setSuccess(true);
+        result.setMsg("导入成功");
+        return result;
+    }
 }
