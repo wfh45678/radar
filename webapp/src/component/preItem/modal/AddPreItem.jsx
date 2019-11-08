@@ -34,6 +34,8 @@ export default class AddPreItem extends React.Component{
         this.setState(state);
     }
 
+
+
     handleSelect=(name,value)=>{
     	var state = this.state;
     	if(name=='plugin'){
@@ -74,6 +76,7 @@ export default class AddPreItem extends React.Component{
 			plugin:'',
 			status:1,
 			args:'',
+			reqType:1,
 			visible:true
 		})
 	}
@@ -96,7 +99,7 @@ export default class AddPreItem extends React.Component{
 	        param.status=this.state.status;
 	        param.args=this.state.args;
 
-			FetchUtil('/preitem/','PUT',JSON.stringify(param),
+			FetchUtil('/preitem/','PUT', JSON.stringify(param),
 		    	(data) => {
 		    		if(data.success){
 		    			message.success('添加成功');
@@ -176,7 +179,7 @@ export default class AddPreItem extends React.Component{
 	        	validate.args.help='请输入日期格式化字符串';
 	        	isValidated=false;
 	        } else if (this.state.plugin=='RESTUTIL') {
-	        	validate.args.help='请输入url';
+	        	validate.args.help='请输入正确的 url';
 	        	isValidated=false;
 	        }
         }
@@ -274,13 +277,37 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             </Row>
 	                    </FormItem>  
-	                    <FormItem required={true} {...formItemLayout} label="RestUtil" style={plugin=='RESTUTIL'?{}:{display:"none"}} help={validate.args.help} validateStatus={validate.args.status}>
+	                    <FormItem required={true} {...formItemLayout} label="请求信息" style={plugin=='RESTUTIL'?{}:{display:"none"}} help={validate.args.help} validateStatus={validate.args.status}>
+                           <Row>
+								<Col span={20}>
+								      <Radio.Group name="reqType" onChange={this.handleChange} value={this.state.reqType}>
+								       	 <Radio value={1}>GET</Radio>
+								       	 <Radio value={2}>POST</Radio>
+								      </Radio.Group>
+                            	</Col>
+                            	<Col span={2} offset={1}>
+		                            <Tooltip placement="right" title={'请求方式： POST, GET'}>
+		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            </Tooltip>
+                            	</Col>
+                            </Row>
+
 							<Row>
 								<Col span={20}>
 									<Input type="text" name="args" value={this.state.args} onChange={this.handleChange}/>
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'Rest url, like http://xxx/getSth'}>
+		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            </Tooltip>
+                            	</Col>
+                            </Row>
+                            <Row>
+								<Col span={20}>
+									 <Input.TextArea  rows={4} placeholder="请输入响应结果字段描叙信息" />
+                            	</Col>
+                            	<Col span={2} offset={1}>
+		                            <Tooltip placement="right" title={'响应字段元信息'}>
 		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
 		                            </Tooltip>
                             	</Col>

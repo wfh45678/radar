@@ -23,7 +23,7 @@ export default class EditPreItem extends React.Component{
 			plugin:'',
 			status:1,
 			args:'',
-
+			reqType:1,
 			preItem:null
 		}
 
@@ -270,7 +270,45 @@ export default class EditPreItem extends React.Component{
 		                            </Tooltip>
                             	</Col>
                             </Row>
-	                    </FormItem>        	                                      
+
+	                    </FormItem> 
+
+	                    <FormItem required={true} {...formItemLayout} label="请求信息" style={plugin=='RESTUTIL'?{}:{display:"none"}} help={validate.args.help} validateStatus={validate.args.status}>
+                           <Row>
+								<Col span={20}>
+								      <Radio.Group name="reqType" onChange={this.handleChange} value={this.state.reqType}>
+								       	 <Radio value={1}>GET</Radio>
+								       	 <Radio value={2}>POST</Radio>
+								      </Radio.Group>
+                            	</Col>
+                            	<Col span={2} offset={1}>
+		                            <Tooltip placement="right" title={'请求方式： POST, GET'}>
+		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            </Tooltip>
+                            	</Col>
+                            </Row>
+
+							<Row>
+								<Col span={20}>
+									<Input type="text" name="args" value={this.state.args} onChange={this.handleChange}/>
+                            	</Col>
+                            	<Col span={2} offset={1}>
+		                            <Tooltip placement="right" title={'Rest url, like http://xxx/getSth'}>
+		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            </Tooltip>
+                            	</Col>
+                            </Row>
+                            <Row>
+								<Col span={20}>
+									 <Input.TextArea  rows={4} placeholder="请输入响应结果字段描叙信息" />
+                            	</Col>
+                            	<Col span={2} offset={1}>
+		                            <Tooltip placement="right" title={'响应字段元信息'}>
+		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            </Tooltip>
+                            	</Col>
+                            </Row>
+	                    </FormItem>    	                                      
                     </Form>
                 </Modal>
             </span>    
