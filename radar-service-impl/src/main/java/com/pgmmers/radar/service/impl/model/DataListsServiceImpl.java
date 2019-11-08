@@ -1,7 +1,6 @@
 package com.pgmmers.radar.service.impl.model;
 
 import com.alibaba.fastjson.JSON;
-
 import com.pgmmers.radar.dal.bean.DataListQuery;
 import com.pgmmers.radar.dal.bean.DataListRecordQuery;
 import com.pgmmers.radar.dal.model.DataListDal;
@@ -296,6 +295,24 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
                 // 通知更新
                 data.setOpt("new");
                 cacheService.publishDataList(data);
+            }
+        }
+        result.setSuccess(true);
+        result.setMsg("导入成功");
+        return result;
+    }
+
+    @Override
+    public CommonResult batchImportDataRecord(List<DataListRecordVO> list, Long dataListId) {
+        CommonResult result = new CommonResult();
+        for (DataListRecordVO dataListRecord : list) {
+            int count = dataListDal.saveRecord(dataListRecord);
+            if (count > 0) {
+                // 通知更新
+                DataListsVO dataListVO = dataListDal.get(dataListRecord.getDataListId());
+                dataListRecord.setModelId(dataListVO.getModelId());
+                dataListRecord.setOpt("update");
+                cacheService.publishDataListRecord(dataListRecord);
             }
         }
         result.setSuccess(true);
