@@ -44,6 +44,11 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/tk.mybatis/mapper -->
         <dependency>
