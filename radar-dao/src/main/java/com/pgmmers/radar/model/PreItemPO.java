@@ -49,6 +49,9 @@ public class PreItemPO {
     @Column(name = "PLUGIN")
     private String plugin;
 
+    @Column(name = "CONFIG_JSON")
+    private String configJson;
+
     @Column(name = "STATUS")
     private Integer status;
 
@@ -192,6 +195,20 @@ public class PreItemPO {
      */
     public void setPlugin(String plugin) {
         this.plugin = plugin;
+    }
+
+    /**
+     * @return CONFIG_JSON
+     */
+    public String getConfigJson() {
+        return configJson;
+    }
+
+    /**
+     * @param configJson
+     */
+    public void setConfigJson(String configJson) {
+        this.configJson = configJson;
     }
 
     /**

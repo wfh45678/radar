@@ -79,7 +79,7 @@
                     <dependency>
                         <groupId>com.pgmmers</groupId>
                         <artifactId>radar-commons</artifactId>
-                        <version>1.0</version>
+                        <version>${project.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

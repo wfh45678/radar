@@ -1,0 +1,2 @@
+ALTER TABLE `engine_pre_item`
+ADD COLUMN `CONFIG_JSON`  varchar(150) NULL AFTER `PLUGIN`;
