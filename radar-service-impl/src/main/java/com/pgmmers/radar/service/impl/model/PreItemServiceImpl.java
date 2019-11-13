@@ -85,20 +85,11 @@ public class PreItemServiceImpl implements PreItemService, SubscribeHandle {
                 return result;
             }
         }
-//        if (preItem.getId() == null) {
-//            FieldQuery query = new FieldQuery();
-//            query.setModelId(preItem.getModelId());
-//            query.setFieldName(fieldName);
-//            PageResult<FieldVO> page = fieldDal.query(query);
-//            if (page != null && page.getRowCount() > 0) {
-//                result.setMsg("字段名已定义");
-//                return result;
-//            }
-//        }
+
         int count = preItemDal.save(preItem);
         if (count > 0) {
         	if(StringUtils.isEmpty(preItem.getDestField())){
-        		preItem.setDestField("preItem_"+preItem.getId());
+        		preItem.setDestField("preItem_" + preItem.getId());
         		preItemDal.save(preItem);
         	}
         	

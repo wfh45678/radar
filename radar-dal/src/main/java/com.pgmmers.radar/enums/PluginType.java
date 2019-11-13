@@ -33,6 +33,7 @@ public enum PluginType {
             "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"provice\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]"), //
     SENSITIVE_TIME(6, "getSensitiveTime", "敏感时间段(小时)", "STRING", null),
     DATEFORMAT(7, "formatDate", "日期时间格式化", "STRING", null),
+    RESTUTIL(8, "doRest", "RestUtil", "STRING", null),
     ;
 
     private Integer key;
