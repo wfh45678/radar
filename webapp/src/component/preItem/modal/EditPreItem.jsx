@@ -24,6 +24,7 @@ export default class EditPreItem extends React.Component{
 			status:1,
 			args:'',
 			reqType:1,
+			configJson:'',
 			preItem:null
 		}
 
@@ -40,8 +41,11 @@ export default class EditPreItem extends React.Component{
 	        		sourceField:preItem.sourceField,
 	        		sourceLabel:preItem.sourceLabel,
 	        		plugin:preItem.plugin,
-	        		status:preItem.status,
-	        		args:preItem.args
+							status:preItem.status,
+							reqType:preItem.reqType,
+							args:preItem.args,
+							configJson:JSON.stringify(preItem.configJson)
+
 	        	});
 	        });
     }
@@ -50,7 +54,7 @@ export default class EditPreItem extends React.Component{
         var name = e.target.name;
         var value = e.target.value;
         var state = this.state;
-        state[name] = trim(value);
+				state[name] = typeof value==='number'?value: trim(value);
         this.setState(state);
     }
 
@@ -59,7 +63,8 @@ export default class EditPreItem extends React.Component{
     	if(name=='plugin'){
     		state['sourceField']='';
     		state['sourceLabel']='';
-    		state['args']='';
+				state['args']='';
+				state['configJson']='';
     	}   	
         state[name] = trim(value);
 
@@ -93,6 +98,9 @@ export default class EditPreItem extends React.Component{
 	}
 
 	handleSubmit=(validated)=>{
+		if(typeof JSON.parse(this.state.configJson)!='object'){
+			return	message.error('多文本框json格式不对');
+		 }
 		if(!validated){
 			Modal.error({
 			    title: '提交失败',
@@ -109,7 +117,9 @@ export default class EditPreItem extends React.Component{
 	        param.sourceLabel=this.state.sourceLabel;
 	        param.plugin=this.state.plugin;
 	        param.status=this.state.status;
-	        param.args=this.state.args;
+					param.args=this.state.args;
+					param.reqType=this.state.reqType;
+					param.configJson=JSON.parse(this.state.configJson);
 
 		    FetchUtil('/preitem/','PUT',JSON.stringify(param),
 		    	(data) => {
@@ -300,7 +310,7 @@ export default class EditPreItem extends React.Component{
                             </Row>
                             <Row>
 								<Col span={20}>
-									 <Input.TextArea  rows={4} placeholder="请输入响应结果字段描叙信息" />
+									 <Input.TextArea name="configJson" value={this.state.configJson} onChange={(e)=>this.handleChange(e)} rows={4} placeholder="请输入响应结果字段描叙信息" />
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'响应字段元信息'}>
