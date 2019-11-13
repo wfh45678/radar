@@ -22,15 +22,17 @@ export default class AddPreItem extends React.Component{
 			sourceLabel:'',
 			plugin:'',
 			status:1,
-			args:''
+			args:'',
+			configJson:''
 		}
 	}
 
     handleChange=(e)=>{
+			console.log(e,'==')
         var name = e.target.name;
         var value = e.target.value;
         var state = this.state;
-        state[name] = trim(value);
+        state[name] = typeof value==='number'?value: trim(value);
         this.setState(state);
     }
 
@@ -41,7 +43,9 @@ export default class AddPreItem extends React.Component{
     	if(name=='plugin'){
     		state['sourceField']='';
     		state['sourceLabel']='';
-    		state['args']='';
+				state['args']='';
+				state['status']=1;
+				state['configJson']='';
     	}   	
         state[name] = trim(value);
 
@@ -77,11 +81,15 @@ export default class AddPreItem extends React.Component{
 			status:1,
 			args:'',
 			reqType:1,
-			visible:true
+			visible:true,
+			configJson:''
 		})
 	}
 
 	handleSubmit=(validated)=>{
+		if(typeof JSON.parse(this.state.configJson)!='object'){
+		 return	message.error('多文本框json格式不对');
+		}
 		if(!validated){
 			Modal.error({
 			    title: '提交失败',
@@ -96,9 +104,10 @@ export default class AddPreItem extends React.Component{
 	        param.sourceField=this.state.sourceField;
 	        param.sourceLabel=this.state.sourceLabel;
 	        param.plugin=this.state.plugin;
-	        param.status=this.state.status;
-	        param.args=this.state.args;
-
+					param.status=this.state.status;
+					param.reqType=this.state.reqType;
+					param.args=this.state.args;
+					param.configJson=JSON.parse(this.state.configJson);
 			FetchUtil('/preitem/','PUT', JSON.stringify(param),
 		    	(data) => {
 		    		if(data.success){
@@ -185,7 +194,8 @@ export default class AddPreItem extends React.Component{
         }
 
         const plugin=this.state.plugin;
-        let fieldArr=this.state.sourceField==''?[]:this.state.sourceField.split(',');
+				let fieldArr=this.state.sourceField==''?[]:this.state.sourceField.split(',');
+				console.log(	this.props.plugins)
 		return (
 			<span>
 				<Button onClick={this.showModal} type="primary">新增</Button>
@@ -304,7 +314,7 @@ export default class AddPreItem extends React.Component{
                             </Row>
                             <Row>
 								<Col span={20}>
-									 <Input.TextArea  rows={4} placeholder="请输入响应结果字段描叙信息" />
+									 <Input.TextArea name="configJson" value={this.state.configJson}  onChange={(e)=>this.handleChange(e)}  rows={4} placeholder="请输入响应结果字段描叙信息" />
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'响应字段元信息'}>
