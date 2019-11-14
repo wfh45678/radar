@@ -72,7 +72,7 @@ public class PluginServiceImpl implements PluginService {
 
     @Override
     public Location gps2location(String lng, String lat) {
-        // TODO Auto-generated method stub
+        // TODO 可以参考 http://jwd.funnyapi.com/#/index , 最好是本地库。
         return null;
     }
 
