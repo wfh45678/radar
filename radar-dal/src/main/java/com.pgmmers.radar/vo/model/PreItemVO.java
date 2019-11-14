@@ -25,6 +25,7 @@ public class PreItemVO implements Serializable{
 
     private String plugin;
 
+    private String reqType = "GET";
 
     @JsonProperty
     private JsonNode configJson;
@@ -155,5 +156,14 @@ public class PreItemVO implements Serializable{
 
     public void setConfigJson(JsonNode configJson) {
         this.configJson = configJson;
+    }
+
+
+    public String getReqType() {
+        return reqType;
+    }
+
+    public void setReqType(String reqType) {
+        this.reqType = reqType;
     }
 }

@@ -35,7 +35,8 @@ public class PreItemDalImpl implements PreItemDal {
         PreItemPO preItem = preItemMapper.selectByPrimaryKey(id);
         if (preItem != null) {
             PreItemVO preItemVO = new PreItemVO();
-            BeanUtils.copyProperties(preItem, preItemVO);
+            //BeanUtils.copyProperties(preItem, preItemVO);
+            preItemVO = POVOUtils.copyFromPreItemPO(preItem);
             return preItemVO;
         }
         return null;

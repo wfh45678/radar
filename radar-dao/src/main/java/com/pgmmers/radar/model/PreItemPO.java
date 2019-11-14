@@ -52,6 +52,12 @@ public class PreItemPO {
     @Column(name = "CONFIG_JSON")
     private String configJson;
 
+    /**
+     * 请求方式
+     */
+    @Column(name = "REQ_TYPE")
+    private String reqType;
+
     @Column(name = "STATUS")
     private Integer status;
 
@@ -209,6 +215,24 @@ public class PreItemPO {
      */
     public void setConfigJson(String configJson) {
         this.configJson = configJson;
+    }
+
+    /**
+     * 获取请求方式
+     *
+     * @return REQ_TYPE - 请求方式
+     */
+    public String getReqType() {
+        return reqType;
+    }
+
+    /**
+     * 设置请求方式
+     *
+     * @param reqType 请求方式
+     */
+    public void setReqType(String reqType) {
+        this.reqType = reqType;
     }
 
     /**
