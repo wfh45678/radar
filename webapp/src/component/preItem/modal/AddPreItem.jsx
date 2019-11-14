@@ -23,6 +23,7 @@ export default class AddPreItem extends React.Component{
 			plugin:'',
 			status:1,
 			args:'',
+			reqType:'GET',
 			configJson:''
 		}
 	}
@@ -80,7 +81,7 @@ export default class AddPreItem extends React.Component{
 			plugin:'',
 			status:1,
 			args:'',
-			reqType:1,
+			reqType:'GET',
 			visible:true,
 			configJson:''
 		})
@@ -287,12 +288,12 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             </Row>
 	                    </FormItem>  
-	                    <FormItem required={true} {...formItemLayout} label="请求信息" style={plugin=='RESTUTIL'?{}:{display:"none"}} help={validate.args.help} validateStatus={validate.args.status}>
+	                    <FormItem required={true} {...formItemLayout} label="请求信息" style={plugin=='HTTP_UTIL'?{}:{display:"none"}} help={validate.args.help} validateStatus={validate.args.status}>
                            <Row>
 								<Col span={20}>
 								      <Radio.Group name="reqType" onChange={this.handleChange} value={this.state.reqType}>
-								       	 <Radio value={1}>GET</Radio>
-								       	 <Radio value={2}>POST</Radio>
+								       	 <Radio value={'GET'}>GET</Radio>
+								       	 <Radio disabled={true} value={'POST'}>POST</Radio>
 								      </Radio.Group>
                             	</Col>
                             	<Col span={2} offset={1}>
@@ -307,17 +308,17 @@ export default class AddPreItem extends React.Component{
 									<Input type="text" name="args" value={this.state.args} onChange={this.handleChange}/>
                             	</Col>
                             	<Col span={2} offset={1}>
-		                            <Tooltip placement="right" title={'Rest url, like http://xxx/getSth'}>
+		                            <Tooltip placement="right" title={'Rest url, like http://xxx/getSth?id={1}'}>
 		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
 		                            </Tooltip>
                             	</Col>
                             </Row>
                             <Row>
 								<Col span={20}>
-									 <Input.TextArea name="configJson" value={this.state.configJson}  onChange={(e)=>this.handleChange(e)}  rows={4} placeholder="请输入响应结果字段描叙信息" />
+									 <Input.TextArea name="configJson" value={this.state.configJson}  onChange={(e)=>this.handleChange(e)}  rows={4} placeholder="请输入响应结果字段描叙信息：json数组" />
                             	</Col>
                             	<Col span={2} offset={1}>
-		                            <Tooltip placement="right" title={'响应字段元信息'}>
+		                            <Tooltip placement="right" title={'响应字段元信息, like:[{"column":"country","title":"国家","type":"STRING"},{"column":"province","title":"省份","type":"STRING"}]'}>
 		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
 		                            </Tooltip>
                             	</Col>

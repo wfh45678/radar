@@ -6,7 +6,7 @@ public class Location {
     
     private String region = "";
     
-    private String provice = "";
+    private String province = "";
     
     private String city = "";
     
@@ -28,12 +28,12 @@ public class Location {
         this.region = region;
     }
 
-    public String getProvice() {
-        return provice;
+    public String getProvince() {
+        return province;
     }
 
-    public void setProvice(String provice) {
-        this.provice = provice;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public String getCity() {
