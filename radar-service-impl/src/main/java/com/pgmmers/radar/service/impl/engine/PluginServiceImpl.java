@@ -141,6 +141,7 @@ public class PluginServiceImpl implements PluginService {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.valueOf(reqType), entity, JSONObject.class, args);
+        logger.info("http plugin:{}\n{}\n {}", url, args, responseEntity.toString());
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();
         }
