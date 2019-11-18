@@ -5,7 +5,7 @@
     <parent>
         <artifactId>radar</artifactId>
         <groupId>com.pgmmers</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>radar-dao</artifactId>
@@ -79,7 +79,7 @@
                     <dependency>
                         <groupId>com.pgmmers</groupId>
                         <artifactId>radar-commons</artifactId>
-                        <version>0.0.1</version>
+                        <version>${project.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

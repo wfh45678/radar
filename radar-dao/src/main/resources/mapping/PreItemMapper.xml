@@ -13,6 +13,8 @@
     <result column="LABEL" jdbcType="VARCHAR" property="label" />
     <result column="ARGS" jdbcType="VARCHAR" property="args" />
     <result column="PLUGIN" jdbcType="VARCHAR" property="plugin" />
+    <result column="CONFIG_JSON" jdbcType="VARCHAR" property="configJson" />
+    <result column="REQ_TYPE" jdbcType="VARCHAR" property="reqType" />
     <result column="STATUS" jdbcType="INTEGER" property="status" />
     <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
     <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />

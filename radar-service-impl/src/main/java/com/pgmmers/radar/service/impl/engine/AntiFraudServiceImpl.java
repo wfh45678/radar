@@ -120,7 +120,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
                         jsonInfo.get(sourceField[1]).toString());
                 break;
             case ALLINONE:
-                List<Object> values = new ArrayList<Object>();
+                List<Object> values = new ArrayList<>();
                 for (String field : sourceField) {
                     values.add(jsonInfo.get(field));
                 }
@@ -142,11 +142,16 @@ public class AntiFraudServiceImpl implements AntiFraudService {
                 millis = Long.parseLong(jsonInfo.get(sourceField[0]).toString());
                 transfer = pluginService.formatDate(millis, formatStr);
                 break;
+            case HTTP_UTIL:
+                String  url = item.getArgs();
+                String  reqType = item.getReqType();
+                String arg = jsonInfo.get(sourceField[0]).toString();
+                transfer = pluginService.httpRequest(url, reqType, arg);
+                break;
             default:
 
             }
             result.put(item.getDestField(), transfer);
-            //result.put(plugin.getFieldName(), transfer);
         }
         return result;
     }

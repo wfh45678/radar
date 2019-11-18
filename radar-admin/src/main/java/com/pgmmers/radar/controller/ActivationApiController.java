@@ -3,6 +3,7 @@ package com.pgmmers.radar.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.pgmmers.radar.dal.bean.ActivationQuery;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.enums.PluginType;
@@ -67,17 +68,16 @@ public class ActivationApiController {
         List<PreItemVO> listPreItem = preItemService.listPreItem(modelId);
         for (PreItemVO preItem : listPreItem) {
             PluginType pt = PluginType.get(preItem.getPlugin());
-            if (StringUtils.isNoneBlank(pt.getType())) {
+            if (StringUtils.isNotEmpty(pt.getType()) && pt.getType().equals("JSON")) {
+                //load  http request data
+                JsonNode json = preItem.getConfigJson();
+                List<DataColumnInfo> children = new ArrayList<>();
+                extractMetaColumn(ds, preItem, json.toString(), children);
+            } else if (StringUtils.isNotEmpty(pt.getType())) {
                 ds.addChildren(preItem.getLabel(), preItem.getDestField(), pt.getType());
             } else {
                 List<DataColumnInfo> children = new ArrayList<>();
-                JSONArray array = JSONArray.parseArray(pt.getMeta());
-                for (int i = 0; i < array.size(); i++) {
-                    JSONObject obj = array.getJSONObject(i);
-                    children.add(new DataColumnInfo(obj.getString("title"), obj.getString("column"), obj
-                            .getString("type")));
-                }
-                ds.addChildren(preItem.getLabel(), preItem.getDestField(), children);
+                extractMetaColumn(ds, preItem, pt.getMeta(), children);
             }
         }
         list.add(ds);
@@ -133,5 +133,15 @@ public class ActivationApiController {
 	@PostMapping("/updateOrder")
 	public CommonResult updateOrder(@RequestParam Long activationId, @RequestParam String ruleOrder) {
 		return activationService.updateOrder(activationId,ruleOrder);
-	}   
+	}
+
+    private void extractMetaColumn(DataColumnInfo ds, PreItemVO preItem, String jsonStr, List<DataColumnInfo> children) {
+        JSONArray array = JSONArray.parseArray(jsonStr);
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject obj = array.getJSONObject(i);
+            children.add(new DataColumnInfo(obj.getString("title"), obj.getString("column"), obj
+                    .getString("type")));
+        }
+        ds.addChildren(preItem.getLabel(), preItem.getDestField(), children);
+    }
 }

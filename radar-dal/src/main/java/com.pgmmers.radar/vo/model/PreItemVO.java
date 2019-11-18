@@ -1,4 +1,7 @@
 package com.pgmmers.radar.vo.model;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -22,6 +25,10 @@ public class PreItemVO implements Serializable{
 
     private String plugin;
 
+    private String reqType = "GET";
+
+    @JsonProperty
+    private JsonNode configJson;
 
     private Integer status;
 
@@ -141,6 +148,22 @@ public class PreItemVO implements Serializable{
 	public void setSourceLabel(String sourceLabel) {
 		this.sourceLabel = sourceLabel;
 	}
-    
-    
+
+
+    public JsonNode getConfigJson() {
+        return configJson;
+    }
+
+    public void setConfigJson(JsonNode configJson) {
+        this.configJson = configJson;
+    }
+
+
+    public String getReqType() {
+        return reqType;
+    }
+
+    public void setReqType(String reqType) {
+        this.reqType = reqType;
+    }
 }

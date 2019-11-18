@@ -1,6 +1,7 @@
 package com.pgmmers.radar.service.impl.engine;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.pgmmers.radar.enums.CombineType;
 import com.pgmmers.radar.service.data.MobileInfoService;
 import com.pgmmers.radar.service.engine.PluginService;
@@ -17,7 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.util.Calendar;
@@ -37,6 +40,9 @@ public class PluginServiceImpl implements PluginService {
     @Autowired
     private MobileInfoService mobileInfoService;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     @PostConstruct
     public void init() {
         try {
@@ -53,14 +59,13 @@ public class PluginServiceImpl implements PluginService {
         if (!Util.isIpAddress(ip)) {
             return null;
         }
-        ;
         try {
             DataBlock block = ipSearcher.memorySearch(ip);
             String[] detail = block.getRegion().split("\\|");
             location = new Location();
             location.setCountry(detail[0]);
             location.setRegion(detail[1]);
-            location.setProvice(detail[2]);
+            location.setProvince(detail[2]);
             location.setCity(detail[3]);
             location.setAddress(detail[4]);
         } catch (Exception e) {
@@ -72,7 +77,7 @@ public class PluginServiceImpl implements PluginService {
 
     @Override
     public Location gps2location(String lng, String lat) {
-        // TODO Auto-generated method stub
+        // TODO 可以参考 http://jwd.funnyapi.com/#/index , 最好是本地库。
         return null;
     }
 
@@ -111,7 +116,7 @@ public class PluginServiceImpl implements PluginService {
         MobileInfoVO vo = mobileInfoService.getMobileInfoByMobile(mobile);
         Location location = new Location();
         if (vo != null) {
-            location.setProvice(vo.getProvince());
+            location.setProvince(vo.getProvince());
             location.setCity(vo.getCity());
             location.setCountry("中国");
         }
@@ -129,6 +134,18 @@ public class PluginServiceImpl implements PluginService {
     public String formatDate(Long timemills, String format) {
         String dateStr = DateFormatUtils.format(timemills, format);
         return dateStr;
+    }
+
+    @Override
+    public JSONObject httpRequest(String url, String reqType, String... args) {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.valueOf(reqType), entity, JSONObject.class, args);
+        logger.info("http plugin:{}\n{}\n {}", url, args, responseEntity.toString());
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            return responseEntity.getBody();
+        }
+        return null;
     }
 
 }

@@ -233,7 +233,7 @@ public class ModelDalImpl implements ModelDal {
         PreItemVO vo = null;
         for (PreItemPO po : itemPOList) {
             vo = new PreItemVO();
-            BeanUtils.copyProperties(po, vo);
+            vo = POVOUtils.copyFromPreItemPO(po);
             itemList.add(vo);
         }
         return itemList;

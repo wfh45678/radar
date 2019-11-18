@@ -4,15 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.pgmmers.radar.model.AbstractionPO;
-import com.pgmmers.radar.model.MobileInfoPO;
-import com.pgmmers.radar.model.ModelPO;
-import com.pgmmers.radar.model.RulePO;
+import com.pgmmers.radar.model.*;
 import com.pgmmers.radar.vo.data.MobileInfoVO;
 import com.pgmmers.radar.vo.model.AbstractionVO;
 import com.pgmmers.radar.vo.model.ModelVO;
+import com.pgmmers.radar.vo.model.PreItemVO;
 import com.pgmmers.radar.vo.model.RuleVO;
 import jdk.nashorn.internal.parser.JSONParser;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.io.IOException;
@@ -88,5 +87,35 @@ public class POVOUtils {
             e.printStackTrace();
         }
         return po;
+    }
+
+    public static PreItemPO copyFromPreItemVO(PreItemVO vo) {
+        PreItemPO po = new PreItemPO();
+        BeanUtils.copyProperties(vo, po);
+        try {
+            if (vo.getConfigJson() != null) {
+                String str = objectMapper.writeValueAsString(vo.getConfigJson());
+                po.setConfigJson(str);
+            }
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return po;
+    }
+
+    public static PreItemVO copyFromPreItemPO(PreItemPO po) {
+        PreItemVO vo = new PreItemVO();
+        BeanUtils.copyProperties(po, vo);
+        JsonNode json = null;
+        try {
+            if (!StringUtils.isEmpty(po.getConfigJson())) {
+                json = objectMapper.readTree(po.getConfigJson());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        vo.setConfigJson(json);
+        return vo;
     }
 }

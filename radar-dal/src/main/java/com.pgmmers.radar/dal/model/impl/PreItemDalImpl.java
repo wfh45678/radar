@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.pgmmers.radar.dal.bean.PageResult;
 import com.pgmmers.radar.dal.bean.PreItemQuery;
 import com.pgmmers.radar.dal.model.PreItemDal;
+import com.pgmmers.radar.dal.util.POVOUtils;
 import com.pgmmers.radar.mapper.PreItemMapper;
 import com.pgmmers.radar.model.PreItemPO;
 import com.pgmmers.radar.vo.model.PreItemVO;
@@ -34,7 +35,8 @@ public class PreItemDalImpl implements PreItemDal {
         PreItemPO preItem = preItemMapper.selectByPrimaryKey(id);
         if (preItem != null) {
             PreItemVO preItemVO = new PreItemVO();
-            BeanUtils.copyProperties(preItem, preItemVO);
+            //BeanUtils.copyProperties(preItem, preItemVO);
+            preItemVO = POVOUtils.copyFromPreItemPO(preItem);
             return preItemVO;
         }
         return null;
@@ -63,8 +65,8 @@ public class PreItemDalImpl implements PreItemDal {
 
         List<PreItemVO> listVO = new ArrayList<PreItemVO>();
         for (PreItemPO preItemPO : page.getResult()) {
-            PreItemVO preItemVO = new PreItemVO();
-            BeanUtils.copyProperties(preItemPO, preItemVO);
+            PreItemVO preItemVO ;
+            preItemVO = POVOUtils.copyFromPreItemPO(preItemPO);
             listVO.add(preItemVO);
         }
 
@@ -75,15 +77,15 @@ public class PreItemDalImpl implements PreItemDal {
 
     @Override
     public int save(PreItemVO preItem) {
-        PreItemPO preItemPO = new PreItemPO();
-        BeanUtils.copyProperties(preItem, preItemPO);
+        PreItemPO preItemPO ;
+        preItemPO = POVOUtils.copyFromPreItemVO(preItem);
         Date sysDate = new Date();
         int count = 0;
         if (preItemPO.getId() == null) {
             preItemPO.setCreateTime(sysDate);
             preItemPO.setUpdateTime(sysDate);
             count = preItemMapper.insertSelective(preItemPO);
-            preItem.setId(preItemPO.getId());// 返回id
+            preItem.setId(preItemPO.getId());
         } else {
             preItemPO.setUpdateTime(sysDate);
             count = preItemMapper.updateByPrimaryKeySelective(preItemPO);

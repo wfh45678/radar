@@ -1,5 +1,6 @@
 package com.pgmmers.radar.service.engine;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pgmmers.radar.service.engine.vo.Location;
 
 import java.util.List;
@@ -51,5 +52,22 @@ public interface PluginService {
     
      String getSensitiveTime(Long timeMills);
 
+    /**
+     *  date format by format str, like yyyyMMdd.
+     * @param timeMills
+     * @param format
+     * @return
+     * @author feihu.wang
+     */
      String formatDate(Long timeMills, String format);
+
+    /**
+     * http util.
+     * @param url
+     * @param reqType
+     * @param args
+     * @return
+     * @author feihu.wang
+     */
+    JSONObject httpRequest(String url, String reqType, String ...args);
 }

@@ -9,6 +9,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -112,4 +114,45 @@ public class ExcelUtils {
         }
     }
 
+    /**
+     * 从 row 的第 index 列，获取字符串值
+     *
+     * @param row   目标行
+     * @param index 目标列
+     * @return 字符串值
+     * @author xushuai
+     */
+    public static String getString(Row row, int index) {
+        return getString(row, index, null);
+    }
+
+    /**
+     * 从 row 的第 index 列，获取字符串值
+     *
+     * @param row          目标行
+     * @param index        目标列
+     * @param numberFormat 对原值为数字时的，数字格式化格式
+     * @return 字符串值
+     * @author xushuai
+     */
+    public static String getString(Row row, int index, String numberFormat) {
+        Cell cell = row.getCell(index);
+
+        if (cell == null) return null;
+
+        switch (cell.getCellType()) {
+            case Cell.CELL_TYPE_NUMERIC:
+                double val = cell.getNumericCellValue();
+                if (numberFormat == null)
+                    return String.valueOf(val);
+                NumberFormat formatter = new DecimalFormat(numberFormat);
+                return formatter.format(val);
+            case Cell.CELL_TYPE_STRING:
+                return cell.getStringCellValue();
+            case Cell.CELL_TYPE_FORMULA:
+                return cell.getStringCellValue();
+            default:
+                return null;
+        }
+    }
 }

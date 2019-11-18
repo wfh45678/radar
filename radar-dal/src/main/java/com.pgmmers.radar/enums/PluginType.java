@@ -16,13 +16,13 @@ public enum PluginType {
             "ip2location",
             "IP转换成地址",
             null,
-            "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"provice\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]"), //
+            "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"province\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]"), //
     GPS2LOCATION(
             2,
             "gps2location",
             "GPS转换成地址",
             null,
-            "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"provice\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]"), //
+            "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"province\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]"), //
     ALLINONE(3, "allInOne", "字段合并", "STRING", null), //
     SUBSTRING(4, "subString", "字符串截短", "STRING", null), //
     MOBILE2LOCATION(
@@ -30,9 +30,10 @@ public enum PluginType {
             "mobile2location",
             "手机号码归属地",
             null,
-            "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"provice\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]"), //
+            "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"province\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]"), //
     SENSITIVE_TIME(6, "getSensitiveTime", "敏感时间段(小时)", "STRING", null),
     DATEFORMAT(7, "formatDate", "日期时间格式化", "STRING", null),
+    HTTP_UTIL(8, "httpRequest", "HttpUtil", "JSON", null),
     ;
 
     private Integer key;

@@ -1,7 +1,6 @@
 package com.pgmmers.radar.service.impl.model;
 
 import com.alibaba.fastjson.JSON;
-
 import com.pgmmers.radar.dal.bean.DataListQuery;
 import com.pgmmers.radar.dal.bean.DataListRecordQuery;
 import com.pgmmers.radar.dal.model.DataListDal;
@@ -278,5 +277,46 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     public Map<String, Object> getDataListMap(Long modelId) {
         Map<String, Object> listMap = dataListRecordCacheMap.get(modelId);
         return listMap;
+    }
+
+    @Override
+    public CommonResult batchImportData(List<DataListsVO> list, Long modelId) {
+        CommonResult result = new CommonResult();
+        for (DataListsVO data : list) {
+            data.setStatus(1);
+            data.setName("");
+            data.setModelId(modelId);
+            int count = dataListDal.save(data);
+            if (count > 0) {
+                if(StringUtils.isEmpty(data.getName())){
+                    data.setName("dataList_"+data.getId());
+                    dataListDal.save(data);
+                }
+                // 通知更新
+                data.setOpt("new");
+                cacheService.publishDataList(data);
+            }
+        }
+        result.setSuccess(true);
+        result.setMsg("导入成功");
+        return result;
+    }
+
+    @Override
+    public CommonResult batchImportDataRecord(List<DataListRecordVO> list, Long dataListId) {
+        CommonResult result = new CommonResult();
+        for (DataListRecordVO dataListRecord : list) {
+            int count = dataListDal.saveRecord(dataListRecord);
+            if (count > 0) {
+                // 通知更新
+                DataListsVO dataListVO = dataListDal.get(dataListRecord.getDataListId());
+                dataListRecord.setModelId(dataListVO.getModelId());
+                dataListRecord.setOpt("update");
+                cacheService.publishDataListRecord(dataListRecord);
+            }
+        }
+        result.setSuccess(true);
+        result.setMsg("导入成功");
+        return result;
     }
 }

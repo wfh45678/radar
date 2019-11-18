@@ -5,6 +5,7 @@
 A real-time risk analysis engine,which can update risk rule in real-time and make it effective immediately.  
 It applies to the anti-fraud application perfectly. 
 The project code called Radar, like the code, monitor the transaction at the back.
+
 ## 项目特点
 
  * 实时风控，特殊场景可以做到100ms内响应
@@ -14,6 +15,13 @@ The project code called Radar, like the code, monitor the transaction at the bac
  * 插件化的设计，快速接入其它数据能力平台
  * NoSQL，易扩展，高性能
  * 配置简单，开箱即用！
+
+## 相关站点
+    Github: https://github.com/wfh45678/radar  
+    Gitee:  https://gitee.com/freshday/radar  // 码云为镜像网站，贡献代码请提交到 github   
+    官网：  http://radar.pgmmer.top  
+    Wiki:   https://gitee.com/freshday/radar/wikis/home
+
 
 ## 背景
   伴随着移动互联网的高速发展，羊毛党快速崛起，从一平台到另一个平台，所过之处一地鸡毛，这还不是最可怕的，
@@ -96,19 +104,15 @@ https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 建议大家自行注册用户，避免使用同样的测试账号受干扰.   
 
 ## 未完待续
-### 小迭代
-* React 版本升级（v15.0.0）
-* 集成嵌入式redis版本，本地调试的时候就不用再单独部署redis
-* 集成 JWT(JSON WEB TOKEN)，前后端分离标准化
-* 插件配置管理，可以集成其他中间件的数据能力
-* 支持Flink，增加特征（abstraction）的提取基于Flink 的实现，以应对时间窗口相对较短，实时性要求更高的情况。
+
 ### 重大特性
 * 支持机器学习
 * 数据分析平台
 
 ## 致谢
-感恩 XWF 团队，感谢参入的每一位小伙伴，后续征得同意后会一一列出名字。
-
+感恩 XWF 团队，感谢参入的每一位小伙伴，后续征得同意后会一一列出名字。  
+千面怪, 烈日下的从容, DerekDingLu, king, sanying2012, 紫泉夜, 玄梦     
+成书平, 徐帅...   
 ## Contact to
 
  如果喜欢本项目，Star支持一下, 让更多人了解本项目，谢谢！   

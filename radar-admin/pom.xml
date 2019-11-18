@@ -5,7 +5,7 @@
     <parent>
         <artifactId>radar</artifactId>
         <groupId>com.pgmmers</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>radar-admin</artifactId>
@@ -13,7 +13,6 @@
     <packaging>jar</packaging>
 
     <properties>
-
     </properties>
 
     <dependencies>
@@ -43,6 +42,11 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/tk.mybatis/mapper -->
