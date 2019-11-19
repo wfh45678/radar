@@ -9,6 +9,7 @@ import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.AbstractionService;
+import com.pgmmers.radar.util.GroovyScriptUtil;
 import com.pgmmers.radar.vo.model.AbstractionVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -79,10 +80,17 @@ public class AbstractionServiceImpl implements AbstractionService, SubscribeHand
     @Override
     public CommonResult save(AbstractionVO abstraction) {
         CommonResult result = new CommonResult();
+        if (abstraction.getId() != null) {
+            AbstractionVO oldAbs = abstractionDal.get(abstraction.getId());
+            // 如果规则有更新，以前的编译好的groovy 对象用不到了，应该删除。
+            if (!oldAbs.getRuleScript().equals(abstraction.getRuleScript())) {
+                GroovyScriptUtil.removeInactiveScript(oldAbs.getRuleScript());
+            }
+        }
         int count = abstractionDal.save(abstraction);
         if (count > 0) {
         	if(StringUtils.isEmpty(abstraction.getName())){
-        		abstraction.setName("abstraction_"+abstraction.getId());
+        		abstraction.setName("abstraction_" + abstraction.getId());
         		abstractionDal.save(abstraction);
         	}
         	
