@@ -17,8 +17,8 @@ The project code called Radar, like the code, monitor the transaction at the bac
  * 配置简单，开箱即用！
 
 ## 相关站点
-    Github: https://github.com/wfh45678/radar  
     Gitee:  https://gitee.com/freshday/radar  // 码云为镜像网站，贡献代码请提交到 github   
+    Github: https://github.com/wfh45678/radar  
     官网：  http://radar.pgmmer.top  
     Wiki:   https://gitee.com/freshday/radar/wikis/home
 
@@ -56,7 +56,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 
 * Mysql ： 本项目中关系数据库，主要用于存放 风险模型的元信息。
 
-* MongoDB： 用于存放事件JSON， 提供基本统计学计算（例如：max, min, sum, avg, ），
+* MongoDB： 用于存放事件JSON， 提供基本统计学计算（例如：max, min, sum, avg,），
 复杂的统计学概念（sd,variance, etc...）在内存中计算。
 
 * Redis： 提供缓存支持，Engine 利用发布订阅特性监听管理端相关配置的更新
@@ -104,7 +104,7 @@ https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 建议大家自行注册用户，避免使用同样的测试账号受干扰.   
 
 ## 未完待续
-
+[Release Note:](https://gitee.com/freshday/radar/wikis/release%20note?sort_id=1723765) https://gitee.com/freshday/radar/wikis/release%20note?sort_id=1723765  
 ### 重大特性
 * 支持机器学习
 * 数据分析平台

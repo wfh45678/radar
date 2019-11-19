@@ -14,6 +14,7 @@ import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.RuleService;
 import com.pgmmers.radar.service.search.SearchEngineService;
+import com.pgmmers.radar.util.GroovyScriptUtil;
 import com.pgmmers.radar.vo.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -89,6 +90,13 @@ public class RuleServiceImpl implements RuleService, SubscribeHandle {
     @Override
     public CommonResult save(RuleVO rule,String merchantCode) {
         CommonResult result = new CommonResult();
+        if (rule.getId() != null) {
+            RuleVO oldRule = ruleDal.get(rule.getId());
+            // 如果规则有更新，以前的编译好的groovy 对象用不到了，应该删除。
+            if (!oldRule.getScripts().equals(rule.getScripts())) {
+                GroovyScriptUtil.removeInactiveScript(oldRule.getScripts());
+            }
+        }
         int count = ruleDal.save(rule);
         if (count > 0) {
         	if(StringUtils.isEmpty(rule.getName())){

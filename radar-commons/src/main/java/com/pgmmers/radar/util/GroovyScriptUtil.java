@@ -3,7 +3,6 @@ package com.pgmmers.radar.util;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,5 +56,12 @@ public class GroovyScriptUtil {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 删除不在使用的脚本关联的groovy object, 不然内存有溢出风险。
+     */
+    public static void removeInactiveScript(String  script){
+        passedClassMap.remove(script.hashCode() + "");
     }
 }
