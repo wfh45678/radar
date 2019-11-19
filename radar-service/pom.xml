@@ -20,10 +20,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.pgmmers</groupId>
             <artifactId>radar-dal</artifactId>
             <version>${project.version}</version>
