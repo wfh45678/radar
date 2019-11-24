@@ -21,7 +21,7 @@ public class SwaggerConfig {
                 .apiInfo(buildApiInf())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.pgmmers.radar.controller"))
-                .paths(PathSelectors.any())
+                .paths(PathSelectors.regex("/services/.*"))
                 .build();
     }
 

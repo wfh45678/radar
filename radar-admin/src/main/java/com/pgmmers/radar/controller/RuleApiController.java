@@ -47,8 +47,6 @@ public class RuleApiController {
 
     @PutMapping
     public CommonResult save(@RequestBody RuleVO rule, HttpServletRequest request) {
-//    	HttpSession session = request.getSession();
-//        UserVO user = (UserVO) session.getAttribute("user");
         return ruleService.save(rule, contextHolder.getContext().getUsername());
     }
 

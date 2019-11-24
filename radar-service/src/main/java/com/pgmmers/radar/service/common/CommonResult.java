@@ -58,6 +58,17 @@ public class CommonResult implements Serializable{
         this.data = data;
     }
 
+
+    public CommonResult () {
+
+    }
+
+    public CommonResult(boolean success, String code, String msg) {
+        this.success = success;
+        this.code = code;
+        this.msg = msg;
+    }
+
     @Override
     public String toString() {
         return "CommonResult [success=" + success + ", msg=" + msg + ", code=" + code + "]";

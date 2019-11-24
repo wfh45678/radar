@@ -5,7 +5,7 @@
     <parent>
         <artifactId>radar</artifactId>
         <groupId>com.pgmmers</groupId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,10 +19,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.pgmmers</groupId>
             <artifactId>radar-dal</artifactId>
