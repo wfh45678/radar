@@ -55,7 +55,7 @@ class Welcome extends React.Component{
       <div>
         <div className="ibox">
           <div className="ibox-content">
-              <h2>欢迎登录反欺诈系统管理平台！</h2>               
+              <h2>欢迎登录风控引擎管理平台！</h2>               
           </div>
         </div>
       </div>

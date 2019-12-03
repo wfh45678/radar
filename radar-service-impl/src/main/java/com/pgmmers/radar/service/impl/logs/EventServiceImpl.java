@@ -161,7 +161,7 @@ public class EventServiceImpl implements EventService {
         // 创建第一种字体样式（用于列名）
         f.setFontHeightInPoints((short) 10);
         f.setColor(IndexedColors.BLACK.getIndex());
-        f.setBoldweight(Font.BOLDWEIGHT_BOLD);
+//        f.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
         // 创建第二种字体样式（用于值）
         f2.setFontHeightInPoints((short) 10);
@@ -173,19 +173,19 @@ public class EventServiceImpl implements EventService {
 
         // 设置第一种单元格的样式（用于列名）
         cs.setFont(f);
-        cs.setBorderLeft(CellStyle.BORDER_THIN);
-        cs.setBorderRight(CellStyle.BORDER_THIN);
-        cs.setBorderTop(CellStyle.BORDER_THIN);
-        cs.setBorderBottom(CellStyle.BORDER_THIN);
-        cs.setAlignment(CellStyle.ALIGN_CENTER);
+//        cs.setBorderLeft(CellStyle.BORDER_THIN);
+//        cs.setBorderRight(CellStyle.BORDER_THIN);
+//        cs.setBorderTop(CellStyle.BORDER_THIN);
+//        cs.setBorderBottom(CellStyle.BORDER_THIN);
+//        cs.setAlignment(CellStyle.ALIGN_CENTER);
 
         // 设置第二种单元格的样式（用于值）
         cs2.setFont(f2);
-        cs2.setBorderLeft(CellStyle.BORDER_THIN);
-        cs2.setBorderRight(CellStyle.BORDER_THIN);
-        cs2.setBorderTop(CellStyle.BORDER_THIN);
-        cs2.setBorderBottom(CellStyle.BORDER_THIN);
-        cs2.setAlignment(CellStyle.ALIGN_CENTER);
+//        cs2.setBorderLeft(CellStyle.BORDER_THIN);
+//        cs2.setBorderRight(CellStyle.BORDER_THIN);
+//        cs2.setBorderTop(CellStyle.BORDER_THIN);
+//        cs2.setBorderBottom(CellStyle.BORDER_THIN);
+//        cs2.setAlignment(CellStyle.ALIGN_CENTER);
         // 设置列名
         for (int i = 0; i < titleList4Field.size(); i++) {
             Cell cell = row.createCell(i);

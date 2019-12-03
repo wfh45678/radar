@@ -256,9 +256,13 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
             String columns = plugin.getMeta();
             if (columns == null) {
                 String fieldType = plugin.getType();
-                String elaType = convertFieldType2ElasticType(fieldType);
-                String tmp = String.format(base, elaType);
-                preItemJson.put(item.getDestField(), JSON.parseObject(tmp));
+                if(fieldType.equals("JSON")) {
+                    //TODO: json类型需要另外处理
+                } else {
+                    String elaType = convertFieldType2ElasticType(fieldType);
+                    String tmp = String.format(base, elaType);
+                    preItemJson.put(item.getDestField(), JSON.parseObject(tmp));
+                }
             } else {
                 String meta = plugin.getMeta();
                 List<JSONObject> fieldsJson = JSON.parseArray(meta, JSONObject.class);
