@@ -22,21 +22,27 @@ public class MoldVO implements Serializable {
      */
     private String name;
     /**
-     * 输入层参数的key
-     */
-    private String feed;
-    /**
-     * 模型参数定义，需要注意参数顺序，改变顺序会使模型调用出错或者失效
-     */
-    private List<MoldParamVO> params;
-    /**
      * 模型文件路径
      */
     private String path;
     /**
+     * tensorflow框架保存模型时设置的tag，非tensorflow模型此字段为空
+     */
+    private String tag;
+    /**
+     * 参数列表
+     */
+    private List<MoldParamVO> params;
+    /**
+     * 模型输出操作名称，predict_Y = tf.nn.softmax(softmax_before, name='predict')
+     */
+    private String operation;
+    /**
      * 模型更新时间
      */
     private Date updateDate;
+
+    private String type;
 
     public Long getId() {
         return id;
@@ -52,14 +58,6 @@ public class MoldVO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getFeed() {
-        return feed;
-    }
-
-    public void setFeed(String feed) {
-        this.feed = feed;
     }
 
     public List<MoldParamVO> getParams() {
@@ -84,5 +82,29 @@ public class MoldVO implements Serializable {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

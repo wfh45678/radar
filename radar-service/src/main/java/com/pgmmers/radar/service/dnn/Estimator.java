@@ -18,6 +18,16 @@ import java.util.Map;
  * @date 2019/11/28
  */
 public interface Estimator {
+    /**
+     * 线性回归模型
+     */
+    String TYPE_REGRESSION = "REGRESSION";
+    /**
+     * 基于TensorFlow实现的神经网络模型
+     */
+    String TYPE_TENSOR_DNN = "TENSOR_DNN";
 
     double predict(Long modelId, Map<String, Map<String, ?>> data);
+
+    String getType();
 }

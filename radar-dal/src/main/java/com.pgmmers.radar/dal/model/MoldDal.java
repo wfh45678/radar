@@ -4,4 +4,5 @@ import com.pgmmers.radar.vo.model.MoldVO;
 
 public interface MoldDal {
     MoldVO get(Long id);
+    MoldVO getByModelId(Long modelId);
 }

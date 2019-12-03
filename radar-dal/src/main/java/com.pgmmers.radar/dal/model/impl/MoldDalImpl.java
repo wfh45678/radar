@@ -24,21 +24,39 @@ public class MoldDalImpl implements MoldDal {
 
     @Override
     public MoldVO get(Long id) {
-        MoldVO vo = new MoldVO();
         MoldPO moldPO = moldMapper.selectByPrimaryKey(id);
+        return convert(moldPO);
+    }
+
+    @Override
+    public MoldVO getByModelId(Long modelId) {
+        Example example = new Example(MoldPO.class);
+        example.createCriteria().andEqualTo("modelId", modelId);
+        MoldPO moldPO = moldMapper.selectOneByExample(example);
+        return convert(moldPO);
+    }
+
+    private MoldVO convert(MoldPO moldPO) {
+        MoldVO vo = null;
         if (moldPO != null) {
+            vo = new MoldVO();
+            BeanUtils.copyProperties(moldPO, vo);
+            fitParams(vo);
+        }
+        return vo;
+    }
+
+    private void fitParams(MoldVO mold) {
+        if (mold != null) {
             Example example = new Example(MoldParamPO.class);
-            example.createCriteria().andEqualTo("moldId", id);
+            example.createCriteria().andEqualTo("moldId", mold.getId());
             List<MoldParamPO> moldParamList = moldParamMapper.selectByExample(example);
             List<MoldParamVO> list = moldParamList.stream().map(moldParamPO -> {
                 MoldParamVO moldParamVO = new MoldParamVO();
                 BeanUtils.copyProperties(moldParamPO, moldParamVO);
                 return moldParamVO;
             }).collect(Collectors.toList());
-            BeanUtils.copyProperties(moldPO, vo);
-            vo.setParams(list);
-            return vo;
+            mold.setParams(list);
         }
-        return null;
     }
 }

@@ -16,4 +16,9 @@ public class MoldServiceImpl implements MoldService {
     public MoldVO get(Long id) {
         return moldDal.get(id);
     }
+
+    @Override
+    public MoldVO getByModelId(Long modelId) {
+        return moldDal.getByModelId(modelId);
+    }
 }

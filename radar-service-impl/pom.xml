@@ -47,5 +47,10 @@
             <artifactId>spring-web</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.tensorflow</groupId>
+            <artifactId>tensorflow</artifactId>
+        </dependency>
     </dependencies>
 </project>
