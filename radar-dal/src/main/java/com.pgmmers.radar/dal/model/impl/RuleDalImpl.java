@@ -118,7 +118,7 @@ public class RuleDalImpl implements RuleDal {
 	public PageResult<RuleHistoryVO> queryHistory(RuleHistoryQuery query) {
 		PageHelper.startPage(query.getPageNo(), query.getPageSize());
 
-        Example example = new Example(RuleHistoryVO.class);
+        Example example = new Example(RuleHistoryPO.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("ruleId", query.getRuleId());
         List<RuleHistoryPO> list = ruleHistoryMapper.selectByExample(example);
