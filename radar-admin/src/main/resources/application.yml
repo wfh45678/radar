@@ -50,10 +50,10 @@ mongodb:
   url: mongodb://localhost:27017/radar
 mobile:
   info:
-    path: D:/soft/moble_info.csv
+    path: D:/soft/moble_info.csv #手机号码归属地文件
 ip2region:
   db:
-    path: D:/soft/ip2region.db
+    path: D:/soft/ip2region.db #IP地址库文件
 elksearch:
   server: localhost
   url: http://localhost:9200
@@ -64,6 +64,6 @@ logging:
     com.pgmmers.radar.mapper: debug
 sys:
   conf:
-    app: admin
-    entity-duplicate-insert: false
-    mongo-restore-days: 93
+    app: admin # admin 或者 engine， 根据启动的项目名称进行选择
+    entity-duplicate-insert: false # 事件是否允许重复插入
+    mongo-restore-days: 93 # 事件保存时间，默认3个月
