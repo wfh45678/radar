@@ -117,6 +117,7 @@ export default class AddDataListRecord extends React.Component{
 			<span>
 				<Button onClick={this.showModal} type="primary">新增</Button> &nbsp;&nbsp;
 				<Button onClick={this.showModal2} type="primary">导入数据</Button>
+				<span>&nbsp;&nbsp;</span> <a href="/res/dataRecord_temp.xlsx">下载数据模板</a>
 				<Modal title="新增记录" visible={this.state.visible} onOk={this.handleSubmit} onCancel={this.handleCancel}>
                     <Form horizontal form={this.props.form}>
                     	{this.props.metaList.map(function(info,i){
