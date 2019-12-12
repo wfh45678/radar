@@ -113,7 +113,7 @@ https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 ## 致谢
 感恩 XWF 团队，感谢参入的每一位小伙伴，后续征得同意后会一一列出名字。  
 千面怪, 烈日下的从容, DerekDingLu, king, sanying2012, 紫泉夜, 玄梦     
-成书平, 徐帅...   
+成书平, 徐帅，郭锐 ...   
 ## Contact to
 
  如果喜欢本项目，Star支持一下, 让更多人了解本项目，谢谢！   
