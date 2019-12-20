@@ -240,7 +240,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
         // field mapping
         JSONObject fieldJson = new JSONObject();
-        String base = "{\"type\": \"%s\",\"index\": \"not_analyzed\"}";
+        String base = "{\"type\": \"%s\"}";
         for (FieldVO field : fields) {
             String fieldType = field.getFieldType();
             String elaType = convertFieldType2ElasticType(fieldType);
@@ -338,7 +338,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         String tmp;
         switch (type) {
         case STRING:
-            tmp = "string";
+            tmp = "keyword";
             break;
         case INTEGER:
             tmp = "integer";
@@ -350,7 +350,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
             tmp = "double";
             break;
         default:
-            tmp = "string";
+            tmp = "text";
             break;
         }
         return tmp;

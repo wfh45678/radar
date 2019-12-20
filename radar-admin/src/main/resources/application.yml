@@ -54,14 +54,19 @@ mobile:
 ip2region:
   db:
     path: D:/soft/ip2region.db #IP地址库文件
-elksearch:
-  server: localhost
+elasticsearch:
+  ip: localhost
+  port: 9300
+  pool-size: 5
+  cluster:
+    name: elasticsearch
   url: http://localhost:9200
 logging:
   level:
     root: info
     com.pgmmers.radar: info
     com.pgmmers.radar.mapper: debug
+    org.elasticsearch: debug
 sys:
   conf:
     app: admin # admin 或者 engine， 根据启动的项目名称进行选择

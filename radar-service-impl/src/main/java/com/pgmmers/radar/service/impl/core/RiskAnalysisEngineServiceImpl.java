@@ -17,7 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +48,12 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
 
     @Autowired
     private ValidateService validateService;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${elasticsearch.url}")
+    private String elasticsearchUrl;
 
     @Override
     public CommonResult uploadInfo(String modelGuid, String reqId, String jsonInfo) {
@@ -132,7 +140,18 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
      * @param info event info and analyze result.
      */
     private void sendResult(String modelGuid, String reqId, String info) {
-        //TODO send to MQ.
+        send2ES(modelGuid, info);
     }
+
+    private void send2ES(String guid, String json) {
+        String url = elasticsearchUrl + "/" + guid.toLowerCase() + "/" + "radar";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
+
+        ResponseEntity<String> result = restTemplate.postForEntity(url, requestEntity, String.class, new Object[]{});
+        logger.info("es result:{}", result);
+    }
+
 
 }

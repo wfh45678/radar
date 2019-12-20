@@ -31,8 +31,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>transport</artifactId>
         </dependency>
 
 

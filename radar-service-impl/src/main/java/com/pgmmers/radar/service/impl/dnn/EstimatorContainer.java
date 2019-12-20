@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+//@Component
 public class EstimatorContainer {
 
     private Map<String, Estimator> estimatorMap = new HashMap<>();

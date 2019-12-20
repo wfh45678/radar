@@ -110,9 +110,7 @@ export default class ListEvent extends React.Component{
         FetchUtil('/event/search','POST',JSON.stringify(param),
             (data) => {              
                 this.setState({
-                    tData:data.data.page.list.map((info)=>{
-                        info=info.replace(/":(-?\d+)/g, "\":\"$1\"");
-                        return JSON.parse(info)}),
+                    tData:data.data.page.list,
                     pageNo:data.data.page.pageNum
                 });
 				if(data.data.page.rowCount > 9990){

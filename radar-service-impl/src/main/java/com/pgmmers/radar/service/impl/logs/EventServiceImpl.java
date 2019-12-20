@@ -1,5 +1,6 @@
 package com.pgmmers.radar.service.impl.logs;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import com.pgmmers.radar.dal.bean.EventQuery;
@@ -69,7 +70,8 @@ public class EventServiceImpl implements EventService {
                 query.getPageSize());
         SearchHit[] hits = hitsRet.getHits();
         for (SearchHit hit : hits) {
-            String info = hit.sourceRef().toUtf8();
+            String info = hit.getSourceRef().utf8ToString();
+            list.add(JSONObject.parse(info));
             list.add(info);
         }
         return list;
@@ -112,8 +114,9 @@ public class EventServiceImpl implements EventService {
 
             hits = hitsRet.getHits();
             for (SearchHit hit : hits) {
-                String info = hit.sourceRef().toUtf8();
-                list.add(info);
+                //String info = hit.sourceRef().toUtf8();
+                String info = hit.getSourceRef().utf8ToString();
+                list.add(JSONObject.parse(info));
             }
             pageResult = new PageResult<>(term.getPageNo(),
                     term.getPageSize(), (int) hitsRet.getTotalHits(), list);

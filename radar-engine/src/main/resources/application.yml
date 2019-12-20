@@ -51,8 +51,12 @@ mobile:
 ip2region:
   db:
     path: D:/soft/ip2region.db # IP地址库文件
-elksearch:
-  server: localhost
+elasticsearch:
+  ip: localhost
+  port: 9300
+  pool-size: 5
+  cluster:
+    name: elasticsearch
   url: http://localhost:9200
 logging:
   level:

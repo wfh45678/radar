@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+//@Component
 public class TensorDnnEstimator implements Estimator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TensorDnnEstimator.class);
     @Resource
