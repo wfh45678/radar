@@ -46,12 +46,12 @@ export default class AddPreItem extends React.Component{
     		state['sourceLabel']='';
 				state['args']='';
 				state['status']=1;
-				state['configJson']='';
+				state['configJson']= JSON.stringify({});
     	}   	
         state[name] = trim(value);
 
         if(name=='sourceField'){
-        	state['sourceLabel']=this.props.fieldList.filter(x=>x.fieldName==value)[0].label;
+        	state['sourceLabel']= this.props.fieldList.filter(x => x.fieldName==value)[0].label;
         }
 
         this.setState(state);
@@ -83,7 +83,7 @@ export default class AddPreItem extends React.Component{
 			args:'',
 			reqType:'GET',
 			visible:true,
-			configJson:''
+			configJson:JSON.stringify({})
 		})
 	}
 
