@@ -24,7 +24,7 @@ export default class EditPreItem extends React.Component{
 			status:1,
 			args:'',
 			reqType:'GET',
-			configJson:'',
+			configJson:JSON.stringify({}),
 			preItem:null
 		}
 

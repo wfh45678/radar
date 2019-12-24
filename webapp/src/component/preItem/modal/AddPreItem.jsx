@@ -24,7 +24,7 @@ export default class AddPreItem extends React.Component{
 			status:1,
 			args:'',
 			reqType:'GET',
-			configJson:''
+			configJson:JSON.stringify({})
 		}
 	}
 
