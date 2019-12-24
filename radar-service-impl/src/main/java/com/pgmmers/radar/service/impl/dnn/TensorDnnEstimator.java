@@ -1,9 +1,9 @@
 package com.pgmmers.radar.service.impl.dnn;
 
 import com.pgmmers.radar.service.dnn.Estimator;
-import com.pgmmers.radar.service.model.MoldService;
-import com.pgmmers.radar.vo.model.MoldParamVO;
-import com.pgmmers.radar.vo.model.MoldVO;
+import com.pgmmers.radar.service.model.ModelConfService;
+import com.pgmmers.radar.vo.model.ModelConfParamVO;
+import com.pgmmers.radar.vo.model.ModelConfVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +18,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//@Component
+@Component
 public class TensorDnnEstimator implements Estimator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TensorDnnEstimator.class);
     @Resource
-    private MoldService moldService;
+    private ModelConfService modelConfService;
     private Map<Long, SavedModelBundle> modelBundleMap = new HashMap<>();
 
     @Override
-    public double predict(Long modelId, Map<String, Map<String, ?>> data) {
-        MoldVO mold = moldService.getByModelId(modelId);
+    public float predict(Long modelId, Map<String, Map<String, ?>> data) {
+        ModelConfVO mold = modelConfService.getByModelId(modelId);
         if (mold == null) {
             LOGGER.debug("没有找到模型配置，ModelId：{}", modelId);
             return 0;
@@ -39,44 +39,42 @@ public class TensorDnnEstimator implements Estimator {
         }
         Session tfSession = modelBundle.session();
         try {
-            List<MoldParamVO> params = mold.getParams();
+            List<ModelConfParamVO> params = mold.getParams();
             Session.Runner runner = tfSession.runner();
-            for (MoldParamVO moldParam : params) {
+            for (ModelConfParamVO moldParam : params) {
                 runner.feed(moldParam.getFeed(), convert2Tensor(moldParam, data));
             }
             Tensor<?> output = runner.fetch(mold.getOperation()).run().get(0);
-            double[] results = new double[1];
+            float[][] results = new float[1][1];
             output.copyTo(results);
-            return results[0];
+            return results[0][0];
         } catch (Exception e) {
             LOGGER.error("模型调用失败，ModelId:" + modelId, e);
-        } finally {
-            tfSession.close();
         }
         return 0;
     }
 
-    private Tensor<?> convert2Tensor(MoldParamVO moldParam, Map<String, Map<String, ?>> data) {
+    private Tensor<?> convert2Tensor(ModelConfParamVO moldParam, Map<String, Map<String, ?>> data) {
         String expressions = moldParam.getExpressions();
         if (StringUtils.isEmpty(expressions)) {
-            return Tensor.create(new double[1][1]);
+            return Tensor.create(new float[1][1]);
         }
         String[] expList = expressions.split(",");
-        double[][] vec = new double[expList.length][1];
+        float[][] vec = new float[1][expList.length];
         int a = 0;
         for (String s : expList) {
-            double xn = 0;
+            float xn = 0;
             String[] ss = s.split("\\.");//fields.deviceId，abstractions.log_uid_ip_1_day_qty
             Map<String, ?> stringMap = data.get(ss[0]);
             if (stringMap != null) {
-                xn = (Double) stringMap.get(ss[1]);
+                xn = Float.parseFloat(String.valueOf(stringMap.get(ss[1])));
             }
-            vec[a++][0] = xn;
+            vec[0][a++] = xn;
         }
         return Tensor.create(vec);
     }
 
-    private synchronized SavedModelBundle loadAndCacheModel(MoldVO mold) {
+    private synchronized SavedModelBundle loadAndCacheModel(ModelConfVO mold) {
         SavedModelBundle modelBundle = modelBundleMap.get(mold.getId());
         if (modelBundle == null) {
             File file = new File(mold.getPath());
@@ -96,5 +94,24 @@ public class TensorDnnEstimator implements Estimator {
     @Override
     public String getType() {
         return Estimator.TYPE_TENSOR_DNN;
+    }
+
+    public static void main(String[] args) {
+        SavedModelBundle modelBundle = SavedModelBundle.load("d:/radar01", "serve");
+        Session tfSession = modelBundle.session();
+        try {
+            Session.Runner runner = tfSession.runner();
+            float[][] aa = new float[1][6];
+            aa[0] = new float[]{20f, 1f, 1f, 1f, 10f, 2f};
+            runner.feed("input_x", Tensor.create(aa));
+            Tensor<?> output = runner.fetch("output_y/BiasAdd").run().get(0);
+            float[][] results = new float[1][1];
+            output.copyTo(results);
+            System.out.println(results[0][0]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            tfSession.close();
+        }
     }
 }
