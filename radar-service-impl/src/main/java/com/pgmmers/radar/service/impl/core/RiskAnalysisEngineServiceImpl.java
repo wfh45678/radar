@@ -140,6 +140,7 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
      * @param info event info and analyze result.
      */
     private void sendResult(String modelGuid, String reqId, String info) {
+        // 这里可以根据情况进行异步处理。
         send2ES(modelGuid, info);
     }
 

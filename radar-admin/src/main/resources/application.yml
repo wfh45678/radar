@@ -66,7 +66,7 @@ logging:
     root: info
     com.pgmmers.radar: info
     com.pgmmers.radar.mapper: debug
-    org.elasticsearch: debug
+    org.elasticsearch: info
 sys:
   conf:
     app: admin # admin 或者 engine， 根据启动的项目名称进行选择

@@ -103,7 +103,29 @@ public class SearchEngineServiceImpl implements SearchEngineService {
 
     @Override
     public Long count(String index, String type, String query, String filter) {
-        return null;
+        return 0L;
+    }
+
+    @Override
+    public Long count(String index, String type, QueryBuilder query, QueryBuilder filter) {
+        SearchResponse response = null;
+        SearchRequestBuilder builder = client.prepareSearch(index)
+                .setTypes(type).setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                .setSize(0).setExplain(true);
+        if (!StringUtils.isEmpty(query)) {
+            builder.setQuery(query);
+        }
+        if (!StringUtils.isEmpty(filter)) {
+            builder.setPostFilter(filter);
+        }
+        response = builder.execute().actionGet();
+        RestStatus status = response.status();
+        if (status.equals(RestStatus.OK)) {
+            SearchHits hits = response.getHits();
+            return hits.getTotalHits();
+        } else {
+            return null;
+        }
     }
 
     @Override
