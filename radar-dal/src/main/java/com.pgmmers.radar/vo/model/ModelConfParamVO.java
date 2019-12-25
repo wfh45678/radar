@@ -1,11 +1,18 @@
-package com.pgmmers.radar.model;
+package com.pgmmers.radar.vo.model;
 
-import javax.persistence.Table;
+import java.io.Serializable;
 
-@Table(name = "engine_mold_param")
-public class MoldParamPO {
+/**
+ * <p>
+ * 机器学习模型配置，目前只考虑输入层为离散值的情况，不考虑需要词嵌入和融入卷积层，其中
+ * 离散值通过表达式取数从前置流程传递过来.
+ * </p>
+ *
+ * @author guor
+ * @date 2019/11/28
+ */
+public class ModelConfParamVO implements Serializable {
     private Long id;
-    private Long moldId;
     /**
      * 参数的key
      */
@@ -21,14 +28,6 @@ public class MoldParamPO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getMoldId() {
-        return moldId;
-    }
-
-    public void setMoldId(Long moldId) {
-        this.moldId = moldId;
     }
 
     public String getFeed() {

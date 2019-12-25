@@ -5,9 +5,11 @@ import com.pgmmers.radar.enums.AggregateType;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.enums.Operator;
 import com.pgmmers.radar.enums.StatusType;
+import com.pgmmers.radar.service.dnn.Estimator;
 import com.pgmmers.radar.service.engine.AggregateCommand;
 import com.pgmmers.radar.service.engine.AntiFraudEngine;
 import com.pgmmers.radar.service.engine.vo.*;
+import com.pgmmers.radar.service.impl.dnn.EstimatorContainer;
 import com.pgmmers.radar.service.model.*;
 import com.pgmmers.radar.util.DateUtils;
 import com.pgmmers.radar.util.GroovyScriptUtil;
@@ -50,6 +52,9 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
 
     @Autowired
     private RuleService ruleService;
+
+    @Autowired
+    private EstimatorContainer estimatorContainer;
 
     @Override
     public AbstractionResult executeAbstraction(Long modelId, Map<String, Map<String, ?>> data) {
@@ -243,9 +248,13 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     @Override
     public AdaptationResult executeAdaptation(Long modelId, Map<String, Map<String, ?>> data) {
         AdaptationResult result = new AdaptationResult();
-        // TODO Auto-generated method stub
+        Estimator estimator = estimatorContainer.getByModelId(modelId);
+        if(estimator != null) {
+            float score = estimator.predict(modelId, data);
+            result.getAdaptationMap().put("score", score);
+        }
         result.setSuccess(true);
-        data.put("adapations", new HashMap<String, Object>());
+        data.put("adapations", result.getAdaptationMap());
         return result;
     }
 
