@@ -44,6 +44,8 @@ public class ModelConfVO implements Serializable {
 
     private String type;
 
+    private String comment;
+
     public Long getId() {
         return id;
     }
@@ -106,5 +108,13 @@ public class ModelConfVO implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

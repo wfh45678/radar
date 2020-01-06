@@ -1,95 +1,155 @@
 package com.pgmmers.radar.model;
 
-import javax.persistence.Table;
 import java.util.Date;
+import javax.persistence.*;
 
 @Table(name = "engine_model_conf")
 public class ModelConfPO {
-    /**
-     * 自增ID，主键
-     */
-    private Long id;
-    private Long modelId;
-    /**
-     * 模型名称
-     */
+    @Id
+    @GeneratedValue(generator = "JDBC")
+    private Integer id;
+
+    @Column(name = "model_id")
+    private Integer modelId;
+
     private String name;
-    /**
-     * 模型文件路径
-     */
+
     private String path;
+
     private String tag;
+
     private String operation;
-    /**
-     * 模型更新时间
-     */
+
+    @Column(name = "update_date")
     private Date updateDate;
-    /**
-     * 模型类型
-     */
+
     private String type;
 
-    public Long getId() {
+    private String comment;
+
+    /**
+     * @return id
+     */
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    /**
+     * @param id
+     */
+    public void setId(Integer id) {
         this.id = id;
     }
 
+    /**
+     * @return model_id
+     */
+    public Integer getModelId() {
+        return modelId;
+    }
+
+    /**
+     * @param modelId
+     */
+    public void setModelId(Integer modelId) {
+        this.modelId = modelId;
+    }
+
+    /**
+     * @return name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * @return path
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * @param path
+     */
     public void setPath(String path) {
         this.path = path;
     }
 
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Long getModelId() {
-        return modelId;
-    }
-
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
-    }
-
+    /**
+     * @return tag
+     */
     public String getTag() {
         return tag;
     }
 
+    /**
+     * @param tag
+     */
     public void setTag(String tag) {
         this.tag = tag;
     }
 
+    /**
+     * @return operation
+     */
     public String getOperation() {
         return operation;
     }
 
+    /**
+     * @param operation
+     */
     public void setOperation(String operation) {
         this.operation = operation;
+    }
+
+    /**
+     * @return update_date
+     */
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    /**
+     * @param updateDate
+     */
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    /**
+     * @return type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * @return comment
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * @param comment
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

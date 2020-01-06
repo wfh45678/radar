@@ -254,7 +254,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
             result.getAdaptationMap().put("score", score);
         }
         result.setSuccess(true);
-        data.put("adapations", result.getAdaptationMap());
+        data.put("adaptations", result.getAdaptationMap());
         return result;
     }
 
