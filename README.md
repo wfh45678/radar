@@ -67,11 +67,11 @@ The project code called Radar, like the code, monitor the transaction at the bac
 * Swagger:  Rest API 管理
 
 ## 名词解释
-### Model: 模型
-  用户行为事件， 例如：注册，登录，购买，提现。。。
-### 模型三要素 
-  也就是事件行为三要素，风控系统的核心定义：事件流水ID(例如：交易流水号)，实体ID（例如：userId），事件发生时间（例如：交易时间）,
-  简单来说就是谁什么时候做了什么事。（who, when, what）
+### Model: 事件模型
+  用户行为事件， 例如：注册，登录，购买，提现等具体的业务行为。
+### 事件模型三要素 
+  也就是事件行为三要素，风控系统的核心定义：事件流水ID(例如：交易流水号)，实体ID（例如：userId,表示某个人或物），事件发生时间（例如：交易时间）,
+  简单来说就是谁（可以是人，也可以是物）什么时候做了什么事。（who, when, what）
 ### PreItem: 预处理 
  像经纬度，IP，手机号码段等事件属性，可能无法直接计算，通过预处理插件 转换成 其他格式，
  例如:经纬度，ip 可以通过对应插件变成位置和地址，手机号码可以通过插件获取其它系统的用户画像信息等。  
@@ -92,7 +92,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 ---
 
 ## [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)
-使用手册里面有大量的图片，为了方便使用，故推荐码云的wiki 链接,  
+使用手册里面有大量的图片，为了方便国内用户使用，故推荐码云的wiki 链接,  
 https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 
 
@@ -120,4 +120,4 @@ https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
  独乐乐不如众乐乐，微信扫码或手动（nicedream7758）加群一起嗨！   
  ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)
  
- Copyright © WFH
+ Copyright © 2020
