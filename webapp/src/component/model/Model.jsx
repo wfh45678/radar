@@ -71,6 +71,8 @@ export default class Model extends React.Component{
             case 'ruleList':
             case 'historyRecordList':
                 key='activation';break;
+            case 'modelConfig':
+                key='modelConfig';break;
         }
         this.setState({
             current:key
@@ -186,6 +188,11 @@ export default class Model extends React.Component{
 					        <Menu.Item key="abstractionList">
 					          <Icon type="picture" />抽象处理
 					        </Menu.Item>
+					        
+						        <Menu.Item key="modelConfig">
+						           <Icon type="setting" />机器学习配置
+						        </Menu.Item>
+					        
 					        <Menu.Item key="activation">
 					          <Icon type="solution" />策略管理
 					        </Menu.Item>

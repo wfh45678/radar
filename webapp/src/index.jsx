@@ -20,7 +20,9 @@ import RuleGraph from './component/report/RuleGraph';
 import ListRule from './component/report/ListRule';
 import Rule from './component/report/ListRule';
 import DashBoard from './component/report/DashBoard';
-
+import ConfigCenter from './component/config/ConfigCenter';
+import LearningConfig from './component/config/LearningConfig';
+import ModelConfig from './component/modelconfig/ModelConfig';
 
 //import Test from './component/test/Test'; 
 
@@ -96,6 +98,7 @@ class AppRoutes extends React.Component{
                 <Route path="/ruleList/:id/:activationId" component={RuleList}/>
                 <Route path="/historyRecordList/:id/:activationId/:ruleId" component={HistoryRecordList}/>
                 <Route path="/abstractionList/:id" component={AbstractionList}/>
+                <Route path="/modelConfig/:id" component={ModelConfig}/>
 
                 {/*<Route path="/test/:id" component={Test}/>*/}
             </Route>
@@ -108,7 +111,13 @@ class AppRoutes extends React.Component{
                 <Route path="/ruleid/:modelId/:ruleId/:activationName" component={ListEvent}/>
                 <Route path="/dashboard" component={DashBoard}/>
 
-            </Route>            
+            </Route> 
+            <Route path="/config" component={ConfigCenter}>
+                
+            </Route>        
+            <Route path="/learningConfig" component={LearningConfig}> 
+             
+            </Route>   
           </Route>
           <Route path="*" component={Index}>
             <IndexRoute component={NotFound} />
