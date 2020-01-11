@@ -21,4 +21,9 @@ public class ModelConfServiceImpl implements ModelConfService {
     public ModelConfVO getByModelId(Long modelId) {
         return modelConfDal.getByModelId(modelId);
     }
+
+    @Override
+    public ModelConfVO save(ModelConfVO modelConf) {
+        return modelConfDal.save(modelConf);
+    }
 }

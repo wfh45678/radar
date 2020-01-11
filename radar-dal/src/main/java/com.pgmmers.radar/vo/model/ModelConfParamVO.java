@@ -45,4 +45,13 @@ public class ModelConfParamVO implements Serializable {
     public void setExpressions(String expressions) {
         this.expressions = expressions;
     }
+
+    @Override
+    public String toString() {
+        return "ModelConfParamVO{" +
+                "id=" + id +
+                ", feed='" + feed + '\'' +
+                ", expressions='" + expressions + '\'' +
+                '}';
+    }
 }

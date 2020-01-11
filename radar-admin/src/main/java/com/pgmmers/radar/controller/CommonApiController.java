@@ -1,21 +1,28 @@
 package com.pgmmers.radar.controller;
 
 
+import com.alibaba.excel.util.IoUtils;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.enums.PluginType;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.util.RandomValidateCode;
+import com.pgmmers.radar.util.ZipUtils;
 import com.pgmmers.radar.vo.common.PluginVO;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,6 +35,8 @@ public class CommonApiController {
 
     public static Logger logger = LoggerFactory.getLogger(CommonApiController.class);
 
+    @Value("${sys.conf.workdir}")
+    public String workDir;
     
     @GetMapping("/plugins")
     public CommonResult plugins() {
@@ -44,10 +53,10 @@ public class CommonApiController {
     @GetMapping("/fieldtypes")
     public CommonResult fieldTypes() {
         CommonResult result = new CommonResult();
-        List<HashMap<String,Object>> fields = new ArrayList<HashMap<String,Object>>();
+        List<HashMap<String,Object>> fields = new ArrayList<>();
         for (FieldType ft : FieldType.values()) {
             //fields.add(ft.name());
-        	HashMap<String,Object> map=new LinkedHashMap<String,Object>();
+        	HashMap<String,Object> map=new LinkedHashMap<>();
         	map.put("name", ft.name());
         	map.put("desc", ft.getDesc());
         	fields.add(map);
@@ -71,6 +80,26 @@ public class CommonApiController {
             logger.error("get captcha error", e);
         }
     }
-    
+
+    @PostMapping(value = "/upload")
+    public CommonResult upload(@ApiParam(value = "file") @RequestPart("file") MultipartFile file, @RequestParam(defaultValue = "") String key) {
+        CommonResult result = new CommonResult();
+        String fileName = file.getOriginalFilename();
+        try {
+            String path = workDir + "/" + fileName;
+            String decomposePath = path.substring(0, path.lastIndexOf("."));
+            FileOutputStream fos = new FileOutputStream(new File(workDir + "/" + fileName));
+            IoUtils.copy(file.getInputStream(), fos);
+            fos.flush();
+            fos.close();
+            if (!StringUtils.isEmpty(key) && key.equals("machine")) {
+                ZipUtils.unZipIt(path, decomposePath);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+        }
+        return result;
+    }
 
 }

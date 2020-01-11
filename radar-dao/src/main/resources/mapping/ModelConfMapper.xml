@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pgmmers.radar.mapper.ModelConfMapper">
+  <resultMap id="BaseResultMap" type="com.pgmmers.radar.model.ModelConfPO">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="model_id" jdbcType="BIGINT" property="modelId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="tag" jdbcType="VARCHAR" property="tag" />
+    <result column="operation" jdbcType="VARCHAR" property="operation" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="comment" jdbcType="VARCHAR" property="comment" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+</mapper>

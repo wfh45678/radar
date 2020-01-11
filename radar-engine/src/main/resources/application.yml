@@ -68,6 +68,6 @@ sys:
     app: engine # admin 或者 engine， 根据启动的项目名称进行选择
     entity-duplicate-insert: false # 事件是否允许重复插入
     mongo-restore-days: 93 # 事件保存时间，默认3个月
-    workdir: d:\\radar
+    workdir: d:\\radar #   工作目录
 server:
   port: 9090

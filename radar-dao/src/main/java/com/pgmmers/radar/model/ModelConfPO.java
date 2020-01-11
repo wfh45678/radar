@@ -7,10 +7,10 @@ import javax.persistence.*;
 public class ModelConfPO {
     @Id
     @GeneratedValue(generator = "JDBC")
-    private Integer id;
+    private Long id;
 
     @Column(name = "model_id")
-    private Integer modelId;
+    private Long modelId;
 
     private String name;
 
@@ -27,31 +27,34 @@ public class ModelConfPO {
 
     private String comment;
 
+    @Column(name = "create_time")
+    private Date createTime;
+
     /**
      * @return id
      */
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
     /**
      * @param id
      */
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     /**
      * @return model_id
      */
-    public Integer getModelId() {
+    public Long getModelId() {
         return modelId;
     }
 
     /**
      * @param modelId
      */
-    public void setModelId(Integer modelId) {
+    public void setModelId(Long modelId) {
         this.modelId = modelId;
     }
 
@@ -151,5 +154,19 @@ public class ModelConfPO {
      */
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    /**
+     * @return create_time
+     */
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * @param createTime
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

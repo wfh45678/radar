@@ -17,6 +17,8 @@ public class ModelConfVO implements Serializable {
      * 自增ID，主键
      */
     private Long id;
+
+    private Long modelId;
     /**
      * 模型名称
      */
@@ -45,6 +47,8 @@ public class ModelConfVO implements Serializable {
     private String type;
 
     private String comment;
+
+    private ModelConfParamVO  confParam;
 
     public Long getId() {
         return id;
@@ -116,5 +120,37 @@ public class ModelConfVO implements Serializable {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Long getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(Long modelId) {
+        this.modelId = modelId;
+    }
+
+    public ModelConfParamVO getConfParam() {
+        return confParam;
+    }
+
+    public void setConfParam(ModelConfParamVO confParam) {
+        this.confParam = confParam;
+    }
+
+    @Override
+    public String toString() {
+        return "ModelConfVO{" +
+                "id=" + id +
+                ", modelId=" + modelId +
+                ", name='" + name + '\'' +
+                ", path='" + path + '\'' +
+                ", tag='" + tag + '\'' +
+                ", operation='" + operation + '\'' +
+                ", updateDate=" + updateDate +
+                ", type='" + type + '\'' +
+                ", comment='" + comment + '\'' +
+                ", confParam=" + confParam.toString() +
+                '}';
     }
 }

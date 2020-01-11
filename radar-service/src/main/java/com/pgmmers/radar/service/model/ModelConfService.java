@@ -6,4 +6,7 @@ public interface ModelConfService {
     ModelConfVO get(Long id);
 
     ModelConfVO getByModelId(Long modelId);
+
+    ModelConfVO save(ModelConfVO modelConf);
+
 }

@@ -90,5 +90,8 @@
         <table tableName="ENGINE_MODEL_CONF" domainObjectName="ModelConf" selectByExampleQueryId="false">
             <generatedKey column="ID"   sqlStatement="JDBC" />
         </table>
+        <table tableName="ENGINE_MODEL_CONF_PARAM" domainObjectName="ModelConfParam" selectByExampleQueryId="false">
+            <generatedKey column="ID"   sqlStatement="JDBC" />
+        </table>
     </context>
 </generatorConfiguration>

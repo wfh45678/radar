@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,49 @@ public class ModelConfDalImpl implements ModelConfDal {
         example.createCriteria().andEqualTo("modelId", modelId);
         ModelConfPO modelConfPO = modelConfMapper.selectOneByExample(example);
         return convert(modelConfPO);
+    }
+
+    @Override
+    public ModelConfVO save(ModelConfVO confVO) {
+        ModelConfPO conf = new ModelConfPO();
+        BeanUtils.copyProperties(confVO, conf);
+        if (conf.getId() == null) {
+            conf.setCreateTime(new Date());
+            conf.setUpdateDate(new Date());
+            modelConfMapper.insert(conf);
+            confVO.setId(conf.getId());
+            ModelConfParamPO paramPO = new ModelConfParamPO();
+            paramPO.setFeed(confVO.getConfParam().getFeed());
+            paramPO.setExpressions(confVO.getConfParam().getExpressions());
+            paramPO.setMoldId(conf.getId());
+            modelConfParamMapper.insert(paramPO);
+            confVO.getConfParam().setId(paramPO.getId());
+        } else {
+            modelConfMapper.updateByPrimaryKeySelective(conf);
+        }
+
+        return confVO;
+    }
+
+    @Override
+    public ModelConfParamVO getParamById(Long id) {
+        ModelConfParamVO modelConfParamVO = new ModelConfParamVO();
+        ModelConfParamPO po =  modelConfParamMapper.selectByPrimaryKey(id);
+        BeanUtils.copyProperties(po,modelConfParamVO);
+        return modelConfParamVO;
+    }
+
+    @Override
+    public ModelConfParamVO saveParam(ModelConfParamVO paramVO) {
+        ModelConfParamPO po = new ModelConfParamPO();
+        BeanUtils.copyProperties(paramVO, po);
+        if (po.getId() == null) {
+            modelConfParamMapper.insert(po);
+            paramVO.setId(po.getId());
+        } else {
+            modelConfParamMapper.updateByPrimaryKeySelective(po);
+        }
+        return paramVO;
     }
 
     private ModelConfVO convert(ModelConfPO modelConfPO) {
