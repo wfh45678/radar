@@ -34,28 +34,38 @@ public class ModelConfigApiController {
     @PutMapping
     public CommonResult save(@RequestBody ModelConfVO modelConf) {
         CommonResult result = new CommonResult();
-        if (!validate(modelConf)) {
-            result.setMsg("信息输入不完整");
-            return result;
-        }
+
         if (modelConf.getId() == -1L) {
            modelConf.setId(null);
+        }
+        if (!validate(modelConf)) {
+            result.setMsg("请按照提示输入必要字段！");
+            return result;
         }
         modelConfService.save(modelConf);
         result.setSuccess(true);
         return result;
     }
 
-    boolean validate(ModelConfVO modelConf) {
+    /**
+     * 检验上传字段。
+     * @param modelConf
+     * @return
+     * @author wangfeihu
+     */
+    private boolean validate(ModelConfVO modelConf) {
         boolean result = true;
         if (StringUtils.isEmpty(modelConf.getName())
                 || StringUtils.isEmpty(modelConf.getOperation())
                 || StringUtils.isEmpty(modelConf.getTag())
-                || StringUtils.isEmpty(modelConf.getPath())
-                || StringUtils.isEmpty(modelConf.getConfParam().getFeed())
-                || StringUtils.isEmpty(modelConf.getConfParam().getExpressions())
-        ) {
+                || StringUtils.isEmpty(modelConf.getPath())) {
             result = false;
+        }
+        if (modelConf.getId() == null) {
+            if ( StringUtils.isEmpty(modelConf.getConfParam().getFeed())
+                    || StringUtils.isEmpty(modelConf.getConfParam().getExpressions())) {
+                result = false;
+            }
         }
         return result;
     }
