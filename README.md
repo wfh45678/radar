@@ -1,6 +1,6 @@
 # 风控引擎（Radar）
 ## 项目介绍
- 一款基于java语言，使用Springboot + Mongodb + Groovy 等框架搭建的轻量级实时风控引擎，适用于反欺诈应用场景，极简的配置，真正做到了开箱即用。     
+ 一款基于java语言，使用Springboot + Mongodb + Groovy + Es等框架搭建的轻量级实时风控引擎，适用于反欺诈应用场景，极简的配置，真正做到了开箱即用。     
  通过学习本项目能快速了解**风险的定义**，进而**量化风险** ，最后达到**集中管理风险**的目的。   
 A real-time risk analysis engine,which can update risk rule in real-time and make it effective immediately.  
 It applies to the anti-fraud application perfectly. 
@@ -43,7 +43,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 
 前后端分离架构
 
-后端技术框架： SpringBoot + Mybatis + tkMapper + Mysql +  MongoDB + Redis + Groovy + Swagger
+后端技术框架： SpringBoot + Mybatis + tkMapper + Mysql +  MongoDB + Redis + Groovy + ES + Swagger
 
 前端技术框架： React(SPA) 
 
@@ -59,6 +59,8 @@ The project code called Radar, like the code, monitor the transaction at the bac
 
 * MongoDB： 用于存放事件JSON， 提供基本统计学计算（例如：max, min, sum, avg,），
 复杂的统计学概念（sd,variance, etc...）在内存中计算。
+
+* ES： 提供数据查询和规则命中报表服务。
 
 * Redis： 提供缓存支持，Engine 利用发布订阅特性监听管理端相关配置的更新
 
@@ -91,9 +93,9 @@ The project code called Radar, like the code, monitor the transaction at the bac
 
 ---
 
-## [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)
+## [使用手册](https://gitee.com/freshday/radar/wikis/manual)
 使用手册里面有大量的图片，为了方便国内用户使用，故推荐码云的wiki 链接,  
-https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
+https://gitee.com/freshday/radar/wikis/manual
 
 
 ## 演示入口
@@ -105,7 +107,7 @@ https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 建议大家自行注册用户，避免使用同样的测试账号受干扰.   
 
 ## 未完待续
-[Release Note:](https://gitee.com/freshday/radar/wikis/release%20note?sort_id=1723765) https://gitee.com/freshday/radar/wikis/release%20note?sort_id=1723765  
+[Release Note:](https://gitee.com/freshday/radar/wikis/release%20note?sort_id=1723765) https://gitee.com/freshday/radar/wikis/release%20note
 ### 重大特性
 * 支持机器学习
 * 数据分析平台
@@ -118,6 +120,6 @@ https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446
 
  如果喜欢本项目，Star支持一下, 让更多人了解本项目，谢谢！   
  独乐乐不如众乐乐，微信扫码或手动（nicedream7758）加群一起嗨！   
- ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)
- 
- Copyright © 2020
+ ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)   
+ 提示：进群需要捐赠1元   
+ Copyright © WangFeiHu 2020
