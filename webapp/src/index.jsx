@@ -21,7 +21,6 @@ import ListRule from './component/report/ListRule';
 import Rule from './component/report/ListRule';
 import DashBoard from './component/report/DashBoard';
 import ConfigCenter from './component/config/ConfigCenter';
-import LearningConfig from './component/config/LearningConfig';
 import ModelConfig from './component/modelconfig/ModelConfig';
 
 //import Test from './component/test/Test'; 
@@ -114,10 +113,7 @@ class AppRoutes extends React.Component{
             </Route> 
             <Route path="/config" component={ConfigCenter}>
                 
-            </Route>        
-            <Route path="/learningConfig" component={LearningConfig}> 
-             
-            </Route>   
+            </Route> 
           </Route>
           <Route path="*" component={Index}>
             <IndexRoute component={NotFound} />

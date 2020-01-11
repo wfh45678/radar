@@ -31,7 +31,7 @@ export default class ConfigCenter extends React.Component{
 						    <Card title="待开发" extra={<a >More</a>} style={{ width: 300 }}>
 						      	<p>待开发。。。</p>
 						      	<p>&nbsp;</p>
-						     	
+						     	<Link >进入配置</Link>
 						    </Card>
 						</Col>
 						<Col span={6} />
