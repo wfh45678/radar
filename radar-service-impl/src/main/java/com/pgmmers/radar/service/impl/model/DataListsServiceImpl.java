@@ -306,6 +306,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     public CommonResult batchImportDataRecord(List<DataListRecordVO> list, Long dataListId) {
         CommonResult result = new CommonResult();
         for (DataListRecordVO dataListRecord : list) {
+            dataListRecord.setDataListId(dataListId);
             int count = dataListDal.saveRecord(dataListRecord);
             if (count > 0) {
                 // 通知更新

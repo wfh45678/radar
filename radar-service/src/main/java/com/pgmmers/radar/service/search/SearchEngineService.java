@@ -21,7 +21,9 @@ public interface SearchEngineService {
      SearchHits search(String index, String type, QueryBuilder query, QueryBuilder filter, Integer offset, Integer limit);
             
      Long count(String index, String type, String query, String filter);
-    
+
+     Long count(String index, String type, QueryBuilder query, QueryBuilder filter);
+
      double avg(String index, String type, String field, String filter);
     
      double max(String index, String type, String field, String filter);

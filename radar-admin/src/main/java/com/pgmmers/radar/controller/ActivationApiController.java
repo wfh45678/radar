@@ -99,6 +99,22 @@ public class ActivationApiController {
         return result;
     }
 
+    @GetMapping("/absColumns/{modelId}")
+    public CommonResult getAbstractionColumns(@PathVariable Long modelId) {
+        CommonResult result = new CommonResult();
+        result.setSuccess(true);
+        List<AbstractionVO> listAbstract = abstractionService.listAbstraction(modelId);
+        DataColumnInfo ds = new DataColumnInfo(DataType.ABSTRACTIONS.getDesc(), DataType.ABSTRACTIONS.getName());
+        if (listAbstract != null) {
+            for (AbstractionVO abs : listAbstract) {
+                ds.addChildren(abs.getLabel(), abs.getName(), FieldType.DOUBLE.name());
+            }
+        }
+
+        result.getData().put("columns", ds.getChildren());
+        return result;
+    }
+
     @GetMapping("/rulecolumns/{modelId}")
 	public CommonResult getRuleColumns(@PathVariable Long modelId) {
 		List<DataColumnInfo> list = new ArrayList<>();

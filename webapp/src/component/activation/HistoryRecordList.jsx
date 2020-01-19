@@ -49,7 +49,7 @@ export default class HistoryRecordList extends Component{
         param.ruleId=this.props.params.ruleId;
 
         //此处为单条策略历史记录接口的获取，参数中应该有本条策略的id，否则无法区分
-        FetchUtil('/ruleHistory','POST',JSON.stringify(param),
+        FetchUtil('/rule/ruleHistory','POST',JSON.stringify(param),
             (data) => {
                 this.setState({loading:false});
                 this.setState({

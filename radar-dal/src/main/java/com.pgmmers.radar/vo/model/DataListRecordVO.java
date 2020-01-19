@@ -96,5 +96,14 @@ public class DataListRecordVO implements Serializable{
         this.opt = opt;
     }
 
-    
+    @Override
+    public String toString() {
+        return "DataListRecordVO{" +
+                "id=" + id +
+                ", dataListId=" + dataListId +
+                ", dataRecord='" + dataRecord + '\'' +
+                ", modelId=" + modelId +
+                ", opt='" + opt + '\'' +
+                '}';
+    }
 }

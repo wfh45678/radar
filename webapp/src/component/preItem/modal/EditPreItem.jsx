@@ -24,7 +24,7 @@ export default class EditPreItem extends React.Component{
 			status:1,
 			args:'',
 			reqType:'GET',
-			configJson:'',
+			configJson:JSON.stringify({}),
 			preItem:null
 		}
 
@@ -64,7 +64,7 @@ export default class EditPreItem extends React.Component{
     		state['sourceField']='';
     		state['sourceLabel']='';
 				state['args']='';
-				state['configJson']='';
+				state['configJson']=JSON.stringify({});
     	}   	
         state[name] = trim(value);
 

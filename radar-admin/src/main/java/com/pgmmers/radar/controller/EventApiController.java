@@ -75,7 +75,7 @@ public class EventApiController {
     public CommonResult search(@RequestBody TermQuery term, HttpSession session) {
         CommonResult result = new CommonResult();
         PageResult<Object> page = new PageResult<>(1, 10, 0, new ArrayList<>());
-        //page = eventService.query(term);
+        page = eventService.query(term);
         if (page != null) {
             result.getData().put("page", page);
             result.setSuccess(true);

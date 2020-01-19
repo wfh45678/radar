@@ -33,6 +33,10 @@ export default class Index extends React.Component{
           <div className="ant-layout-logo">
             <Tooltip title="统计报表"><Link to="/report"><Icon type="line-chart" /></Link></Tooltip>
           </div>
+          <div className="ant-layout-logo">
+            <Tooltip title="配置中心"><Link to="/config"><Icon type="setting" /></Link></Tooltip>
+          </div>
+
           <div className="ant-layout-logo" style={{float:"right",marginRight:0}}>
             <Tooltip title="退出登录"><a onClick={this.handleLogout}><Icon type="logout" /></a></Tooltip>
           </div>

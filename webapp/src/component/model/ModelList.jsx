@@ -187,7 +187,7 @@ export default class ModelList extends React.Component{
                 <div className="ant-layout-container">
                     <div className="ant-layout-content">
                         <div id="header">
-                            <Form inline>
+                            <Form layout="inline">
                                         <FormItem label="模型名：">
                                             <Input value={this.state.modelName} name="modelName" id="blue" onChange={this.handleChange}/>
                                         </FormItem>

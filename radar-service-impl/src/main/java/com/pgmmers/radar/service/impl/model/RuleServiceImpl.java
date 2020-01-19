@@ -14,8 +14,10 @@ import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.RuleService;
 import com.pgmmers.radar.service.search.SearchEngineService;
+import com.pgmmers.radar.util.GroovyScriptUtil;
 import com.pgmmers.radar.vo.model.*;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,7 @@ public class RuleServiceImpl implements RuleService, SubscribeHandle {
     @Autowired
     private SearchEngineService searchService;
 
-    public Map<Long, List<RuleVO>> contextMap = new HashMap<Long, List<RuleVO>>();
+    public Map<Long, List<RuleVO>> contextMap = new HashMap<>();
 
     public List<RuleVO> listRule(Long modelId, Long activationId, Integer status) {
         return modelDal.listRules(modelId, activationId, status);
@@ -89,6 +91,13 @@ public class RuleServiceImpl implements RuleService, SubscribeHandle {
     @Override
     public CommonResult save(RuleVO rule,String merchantCode) {
         CommonResult result = new CommonResult();
+        if (rule.getId() != null) {
+            RuleVO oldRule = ruleDal.get(rule.getId());
+            // 如果规则有更新，以前的编译好的groovy 对象用不到了，应该删除。
+            if (!oldRule.getScripts().equals(rule.getScripts())) {
+                GroovyScriptUtil.removeInactiveScript(oldRule.getScripts());
+            }
+        }
         int count = ruleDal.save(rule);
         if (count > 0) {
         	if(StringUtils.isEmpty(rule.getName())){
@@ -139,9 +148,9 @@ public class RuleServiceImpl implements RuleService, SubscribeHandle {
     @Override
     public CommonResult getHitSorts(Long modelId) {
         CommonResult result = new CommonResult();
-        Set<RuleHitsVO> treeSet = new TreeSet<RuleHitsVO>();
+        Set<RuleHitsVO> treeSet = new TreeSet<>();
         ModelVO model = modelDal.getModelById(modelId);
-        String elaQuery = "{\"query\":{\"term\":{\"hitsDetail.${activationName}.rule_${ruleId}.key\":\"${ruleId}\"}}}";
+        String keyTempl = "hitsDetail.${activationName}.rule_${ruleId}.key";
         ActivationQuery actQuery = new ActivationQuery();
         actQuery.setModelId(modelId);
         PageResult<ActivationVO> actResult = activationDal.query(actQuery);
@@ -153,20 +162,17 @@ public class RuleServiceImpl implements RuleService, SubscribeHandle {
             PageResult<RuleVO> page = ruleDal.query(query);
             List<RuleVO> list = page.getList();
             for (RuleVO rule : list) {
-                String tmpQuery = elaQuery.replace("${activationName}",
-                        act.getActivationName());
-                tmpQuery = tmpQuery.replace("${ruleId}", rule.getId() + "");
+                String keyStr = keyTempl.replace("${activationName}", act.getActivationName());
+
+                keyStr = keyStr.replace("${ruleId}", rule.getId() + "");
                 long qty = 0;
                 try {
                     qty = searchService.count(model.getGuid().toLowerCase(),
-                            "radar", tmpQuery, null);
+                            "radar", QueryBuilders.termQuery(keyStr,rule.getId() + ""), null);
                 } catch (Exception e) {
                     logger.error("search error", e);
-                    qty = 0;
                 }
-                if (qty <= 0) {
-                    continue;
-                } else {
+                if (qty > 0){
                     RuleHitsVO hit = new RuleHitsVO();
                     hit.setId(rule.getId());
                     hit.setActivationName(act.getActivationName());

@@ -16,26 +16,26 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
-    port: 8080,
+    port: 3000,
     disableHostCheck: true,
-    host: '0.0.0.0',
+    host: 'localhost',
     compress: true,
     inline: true,
     hot: true,
     overlay: true,
     disableHostCheck: true, //  新增该配置项
     proxy: [{
-        context: ["/services/v1/"],
-        target: "http://10.50.3.218:8080",
-        changeOrigin: true,
-        secure: false,
-        onProxyRes: function (proxyRes, req, res) { //
-            // console.log(proxyRes)
-            let proxyHost = proxyRes.req.getHeader('host');
-            let proxyPath = proxyRes.req.path;
-            //console.log(host, path)
-            console.log(`Proxy ${req.get('host')}${req.path} -> ${proxyHost}${proxyPath}`)
-        }
+      context: ["/services/v1/"],
+      target: "http://localhost:8080",
+      changeOrigin: true,
+      secure: false,
+      onProxyRes: function(proxyRes, req, res) { //
+        // console.log(proxyRes)
+        let proxyHost = proxyRes.req.getHeader('host');
+        let proxyPath = proxyRes.req.path;
+        //console.log(host, path)
+        console.log(`Proxy ${req.get('host')}${req.path} -> ${proxyHost}${proxyPath}`)
+      }
     }]
   },
   plugins: [
