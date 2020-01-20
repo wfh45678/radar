@@ -108,9 +108,8 @@ https://gitee.com/freshday/radar/wikis/manual
 
 ## 未完待续
 [Release Note:](https://gitee.com/freshday/radar/wikis/release%20note?sort_id=1723765) https://gitee.com/freshday/radar/wikis/release%20note
-### 重大特性
-* 支持机器学习
-* 数据分析平台
+### 重大特性预告
+* 新建模型支持一键自动提取特征 自动生成规则 自动设置阈值
 
 ## 致谢
 感恩 XWF 团队，感谢参入的每一位小伙伴，后续征得同意后会一一列出名字。  
