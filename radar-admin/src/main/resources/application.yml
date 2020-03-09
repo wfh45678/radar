@@ -1,8 +1,7 @@
 spring:
+  profiles:
+    active: @profileActive@
   datasource:
-    url: jdbc:mysql://localhost:3306/radar?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
-    username: root
-    password: 456132
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -29,10 +28,6 @@ spring:
     cache: false
     prefix: classpath:/templates
   redis:
-    host: 127.0.0.1
-    #password:
-    timeout: 2000ms
-    database: 0  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
     lettuce:
       pool:
         max-active: 30 #最大连接数（使用负值表示没有限制） 默认 8
@@ -46,32 +41,13 @@ mapper:
   mappers:
     - tk.mybatis.mapper.common.Mapper
   not-empty: false
-mongodb:
-  url: mongodb://localhost:27017/radar
-mobile:
-  info:
-    path: D:/radar/moble_info.csv #手机号码归属地文件
-ip2region:
-  db:
-    path: D:/radar/ip2region.db #IP地址库文件
-elasticsearch:
-  ip: localhost
-  port: 9300
-  pool-size: 5
-  cluster:
-    name: elasticsearch
-  url: http://localhost:9200
+
 logging:
   level:
     root: info
     com.pgmmers.radar: info
     com.pgmmers.radar.mapper: debug
     org.elasticsearch: info
-sys:
-  conf:
-    app: admin # admin 或者 engine， 根据启动的项目名称进行选择
-    entity-duplicate-insert: false # 事件是否允许重复插入
-    mongo-restore-days: 93 # 事件保存时间，默认3个月
-    workdir: d:\\radar #   工作目录
+
 server:
-  port: 8080
+  port: 18080

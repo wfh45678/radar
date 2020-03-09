@@ -23,12 +23,12 @@ public class EntityServiceImpl implements EntityService, SubscribeHandle {
 
     private Logger logger = LoggerFactory.getLogger(EntityServiceImpl.class);
 
-    @Value("${mongodb.url}")
+    @Value("${spring.data.mongodb.uri}")
     private String url;
 
     @Autowired
     private ModelDal modelDal;
-    
+
     @Autowired
     private CacheService cacheService;
 
