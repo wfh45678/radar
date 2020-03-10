@@ -33,6 +33,7 @@
         <springboot.version>2.1.7.RELEASE</springboot.version>
         <tomcat.version>8.5.37</tomcat.version>
         <tensorflow.version>1.12.0</tensorflow.version>
+        <es.version>7.6.1</es.version>
     </properties>
 
 
@@ -128,32 +129,21 @@
             </dependency>
 
 
+
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
-                <artifactId>transport</artifactId>
-                <version>6.8.5</version>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>${es.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
-                <version>6.8.5</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.hdrhistogram</groupId>
-                        <artifactId>HdrHistogram</artifactId>
-                    </exclusion>
-                </exclusions>
+                <version>${es.version}</version>
             </dependency>
-
             <dependency>
-                <groupId>org.elasticsearch.plugin</groupId>
-                <artifactId>transport-netty4-client</artifactId>
-                <version>6.8.5</version>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-client</artifactId>
+                <version>${es.version}</version>
             </dependency>
 
             <dependency>
