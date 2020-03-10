@@ -22,7 +22,7 @@ import java.util.List;
 @Service
 public class AggregateCommandImpl implements AggregateCommand {
 
-    @Value("${mongodb.url}")
+    @Value("${spring.data.mongodb.uri}")
     private String url;
 
     @Override

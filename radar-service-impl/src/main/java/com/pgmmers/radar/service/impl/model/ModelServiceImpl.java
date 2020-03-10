@@ -2,9 +2,6 @@ package com.pgmmers.radar.service.impl.model;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.model.IndexOptions;
 import com.pgmmers.radar.dal.bean.ModelQuery;
@@ -22,6 +19,11 @@ import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.vo.model.FieldVO;
 import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -30,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,8 +40,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+
 @Service
 public class ModelServiceImpl implements ModelService, SubscribeHandle {
+
     public static Logger logger = LoggerFactory
             .getLogger(ModelServiceImpl.class);
 
@@ -48,7 +53,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
     @Autowired
     private CacheService cacheService;
 
-    @Value("${mongodb.url}")
+    @Value("${spring.data.mongodb.uri}")
     private String url;
 
     @Value("${sys.conf.mongo-restore-days}")
@@ -137,11 +142,11 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         }
         int count = modelDal.save(model);
         if (count > 0) {
-        	if(StringUtils.isEmpty(model.getModelName())){
-        		model.setModelName("model" + model.getId());
-        		modelDal.save(model);
-        	}
-        	
+            if (StringUtils.isEmpty(model.getModelName())) {
+                model.setModelName("model" + model.getId());
+                modelDal.save(model);
+            }
+
             result.getData().put("id", model.getId());
             result.setSuccess(true);
             // 通知更新
@@ -176,15 +181,10 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         List<FieldVO> fields = modelDal.listField(id);
         List<PreItemVO> items = modelDal.listPreItem(id, null);
         String tempUrl = url + ".entity_" + id;
-        MongoClientURI uri = new MongoClientURI(tempUrl);
-        MongoClient client = MongodbUtil.getClient(tempUrl);
-        client.getDatabase(uri.getDatabase())
-                .getCollection(uri.getCollection()).drop();
-        client.getDatabase(uri.getDatabase()).createCollection(
-                uri.getCollection());
+        MongodbUtil.mongoTemplate.getCollection(tempUrl).drop();
+        MongodbUtil.mongoTemplate.createCollection(tempUrl);
         List<IndexModel> indexes = new ArrayList<>();
 
-        
         if (fields == null) {
             result.setMsg("请先为模型配置字段");
             return result;
@@ -198,19 +198,17 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
                 indexes.add(index);
             }
         }
-        
+
         Document ttlKeys = new Document();
         ttlKeys.put("radar_ref_datetime", 1);
         IndexOptions options = new IndexOptions();
-        options.expireAfter((long)eventExpireDays, TimeUnit.DAYS);
+        options.expireAfter((long) eventExpireDays, TimeUnit.DAYS);
         IndexModel ttlIndex = new IndexModel(ttlKeys, options);
 
         indexes.add(ttlIndex);
 
-        client.getDatabase(uri.getDatabase()).getCollection(uri.getCollection()).createIndexes(indexes);
-
-
-
+        MongodbUtil.getCollection(tempUrl).createIndexes(indexes);
+//
 
         // 重建es index
         JSONObject total = buildEsMappingJson(fields, items);
@@ -230,9 +228,6 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
     /**
      * recreate elastic mapping
-     * @param fields
-     * @param items
-     * @return
      */
     private JSONObject buildEsMappingJson(List<FieldVO> fields, List<PreItemVO> items) {
         //
@@ -256,7 +251,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
             String columns = plugin.getMeta();
             if (columns == null) {
                 String fieldType = plugin.getType();
-                if(fieldType.equals("JSON")) {
+                if (fieldType.equals("JSON")) {
                     //TODO: json类型需要另外处理
                 } else {
                     String elaType = convertFieldType2ElasticType(fieldType);
@@ -295,14 +290,14 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
     }
 
     @Override
-	public CommonResult copy(Long id,String merchantCode,String name,String label) {
-		ModelVO model = modelDal.getModelById(id);
-		model.setModelName(name);
-		model.setLabel(label);
-		model.setCode(merchantCode);
-		
-		CommonResult result = new CommonResult();
-		//检查是否重复
+    public CommonResult copy(Long id, String merchantCode, String name, String label) {
+        ModelVO model = modelDal.getModelById(id);
+        model.setModelName(name);
+        model.setLabel(label);
+        model.setCode(merchantCode);
+
+        CommonResult result = new CommonResult();
+        //检查是否重复
         ModelQuery query = new ModelQuery();
         query.setMerchantCode(model.getCode());
         query.setLabel(model.getLabel());
@@ -317,41 +312,41 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
             }
 
         }
-        
+
         int count = modelDal.copy(model);
         if (count > 0) {
-        	if(StringUtils.isEmpty(model.getModelName())){
-        		model.setModelName("model_" + model.getId());
-        		modelDal.save(model);
-        	}
-        	
+            if (StringUtils.isEmpty(model.getModelName())) {
+                model.setModelName("model_" + model.getId());
+                modelDal.save(model);
+            }
+
             result.getData().put("id", model.getId());
             result.setSuccess(true);
             // 通知更新
             cacheService.publishModel(model);
         }
         return result;
-	}
+    }
 
-	public String convertFieldType2ElasticType(String fieldType) {
+    public String convertFieldType2ElasticType(String fieldType) {
         FieldType type = Enum.valueOf(FieldType.class, fieldType);
         String tmp;
         switch (type) {
-        case STRING:
-            tmp = "keyword";
-            break;
-        case INTEGER:
-            tmp = "integer";
-            break;
-        case LONG:
-            tmp = "long";
-            break;
-        case DOUBLE:
-            tmp = "double";
-            break;
-        default:
-            tmp = "text";
-            break;
+            case STRING:
+                tmp = "keyword";
+                break;
+            case INTEGER:
+                tmp = "integer";
+                break;
+            case LONG:
+                tmp = "long";
+                break;
+            case DOUBLE:
+                tmp = "double";
+                break;
+            default:
+                tmp = "text";
+                break;
         }
         return tmp;
     }
