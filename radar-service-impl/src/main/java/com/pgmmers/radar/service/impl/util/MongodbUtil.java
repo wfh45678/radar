@@ -1,70 +1,47 @@
 package com.pgmmers.radar.service.impl.util;
 
-import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
-import java.util.List;
+@Component
+public class MongodbUtil implements InitializingBean {
 
-public class MongodbUtil {
+    public static MongoTemplate mongoTemplate;
 
-    private static MongoClient client = null;
-
-    static MongoClient initClient(String host, int port) {
-        if (client == null) {
-            client = new MongoClient(host, port);
-        }
-        return client;
-    }
-
-    static MongoClient initClient(String uri) {
-        if (client == null) {
-            client = new MongoClient(new MongoClientURI(uri));
-        }
-        return client;
-    }
-
-    public static void closeClient(MongoClient client) {
-        client.close();
-        client = null;
+    @Override
+    public void afterPropertiesSet() {
+        mongoTemplate = (MongoTemplate) BeanUtils.getBean("mongoTemplate");
     }
 
     public static MongoCollection<Document> getCollection(String uri) {
         MongoClientURI clientURI = new MongoClientURI(uri);
-        return client.getDatabase(clientURI.getDatabase()).getCollection(clientURI.getCollection());
+        return mongoTemplate.getCollection(Objects.requireNonNull(clientURI.getCollection()));
     }
 
     public static void insert(String url, Document doc) {
-        MongoClientURI uri = new MongoClientURI(url);
-        if (client == null) {
-            client = new MongoClient(uri);
-        }
-        MongoCollection<Document> collection = client.getDatabase(uri.getDatabase()).getCollection(uri.getCollection());
+        MongoCollection<Document> collection = getCollection(url);
         collection.insertOne(doc);
     }
 
     public static long count(String url, Bson filter) {
-        MongoClientURI uri = new MongoClientURI(url);
-        if (client == null) {
-            client = new MongoClient(uri);
-        }
-        MongoCollection<Document> collection = client.getDatabase(uri.getDatabase()).getCollection(uri.getCollection());
+        MongoCollection<Document> collection =  getCollection(url);
         long count = collection.count(filter);
         return count;
     }
 
     public static long distinctCount(String url, Bson filter, String fieldName) {
-        MongoClientURI uri = new MongoClientURI(url);
-        if (client == null) {
-            client = new MongoClient(uri);
-        }
-        MongoCollection<Document> collection = client.getDatabase(uri.getDatabase()).getCollection(uri.getCollection());
+        MongoCollection<Document> collection =getCollection(url);
         long count = 0;
         Iterator<BsonValue> it = collection.distinct(fieldName, filter, BsonValue.class).iterator();
         while (it.hasNext()) {
@@ -75,30 +52,15 @@ public class MongodbUtil {
     }
 
     public static AggregateIterable<Document> aggregate(String url, List<Bson> pipeline) {
-        MongoClientURI uri = new MongoClientURI(url);
-        if (client == null) {
-            client = new MongoClient(uri);
-        }
-        MongoCollection<Document> collection = client.getDatabase(uri.getDatabase()).getCollection(uri.getCollection());
+        MongoCollection<Document> collection = getCollection(url);
         AggregateIterable<Document> it = collection.aggregate(pipeline);
         return it;
     }
-    
+
     public static FindIterable<Document> find(String url, Bson filter) {
-        MongoClientURI uri = new MongoClientURI(url);
-        if (client == null) {
-            client = new MongoClient(uri);
-        }
-        MongoCollection<Document> collection = client.getDatabase(uri.getDatabase()).getCollection(uri.getCollection());
+        MongoCollection<Document> collection = getCollection(url);
         FindIterable<Document> it = collection.find(filter);
         return it;
-    }
-    
-    public static MongoClient getClient(String uri) {
-        if (client == null) {
-            client = new MongoClient(new MongoClientURI(uri));
-        }
-        return client;
     }
 
 }
