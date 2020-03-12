@@ -52,9 +52,6 @@
             <groupId>org.tensorflow</groupId>
             <artifactId>tensorflow</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-        </dependency>
+
     </dependencies>
 </project>

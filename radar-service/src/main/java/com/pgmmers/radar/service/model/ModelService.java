@@ -6,6 +6,7 @@ import com.pgmmers.radar.dal.bean.ModelQuery;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.vo.model.ModelVO;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ModelService {
@@ -28,7 +29,7 @@ public interface ModelService {
 
      CommonResult delete(Long[] id);
 
-     CommonResult build(Long id);
+     CommonResult build(Long id) throws IOException;
 
      CommonResult copy(Long id, String merchantCode, String name, String label);
 

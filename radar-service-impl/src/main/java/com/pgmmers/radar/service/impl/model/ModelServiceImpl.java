@@ -32,6 +32,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+
 @Service
 public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
@@ -166,7 +175,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
     }
 
     @Override
-    public CommonResult build(Long id) {
+    public CommonResult build(Long id) throws IOException {
         CommonResult result = new CommonResult();
         ModelVO modelVO = modelDal.getModelById(id);
         List<FieldVO> fields = modelDal.listField(id);
@@ -205,10 +214,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         JSONObject total = buildEsMappingJson(fields, items);
 
         // execute
-        boolean isCreated;
-        isCreated = searchService
-                .createIndex(modelVO.getGuid().toLowerCase(), modelVO.getModelName().toLowerCase(),
-                        "radar", total.toJSONString());
+        boolean isCreated = searchService.createIndex(modelVO.getGuid().toLowerCase(), modelVO.getModelName().toLowerCase(), total.toJSONString());
         logger.info("index mapping:{} is create {}", total.toJSONString(), isCreated);
         if (isCreated) {
             modelVO.setStatus(StatusType.INACTIVE.getKey());
