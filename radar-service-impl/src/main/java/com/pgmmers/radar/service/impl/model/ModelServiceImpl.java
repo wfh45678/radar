@@ -19,6 +19,7 @@ import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.vo.model.FieldVO;
 import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,14 +34,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
-
 @Service
 public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
@@ -52,9 +45,6 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
     @Autowired
     private CacheService cacheService;
-
-    @Value("${spring.data.mongodb.uri}")
-    private String url;
 
     @Value("${sys.conf.mongo-restore-days}")
     private Integer eventExpireDays;
@@ -180,9 +170,9 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         ModelVO modelVO = modelDal.getModelById(id);
         List<FieldVO> fields = modelDal.listField(id);
         List<PreItemVO> items = modelDal.listPreItem(id, null);
-        String tempUrl = url + ".entity_" + id;
-        MongodbUtil.mongoTemplate.getCollection(tempUrl).drop();
-        MongodbUtil.mongoTemplate.createCollection(tempUrl);
+        String collectionName = "entity_" + id;
+        MongodbUtil.mongoTemplate.getCollection(collectionName).drop();
+        MongodbUtil.mongoTemplate.createCollection(collectionName);
         List<IndexModel> indexes = new ArrayList<>();
 
         if (fields == null) {
@@ -207,14 +197,16 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
         indexes.add(ttlIndex);
 
-        MongodbUtil.getCollection(tempUrl).createIndexes(indexes);
+        MongodbUtil.getCollection(collectionName).createIndexes(indexes);
 //
 
         // 重建es index
         JSONObject total = buildEsMappingJson(fields, items);
 
         // execute
-        boolean isCreated = searchService.createIndex(modelVO.getGuid().toLowerCase(), modelVO.getModelName().toLowerCase(), total.toJSONString());
+        boolean isCreated = searchService
+                .createIndex(modelVO.getGuid().toLowerCase(), modelVO.getModelName().toLowerCase(),
+                        total.toJSONString());
         logger.info("index mapping:{} is create {}", total.toJSONString(), isCreated);
         if (isCreated) {
             modelVO.setStatus(StatusType.INACTIVE.getKey());
