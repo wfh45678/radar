@@ -8,28 +8,23 @@ import com.mongodb.client.model.Filters;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.service.engine.AggregateCommand;
 import com.pgmmers.radar.service.impl.util.MongodbUtil;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AggregateCommandImpl implements AggregateCommand {
 
-    @Value("${spring.data.mongodb.uri}")
-    private String url;
-
     @Override
     public long count(String modelId, String searchField, Object searchFieldValue, String refDateName, Date begin,
             Date end) {
-        String tempUrl = url + ".entity_" + modelId;
-        Long qty = MongodbUtil.count(tempUrl, Filters.and(Filters.eq(searchField, searchFieldValue),
+        String collectionName = "entity_" + modelId;
+        Long qty = MongodbUtil.count(collectionName, Filters.and(Filters.eq(searchField, searchFieldValue),
                 Filters.gte(refDateName, begin.getTime()), Filters.lte(refDateName, end.getTime())));
         return qty;
     }
@@ -37,8 +32,8 @@ public class AggregateCommandImpl implements AggregateCommand {
     @Override
     public long distinctCount(String modelId, String searchField, Object searchFieldValue, String refDateName,
             Date begin, Date end, String distinctBy) {
-        String tempUrl = url + ".entity_" + modelId;
-        Long qty = MongodbUtil.distinctCount(tempUrl, Filters.and(Filters.eq(searchField, searchFieldValue),
+        String collectionName = "entity_" + modelId;
+        Long qty = MongodbUtil.distinctCount(collectionName, Filters.and(Filters.eq(searchField, searchFieldValue),
                 Filters.gte(refDateName, begin.getTime()), Filters.lte(refDateName, end.getTime())), distinctBy);
         return qty;
     }
@@ -47,14 +42,14 @@ public class AggregateCommandImpl implements AggregateCommand {
     public BigDecimal sum(String modelId, String searchField, Object searchFieldValue, String refDateName, Date begin,
             Date end, String funcField) {
         BigDecimal sum = null;
-        String tempUrl = url + ".entity_" + modelId;
+        String collectionName = "entity_" + modelId;
         Document match = new Document("$match", new Document(searchField, searchFieldValue).append(refDateName,
                 new Document("$gte", begin.getTime()).append("$lte", end.getTime())));
 
         Document group = new Document("$group", new Document("_id", null).append("sum", new Document("$sum", "$"
                 + funcField)));
         List<Bson> pipeline = Arrays.asList(match, group);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(tempUrl, pipeline);
+        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
         Document doc = it.first();
         if (doc != null) {
             sum = new BigDecimal(doc.get("sum").toString());
@@ -68,14 +63,14 @@ public class AggregateCommandImpl implements AggregateCommand {
     public BigDecimal average(String modelId, String searchField, Object searchFieldValue, String refDateName,
             Date begin, Date end, String funcField) {
         BigDecimal avg = null;
-        String tempUrl = url + ".entity_" + modelId;
+        String collectionName = "entity_" + modelId;
         Document match = new Document("$match", new Document(searchField, searchFieldValue).append(refDateName,
                 new Document("$gte", begin.getTime()).append("$lte", end.getTime())));
 
         Document group = new Document("$group", new Document("_id", null).append("avg", new Document("$avg", "$"
                 + funcField)));
         List<Bson> pipeline = Arrays.asList(match, group);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(tempUrl, pipeline);
+        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
         Document doc = it.first();
         if (doc != null) {
             avg = new BigDecimal(doc.get("avg").toString());
@@ -87,14 +82,14 @@ public class AggregateCommandImpl implements AggregateCommand {
     public BigDecimal median(String modelId, String searchField, Object searchFieldValue, String refDateName,
             Date begin, Date end, String funcField) {
         BigDecimal avg = null;
-        String tempUrl = url + ".entity_" + modelId;
+        String collectionName = "entity_" + modelId;
         Document match = new Document("$match", new Document(searchField, searchFieldValue).append(refDateName,
                 new Document("$gte", begin.getTime()).append("$lte", end.getTime())));
 
         Document sort = new Document("$sort", new Document(funcField, 1));
         List<Bson> pipeline = Arrays.asList(match, sort);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(tempUrl, pipeline);
-        List<Document> docList = new ArrayList<Document>();
+        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
+        List<Document> docList = new ArrayList<>();
         it.forEach(new Block<Document>() {
 
             @Override
@@ -130,14 +125,14 @@ public class AggregateCommandImpl implements AggregateCommand {
     public BigDecimal max(String modelId, String searchField, Object searchFieldValue, String refDateName, Date begin,
             Date end, String funcField) {
         BigDecimal max = null;
-        String tempUrl = url + ".entity_" + modelId;
+        String collectionName = "entity_" + modelId;
         Document match = new Document("$match", new Document(searchField, searchFieldValue).append(refDateName,
                 new Document("$gte", begin.getTime()).append("$lte", end.getTime())));
 
         Document group = new Document("$group", new Document("_id", null).append("max", new Document("$max", "$"
                 + funcField)));
         List<Bson> pipeline = Arrays.asList(match, group);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(tempUrl, pipeline);
+        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
         Document doc = it.first();
         if (doc != null) {
             max = new BigDecimal(doc.get("max").toString());
@@ -149,14 +144,14 @@ public class AggregateCommandImpl implements AggregateCommand {
     public BigDecimal min(String modelId, String searchField, Object searchFieldValue, String refDateName, Date begin,
             Date end, String funcField) {
         BigDecimal min = null;
-        String tempUrl = url + ".entity_" + modelId;
+        String collectionName = "entity_" + modelId;
         Document match = new Document("$match", new Document(searchField, searchFieldValue).append(refDateName,
                 new Document("$gte", begin.getTime()).append("$lte", end.getTime())));
 
         Document group = new Document("$group", new Document("_id", null).append("min", new Document("$min", "$"
                 + funcField)));
         List<Bson> pipeline = Arrays.asList(match, group);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(tempUrl, pipeline);
+        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
         Document doc = it.first();
         if (doc != null) {
             min = new BigDecimal(doc.get("min").toString());
@@ -189,11 +184,11 @@ public class AggregateCommandImpl implements AggregateCommand {
     @Override
     public BigDecimal variance(String modelId, String searchField, Object searchFieldValue, String refDateName,
             Date begin, Date end, String funcField, FieldType fieldType) {
-        String tempUrl = url + ".entity_" + modelId;
+        String collectionName = "entity_" + modelId;
         Bson filter = Filters.and(Filters.eq(searchField, searchFieldValue), Filters.gte(refDateName, begin.getTime()),
                 Filters.lte(refDateName, end.getTime()));
-        FindIterable<Document> findIt = MongodbUtil.find(tempUrl, filter);
-        List<BigDecimal> records = new ArrayList<BigDecimal>();
+        FindIterable<Document> findIt = MongodbUtil.find(collectionName, filter);
+        List<BigDecimal> records = new ArrayList<>();
         BigDecimal sum = new BigDecimal("0");
         findIt.forEach(new Block<Document>() {
             @Override

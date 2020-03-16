@@ -25,7 +25,8 @@ elasticsearch:
   cluster:
     name: elasticsearch
   url: http://127.0.0.1:9200
-
+  username:  # 不存在就留空
+  password:  #
 sys:
   conf:
     app: admin # admin 或者 engine， 根据启动的项目名称进行选择
