@@ -1,7 +1,5 @@
 package com.pgmmers.radar.util;
 
-import com.pgmmers.radar.dal.util.JsonUtils;
-
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
