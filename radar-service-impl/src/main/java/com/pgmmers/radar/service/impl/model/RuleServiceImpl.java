@@ -153,6 +153,8 @@ public class RuleServiceImpl implements RuleService, SubscribeHandle {
         String keyTempl = "hitsDetail.${activationName}.rule_${ruleId}.key";
         ActivationQuery actQuery = new ActivationQuery();
         actQuery.setModelId(modelId);
+        // page size default is 10.
+        actQuery.setPageSize(100);
         PageResult<ActivationVO> actResult = activationDal.query(actQuery);
         List<ActivationVO> actList = actResult.getList();
         for (ActivationVO act : actList) {
