@@ -170,7 +170,7 @@ public class RuleServiceImpl implements RuleService, SubscribeHandle {
                 long qty = 0;
                 try {
                     qty = searchService.count(model.getGuid().toLowerCase(),
-                            "radar", QueryBuilders.termQuery(keyStr,rule.getId() + ""), null);
+                            QueryBuilders.termQuery(keyStr,rule.getId() + ""), null);
                 } catch (Exception e) {
                     logger.error("search error", e);
                 }

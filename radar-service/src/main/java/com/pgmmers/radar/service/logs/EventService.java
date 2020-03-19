@@ -6,6 +6,7 @@ import com.pgmmers.radar.dal.bean.PageResult;
 import com.pgmmers.radar.dal.bean.TermQuery;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public interface EventService {
 
-     List<Object> query(EventQuery query);
+     List<Object> query(EventQuery query) throws IOException;
     
      PageResult<Object> query(TermQuery term);
     
