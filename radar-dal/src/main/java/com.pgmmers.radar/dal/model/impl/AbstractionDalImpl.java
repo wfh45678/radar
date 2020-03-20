@@ -1,27 +1,26 @@
 package com.pgmmers.radar.dal.model.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.pgmmers.radar.dal.bean.AbstractionQuery;
+import com.pgmmers.radar.dal.bean.PageResult;
+import com.pgmmers.radar.dal.model.AbstractionDal;
+import com.pgmmers.radar.mapper.AbstractionMapper;
+import com.pgmmers.radar.mapstruct.AbstractionMapping;
+import com.pgmmers.radar.model.AbstractionPO;
+import com.pgmmers.radar.util.BaseUtils;
+import com.pgmmers.radar.vo.model.AbstractionVO;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
-import com.pgmmers.radar.dal.bean.AbstractionQuery;
-import com.pgmmers.radar.dal.bean.PageResult;
-import com.pgmmers.radar.dal.model.AbstractionDal;
-import com.pgmmers.radar.dal.util.POVOUtils;
-import com.pgmmers.radar.mapper.AbstractionMapper;
-import com.pgmmers.radar.model.AbstractionPO;
-import com.pgmmers.radar.util.BaseUtils;
-import com.pgmmers.radar.vo.model.AbstractionVO;
+import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import tk.mybatis.mapper.entity.Example;
 
 
@@ -32,14 +31,14 @@ public class AbstractionDalImpl implements AbstractionDal {
 
     @Autowired
     private AbstractionMapper abstractionMapper;
+    @Resource
+    private AbstractionMapping abstractionMapping;
 
     @Override
     public AbstractionVO get(Long id) {
         AbstractionPO abstraction = abstractionMapper.selectByPrimaryKey(id);
         if (abstraction != null) {
-            AbstractionVO abstractionVO = new AbstractionVO();
-            BeanUtils.copyProperties(abstraction, abstractionVO);
-            return abstractionVO;
+            return abstractionMapping.sourceToTarget(abstraction);
         }
         return null;
     }
@@ -50,14 +49,10 @@ public class AbstractionDalImpl implements AbstractionDal {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("modelId", modelId);
         List<AbstractionPO> list = abstractionMapper.selectByExample(example);
-
-        List<AbstractionVO> listVO = new ArrayList<AbstractionVO>();
-        for (AbstractionPO abstractionPO : list) {
-            AbstractionVO abstractionVO = new AbstractionVO();
-            BeanUtils.copyProperties(abstractionPO, abstractionVO);
-            listVO.add(abstractionVO);
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
         }
-        return listVO;
+        return abstractionMapping.sourceToTarget(list);
     }
 
     @Override
@@ -80,28 +75,21 @@ public class AbstractionDalImpl implements AbstractionDal {
 
         List<AbstractionPO> list = abstractionMapper.selectByExample(example);
         Page<AbstractionPO> page = (Page<AbstractionPO>) list;
-
-        List<AbstractionVO> listVO = new ArrayList<AbstractionVO>();
-        for (AbstractionPO abstractionPO : page.getResult()) {
-            AbstractionVO abstractionVO = new AbstractionVO();
-            abstractionVO = POVOUtils.copyFromAbstractPO(abstractionPO);
-            listVO.add(abstractionVO);
+        List<AbstractionVO> listVO;
+        if (CollectionUtils.isEmpty(list)) {
+            listVO = new ArrayList<>();
+        } else {
+            listVO = abstractionMapping.sourceToTarget(list);
         }
-
-//        for (AbstractionPO abstractionPO : page.getResult()) {
-//            AbstractionVO abstractionVO = new AbstractionVO();
-//            BeanUtils.copyProperties(abstractionPO, abstractionVO);
-//            listVO.add(abstractionVO);
-//        }
-
-        PageResult<AbstractionVO> pageResult = new PageResult<AbstractionVO>(page.getPageNum(), page.getPageSize(),
+        PageResult<AbstractionVO> pageResult = new PageResult<>(page.getPageNum(),
+                page.getPageSize(),
                 (int) page.getTotal(), listVO);
         return pageResult;
     }
 
     @Override
     public int save(AbstractionVO abstraction) {
-        AbstractionPO abstractionPO = POVOUtils.copyFromAbstractVO(abstraction);
+        AbstractionPO abstractionPO = abstractionMapping.targetToSource(abstraction);
         Date sysDate = new Date();
         int count = 0;
         if (abstraction.getId() == null) {

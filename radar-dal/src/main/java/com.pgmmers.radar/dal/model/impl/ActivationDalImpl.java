@@ -1,26 +1,26 @@
 package com.pgmmers.radar.dal.model.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.pgmmers.radar.dal.bean.ActivationQuery;
 import com.pgmmers.radar.dal.bean.PageResult;
 import com.pgmmers.radar.dal.model.ActivationDal;
 import com.pgmmers.radar.mapper.ActivationMapper;
+import com.pgmmers.radar.mapstruct.ActivationMapping;
 import com.pgmmers.radar.model.ActivationPO;
 import com.pgmmers.radar.util.BaseUtils;
 import com.pgmmers.radar.vo.model.ActivationVO;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import tk.mybatis.mapper.entity.Example;
 
 
@@ -31,14 +31,13 @@ public class ActivationDalImpl implements ActivationDal {
 
 	@Autowired
 	private ActivationMapper activationMapper;
-
+	@Resource
+	private ActivationMapping activationMapping;
 	@Override
 	public ActivationVO get(Long id) {
 		ActivationPO activation = activationMapper.selectByPrimaryKey(id);
 		if (activation != null) {
-			ActivationVO activationVO = new ActivationVO();
-			BeanUtils.copyProperties(activation, activationVO);
-			return activationVO;
+			return activationMapping.sourceToTarget(activation);
 		}
 		return null;
 	}
@@ -58,23 +57,20 @@ public class ActivationDalImpl implements ActivationDal {
 		}
 		List<ActivationPO> list = activationMapper.selectByExample(example);
 		Page<ActivationPO> page = (Page<ActivationPO>) list;
-
-		List<ActivationVO> listVO = new ArrayList<>();
-		for (ActivationPO activationPO : page.getResult()) {
-			ActivationVO activationVO = new ActivationVO();
-			BeanUtils.copyProperties(activationPO, activationVO);
-			listVO.add(activationVO);
+		List<ActivationVO> listVO ;
+		if (CollectionUtils.isEmpty(list)){
+			listVO =new ArrayList<>();
+		}else {
+			listVO=activationMapping.sourceToTarget(list);
 		}
-
-		PageResult<ActivationVO> pageResult = new PageResult<ActivationVO>(page.getPageNum(), page.getPageSize(),
+		PageResult<ActivationVO> pageResult = new PageResult<>(page.getPageNum(), page.getPageSize(),
 				(int) page.getTotal(), listVO);
 		return pageResult;
 	}
 
 	@Override
 	public int save(ActivationVO activation) {
-		ActivationPO activationPO = new ActivationPO();
-		BeanUtils.copyProperties(activation, activationPO);
+		ActivationPO activationPO = activationMapping.targetToSource(activation);
 		Date sysDate = new Date();
 		int count = 0;
 		if (activation.getId() == null) {

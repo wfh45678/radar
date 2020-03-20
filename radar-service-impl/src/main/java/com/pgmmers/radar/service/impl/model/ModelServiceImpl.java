@@ -69,7 +69,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
     @Override
     public List<ModelVO> listModel(Integer status) {
         if (modelList == null) {
-            modelList = modelDal.listModel(null);
+            modelList = modelDal.listModel(status);
         }
         return modelList;
     }

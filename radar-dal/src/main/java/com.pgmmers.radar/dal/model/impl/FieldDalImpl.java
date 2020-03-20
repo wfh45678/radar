@@ -1,27 +1,26 @@
 package com.pgmmers.radar.dal.model.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.pgmmers.radar.dal.bean.FieldQuery;
 import com.pgmmers.radar.dal.bean.PageResult;
 import com.pgmmers.radar.dal.model.FieldDal;
 import com.pgmmers.radar.mapper.FieldMapper;
+import com.pgmmers.radar.mapstruct.FieldMapping;
 import com.pgmmers.radar.model.FieldPO;
 import com.pgmmers.radar.util.BaseUtils;
 import com.pgmmers.radar.vo.model.FieldVO;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import tk.mybatis.mapper.entity.Example;
 
 
@@ -32,14 +31,14 @@ public class FieldDalImpl implements FieldDal {
 
     @Autowired
     private FieldMapper fieldMapper;
+    @Resource
+    private FieldMapping fieldMapping;
 
     @Override
     public FieldVO get(Long id) {
         FieldPO field = fieldMapper.selectByPrimaryKey(id);
         if (field != null) {
-            FieldVO fieldVO = new FieldVO();
-            BeanUtils.copyProperties(field, fieldVO);
-            return fieldVO;
+            return fieldMapping.sourceToTarget(field);
         }
         return null;
     }
@@ -59,23 +58,21 @@ public class FieldDalImpl implements FieldDal {
         }
         List<FieldPO> list = fieldMapper.selectByExample(example);
         Page<FieldPO> page = (Page<FieldPO>) list;
-
-        List<FieldVO> listVO = new ArrayList<>();
-        for (FieldPO fieldPO : page.getResult()) {
-            FieldVO fieldVO = new FieldVO();
-            BeanUtils.copyProperties(fieldPO, fieldVO);
-            listVO.add(fieldVO);
+        List<FieldVO> listVO;
+        if (CollectionUtils.isEmpty(list)) {
+            listVO = new ArrayList<>();
+        } else {
+            listVO = fieldMapping.sourceToTarget(list);
         }
-
-        PageResult<FieldVO> pageResult = new PageResult<FieldVO>(page.getPageNum(), page.getPageSize(),
+        PageResult<FieldVO> pageResult = new PageResult<>(page.getPageNum(),
+                page.getPageSize(),
                 (int) page.getTotal(), listVO);
         return pageResult;
     }
 
     @Override
     public int save(FieldVO field) {
-        FieldPO fieldPO = new FieldPO();
-        BeanUtils.copyProperties(field, fieldPO);
+        FieldPO fieldPO = fieldMapping.targetToSource(field);
         Date sysDate = new Date();
         int count = 0;
         if (field.getId() == null) {
