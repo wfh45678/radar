@@ -7,17 +7,17 @@ import com.pgmmers.radar.model.ModelConfPO;
 import com.pgmmers.radar.model.ModelConfParamPO;
 import com.pgmmers.radar.vo.model.ModelConfParamVO;
 import com.pgmmers.radar.vo.model.ModelConfVO;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class ModelConfDalImpl implements ModelConfDal {
+
     @Resource
     private ModelConfMapper modelConfMapper;
     @Resource
@@ -62,8 +62,8 @@ public class ModelConfDalImpl implements ModelConfDal {
     @Override
     public ModelConfParamVO getParamById(Long id) {
         ModelConfParamVO modelConfParamVO = new ModelConfParamVO();
-        ModelConfParamPO po =  modelConfParamMapper.selectByPrimaryKey(id);
-        BeanUtils.copyProperties(po,modelConfParamVO);
+        ModelConfParamPO po = modelConfParamMapper.selectByPrimaryKey(id);
+        BeanUtils.copyProperties(po, modelConfParamVO);
         return modelConfParamVO;
     }
 

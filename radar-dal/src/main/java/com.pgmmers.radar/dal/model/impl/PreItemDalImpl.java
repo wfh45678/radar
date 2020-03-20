@@ -5,22 +5,22 @@ import com.github.pagehelper.PageHelper;
 import com.pgmmers.radar.dal.bean.PageResult;
 import com.pgmmers.radar.dal.bean.PreItemQuery;
 import com.pgmmers.radar.dal.model.PreItemDal;
-import com.pgmmers.radar.dal.util.POVOUtils;
 import com.pgmmers.radar.mapper.PreItemMapper;
+import com.pgmmers.radar.mapstruct.PreItemMapping;
 import com.pgmmers.radar.model.PreItemPO;
 import com.pgmmers.radar.vo.model.PreItemVO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import tk.mybatis.mapper.entity.Example;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
 @Service
 public class PreItemDalImpl implements PreItemDal {
@@ -29,15 +29,13 @@ public class PreItemDalImpl implements PreItemDal {
 
     @Autowired
     private PreItemMapper preItemMapper;
-
+    @Resource
+    private PreItemMapping preItemMapping;
     @Override
     public PreItemVO get(Long id) {
         PreItemPO preItem = preItemMapper.selectByPrimaryKey(id);
         if (preItem != null) {
-            PreItemVO preItemVO = new PreItemVO();
-            //BeanUtils.copyProperties(preItem, preItemVO);
-            preItemVO = POVOUtils.copyFromPreItemPO(preItem);
-            return preItemVO;
+            return preItemMapping.sourceToTarget(preItem);
         }
         return null;
     }
@@ -62,14 +60,12 @@ public class PreItemDalImpl implements PreItemDal {
 
         List<PreItemPO> list = preItemMapper.selectByExample(example);
         Page<PreItemPO> page = (Page<PreItemPO>) list;
-
-        List<PreItemVO> listVO = new ArrayList<PreItemVO>();
-        for (PreItemPO preItemPO : page.getResult()) {
-            PreItemVO preItemVO ;
-            preItemVO = POVOUtils.copyFromPreItemPO(preItemPO);
-            listVO.add(preItemVO);
+        List<PreItemVO> listVO;
+        if (CollectionUtils.isEmpty(list)){
+            listVO = new ArrayList<>();
+        }else {
+            listVO=preItemMapping.sourceToTarget(list);
         }
-
         PageResult<PreItemVO> pageResult = new PageResult<>(page.getPageNum(), page.getPageSize(),
                 (int) page.getTotal(), listVO);
         return pageResult;
@@ -78,7 +74,7 @@ public class PreItemDalImpl implements PreItemDal {
     @Override
     public int save(PreItemVO preItem) {
         PreItemPO preItemPO ;
-        preItemPO = POVOUtils.copyFromPreItemVO(preItem);
+        preItemPO = preItemMapping.targetToSource(preItem);
         Date sysDate = new Date();
         int count = 0;
         if (preItemPO.getId() == null) {
