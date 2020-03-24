@@ -103,7 +103,6 @@ https://gitee.com/freshday/radar/wikis/manual
 通过管理端能够快速了解系统是怎么从风险的定义到风险的量化再到风险的集中管理的整个工作流程。  
 为了更好的体验，请花一分钟观看 [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)  
 [Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top   
-账号密码：test/123456  
 建议大家自行注册用户，避免使用同样的测试账号受干扰.   
 
 ## 未完待续
@@ -123,4 +122,4 @@ https://gitee.com/freshday/radar/wikis/manual
  提示：进群需要捐赠，0.1元起  
  ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)   
  
- Copyright © WangFeiHu 2020
+ Copyright ©  2019-2020 WangFeiHu

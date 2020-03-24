@@ -34,4 +34,4 @@ sys:
     mongo-restore-days: 93 # 事件保存时间，默认3个月
     workdir: /radar/workdir #   工作目录
 server:
-  port: 18080
+  port: 6580

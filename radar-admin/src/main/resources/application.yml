@@ -50,4 +50,4 @@ logging:
     org.elasticsearch: info
 
 server:
-  port: 18080
+  port: 6580
