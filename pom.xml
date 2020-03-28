@@ -10,6 +10,7 @@
         <module>radar-service</module>
         <module>radar-commons</module>
         <module>radar-service-impl</module>
+        <module>radar-kafka-demo</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -256,6 +257,12 @@
                 <version>${mapstruct.version}</version>
             </dependency>
             <!-- MapStruct  end -->
+
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring-kafka.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

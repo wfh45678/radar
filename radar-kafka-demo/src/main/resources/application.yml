@@ -1,0 +1,22 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: radar-demo
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: latest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 0
+sys:
+  conf:
+    app: kafka-demo
+    engine-url: http://localhost:6581/services/v1/uploadInfo # radar engine url
+logging:
+  level:
+    root: info
+    com.pgmmers.radar: info
+server:
+  port: 6583
