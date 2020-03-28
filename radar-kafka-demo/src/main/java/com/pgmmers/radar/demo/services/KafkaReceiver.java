@@ -23,6 +23,7 @@ import java.util.Optional;
 
 /**
  * kafka 消息来源， 调用 radar engine 事例。
+ *
  * @author feihu.wang
  */
 @Service
@@ -52,6 +53,7 @@ public class KafkaReceiver {
 
     /**
      * send to radar engine
+     *
      * @param jsonInfo
      */
     private void invokeEngine(String jsonInfo) {
@@ -69,8 +71,9 @@ public class KafkaReceiver {
     }
 
     /**
-     *  generator demo data.
-     * @author  feihu.wang
+     * generator demo data.
+     *
+     * @author feihu.wang
      */
     @PostConstruct
     public void dataGenerator() {
