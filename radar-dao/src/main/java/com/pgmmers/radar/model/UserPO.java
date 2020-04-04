@@ -22,6 +22,18 @@ public class UserPO {
     @Column(name = "STATUS")
     private String status;
 
+    @Column(name = "VIP_LEVEL")
+    private Integer vipLevel;
+
+    @Column(name = "MOBILE")
+    private String mobile;
+
+    @Column(name = "EMAIL")
+    private String email;
+
+    @Column(name = "GITEE_ACCOUNT")
+    private String giteeAccount;
+
     @Column(name = "CREATE_TIME")
     private Date createTime;
 
@@ -96,6 +108,62 @@ public class UserPO {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    /**
+     * @return VIP_LEVEL
+     */
+    public Integer getVipLevel() {
+        return vipLevel;
+    }
+
+    /**
+     * @param vipLevel
+     */
+    public void setVipLevel(Integer vipLevel) {
+        this.vipLevel = vipLevel;
+    }
+
+    /**
+     * @return MOBILE
+     */
+    public String getMobile() {
+        return mobile;
+    }
+
+    /**
+     * @param mobile
+     */
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    /**
+     * @return EMAIL
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return GITEE_ACCOUNT
+     */
+    public String getGiteeAccount() {
+        return giteeAccount;
+    }
+
+    /**
+     * @param giteeAccount
+     */
+    public void setGiteeAccount(String giteeAccount) {
+        this.giteeAccount = giteeAccount;
     }
 
     /**

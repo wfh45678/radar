@@ -4,6 +4,7 @@ package com.pgmmers.radar.controller;
 import com.pgmmers.radar.dal.bean.ModelQuery;
 import com.pgmmers.radar.enums.StatusType;
 import com.pgmmers.radar.intercpt.ContextHolder;
+import com.pgmmers.radar.service.admin.UserService;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.vo.admin.UserVO;
@@ -28,6 +29,9 @@ public class ModelApiController  {
 
     @Autowired
     private ContextHolder contextHolder;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/{id}")
     public CommonResult get(@PathVariable Long id) {
@@ -96,6 +100,13 @@ public class ModelApiController  {
     @PostMapping("/build/{id}")
     public CommonResult build(@PathVariable Long id) {
         CommonResult result = new CommonResult();
+        String userName = contextHolder.getContext().getUsername();
+        UserVO userVO = userService.getByUserName(userName);
+        if (userVO.getVipLevel() <= 0) {
+            result.setSuccess(false);
+            result.setMsg("服务器资源有限，请联系作者开通VIP权限！");
+            return result;
+        }
         try {
             result = modelService.build(id);
         } catch (Exception e) {

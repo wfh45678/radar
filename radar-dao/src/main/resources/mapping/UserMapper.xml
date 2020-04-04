@@ -10,6 +10,10 @@
     <result column="PASSWD" jdbcType="VARCHAR" property="passwd" />
     <result column="CODE" jdbcType="VARCHAR" property="code" />
     <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="VIP_LEVEL" jdbcType="INTEGER" property="vipLevel" />
+    <result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="GITEE_ACCOUNT" jdbcType="VARCHAR" property="giteeAccount" />
     <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
     <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>

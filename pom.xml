@@ -265,7 +265,12 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
+    <repositories>
+        <repository>
+            <id>nexus-aliyun</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
     <build>
         <pluginManagement>
             <plugins>
@@ -323,5 +328,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
 </project>

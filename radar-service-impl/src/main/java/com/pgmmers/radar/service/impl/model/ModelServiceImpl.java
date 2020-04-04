@@ -115,6 +115,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         ModelQuery query = new ModelQuery();
         query.setMerchantCode(model.getCode());
         query.setLabel(model.getLabel());
+        query.setPageSize(100);
         PageResult<ModelVO> page = modelDal.query(query);
         if (page != null && page.getRowCount() > 0 && (model.getId() == null)) {
             for (ModelVO tmp : page.getList()) {
@@ -124,7 +125,6 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
                     return result;
                 }
             }
-
         }
         if (model.getId() == null) {
             model.setStatus(StatusType.INIT.getKey());

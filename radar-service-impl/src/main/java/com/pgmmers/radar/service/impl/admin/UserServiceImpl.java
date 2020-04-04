@@ -43,6 +43,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserVO getByUserName(String userName) {
+        UserQuery query = new UserQuery();
+        query.setUserName(userName);
+        PageResult<UserPO> result = userDal.query(query);
+        UserVO  userVO = null;
+        if (result.getRowCount() > 0) {
+            userVO = userMapping.sourceToTarget(result.getList().get(0));
+        }
+        return userVO;
+    }
+
+    @Override
     public Integer insert(UserVO userVO) {
         UserPO userPO = userMapping.targetToSource(userVO);
         Integer integer = userDal.insert(userPO);

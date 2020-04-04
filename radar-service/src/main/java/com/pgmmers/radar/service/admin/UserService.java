@@ -14,5 +14,7 @@ public interface UserService {
 
     Optional<List<UserVO>> list(String userName, String passwd);
 
+    UserVO getByUserName(String userName);
+
     Integer insert(UserVO userVO);
 }
