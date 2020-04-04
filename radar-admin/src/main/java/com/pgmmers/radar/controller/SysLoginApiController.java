@@ -93,7 +93,7 @@ public class SysLoginApiController {
      * @author xushuai
      */
     @PostMapping("/merchant/regist")
-    public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha, HttpServletRequest request) {
+    public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha,String giteeAccount, HttpServletRequest request) {
         CommonResult result = new CommonResult();
 
         String checkResult = checkParam(loginName, passwd, verifyPasswd, captcha, request);
@@ -115,6 +115,8 @@ public class SysLoginApiController {
         userVO.setUserName(loginName);
         userVO.setPasswd(encrypt);
         userVO.setStatus("1");
+        userVO.setVipLevel(0);
+        userVO.setGiteeAccount(giteeAccount);
         userVO.setCode(loginName);
         userVO.setCreateTime(new Date());
         userVO.setUpdateTime(new Date());

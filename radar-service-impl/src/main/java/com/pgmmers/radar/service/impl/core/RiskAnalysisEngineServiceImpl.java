@@ -12,6 +12,11 @@ import com.pgmmers.radar.service.model.EntityService;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.util.DateUtils;
 import com.pgmmers.radar.vo.model.ModelVO;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,11 +55,9 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
     @Autowired
     private ValidateService validateService;
 
-    @Autowired
-    private RestTemplate restTemplate;
 
-    @Value("${elasticsearch.url}")
-    private String elasticsearchUrl;
+    @Autowired
+    private RestHighLevelClient esClient;
 
     @Override
     public CommonResult uploadInfo(String modelGuid, String reqId, String jsonInfo) {
@@ -114,8 +118,12 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
         cacheService.saveAntiFraudResult(modelGuid, reqId, result);
 
         // 保存事件信息和分析结果用于后续分析
-        sendResult(modelGuid, reqId, JSON.toJSONString(context));
-
+        try {
+            sendResult(modelGuid, reqId, JSON.toJSONString(context));
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            logger.error("向es中保存数据失败！");
+        }
         // 返回分析结果
         return result;
     }
@@ -139,19 +147,18 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
      * @param reqId
      * @param info event info and analyze result.
      */
-    private void sendResult(String modelGuid, String reqId, String info) {
+    private void sendResult(String modelGuid, String reqId, String info) throws IOException {
         // 这里可以根据情况进行异步处理。
-        send2ES(modelGuid, info);
+        send2ES(modelGuid, reqId, info);
     }
 
-    private void send2ES(String guid, String json) {
-        String url = elasticsearchUrl + "/" + guid.toLowerCase() + "/" + "radar";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
-
-        ResponseEntity<String> result = restTemplate.postForEntity(url, requestEntity, String.class, new Object[]{});
-        logger.info("es result:{}", result);
+    private void send2ES(String guid, String reqId, String json) throws IOException {
+        IndexRequest request = new IndexRequest(guid.toLowerCase());
+        request.id(reqId);
+        request.source(json, XContentType.JSON);
+        IndexResponse result = this.esClient.index(request, RequestOptions.DEFAULT);
+//        ResponseEntity<String> result = restTemplate.postForEntity(url, requestEntity, String.class, new Object[]{});
+        logger.info("es result:{}", result.toString());
     }
 
 

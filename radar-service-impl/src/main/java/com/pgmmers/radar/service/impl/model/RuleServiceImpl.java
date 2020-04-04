@@ -153,6 +153,8 @@ public class RuleServiceImpl implements RuleService, SubscribeHandle {
         String keyTempl = "hitsDetail.${activationName}.rule_${ruleId}.key";
         ActivationQuery actQuery = new ActivationQuery();
         actQuery.setModelId(modelId);
+        // page size default is 10.
+        actQuery.setPageSize(100);
         PageResult<ActivationVO> actResult = activationDal.query(actQuery);
         List<ActivationVO> actList = actResult.getList();
         for (ActivationVO act : actList) {
@@ -168,7 +170,7 @@ public class RuleServiceImpl implements RuleService, SubscribeHandle {
                 long qty = 0;
                 try {
                     qty = searchService.count(model.getGuid().toLowerCase(),
-                            "radar", QueryBuilders.termQuery(keyStr,rule.getId() + ""), null);
+                            QueryBuilders.termQuery(keyStr,rule.getId() + ""), null);
                 } catch (Exception e) {
                     logger.error("search error", e);
                 }

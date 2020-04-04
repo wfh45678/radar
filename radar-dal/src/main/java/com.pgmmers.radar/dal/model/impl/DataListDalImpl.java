@@ -1,10 +1,7 @@
 package com.pgmmers.radar.dal.model.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.pgmmers.radar.dal.bean.DataListQuery;
 import com.pgmmers.radar.dal.bean.DataListRecordQuery;
 import com.pgmmers.radar.dal.bean.PageResult;
@@ -12,6 +9,9 @@ import com.pgmmers.radar.dal.model.DataListDal;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
 import com.pgmmers.radar.mapper.DataListRecordMapper;
 import com.pgmmers.radar.mapper.DataListsMapper;
+import com.pgmmers.radar.mapstruct.DataListMetaMapping;
+import com.pgmmers.radar.mapstruct.DataListRecordMapping;
+import com.pgmmers.radar.mapstruct.DataListsMapping;
 import com.pgmmers.radar.model.DataListMetaPO;
 import com.pgmmers.radar.model.DataListRecordPO;
 import com.pgmmers.radar.model.DataListsPO;
@@ -19,15 +19,17 @@ import com.pgmmers.radar.util.BaseUtils;
 import com.pgmmers.radar.vo.model.DataListMetaVO;
 import com.pgmmers.radar.vo.model.DataListRecordVO;
 import com.pgmmers.radar.vo.model.DataListsVO;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import tk.mybatis.mapper.entity.Example;
 
 
@@ -38,44 +40,39 @@ public class DataListDalImpl implements DataListDal {
 
     @Autowired
     private DataListsMapper dataListMapper;
-
+    @Resource
+    private DataListsMapping dataListsMapping;
     @Autowired
     private DataListRecordMapper dataListRecordMapper;
-
+    @Resource
+    private DataListRecordMapping dataListRecordMapping;
     @Autowired
     private DataListMetaMapper dataListMetaMapper;
+    @Resource
+    private DataListMetaMapping dataListMetaMapping;
 
     @Override
     public List<DataListMetaVO> listDataMeta(Long dataListId) {
         logger.info("listDataRecord,{}", dataListId);
-        List<DataListMetaVO> volist = new ArrayList<>();
         Example example = new Example(DataListMetaPO.class);
         example.createCriteria().andEqualTo("dataListId", dataListId);
-        DataListMetaVO vo;
         List<DataListMetaPO> list = dataListMetaMapper.selectByExample(example);
-        for (DataListMetaPO po : list) {
-            vo = new DataListMetaVO();
-            BeanUtils.copyProperties(po, vo);
-            volist.add(vo);
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
         }
-        return volist;
+        return dataListMetaMapping.sourceToTarget(list);
     }
 
     @Override
     public List<DataListRecordVO> listDataRecord(Long dataListId) {
         logger.info("listDataRecord,{}", dataListId);
-        List<DataListRecordVO> voList = new ArrayList<>();
         Example example = new Example(DataListRecordPO.class);
         example.createCriteria().andEqualTo("dataListId", dataListId);
         List<DataListRecordPO> list = dataListRecordMapper.selectByExample(example);
-        DataListRecordVO vo;
-        for (DataListRecordPO po : list) {
-            vo = new DataListRecordVO();
-            BeanUtils.copyProperties(po, vo);
-            voList.add(vo);
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
         }
-
-        return voList;
+        return dataListRecordMapping.sourceToTarget(list);
     }
 
     @Override
@@ -87,33 +84,23 @@ public class DataListDalImpl implements DataListDal {
     @Override
     public List<DataListsVO> listDataLists(Long modelId, Integer status) {
         logger.info("listDataLists,{},{}", modelId, status);
-        List<DataListsVO> dataLists = new ArrayList<>();
         Example example = new Example(DataListsPO.class);
         Example.Criteria cri = example.createCriteria();
         if (status != null) {
             cri.andEqualTo("status", status);
         }
         List<DataListsPO> list = dataListMapper.selectByExample(example);
-        DataListsVO vo;
-        if (list == null || list.size() == 0) {
-            return null;
-        } else {
-            for (DataListsPO po : list) {
-                vo = new DataListsVO();
-                BeanUtils.copyProperties(po, vo);
-                dataLists.add(vo);
-            }
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
         }
-        return dataLists;
+        return dataListsMapping.sourceToTarget(list);
     }
 
     @Override
     public DataListsVO get(Long id) {
         DataListsPO dataListsPO = dataListMapper.selectByPrimaryKey(id);
         if (dataListsPO != null) {
-            DataListsVO dataListsVO = new DataListsVO();
-            BeanUtils.copyProperties(dataListsPO, dataListsVO);
-            return dataListsVO;
+            return dataListsMapping.sourceToTarget(dataListsPO);
         }
         return null;
     }
@@ -124,14 +111,10 @@ public class DataListDalImpl implements DataListDal {
         Example.Criteria criteria = example.createCriteria();
         criteria.andIn("modelId", Arrays.asList(modelId, 0L));
         List<DataListsPO> list = dataListMapper.selectByExample(example);
-
-        List<DataListsVO> listVO = new ArrayList<>();
-        for (DataListsPO dataListsPO : list) {
-            DataListsVO dataListsVO = new DataListsVO();
-            BeanUtils.copyProperties(dataListsPO, dataListsVO);
-            listVO.add(dataListsVO);
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
         }
-        return listVO;
+        return dataListsMapping.sourceToTarget(list);
     }
 
     @Override
@@ -152,14 +135,12 @@ public class DataListDalImpl implements DataListDal {
         }
         List<DataListsPO> list = dataListMapper.selectByExample(example);
         Page<DataListsPO> page = (Page<DataListsPO>) list;
-
-        List<DataListsVO> listVO = new ArrayList<>();
-        for (DataListsPO dataListsPO : page.getResult()) {
-            DataListsVO dataListsVO = new DataListsVO();
-            BeanUtils.copyProperties(dataListsPO, dataListsVO);
-            listVO.add(dataListsVO);
+        List<DataListsVO> listVO;
+        if (CollectionUtils.isEmpty(list)) {
+            listVO = new ArrayList<>();
+        } else {
+            listVO = dataListsMapping.sourceToTarget(list);
         }
-
         PageResult<DataListsVO> pageResult = new PageResult<>(page.getPageNum(), page.getPageSize(),
                 (int) page.getTotal(), listVO);
         return pageResult;
@@ -167,8 +148,7 @@ public class DataListDalImpl implements DataListDal {
 
     @Override
     public int save(DataListsVO datalist) {
-        DataListsPO dataListsPO = new DataListsPO();
-        BeanUtils.copyProperties(datalist, dataListsPO);
+        DataListsPO dataListsPO = dataListsMapping.targetToSource(datalist);
         Date sysDate = new Date();
         int count = 0;
         if (datalist.getId() == null) {
@@ -196,17 +176,14 @@ public class DataListDalImpl implements DataListDal {
     public DataListMetaVO getMeta(Long id) {
         DataListMetaPO dataListMetaPO = dataListMetaMapper.selectByPrimaryKey(id);
         if (dataListMetaPO != null) {
-            DataListMetaVO dataListMetaVO = new DataListMetaVO();
-            BeanUtils.copyProperties(dataListMetaPO, dataListMetaVO);
-            return dataListMetaVO;
+           return dataListMetaMapping.sourceToTarget(dataListMetaPO);
         }
         return null;
     }
 
     @Override
     public int saveMeta(DataListMetaVO dataListMeta) {
-        DataListMetaPO dataListMetaPO = new DataListMetaPO();
-        BeanUtils.copyProperties(dataListMeta, dataListMetaPO);
+        DataListMetaPO dataListMetaPO = dataListMetaMapping.targetToSource(dataListMeta);
         Date sysDate = new Date();
         int count = 0;
         if (dataListMetaPO.getId() == null) {
@@ -234,9 +211,7 @@ public class DataListDalImpl implements DataListDal {
     public DataListRecordVO getRecord(Long id) {
         DataListRecordPO dataListRecordPO = dataListRecordMapper.selectByPrimaryKey(id);
         if (dataListRecordPO != null) {
-            DataListRecordVO dataListRecordVO = new DataListRecordVO();
-            BeanUtils.copyProperties(dataListRecordPO, dataListRecordVO);
-            return dataListRecordVO;
+            return dataListRecordMapping.sourceToTarget(dataListRecordPO);
         }
         return null;
     }
@@ -249,14 +224,12 @@ public class DataListDalImpl implements DataListDal {
         example.createCriteria().andEqualTo("dataListId", query.getDataListId());
         List<DataListRecordPO> list = dataListRecordMapper.selectByExample(example);
         Page<DataListRecordPO> page = (Page<DataListRecordPO>) list;
-
-        List<DataListRecordVO> listVO = new ArrayList<>();
-        for (DataListRecordPO dataListRecordPO : page.getResult()) {
-            DataListRecordVO dataListRecordVO = new DataListRecordVO();
-            BeanUtils.copyProperties(dataListRecordPO, dataListRecordVO);
-            listVO.add(dataListRecordVO);
+        List<DataListRecordVO> listVO ;
+        if (CollectionUtils.isEmpty(list)){
+            listVO = new ArrayList<>();
+        }else {
+            listVO=dataListRecordMapping.sourceToTarget(list);
         }
-
         PageResult<DataListRecordVO> pageResult = new PageResult<>(page.getPageNum(),
                 page.getPageSize(), (int) page.getTotal(), listVO);
         return pageResult;
@@ -264,8 +237,7 @@ public class DataListDalImpl implements DataListDal {
 
     @Override
     public int saveRecord(DataListRecordVO dataListRecord) {
-        DataListRecordPO dataListRecordPO = new DataListRecordPO();
-        BeanUtils.copyProperties(dataListRecord, dataListRecordPO);
+        DataListRecordPO dataListRecordPO = dataListRecordMapping.targetToSource(dataListRecord);
         Date sysDate = new Date();
         int count = 0;
         if (dataListRecordPO.getId() == null) {

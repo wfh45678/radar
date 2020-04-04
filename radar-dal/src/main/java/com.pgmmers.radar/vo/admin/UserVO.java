@@ -16,6 +16,14 @@ public class UserVO implements Serializable{
 
     private String status;
 
+    private Integer vipLevel;
+
+    private String mobile;
+
+    private String email;
+
+    private String giteeAccount;
+
     private Date createTime;
 
     private Date updateTime;
@@ -74,5 +82,37 @@ public class UserVO implements Serializable{
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getVipLevel() {
+        return vipLevel;
+    }
+
+    public void setVipLevel(Integer vipLevel) {
+        this.vipLevel = vipLevel;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getGiteeAccount() {
+        return giteeAccount;
+    }
+
+    public void setGiteeAccount(String giteeAccount) {
+        this.giteeAccount = giteeAccount;
     }
 }

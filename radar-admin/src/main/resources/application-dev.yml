@@ -1,0 +1,37 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:123456@127.0.0.1:27017/radar
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/radar?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
+    username: root
+    password: 123456
+  redis:
+    host: 127.0.0.1
+    password: 123456
+    timeout: 2000ms
+    database: 1  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
+
+mobile:
+  info:
+    path: /radar/resources/moble_info.csv #手机号码归属地文件
+ip2region:
+  db:
+    path: /radar/resources/ip2region.db #IP地址库文件
+elasticsearch:
+  ip: 192.168.1.60
+  port: 9300
+  pool-size: 5
+  cluster:
+    name: elasticsearch
+  url: http://127.0.0.1:9200
+  username:  # 不存在就留空
+  password:  #
+sys:
+  conf:
+    app: admin # admin 或者 engine， 根据启动的项目名称进行选择
+    entity-duplicate-insert: false # 事件是否允许重复插入
+    mongo-restore-days: 93 # 事件保存时间，默认3个月
+    workdir: /radar/workdir #   工作目录
+server:
+  port: 6580

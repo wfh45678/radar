@@ -62,7 +62,7 @@ public class EventApiController {
 
 
     @PostMapping("/query")
-    public CommonResult query(@RequestBody EventQuery query) {
+    public CommonResult query(@RequestBody EventQuery query) throws IOException {
         CommonResult result = new CommonResult();
         List<Object> list = eventService.query(query);
         result.getData().put("page", list);

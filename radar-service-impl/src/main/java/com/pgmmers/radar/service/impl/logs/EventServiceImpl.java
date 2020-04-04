@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -38,7 +40,7 @@ public class EventServiceImpl implements EventService {
     private ModelDal modelDal;
 
     @Override
-    public List<Object> query(EventQuery query) {
+    public List<Object> query(EventQuery query) throws IOException {
         List<Object> list = new ArrayList<>();
         ModelVO model = modelDal.getModelById(query.getModelId());
         String entityName = model.getEntityName();
@@ -65,7 +67,7 @@ public class EventServiceImpl implements EventService {
         }
 
         SearchHits hitsRet = searchService.search(
-                model.getGuid().toLowerCase(), "radar", queryMap, filterMap,
+                model.getGuid().toLowerCase(), queryMap, filterMap,
                 (query.getPageNo() - 1) * query.getPageSize(),
                 query.getPageSize());
         SearchHit[] hits = hitsRet.getHits();
@@ -99,8 +101,7 @@ public class EventServiceImpl implements EventService {
             query = QueryBuilders.termQuery(term.getFieldName(),
                     term.getFieldValue());
         }
-        QueryBuilder filter = null;
-        filter = QueryBuilders.rangeQuery("fields." + dateField)
+        RangeQueryBuilder filter = QueryBuilders.rangeQuery("fields."+dateField)
                 .from(beginTime.getTimeInMillis())
                 .to(endTime.getTimeInMillis());
         SearchHits hitsRet;
@@ -108,7 +109,7 @@ public class EventServiceImpl implements EventService {
         PageResult<Object> pageResult = null;
         try {
             hitsRet = searchService.search(model.getGuid().toLowerCase(),
-                    "radar", query, filter,
+                    query, filter,
                     (term.getPageNo() - 1) * term.getPageSize(),
                     term.getPageSize());
 
@@ -119,7 +120,7 @@ public class EventServiceImpl implements EventService {
                 list.add(JSONObject.parse(info));
             }
             pageResult = new PageResult<>(term.getPageNo(),
-                    term.getPageSize(), (int) hitsRet.getTotalHits(), list);
+                    term.getPageSize(), (int) hitsRet.getTotalHits().value, list);
         } catch (Exception e) {
             logger.error("", e);
         }
