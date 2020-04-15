@@ -13,7 +13,7 @@ import com.pgmmers.radar.enums.StatusType;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.service.impl.util.MongodbUtil;
+import com.pgmmers.radar.service.data.MongoService;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.vo.model.FieldVO;
@@ -51,6 +51,9 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
     @Autowired
     private SearchEngineService searchService;
+
+    @Autowired
+    private MongoService mongoService;
 
     private List<ModelVO> modelList = new ArrayList<>();
 
@@ -171,8 +174,8 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         List<FieldVO> fields = modelDal.listField(id);
         List<PreItemVO> items = modelDal.listPreItem(id, null);
         String collectionName = "entity_" + id;
-        MongodbUtil.mongoTemplate.getCollection(collectionName).drop();
-        MongodbUtil.mongoTemplate.createCollection(collectionName);
+        mongoService.getCollection(collectionName).drop();
+        mongoService.getMongoTemplate().createCollection(collectionName);
         List<IndexModel> indexes = new ArrayList<>();
 
         if (fields == null) {
@@ -197,7 +200,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
 
         indexes.add(ttlIndex);
 
-        MongodbUtil.getCollection(collectionName).createIndexes(indexes);
+        mongoService.getCollection(collectionName).createIndexes(indexes);
 //
 
         // 重建es index

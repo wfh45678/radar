@@ -12,7 +12,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
-@Component
+/**
+ * 重新封装类。
+ * @author feihu.wang
+ * @since 2020.04.15
+ */
+@Deprecated
+//@Component
 public class MongodbUtil implements InitializingBean {
 
     public static MongoTemplate mongoTemplate;

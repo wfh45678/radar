@@ -3,7 +3,7 @@ package com.pgmmers.radar.service.impl.model;
 import com.pgmmers.radar.dal.model.ModelDal;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
-import com.pgmmers.radar.service.impl.util.MongodbUtil;
+import com.pgmmers.radar.service.data.MongoService;
 import com.pgmmers.radar.service.model.EntityService;
 import com.pgmmers.radar.vo.model.ModelVO;
 import java.util.ArrayList;
@@ -28,6 +28,9 @@ public class EntityServiceImpl implements EntityService, SubscribeHandle {
     @Autowired
     private CacheService cacheService;
 
+    @Autowired
+    private MongoService mongoService;
+    
     private List<ModelVO> modelList = new ArrayList<>();
 
     @PostConstruct
@@ -53,13 +56,13 @@ public class EntityServiceImpl implements EntityService, SubscribeHandle {
             }
             Document filter = new Document();
             filter.append(model.getEntryName(), doc.get(model.getEntryName()));
-            long qty = MongodbUtil.count(tmpUrl, filter);
+            long qty = mongoService.count(tmpUrl, filter);
             if (qty > 0) {
                 logger.info("record has already exsit!");
                 return 1;
             }
         }
-        MongodbUtil.insert(tmpUrl, doc);
+        mongoService.insert(tmpUrl, doc);
         return 1;
     }
 
@@ -96,13 +99,13 @@ public class EntityServiceImpl implements EntityService, SubscribeHandle {
             //设置查询条件
             Document filter = new Document();
             filter.append(model.getEntryName(), doc.get(model.getEntryName()));
-            long qty = MongodbUtil.count(tmpUrl, filter);
+            long qty = mongoService.count(tmpUrl, filter);
             if (qty > 0) {
                 logger.info("record has already exsit!");
                 return 1;
             }
         }
-        MongodbUtil.insert(tmpUrl, doc);
+        mongoService.insert(tmpUrl, doc);
         return 1;
     }
 
