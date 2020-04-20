@@ -1,22 +1,19 @@
 package com.pgmmers.radar.service.impl.model;
 
 import com.alibaba.fastjson.JSON;
-
 import com.pgmmers.radar.dal.model.DataListDal;
-import com.pgmmers.radar.dal.model.ModelDal;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.model.DataListRecordService;
 import com.pgmmers.radar.service.model.DataListsService;
 import com.pgmmers.radar.vo.model.DataListRecordVO;
 import com.pgmmers.radar.vo.model.DataListsVO;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.util.Map;
 
 @Service
 public class DataListRecordServiceImpl implements DataListRecordService,
@@ -29,9 +26,6 @@ public class DataListRecordServiceImpl implements DataListRecordService,
     private DataListDal dataListDal;
     @Autowired
     private CacheService cacheService;
-    @Autowired
-    private ModelDal modelDal;
-
     @Autowired
     private DataListsService dataListsService;
 

@@ -3,7 +3,6 @@ package com.pgmmers.radar.service.impl.model;
 import com.alibaba.fastjson.JSON;
 import com.pgmmers.radar.dal.bean.PageResult;
 import com.pgmmers.radar.dal.bean.PreItemQuery;
-import com.pgmmers.radar.dal.model.FieldDal;
 import com.pgmmers.radar.dal.model.ModelDal;
 import com.pgmmers.radar.dal.model.PreItemDal;
 import com.pgmmers.radar.service.cache.CacheService;
@@ -11,41 +10,36 @@ import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.PreItemService;
 import com.pgmmers.radar.vo.model.PreItemVO;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Service
-public class PreItemServiceImpl implements PreItemService, SubscribeHandle {
+public class PreItemServiceImpl extends BaseLocalCacheService implements PreItemService, SubscribeHandle {
 
     public static Logger logger = LoggerFactory.getLogger(FieldServiceImpl.class);
 
-    public Map<Long, List<PreItemVO>> contextMap = new HashMap<Long, List<PreItemVO>>();
+
+    @Override
+    public Object query(Long modelId) {
+        return  modelDal.listPreItem(modelId, null);
+    }
 
     @Autowired
     private ModelDal modelDal;
     @Autowired
     private PreItemDal preItemDal;
     @Autowired
-    private FieldDal fieldDal;
-    @Autowired
     private CacheService cacheService;
 
     @Override
     public List<PreItemVO> listPreItem(Long modelId) {
-        List<PreItemVO> list = contextMap.get(modelId);
-        if (list == null) {
-            list = modelDal.listPreItem(modelId, null);
-            contextMap.put(modelId, list);
-        }
-        return list;
+        //noinspection unchecked
+        return (List<PreItemVO>) getByCache(modelId);
     }
 
     @Override
@@ -53,8 +47,7 @@ public class PreItemServiceImpl implements PreItemService, SubscribeHandle {
         logger.info("prefield sub:{}", message);
         PreItemVO preItem = JSON.parseObject(message, PreItemVO.class);
         if (preItem != null) {
-            List<PreItemVO> list = modelDal.listPreItem(preItem.getModelId(), null);
-            contextMap.put(preItem.getModelId(), list);
+          invalidateCache(preItem.getModelId());
         }
 
     }
@@ -92,7 +85,7 @@ public class PreItemServiceImpl implements PreItemService, SubscribeHandle {
         		preItem.setDestField("preItem_" + preItem.getId());
         		preItemDal.save(preItem);
         	}
-        	
+
             result.getData().put("id", preItem.getId());
             result.setSuccess(true);
             // 通知更新
@@ -113,7 +106,7 @@ public class PreItemServiceImpl implements PreItemService, SubscribeHandle {
         }
         return result;
     }
-    
+
     @PostConstruct
     public void init() {
         cacheService.subscribePreItem(this);

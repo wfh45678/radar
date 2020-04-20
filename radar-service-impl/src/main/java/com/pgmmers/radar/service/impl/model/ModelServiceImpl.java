@@ -16,14 +16,17 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.data.MongoService;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.search.SearchEngineService;
+import com.pgmmers.radar.util.JsonUtils;
 import com.pgmmers.radar.vo.model.FieldVO;
 import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
@@ -35,7 +38,12 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class ModelServiceImpl implements ModelService, SubscribeHandle {
+public class ModelServiceImpl extends BaseLocalCacheService implements ModelService, SubscribeHandle {
+
+    @Override
+    public Object query(Long modelId) {
+        return modelDal.getModelById(modelId);
+    }
 
     public static Logger logger = LoggerFactory
             .getLogger(ModelServiceImpl.class);
@@ -55,53 +63,48 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
     @Autowired
     private MongoService mongoService;
 
-    private List<ModelVO> modelList = new ArrayList<>();
+    //  维护GUID到modelId的映射
+    private Map<String, Long> guidMap;
 
     @PostConstruct
     public void init() {
-        modelList = modelDal.listModel(null);
+        guidMap = modelDal.listModel(null).stream()
+                .collect(Collectors.toMap(ModelVO::getGuid, ModelVO::getId));
         cacheService.subscribeModel(this);
     }
 
     @Override
     public List<ModelVO> listModel(String merchantCode, Integer status) {
-        List<ModelVO> modelList = modelDal.listModel(merchantCode, status);
-        return modelList;
+        return modelDal.listModel(merchantCode, status);
     }
 
     @Override
     public List<ModelVO> listModel(Integer status) {
-        if (modelList == null) {
-            modelList = modelDal.listModel(status);
-        }
-        return modelList;
+        return modelDal.listModel(status);
     }
 
     @Override
     public ModelVO getModelByGuid(String guid) {
-        for (ModelVO mod : modelList) {
-            if (mod.getGuid().equals(guid)) {
-                return mod;
-            }
+        long modelId = guidMap.get(guid);
+        ModelVO vo = (ModelVO) getByCache(modelId);
+        if (vo == null) {
+            vo = modelDal.getModelByGuid(guid);
+            guidMap.put(vo.getGuid(), vo.getId());
         }
-        ModelVO model = modelDal.getModelByGuid(guid);
-        return model;
+        return vo;
     }
 
     @Override
     public ModelVO getModelById(Long id) {
-        return modelDal.getModelById(id);
+        return (ModelVO) getByCache(id);
     }
 
     @Override
     public void onMessage(String channel, String message) {
-        logger.info("model sub:{}", message);
-        modelList = modelDal.listModel(null);
-    }
-
-    @Override
-    public ModelVO get(Long id) {
-        return modelDal.getModelById(id);
+        logger.info("model update message:{}", message);
+        ModelVO vo = JsonUtils.fromJson(message, ModelVO.class);
+//      删除本地缓存的规则模型
+        invalidateCache(vo.getId());
     }
 
     @Override
@@ -149,16 +152,16 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
     }
 
     @Override
-    public CommonResult delete(Long[] id) {
+    public CommonResult delete(Long[] ids) {
         CommonResult result = new CommonResult();
-        ModelVO model = modelDal.getModelById(id[0]);
+        ModelVO model = modelDal.getModelById(ids[0]);
         if (model.getTemplate()) {
             result.setCode("701");
             result.setSuccess(false);
             result.setMsg("系统模板禁止删除！");
             return result;
         }
-        int count = modelDal.delete(id);
+        int count = modelDal.delete(ids);
         if (count > 0) {
             result.setSuccess(true);
             // 通知更新
@@ -170,7 +173,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
     @Override
     public CommonResult build(Long id) throws IOException {
         CommonResult result = new CommonResult();
-        ModelVO modelVO = modelDal.getModelById(id);
+        ModelVO modelVO = getModelById(id);
         List<FieldVO> fields = modelDal.listField(id);
         List<PreItemVO> items = modelDal.listPreItem(id, null);
         String collectionName = "entity_" + id;
@@ -184,7 +187,7 @@ public class ModelServiceImpl implements ModelService, SubscribeHandle {
         }
         // 为需要索引的字段添加索引
         for (FieldVO field : fields) {
-            if (field.getIndexed().booleanValue()) {
+            if (field.getIndexed()) {
                 Document indexKey = new Document();
                 indexKey.put(field.getFieldName(), 1);
                 IndexModel index = new IndexModel(indexKey);
