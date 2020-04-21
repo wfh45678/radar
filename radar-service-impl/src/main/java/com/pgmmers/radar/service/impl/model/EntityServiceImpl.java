@@ -1,15 +1,11 @@
 package com.pgmmers.radar.service.impl.model;
 
-import com.pgmmers.radar.dal.model.ModelDal;
-import com.pgmmers.radar.service.cache.CacheService;
-import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.data.MongoService;
 import com.pgmmers.radar.service.model.EntityService;
+import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.vo.model.ModelVO;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,43 +13,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EntityServiceImpl implements EntityService, SubscribeHandle {
+public class EntityServiceImpl implements EntityService {
 
     private Logger logger = LoggerFactory.getLogger(EntityServiceImpl.class);
 
-
     @Autowired
-    private ModelDal modelDal;
-
-    @Autowired
-    private CacheService cacheService;
-
+    private ModelService modelService;
     @Autowired
     private MongoService mongoService;
-    
-    private List<ModelVO> modelList = new ArrayList<>();
 
-    @PostConstruct
-    public void init() {
-        modelList = modelDal.listModel(null);
-        cacheService.subscribeModel(this);
-    }
 
     @Override
     public int save(Long modelId, String jsonString, boolean isAllowDuplicate) {
         String tmpUrl = "entity_" + modelId;
         Document doc = Document.parse(jsonString);
         if (!isAllowDuplicate) {
-            ModelVO model = null;//cacheService.getModel(modelId);
-            for (ModelVO vo : modelList) {
-                if (vo.getId().equals(modelId)) {
-                    model = vo;
-                    break;
-                }
-            }
-            if (model == null) {
-                model = modelDal.getModelById(modelId);
-            }
+            ModelVO model = modelService.getModelById(modelId);
             Document filter = new Document();
             filter.append(model.getEntryName(), doc.get(model.getEntryName()));
             long qty = mongoService.count(tmpUrl, filter);
@@ -73,26 +48,12 @@ public class EntityServiceImpl implements EntityService, SubscribeHandle {
     }
 
     @Override
-    public void onMessage(String channel, String message) {
-        modelList = modelDal.listModel(null);
-    }
-
-    @Override
     public int save(Long modelId, String jsonString, String attachJson,
             boolean isAllowDuplicate) {
         String tmpUrl = "entity_" + modelId;
         Document doc = Document.parse(jsonString);
         Document atta = Document.parse(attachJson);
-        ModelVO model = null;//cacheService.getModel(modelId);
-        for (ModelVO vo : modelList) {
-            if (vo.getId().equals(modelId)) {
-                model = vo;
-                break;
-            }
-        }
-        if (model == null) {
-            model = modelDal.getModelById(modelId);
-        }
+        ModelVO model = modelService.getModelById(modelId);
         atta.put("radar_ref_datetime", new Date(doc.getLong(model.getReferenceDate())));
         doc.putAll(atta);
         if (!isAllowDuplicate) {

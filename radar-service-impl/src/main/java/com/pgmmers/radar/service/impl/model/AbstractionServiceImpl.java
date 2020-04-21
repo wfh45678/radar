@@ -1,7 +1,6 @@
 package com.pgmmers.radar.service.impl.model;
 
 import com.alibaba.fastjson.JSON;
-
 import com.pgmmers.radar.dal.bean.AbstractionQuery;
 import com.pgmmers.radar.dal.model.AbstractionDal;
 import com.pgmmers.radar.dal.model.ModelDal;
@@ -11,20 +10,24 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.AbstractionService;
 import com.pgmmers.radar.util.GroovyScriptUtil;
 import com.pgmmers.radar.vo.model.AbstractionVO;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Service
-public class AbstractionServiceImpl implements AbstractionService, SubscribeHandle {
+public class AbstractionServiceImpl extends BaseLocalCacheService implements AbstractionService,
+        SubscribeHandle {
+
     public static Logger logger = LoggerFactory.getLogger(AbstractionServiceImpl.class);
+
+    @Override
+    public Object query(Long modelId) {
+        return modelDal.listAbstraction(modelId, null);
+    }
 
     @Autowired
     private ModelDal modelDal;
@@ -33,16 +36,10 @@ public class AbstractionServiceImpl implements AbstractionService, SubscribeHand
     @Autowired
     private CacheService cacheService;
 
-    public Map<Long, List<AbstractionVO>> contextMap = new HashMap<Long, List<AbstractionVO>>();
-
     @Override
     public List<AbstractionVO> listAbstraction(Long modelId) {
-        List<AbstractionVO> list = contextMap.get(modelId);
-        if (list == null || list.size() == 0) {
-            list = modelDal.listAbstraction(modelId, null);
-            contextMap.put(modelId, list);
-        }
-        return list;
+        //noinspection unchecked
+        return (List<AbstractionVO>) getByCache(modelId);
     }
 
     @Override
@@ -50,8 +47,7 @@ public class AbstractionServiceImpl implements AbstractionService, SubscribeHand
         logger.info("abstraction sub:{}", message);
         AbstractionVO abstraction = JSON.parseObject(message, AbstractionVO.class);
         if (abstraction != null) {
-            List<AbstractionVO> list = modelDal.listAbstraction(abstraction.getModelId(), null);
-            contextMap.put(abstraction.getModelId(), list);
+            invalidateCache(abstraction.getModelId());
         }
 
     }
@@ -65,7 +61,7 @@ public class AbstractionServiceImpl implements AbstractionService, SubscribeHand
     public CommonResult list(Long modelId) {
         CommonResult result = new CommonResult();
         result.setSuccess(true);
-        result.getData().put("list", abstractionDal.list(modelId));
+        result.getData().put("list", listAbstraction(modelId));
         return result;
     }
 
@@ -89,11 +85,11 @@ public class AbstractionServiceImpl implements AbstractionService, SubscribeHand
         }
         int count = abstractionDal.save(abstraction);
         if (count > 0) {
-        	if(StringUtils.isEmpty(abstraction.getName())){
-        		abstraction.setName("abstraction_" + abstraction.getId());
-        		abstractionDal.save(abstraction);
-        	}
-        	
+            if (StringUtils.isEmpty(abstraction.getName())) {
+                abstraction.setName("abstraction_" + abstraction.getId());
+                abstractionDal.save(abstraction);
+            }
+
             result.getData().put("id", abstraction.getId());
             result.setSuccess(true);
             // 通知更新
@@ -114,7 +110,7 @@ public class AbstractionServiceImpl implements AbstractionService, SubscribeHand
         }
         return result;
     }
-    
+
     @PostConstruct
     public void init() {
         cacheService.subscribeAbstraction(this);

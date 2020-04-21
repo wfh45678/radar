@@ -47,6 +47,9 @@
             <groupId>org.tensorflow</groupId>
             <artifactId>tensorflow</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
     </dependencies>
 </project>
