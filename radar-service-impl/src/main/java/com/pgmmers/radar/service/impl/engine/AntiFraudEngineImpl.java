@@ -49,7 +49,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     private static Logger logger = LoggerFactory.getLogger(AntiFraudEngineImpl.class);
 
     private static Map<Long, Map<String, Object>> dataListCacheMap = new HashMap<Long, Map<String, Object>>();
-    @Value("${sys.conf.machine-learning: false}")
+    @Value("${sys.conf.machine-learning: true}")
     private boolean machineLearning;
     @Autowired
     private EntityService entityService;
