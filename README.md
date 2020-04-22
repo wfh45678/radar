@@ -118,8 +118,8 @@ https://gitee.com/freshday/radar/wikis/manual
 ## Contact to
 
  如果喜欢本项目，Star支持一下, 让更多人了解本项目，谢谢！   
- 独乐乐不如众乐乐，微信扫码或手动（nicedream7758）加群一起嗨！   
- 提示：进群需要捐赠，0.1元起  
+ 独乐乐不如众乐乐，微信（nicedream7758）加群一起嗨！  
+ 提示：进群需要捐赠到gitee，0.1元起  
  ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)   
  
  Copyright ©  2019-2020 WangFeiHu
