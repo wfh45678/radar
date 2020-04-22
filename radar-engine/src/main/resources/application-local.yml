@@ -33,5 +33,6 @@ sys:
     entity-duplicate-insert: false # 事件是否允许重复插入
     mongo-restore-days: 93 # 事件保存时间，默认3个月
     workdir: d:/radar #   工作目录
+    machine-learning: true # 是否启用 机器学习
 server:
   port: 6581

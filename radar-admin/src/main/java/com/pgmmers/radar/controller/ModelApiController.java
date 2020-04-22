@@ -36,13 +36,13 @@ public class ModelApiController  {
     @GetMapping("/{id}")
     public CommonResult get(@PathVariable Long id) {
         CommonResult result = new CommonResult();
-        ModelVO modelVO = modelService.get(id);
+        ModelVO modelVO = modelService.getModelById(id);
         if (modelVO != null) {
             result.setSuccess(true);
             result.getData().put("model", modelVO);
         }
         return result;
-    }   
+    }
 
     @GetMapping("/list")
 	public CommonResult list(HttpServletRequest request) {
@@ -119,14 +119,14 @@ public class ModelApiController  {
 
     @PostMapping("/enable/{id}")
     public CommonResult enable(@PathVariable Long id) {
-        ModelVO modelVO = modelService.get(id);
+        ModelVO modelVO = modelService.getModelById(id);
         modelVO.setStatus(StatusType.ACTIVE.getKey());
         return modelService.save(modelVO);
     }
 
     @PostMapping("/disable/{id}")
     public CommonResult disable(@PathVariable Long id) {
-        ModelVO modelVO = modelService.get(id);
+        ModelVO modelVO = modelService.getModelById(id);
         modelVO.setStatus(StatusType.INACTIVE.getKey());
         return modelService.save(modelVO);
     }
