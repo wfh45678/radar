@@ -38,7 +38,8 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class ModelServiceImpl extends BaseLocalCacheService implements ModelService, SubscribeHandle {
+public class ModelServiceImpl extends BaseLocalCacheService implements ModelService,
+        SubscribeHandle {
 
     @Override
     public Object query(Long modelId) {
@@ -85,11 +86,16 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
 
     @Override
     public ModelVO getModelByGuid(String guid) {
-        long modelId = guidMap.get(guid);
-        ModelVO vo = (ModelVO) getByCache(modelId);
+        Long modelId = guidMap.get(guid);
+        ModelVO vo = null;
+        if (modelId != null) {
+            vo = (ModelVO) getByCache(modelId);
+        }
         if (vo == null) {
             vo = modelDal.getModelByGuid(guid);
+            //维护guid->modelId 映射数据
             guidMap.put(vo.getGuid(), vo.getId());
+            localCache.put(vo.getId(),vo);
         }
         return vo;
     }
