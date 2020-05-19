@@ -4,10 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.pgmmers.radar.dal.bean.AbstractionQuery;
-import com.pgmmers.radar.enums.PluginType;
 import com.pgmmers.radar.service.common.CommonResult;
+import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.DataColumnInfo;
 import com.pgmmers.radar.service.enums.DataType;
+import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
 import com.pgmmers.radar.service.model.AbstractionService;
 import com.pgmmers.radar.service.model.FieldService;
 import com.pgmmers.radar.service.model.PreItemService;
@@ -15,13 +16,18 @@ import com.pgmmers.radar.vo.model.AbstractionVO;
 import com.pgmmers.radar.vo.model.FieldVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import io.swagger.annotations.Api;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/services/v1/abstraction")
 @Api(value = "AbstractionApi", description = "特征管理相关操作",  tags = {"特征API"})
@@ -74,7 +80,7 @@ public class AbstractionApiController {
         List<PreItemVO> listPreItem = preItemService.listPreItem(modelId);
         if(listPreItem != null && listPreItem.size()!= 0){
 	        for (PreItemVO preItem : listPreItem) {
-	            PluginType pt = PluginType.get(preItem.getPlugin());
+                PluginServiceV2 pt= PluginManager.pluginServiceMap().get(preItem.getPlugin());
 	            if (StringUtils.isNotEmpty(pt.getType()) && pt.getType().equals("JSON")) {
 	                //load  http request data
                     JsonNode json = preItem.getConfigJson();

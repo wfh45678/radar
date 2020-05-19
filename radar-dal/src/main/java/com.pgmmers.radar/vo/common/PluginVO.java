@@ -1,8 +1,6 @@
 package com.pgmmers.radar.vo.common;
 
 
-import com.pgmmers.radar.enums.PluginType;
-
 public class PluginVO {
 
     private Integer key;
@@ -12,14 +10,10 @@ public class PluginVO {
     // private JSONArray meta;
 
 
-
-    public PluginVO(PluginType plugin) {
-        this.key = plugin.getKey();
-        this.method = plugin.name();
-        this.desc = plugin.getDesc();
-        // if (!StringUtils.isEmpty(plugin.getMeta())) {
-        // this.meta = JSONArray.parseArray(plugin.getMeta());
-        // }
+    public PluginVO(Integer key, String method, String desc) {
+        this.key = key;
+        this.method = method;
+        this.desc = desc;
     }
 
     public Integer getKey() {
