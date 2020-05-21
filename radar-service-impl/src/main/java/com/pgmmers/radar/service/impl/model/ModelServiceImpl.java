@@ -8,12 +8,13 @@ import com.pgmmers.radar.dal.bean.ModelQuery;
 import com.pgmmers.radar.dal.bean.PageResult;
 import com.pgmmers.radar.dal.model.ModelDal;
 import com.pgmmers.radar.enums.FieldType;
-import com.pgmmers.radar.enums.PluginType;
 import com.pgmmers.radar.enums.StatusType;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.data.MongoService;
+import com.pgmmers.radar.service.engine.PluginServiceV2;
+import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.util.JsonUtils;
@@ -251,7 +252,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         JSONObject preItemJson = new JSONObject();
         for (PreItemVO item : items) {
             String pluginType = item.getPlugin();
-            PluginType plugin = Enum.valueOf(PluginType.class, pluginType);
+            PluginServiceV2 plugin= PluginManager.pluginServiceMap().get(pluginType);
             String columns = plugin.getMeta();
             if (columns == null) {
                 String fieldType = plugin.getType();

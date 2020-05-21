@@ -3,14 +3,15 @@ package com.pgmmers.radar.controller;
 
 import com.alibaba.excel.util.IoUtils;
 import com.pgmmers.radar.enums.FieldType;
-import com.pgmmers.radar.enums.PluginType;
 import com.pgmmers.radar.service.common.CommonResult;
+import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
 import com.pgmmers.radar.util.RandomValidateCode;
 import com.pgmmers.radar.util.ZipUtils;
 import com.pgmmers.radar.vo.common.PluginVO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,14 +38,15 @@ public class CommonApiController {
 
     @Value("${sys.conf.workdir}")
     public String workDir;
-    
+
     @GetMapping("/plugins")
     public CommonResult plugins() {
         CommonResult result = new CommonResult();
-        List<PluginVO> plugins = new ArrayList<PluginVO>();
-        for (PluginType pt : PluginType.values()) {
-            plugins.add(new PluginVO(pt));
-        }
+        List<PluginVO> plugins=PluginManager.pluginServiceMap()
+                .values()
+                .stream()
+                .map(t-> new PluginVO(t.key(),t.pluginName(),t.desc()))
+                .collect(Collectors.toList());
         result.setSuccess(true);
         result.getData().put("plugins", plugins);
         return result;
