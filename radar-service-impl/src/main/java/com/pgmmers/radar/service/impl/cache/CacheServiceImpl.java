@@ -33,6 +33,8 @@ public class CacheServiceImpl implements CacheService {
     public static final String PUB_SUB_ACTIVATION_CHANNEL = "radar_channel_activation";
     public static final String PUB_SUB_LISTRECORD_CHANNEL = "radar_channel_listrecord";
     public static final String PUB_SUB_DATALIST_CHANNEL = "radar_channel_datalist";
+    public static final String LOGIN_CAPTCHA_PREFIX = "log_captcha_";
+
 
     @Autowired
     private RedisService redisService;
@@ -141,6 +143,16 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public void subscribeDataList(SubscribeHandle handler) {
         redisService.subscribe(PUB_SUB_DATALIST_CHANNEL, handler);
+    }
+
+    @Override
+    public void cacheCaptcha(String captcha) {
+        redisService.setex(LOGIN_CAPTCHA_PREFIX + captcha, captcha, 60);
+    }
+
+    @Override
+    public boolean validateCaptcha(String captcha) {
+        return redisService.contains(LOGIN_CAPTCHA_PREFIX + captcha.toUpperCase());
     }
 
 }

@@ -5,30 +5,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.util.Random;
 
 
 /**
- * RandomValidateCode class.
+ * CaptchaUtil class.
  *
  * @author feihu.wang
  */
-@Deprecated
-public class RandomValidateCode {
+public class CaptchaUtil {
     
-    private Logger logger = LoggerFactory.getLogger(RandomValidateCode.class);
+    private Logger logger = LoggerFactory.getLogger(CaptchaUtil.class);
     private Random random = new Random();
-    private String randString = "23456789ABCDEFGHIJKLMNPQRSTUVWXYZ";// 随机产生的字符串
-
-    private int width = 140;// 图片宽
-    private int height = 30;// 图片高
-    private int lineSize = 40;// 干扰线数量
-    private int stringNum = 4;// 随机产生字符数量
+    private String randString = "23456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
+    private int width = 140;
+    private int height = 30;
+    private int lineSize = 40;
+    private int stringNum = 4;
 
     /**
      * 获得字体.
@@ -47,29 +43,30 @@ public class RandomValidateCode {
      * @return a {@link Color} object.
      */
     private Color getRandColor(int fc, int bc) {
-        if (fc > 255)
+        if (fc > 255) {
             fc = 255;
-        if (bc > 255)
+        }
+        if (bc > 255) {
             bc = 255;
+        }
+
         int r = fc + random.nextInt(bc - fc - 16);
         int g = fc + random.nextInt(bc - fc - 14);
         int b = fc + random.nextInt(bc - fc - 18);
         return new Color(r, g, b);
     }
 
+
     /**
-     * 生成随机图片.
      *
-     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param response a {@link javax.servlet.http.HttpServletResponse} object.
+     *
+     * @return captcha
      */
-    public void genRandcode(HttpServletRequest request,
-            HttpServletResponse response) {
-        HttpSession session = request.getSession(true);
+    public Captcha genRandcode() {
+        Captcha captcha = new Captcha();
         // BufferedImage类是具有缓冲区的Image类,Image类是用于描述图像信息的类
-        BufferedImage image = new BufferedImage(width, height,
-                BufferedImage.TYPE_INT_BGR);
-        Graphics g = image.getGraphics();// 产生Image对象的Graphics对象,改对象可以在图像上进行各种绘制操作
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
+        Graphics g = image.getGraphics();
         g.fillRect(0, 0, width, height);
         g.setFont(new Font("Times New Roman", Font.ROMAN_BASELINE, 18));
         g.setColor(getRandColor(110, 133));
@@ -82,15 +79,20 @@ public class RandomValidateCode {
         for (int i = 1; i <= stringNum; i++) {
             randomString = drowString(g, randomString, i);
         }
-        session.removeAttribute("captcha");
-        session.setAttribute("captcha", randomString);
+
         g.dispose();
         logger.info("curr captcha:{}", randomString);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            ImageIO.write(image, "JPEG", response.getOutputStream());// 将内存中的图片通过流动形式输出到客户端
+            // 将内存中的图片通过流动形式输出到客户端
+            ImageIO.write(image, "JPEG", out);
+            captcha.setCaptcha(randomString);
+            captcha.setContents(out.toByteArray());
         } catch (Exception e) {
             logger.error("create register rand code error" , e);
+            captcha.setCaptcha("");
         }
+        return captcha;
     }
 
     /**
@@ -134,5 +136,28 @@ public class RandomValidateCode {
     public String getRandomString(int num) {
         return String.valueOf(randString.charAt(num));
     }
-    
+
+    public class Captcha {
+
+        private String captcha;
+
+        private byte[] contents;
+
+        public String getCaptcha() {
+            return captcha;
+        }
+
+        public void setCaptcha(String captcha) {
+            this.captcha = captcha;
+        }
+
+        public byte[] getContents() {
+            return contents;
+        }
+
+        public void setContents(byte[] contents) {
+            this.contents = contents;
+        }
+    }
 }
+

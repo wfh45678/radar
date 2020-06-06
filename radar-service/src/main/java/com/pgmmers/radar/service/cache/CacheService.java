@@ -11,6 +11,7 @@ import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import com.pgmmers.radar.vo.model.RuleVO;
 
+
 public interface CacheService {
      void saveAntiFraudResult(String modelId, String sessionId, CommonResult result);
 
@@ -46,4 +47,8 @@ public interface CacheService {
      void publishDataList(DataListsVO dataList);
      void subscribeDataList(SubscribeHandle handler);
 
+
+     void cacheCaptcha(String captcha);
+
+     boolean validateCaptcha(String captcha);
 }

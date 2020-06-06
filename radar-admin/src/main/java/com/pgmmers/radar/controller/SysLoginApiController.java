@@ -6,6 +6,7 @@ import com.pgmmers.radar.intercpt.ContextHolder;
 import com.pgmmers.radar.intercpt.JsonWebTokenService;
 import com.pgmmers.radar.intercpt.TokenBody;
 import com.pgmmers.radar.service.admin.UserService;
+import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.util.CryptUtils;
 import com.pgmmers.radar.vo.admin.UserVO;
@@ -41,11 +42,14 @@ public class SysLoginApiController {
     @Autowired
     private JsonWebTokenService tokenService;
 
+    @Autowired
+    private CacheService cacheService;
+
     @PostMapping("/merchant/login")
-    public CommonResult login(String loginName, String passwd, String captcha, HttpServletRequest request) {
+    public CommonResult login(String loginName, String passwd, String captcha) {
         CommonResult ret = new CommonResult();
         ret.setSuccess(false);
-        String checkResult = checkParam(loginName, passwd, passwd, captcha, request);
+        String checkResult = checkParam(loginName, passwd, passwd, captcha);
         if(!StringUtils.isEmpty(checkResult)){
             ret.setMsg(checkResult);
             return ret;
@@ -68,8 +72,10 @@ public class SysLoginApiController {
                 }));
                 ret.getData().put("x-auth-token", token);
                 ret.setSuccess(true);
-            } else
+            } else {
                 ret.setMsg("用户名和密码错误！");
+            }
+
         } else {
             ret.setMsg("用户名和密码错误！");
         }
@@ -88,15 +94,15 @@ public class SysLoginApiController {
 
     /**
      * 注册接口
-     * @param request
+     * @param
      * @return
      * @author xushuai
      */
     @PostMapping("/merchant/regist")
-    public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha,String giteeAccount, HttpServletRequest request) {
+    public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha, String giteeAccount) {
         CommonResult result = new CommonResult();
 
-        String checkResult = checkParam(loginName, passwd, verifyPasswd, captcha, request);
+        String checkResult = checkParam(loginName, passwd, verifyPasswd, captcha);
         if(!StringUtils.isEmpty(checkResult)){
             result.setMsg(checkResult);
             return result;
@@ -130,7 +136,7 @@ public class SysLoginApiController {
         return result;
     }
 
-    private String checkParam(String loginName, String passwd, String verifyPasswd, String captcha, HttpServletRequest request){
+    private String checkParam(String loginName, String passwd, String verifyPasswd, String captcha){
         if(StringUtils.isEmpty(loginName)){
             return "登录名称不能为空";
         }
@@ -140,9 +146,8 @@ public class SysLoginApiController {
         if(StringUtils.isEmpty(captcha)){
             return "验证码不能为空";
         }
-        String sourceCaptcha = (String) request.getSession(true).getAttribute("captcha");
-        request.getSession().removeAttribute("captcha");
-        if (captcha == null || !captcha.equalsIgnoreCase(sourceCaptcha) ) {
+        boolean validateCaptcha = cacheService.validateCaptcha(captcha);
+        if (!validateCaptcha ) {
             return "验证码无效";
         }
         if(!passwd.equals(verifyPasswd)){
