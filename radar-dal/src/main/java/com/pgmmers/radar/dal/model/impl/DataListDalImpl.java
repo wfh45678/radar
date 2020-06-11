@@ -86,6 +86,7 @@ public class DataListDalImpl implements DataListDal {
         logger.info("listDataLists,{},{}", modelId, status);
         Example example = new Example(DataListsPO.class);
         Example.Criteria cri = example.createCriteria();
+        cri.andEqualTo("modelId", modelId);
         if (status != null) {
             cri.andEqualTo("status", status);
         }
