@@ -18,3 +18,6 @@
 /radar-service-impl/radar-service-impl.iml
 webapp/node_modules/
 .project
+.settings
+.classpath
+.factorypath
