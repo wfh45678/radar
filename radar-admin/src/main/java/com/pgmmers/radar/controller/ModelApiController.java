@@ -133,8 +133,6 @@ public class ModelApiController  {
 
     @PostMapping("/copy")
 	public CommonResult copy(@RequestBody ModelVO model, HttpServletRequest request) {
-//    	HttpSession session = request.getSession();
-//        UserVO user = (UserVO) session.getAttribute("user");
         return modelService.copy(model.getId(), contextHolder.getContext().getCode(), model.getModelName(), model.getLabel());
 	}
 

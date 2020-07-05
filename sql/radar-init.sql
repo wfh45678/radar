@@ -540,8 +540,8 @@ CREATE TABLE `engine_model` (
 INSERT INTO `engine_model` VALUES ('99', '697AA0D6-4B0F-4B57-A487-345CB10BDD8A', 'login_template', '登录行为模板', 'userId', 'eventId', 'loginTime', '0', 'pgmmer.top', '1', null, '0', '2016-11-17 10:59:43', '2016-11-18 18:02:15');
 INSERT INTO `engine_model` VALUES ('101', '3EAE4543-814B-4AAB-9C96-F3172D2C9B16', 'register_template', '注册行为模板', 'userId', 'eventId', 'registerTime', '0', 'pgmmer.top', '1', null, '0', '2016-11-17 15:50:49', '2016-11-18 18:02:22');
 INSERT INTO `engine_model` VALUES ('103', '03355AB9-4396-4740-8CA2-4E6643CDC0F1', 'transaction_template', '交易行为模板', 'userId', 'eventId', 'eventTime', '0', 'pgmmer.top', '1', null, '0', '2016-11-17 16:06:31', '2016-11-17 16:10:02');
-INSERT INTO `engine_model` VALUES ('222', 'B6B69670-2E27-4363-8D7D-B6CBC73CEB60', 'model_222', 'Ting注册', 'userId', 'eventId', 'registerTime', '0', 'pgmmer.top', '0', null, '1', '2016-11-17 15:50:49', '2019-09-11 13:42:48');
-INSERT INTO `engine_model` VALUES ('224', 'DB8A078F-97FE-4A7F-AAC0-5AF1A6C36CE8', 'model_224', 'Ting提现', 'userId', 'eventId', 'eventTime', '0', 'pgmmer.top', '0', null, '1', '2016-11-17 16:06:31', '2019-09-11 18:07:23');
+INSERT INTO `engine_model` VALUES ('222', 'B6B69670-2E27-4363-8D7D-B6CBC73CEB60', 'model_222', 'Ting注册', 'userId', 'eventId', 'registerTime', '0', 'pgmmer.top', '0', null, '0', '2016-11-17 15:50:49', '2019-09-11 13:42:48');
+INSERT INTO `engine_model` VALUES ('224', 'DB8A078F-97FE-4A7F-AAC0-5AF1A6C36CE8', 'model_224', 'Ting提现', 'userId', 'eventId', 'eventTime', '0', 'pgmmer.top', '0', null, '0', '2016-11-17 16:06:31', '2019-09-11 18:07:23');
 
 -- ----------------------------
 -- Table structure for engine_pre_item
