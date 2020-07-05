@@ -18,6 +18,7 @@ import java.util.Random;
  *
  * @author feihu.wang
  */
+@Deprecated
 public class RandomValidateCode {
     
     private Logger logger = LoggerFactory.getLogger(RandomValidateCode.class);

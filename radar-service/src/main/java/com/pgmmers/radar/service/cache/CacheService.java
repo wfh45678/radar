@@ -1,31 +1,18 @@
 package com.pgmmers.radar.service.cache;
 
 
-
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.vo.model.*;
+import com.pgmmers.radar.vo.model.AbstractionVO;
+import com.pgmmers.radar.vo.model.ActivationVO;
+import com.pgmmers.radar.vo.model.DataListRecordVO;
+import com.pgmmers.radar.vo.model.DataListsVO;
+import com.pgmmers.radar.vo.model.FieldVO;
+import com.pgmmers.radar.vo.model.ModelVO;
+import com.pgmmers.radar.vo.model.PreItemVO;
+import com.pgmmers.radar.vo.model.RuleVO;
 
-import java.io.Serializable;
-import java.util.List;
 
 public interface CacheService {
-
-     void saveModel(ModelVO model);
-
-     ModelVO getModel(Long modelId);
-
-     void saveField(FieldVO field);
-
-     List<FieldVO> listFields(Long modelId);
-
-     void saveAbstraction(AbstractionVO abstraction);
-
-     List<AbstractionVO> listAbstraction(Long modelId);
-
-     void saveActivation(ActivationVO activation);
-
-     List<ActivationVO> listActivation(Long modelId);
-
      void saveAntiFraudResult(String modelId, String sessionId, CommonResult result);
 
      CommonResult getAntiFraudResult(String modelId, String sessionId);
@@ -53,11 +40,15 @@ public interface CacheService {
      void publishActivation(ActivationVO activation);
 
      void subscribeActivation(SubscribeHandle handler);
-    
+
      void publishDataListRecord(DataListRecordVO record);
      void subscribeDataListRecord(SubscribeHandle handler);
-    
+
      void publishDataList(DataListsVO dataList);
      void subscribeDataList(SubscribeHandle handler);
 
+
+     void cacheCaptcha(String captcha);
+
+     boolean validateCaptcha(String captcha);
 }

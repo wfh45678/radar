@@ -1,0 +1,12 @@
+com.pgmmers.radar.service.engine.PluginServiceV2=\
+    com.pgmmers.radar.service.impl.engine.Plugin.DATEFORMAT,\
+    com.pgmmers.radar.service.impl.engine.Plugin.ALLINONE,\
+    com.pgmmers.radar.service.impl.engine.Plugin.GPS2LOCATION,\
+    com.pgmmers.radar.service.impl.engine.Plugin.HTTP_UTIL,\
+    com.pgmmers.radar.service.impl.engine.Plugin.IP2LOCATION,\
+    com.pgmmers.radar.service.impl.engine.Plugin.MOBILE2LOCATION,\
+    com.pgmmers.radar.service.impl.engine.Plugin.SENSITIVE_TIME,\
+    com.pgmmers.radar.service.impl.engine.Plugin.SUBSTRING
+
+
+

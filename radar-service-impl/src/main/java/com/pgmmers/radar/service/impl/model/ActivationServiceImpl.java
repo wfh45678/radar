@@ -1,7 +1,6 @@
 package com.pgmmers.radar.service.impl.model;
 
 import com.alibaba.fastjson.JSON;
-
 import com.pgmmers.radar.dal.bean.ActivationQuery;
 import com.pgmmers.radar.dal.model.ActivationDal;
 import com.pgmmers.radar.dal.model.ModelDal;
@@ -10,19 +9,21 @@ import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.ActivationService;
 import com.pgmmers.radar.vo.model.ActivationVO;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Service
-public class ActivationServiceImpl implements ActivationService, SubscribeHandle {
+public class ActivationServiceImpl extends BaseLocalCacheService implements ActivationService, SubscribeHandle {
+
+    @Override
+    public Object query(Long modelId) {
+        return  modelDal.listActivation(modelId, null);
+    }
 
     public static Logger logger = LoggerFactory.getLogger(ActivationServiceImpl.class);
 
@@ -35,16 +36,10 @@ public class ActivationServiceImpl implements ActivationService, SubscribeHandle
     @Autowired
     private CacheService cacheService;
 
-    public Map<Long, List<ActivationVO>> contextMap = new HashMap<Long, List<ActivationVO>>();
-
     @Override
     public List<ActivationVO> listActivation(Long modelId) {
-        List<ActivationVO> list = contextMap.get(modelId);
-        if (list == null || list.size() == 0) {
-            list = modelDal.listActivation(modelId, null);
-            contextMap.put(modelId, list);
-        }
-        return list;
+        //noinspection unchecked
+        return (List<ActivationVO>) getByCache(modelId);
     }
 
     @Override
@@ -52,8 +47,7 @@ public class ActivationServiceImpl implements ActivationService, SubscribeHandle
         logger.info("activation sub:{}", message);
         ActivationVO act = JSON.parseObject(message, ActivationVO.class);
         if (act != null) {
-            List<ActivationVO> list = modelDal.listActivation(act.getModelId(), null);
-            contextMap.put(act.getModelId(), list);
+            invalidateCache(act.getModelId());
         }
     }
 
@@ -99,7 +93,7 @@ public class ActivationServiceImpl implements ActivationService, SubscribeHandle
         }
         return result;
     }
-    
+
     @Override
 	public CommonResult updateOrder(Long activationId, String ruleOrder) {
     	CommonResult result = new CommonResult();
@@ -117,6 +111,6 @@ public class ActivationServiceImpl implements ActivationService, SubscribeHandle
 	@PostConstruct
     public void init() {
         cacheService.subscribeActivation(this);
-    }   
+    }
 
 }

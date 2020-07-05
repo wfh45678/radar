@@ -21,8 +21,6 @@ public interface ModelService {
 
      ModelVO getModelById(Long id);
 
-     ModelVO get(Long id);
-
      CommonResult query(ModelQuery query);
 
      CommonResult save(ModelVO model);

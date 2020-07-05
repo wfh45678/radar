@@ -4,38 +4,37 @@ import com.alibaba.fastjson.JSON;
 import com.pgmmers.radar.dal.bean.DataListQuery;
 import com.pgmmers.radar.dal.bean.DataListRecordQuery;
 import com.pgmmers.radar.dal.model.DataListDal;
-import com.pgmmers.radar.dal.model.ModelDal;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.DataListsService;
+import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.vo.model.DataListMetaVO;
 import com.pgmmers.radar.vo.model.DataListRecordVO;
 import com.pgmmers.radar.vo.model.DataListsVO;
 import com.pgmmers.radar.vo.model.ModelVO;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Service
 public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
 
     public static Logger logger = LoggerFactory.getLogger(DataListsServiceImpl.class);
-    
+
     @Autowired
     private DataListDal dataListDal;
     @Autowired
     private CacheService cacheService;
     @Autowired
-    private ModelDal modelDal;
+    private ModelService modelService;
 
     private static Map<Long, Map<String, Object>> dataListRecordCacheMap = new HashMap<>();
 
@@ -79,10 +78,10 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
         		dataList.setName("dataList_"+dataList.getId());
         		dataListDal.save(dataList);
         	}
-        	
+
             result.getData().put("id", dataList.getId());
             result.setSuccess(true);
-            // 通知更新 
+            // 通知更新
             dataList.setOpt("new");
             cacheService.publishDataList(dataList);
         }
@@ -96,7 +95,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
         int count = dataListDal.delete(id);
         if (count > 0) {
             result.setSuccess(true);
-            // 通知更新 
+            // 通知更新
             dataList.setOpt("delete");
             cacheService.publishDataList(dataList);
         }
@@ -131,7 +130,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
                 metaMap.remove(dataListMeta.getId());
             }
             dataListDal.saveMeta(dataListMeta);
-            
+
             if(StringUtils.isEmpty(dataListMeta.getFieldName())){
         		dataListMeta.setFieldName("dataListMeta_"+dataListMeta.getId());
         		dataListDal.saveMeta(dataListMeta);
@@ -225,14 +224,14 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     public void init() {
         cacheService.subscribeDataList(this);
         new Thread(() ->{
-                
-                List<ModelVO> modelList = modelDal.listModel(null);
+
+                List<ModelVO> modelList = modelService.listModel(null);
                 // 加载系统数据名单列表
                 Map<String, Object> sysDataListMap = new HashMap<>();
                 List<DataListsVO> sysList = dataListDal.listDataLists(0L, null);
                 for (DataListsVO dataListVO : sysList) {
                     Map<String, String> dataListRecords = new HashMap<String, String>();
-                    // record list 
+                    // record list
                     List<DataListRecordVO> recordVOList = dataListDal.listDataRecord(dataListVO.getId());
                     if (recordVOList != null) {
                         for (DataListRecordVO record : recordVOList) {
@@ -241,8 +240,8 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
                     }
                     sysDataListMap.put(dataListVO.getName(), dataListRecords);
                 }
-                
-                
+
+
                 for (ModelVO model : modelList) {
                     Map<String, Object> dataListMap = new HashMap<>();
                     // datalist list
@@ -250,7 +249,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
                     if (dataLists != null) {
                         for (DataListsVO dataListVO : dataLists) {
                             Map<String, String> dataListRecords = new HashMap<>();
-                            // record list 
+                            // record list
                             List<DataListRecordVO> recordVOList = dataListDal.listDataRecord(dataListVO.getId());
                             if (recordVOList != null) {
                                 for (DataListRecordVO record : recordVOList) {
@@ -258,11 +257,11 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
                                 }
                             }
                             dataListMap.put(dataListVO.getName(), dataListRecords);
-                            
+
                         }
                     }
 
-                    
+
                     // add sys data list
                     dataListMap.putAll(sysDataListMap);
                     dataListRecordCacheMap.put(model.getId(), dataListMap);

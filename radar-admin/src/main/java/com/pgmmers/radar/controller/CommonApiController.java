@@ -3,23 +3,27 @@ package com.pgmmers.radar.controller;
 
 import com.alibaba.excel.util.IoUtils;
 import com.pgmmers.radar.enums.FieldType;
-import com.pgmmers.radar.enums.PluginType;
+import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.util.RandomValidateCode;
+import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
+import com.pgmmers.radar.util.CaptchaUtil;
 import com.pgmmers.radar.util.ZipUtils;
 import com.pgmmers.radar.vo.common.PluginVO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
+
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,14 +41,19 @@ public class CommonApiController {
 
     @Value("${sys.conf.workdir}")
     public String workDir;
-    
+
+    @Autowired
+    private CacheService cacheService;
+
+
     @GetMapping("/plugins")
     public CommonResult plugins() {
         CommonResult result = new CommonResult();
-        List<PluginVO> plugins = new ArrayList<PluginVO>();
-        for (PluginType pt : PluginType.values()) {
-            plugins.add(new PluginVO(pt));
-        }
+        List<PluginVO> plugins=PluginManager.pluginServiceMap()
+                .values()
+                .stream()
+                .map(t-> new PluginVO(t.key(),t.pluginName(),t.desc()))
+                .collect(Collectors.toList());
         result.setSuccess(true);
         result.getData().put("plugins", plugins);
         return result;
@@ -67,18 +76,12 @@ public class CommonApiController {
     }
 
 
-    @GetMapping("/getCaptcha")
-    public void getCaptcha(HttpServletRequest request, HttpServletResponse response) {
-        response.setContentType("image/jpeg");// 设置相应类型,告诉浏览器输出的内容为图片
-        response.setHeader("Pragma", "No-cache");// 设置响应头信息，告诉浏览器不要缓存此内容
-        response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expire", 0);
-        RandomValidateCode randomValidateCode = new RandomValidateCode();
-        try {
-            randomValidateCode.genRandcode(request, response);//输出图片方法
-        } catch (Exception e) {
-            logger.error("get captcha error", e);
-        }
+    @GetMapping(value = "/getCaptcha", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity getCaptcha() {
+        CaptchaUtil captchaUtil = new CaptchaUtil();
+        CaptchaUtil.Captcha captcha = captchaUtil.genRandcode();
+        cacheService.cacheCaptcha(captcha.getCaptcha().toUpperCase());
+        return ResponseEntity.ok(captcha.getContents());
     }
 
     @PostMapping(value = "/upload")

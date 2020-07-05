@@ -1,18 +1,22 @@
 package com.pgmmers.radar.service.impl.cache;
 
 import com.alibaba.fastjson.JSON;
-
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.RedisService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.vo.model.*;
+import com.pgmmers.radar.vo.model.AbstractionVO;
+import com.pgmmers.radar.vo.model.ActivationVO;
+import com.pgmmers.radar.vo.model.DataListRecordVO;
+import com.pgmmers.radar.vo.model.DataListsVO;
+import com.pgmmers.radar.vo.model.FieldVO;
+import com.pgmmers.radar.vo.model.ModelVO;
+import com.pgmmers.radar.vo.model.PreItemVO;
+import com.pgmmers.radar.vo.model.RuleVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CacheServiceImpl implements CacheService {
@@ -29,58 +33,11 @@ public class CacheServiceImpl implements CacheService {
     public static final String PUB_SUB_ACTIVATION_CHANNEL = "radar_channel_activation";
     public static final String PUB_SUB_LISTRECORD_CHANNEL = "radar_channel_listrecord";
     public static final String PUB_SUB_DATALIST_CHANNEL = "radar_channel_datalist";
-    
+    public static final String LOGIN_CAPTCHA_PREFIX = "log_captcha_";
+
+
     @Autowired
     private RedisService redisService;
-
-    @Override
-    public void saveModel(ModelVO model) {
-        redisService.set(prefix + "model_" + model.getId(), model);
-    }
-
-    @Override
-    public ModelVO getModel(Long modelId) {
-        return redisService.get(prefix + "model_" + modelId, ModelVO.class);
-    }
-
-    @Override
-    public void saveField(FieldVO field) {
-        String key = prefix + "field_" + field.getModelId();
-        redisService.hset(key, field.getFieldName(), field);
-    }
-
-    @Override
-    public List<FieldVO> listFields(Long modelId) {
-        String key = prefix + "field_" + modelId;
-        List<FieldVO> list = redisService.hvals(key);
-        return list;
-    }
-
-    @Override
-    public void saveAbstraction(AbstractionVO abstraction) {
-        String key = prefix + "abstraction_" + abstraction.getModelId();
-        redisService.hset(key, abstraction.getName(), abstraction);
-    }
-
-    @Override
-    public List<AbstractionVO> listAbstraction(Long modelId) {
-        String key = prefix + "abstraction_" + modelId;
-        List<AbstractionVO> list = redisService.hget(key, AbstractionVO.class);
-        return list;
-    }
-
-    @Override
-    public void saveActivation(ActivationVO activation) {
-        String key = prefix + "activation_" + activation.getModelId();
-        redisService.hset(key, activation.getActivationName(), activation);
-    }
-
-    @Override
-    public List<ActivationVO> listActivation(Long modelId) {
-        String key = prefix + "activation_" + modelId;
-        List<ActivationVO> list = redisService.hget(key, ActivationVO.class);
-        return list;
-    }
 
     @Override
     public void saveAntiFraudResult(String modelId, String sessionId, CommonResult result) {
@@ -169,7 +126,7 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public void publishDataListRecord(DataListRecordVO record) {
         redisService.publish(PUB_SUB_LISTRECORD_CHANNEL, JSON.toJSONString(record));
-        
+
     }
 
     @Override
@@ -180,12 +137,22 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public void publishDataList(DataListsVO dataList) {
         redisService.publish(PUB_SUB_DATALIST_CHANNEL, JSON.toJSONString(dataList));
-        
+
     }
 
     @Override
     public void subscribeDataList(SubscribeHandle handler) {
         redisService.subscribe(PUB_SUB_DATALIST_CHANNEL, handler);
+    }
+
+    @Override
+    public void cacheCaptcha(String captcha) {
+        redisService.setex(LOGIN_CAPTCHA_PREFIX + captcha, captcha, 60);
+    }
+
+    @Override
+    public boolean validateCaptcha(String captcha) {
+        return redisService.contains(LOGIN_CAPTCHA_PREFIX + captcha.toUpperCase());
     }
 
 }

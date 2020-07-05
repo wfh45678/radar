@@ -6,8 +6,8 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Filters;
 import com.pgmmers.radar.enums.FieldType;
+import com.pgmmers.radar.service.data.MongoService;
 import com.pgmmers.radar.service.engine.AggregateCommand;
-import com.pgmmers.radar.service.impl.util.MongodbUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,16 +15,20 @@ import java.util.Date;
 import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AggregateCommandImpl implements AggregateCommand {
 
+    @Autowired
+    private MongoService mongoService;
+
     @Override
     public long count(String modelId, String searchField, Object searchFieldValue, String refDateName, Date begin,
             Date end) {
         String collectionName = "entity_" + modelId;
-        Long qty = MongodbUtil.count(collectionName, Filters.and(Filters.eq(searchField, searchFieldValue),
+        Long qty = mongoService.count(collectionName, Filters.and(Filters.eq(searchField, searchFieldValue),
                 Filters.gte(refDateName, begin.getTime()), Filters.lte(refDateName, end.getTime())));
         return qty;
     }
@@ -33,7 +37,7 @@ public class AggregateCommandImpl implements AggregateCommand {
     public long distinctCount(String modelId, String searchField, Object searchFieldValue, String refDateName,
             Date begin, Date end, String distinctBy) {
         String collectionName = "entity_" + modelId;
-        Long qty = MongodbUtil.distinctCount(collectionName, Filters.and(Filters.eq(searchField, searchFieldValue),
+        Long qty = mongoService.distinctCount(collectionName, Filters.and(Filters.eq(searchField, searchFieldValue),
                 Filters.gte(refDateName, begin.getTime()), Filters.lte(refDateName, end.getTime())), distinctBy);
         return qty;
     }
@@ -49,7 +53,7 @@ public class AggregateCommandImpl implements AggregateCommand {
         Document group = new Document("$group", new Document("_id", null).append("sum", new Document("$sum", "$"
                 + funcField)));
         List<Bson> pipeline = Arrays.asList(match, group);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
+        AggregateIterable<Document> it = mongoService.aggregate(collectionName, pipeline);
         Document doc = it.first();
         if (doc != null) {
             sum = new BigDecimal(doc.get("sum").toString());
@@ -70,7 +74,7 @@ public class AggregateCommandImpl implements AggregateCommand {
         Document group = new Document("$group", new Document("_id", null).append("avg", new Document("$avg", "$"
                 + funcField)));
         List<Bson> pipeline = Arrays.asList(match, group);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
+        AggregateIterable<Document> it = mongoService.aggregate(collectionName, pipeline);
         Document doc = it.first();
         if (doc != null) {
             avg = new BigDecimal(doc.get("avg").toString());
@@ -88,7 +92,7 @@ public class AggregateCommandImpl implements AggregateCommand {
 
         Document sort = new Document("$sort", new Document(funcField, 1));
         List<Bson> pipeline = Arrays.asList(match, sort);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
+        AggregateIterable<Document> it = mongoService.aggregate(collectionName, pipeline);
         List<Document> docList = new ArrayList<>();
         it.forEach(new Block<Document>() {
 
@@ -132,7 +136,7 @@ public class AggregateCommandImpl implements AggregateCommand {
         Document group = new Document("$group", new Document("_id", null).append("max", new Document("$max", "$"
                 + funcField)));
         List<Bson> pipeline = Arrays.asList(match, group);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
+        AggregateIterable<Document> it = mongoService.aggregate(collectionName, pipeline);
         Document doc = it.first();
         if (doc != null) {
             max = new BigDecimal(doc.get("max").toString());
@@ -151,7 +155,7 @@ public class AggregateCommandImpl implements AggregateCommand {
         Document group = new Document("$group", new Document("_id", null).append("min", new Document("$min", "$"
                 + funcField)));
         List<Bson> pipeline = Arrays.asList(match, group);
-        AggregateIterable<Document> it = MongodbUtil.aggregate(collectionName, pipeline);
+        AggregateIterable<Document> it = mongoService.aggregate(collectionName, pipeline);
         Document doc = it.first();
         if (doc != null) {
             min = new BigDecimal(doc.get("min").toString());
@@ -187,7 +191,7 @@ public class AggregateCommandImpl implements AggregateCommand {
         String collectionName = "entity_" + modelId;
         Bson filter = Filters.and(Filters.eq(searchField, searchFieldValue), Filters.gte(refDateName, begin.getTime()),
                 Filters.lte(refDateName, end.getTime()));
-        FindIterable<Document> findIt = MongodbUtil.find(collectionName, filter);
+        FindIterable<Document> findIt = mongoService.find(collectionName, filter);
         List<BigDecimal> records = new ArrayList<>();
         BigDecimal sum = new BigDecimal("0");
         findIt.forEach(new Block<Document>() {
