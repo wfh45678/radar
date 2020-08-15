@@ -221,6 +221,11 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         if (isCreated) {
             modelVO.setStatus(StatusType.INACTIVE.getKey());
             modelDal.save(modelVO);
+            int save = modelDal.save(modelVO);
+            // 通知更新
+            if (save > 0) {
+                cacheService.publishModel(modelVO);
+            }
         } else {
             result.setMsg("重建索引失败");
         }

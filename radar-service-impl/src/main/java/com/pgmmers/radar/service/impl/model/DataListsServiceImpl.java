@@ -137,7 +137,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
         	}
         }
         // 移除未提交的记录
-        List<Long> listId = new ArrayList<Long>();
+        List<Long> listId = new ArrayList<>();
         listId.addAll(metaMap.keySet());
         if (listId.size() > 0) {
             deleteMeta(listId);
@@ -210,7 +210,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     public void onMessage(String channel, String message) {
         logger.info("data list sub:{}", message);
         DataListsVO dataListsVO = JSON.parseObject(message, DataListsVO.class);
-        Map<String, Object> listRecordMap = dataListRecordCacheMap.get(dataListsVO.getModelId());
+        Map<String, Object> listRecordMap = dataListRecordCacheMap.computeIfAbsent(dataListsVO.getModelId(), k -> new HashMap<>());
         if (dataListsVO.getOpt().equals("delete")) {
             listRecordMap.remove(dataListsVO.getName());
         } else if (dataListsVO.getOpt().equals("new")) {
@@ -273,6 +273,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
         }).start();
     }
 
+    @Override
     public Map<String, Object> getDataListMap(Long modelId) {
         Map<String, Object> listMap = dataListRecordCacheMap.get(modelId);
         return listMap;
