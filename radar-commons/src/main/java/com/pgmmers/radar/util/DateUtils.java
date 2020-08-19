@@ -148,8 +148,8 @@ public class DateUtils {
         startCal.setTime(startDate);
         Calendar endCal = Calendar.getInstance();
         endCal.setTime(endDate);
-        System.out.println(startCal.getTimeInMillis());
-        System.out.println(endCal.getTimeInMillis());
+        //System.out.println(startCal.getTimeInMillis());
+        //System.out.println(endCal.getTimeInMillis());
         return (startCal.getTimeInMillis() - endCal.getTimeInMillis()) / (1000);
     }
 
