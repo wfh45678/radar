@@ -24,6 +24,7 @@ public class MainController {
                                @RequestParam @ApiParam(name="reqId",value="请求流水号",required=true) String reqId,
                                @RequestParam @ApiParam(name="jsonInfo",value="事件内容(json 格式)",required=true) String jsonInfo) {
         CommonResult result = engineApi.uploadInfo(modelGuid, reqId, jsonInfo);
+		result.setSuccess(true);
         return result;
     }
 
@@ -32,6 +33,7 @@ public class MainController {
     public CommonResult getScore(@RequestParam  @ApiParam(name="modelGuid",value="模型Guid",required=true)  String modelGuid,
                            @RequestParam  @ApiParam(name="reqId",value="请求流水号",required=true)  String reqId) {
         CommonResult result = engineApi.getScore(modelGuid, reqId);
+		result.setSuccess(true);
         return result;
     }
 }
