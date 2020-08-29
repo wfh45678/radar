@@ -5,7 +5,7 @@ import com.alibaba.excel.util.IoUtils;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.util.CaptchaUtil;
 import com.pgmmers.radar.util.ZipUtils;
 import com.pgmmers.radar.vo.common.PluginVO;

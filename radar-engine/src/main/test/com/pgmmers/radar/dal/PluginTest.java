@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.pgmmers.radar.EngineApplication;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.Location;
-import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import java.util.Comparator;
 import java.util.HashMap;

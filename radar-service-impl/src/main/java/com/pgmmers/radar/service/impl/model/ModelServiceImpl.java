@@ -14,7 +14,7 @@ import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.data.MongoService;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
-import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.util.JsonUtils;

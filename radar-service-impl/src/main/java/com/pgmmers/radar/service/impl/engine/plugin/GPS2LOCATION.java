@@ -1,4 +1,4 @@
-package com.pgmmers.radar.service.impl.engine.Plugin;
+package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.alibaba.fastjson.JSONObject;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
@@ -12,6 +12,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 
 
 import java.util.Map;
@@ -45,10 +46,12 @@ public class GPS2LOCATION implements PluginServiceV2 {
     @Override
     public Object handle(PreItemVO item, Map<String, Object> jsonInfo,
             String[] sourceField) {
-        // TODO 可以参考 http://jwd.funnyapi.com/#/index , 最好是本地库。
+        //参考 http://jwd.funnyapi.com/#/index , 最好是本地库。
         Location location = new Location();
-        String latitude = String.valueOf(jsonInfo.get(sourceField[0]));//纬度
-        String longitude = String.valueOf(jsonInfo.get(sourceField[1]));//经度
+        //纬度
+        String latitude = String.valueOf(jsonInfo.get(sourceField[0]));
+        //经度
+        String longitude = String.valueOf(jsonInfo.get(sourceField[1]));
         if ("".equals(latitude) || "".equals(longitude)) {
             return null;
         }
@@ -60,7 +63,7 @@ public class GPS2LOCATION implements PluginServiceV2 {
             HttpGet httpget = new HttpGet(url);
             //执行请求
             CloseableHttpResponse response = httpclient.execute(httpget);
-            if(response.getStatusLine().getStatusCode()==200) {
+            if(response.getStatusLine().getStatusCode()== HttpStatus.OK.value()) {
                 HttpEntity entity = response.getEntity();
                 //所需内容都在entity里面，这里可以对数据操作
                 String detail = EntityUtils.toString(entity,"UTF-8");

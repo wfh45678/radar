@@ -10,7 +10,7 @@ import com.pgmmers.radar.service.engine.vo.AbstractionResult;
 import com.pgmmers.radar.service.engine.vo.ActivationResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.AntiFraudProcessResult;
-import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.model.PreItemService;
 import com.pgmmers.radar.vo.model.PreItemVO;

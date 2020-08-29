@@ -1,4 +1,4 @@
-package com.pgmmers.radar.service.impl.engine.Plugin;
+package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.pgmmers.radar.service.data.MobileInfoService;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
