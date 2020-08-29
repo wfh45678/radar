@@ -22,7 +22,11 @@ import com.pgmmers.radar.vo.model.FieldVO;
 import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -220,7 +224,6 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         logger.info("index mapping:{} is create {}", total.toJSONString(), isCreated);
         if (isCreated) {
             modelVO.setStatus(StatusType.INACTIVE.getKey());
-            modelDal.save(modelVO);
             int save = modelDal.save(modelVO);
             // 通知更新
             if (save > 0) {
