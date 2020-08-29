@@ -220,7 +220,6 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         logger.info("index mapping:{} is create {}", total.toJSONString(), isCreated);
         if (isCreated) {
             modelVO.setStatus(StatusType.INACTIVE.getKey());
-            modelDal.save(modelVO);
             int save = modelDal.save(modelVO);
             // 通知更新
             if (save > 0) {
