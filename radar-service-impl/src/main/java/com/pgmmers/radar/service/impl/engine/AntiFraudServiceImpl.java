@@ -14,22 +14,22 @@ import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.model.PreItemService;
 import com.pgmmers.radar.vo.model.PreItemVO;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 @Service
-@ConditionalOnProperty(prefix = "sys.conf", name="app", havingValue = "engine")
+@ConditionalOnProperty(prefix = "sys.conf", name = "app", havingValue = "engine")
 public class AntiFraudServiceImpl implements AntiFraudService {
 
-    private static Logger logger = LoggerFactory.getLogger(AntiFraudServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(AntiFraudServiceImpl.class);
 
     @Autowired
     private AntiFraudEngine antiFraudEngine;
@@ -44,7 +44,8 @@ public class AntiFraudServiceImpl implements AntiFraudService {
     private ModelService modelService;
 
     @Override
-    public CommonResult process(Long modelId, Map<String, Map<String, ?>> context) {
+    public CommonResult process(Long modelId, Map<String, Map<String, ?>> context,
+            Date radar_ref_datetime) {
         AntiFraudProcessResult analysisResult = new AntiFraudProcessResult();
         //上下文参数,用于存放中间计算结果
         long start = 0;
@@ -53,7 +54,8 @@ public class AntiFraudServiceImpl implements AntiFraudService {
         // do abstraction
         logger.info("start abstraction...");
         start = System.currentTimeMillis();
-        AbstractionResult absResult = antiFraudEngine.executeAbstraction(modelId, context);
+        AbstractionResult absResult = antiFraudEngine
+                .executeAbstraction(modelId, context, radar_ref_datetime);
         end = System.currentTimeMillis();
         analysisResult.getRespTimes().put("abstractions", end - start);
         logger.info("takes:{}ms", end - start);
@@ -107,7 +109,8 @@ public class AntiFraudServiceImpl implements AntiFraudService {
                 continue;
             }
             String[] sourceField = item.getSourceField().split(",");
-            Object transfer = PluginManager.pluginServiceMap().get(item.getPlugin()).handle(item,jsonInfo,sourceField);
+            Object transfer = PluginManager.pluginServiceMap().get(item.getPlugin())
+                    .handle(item, jsonInfo, sourceField);
             result.put(item.getDestField(), transfer);
         }
         return result;

@@ -32,7 +32,6 @@ import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.RuleVO;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +45,7 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class AntiFraudEngineImpl implements AntiFraudEngine {
+
     private static Logger logger = LoggerFactory.getLogger(AntiFraudEngineImpl.class);
 
     private static Map<Long, Map<String, Object>> dataListCacheMap = new HashMap<Long, Map<String, Object>>();
@@ -79,7 +79,8 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     private EstimatorContainer estimatorContainer;
 
     @Override
-    public AbstractionResult executeAbstraction(Long modelId, Map<String, Map<String, ?>> data) {
+    public AbstractionResult executeAbstraction(Long modelId, Map<String, Map<String, ?>> data,
+            Date radar_ref_datetime) {
         AbstractionResult result = new AbstractionResult();
         // 1. 解析 参数信息
         //JSONObject entity = (JSONObject) data.get("entity");
@@ -129,22 +130,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
             }
             ModelVO model = modelService.getModelById(modelId);
             String refDateFieldName = model.getReferenceDate();
-            Date refDate;
-            try {
-                Long refDatetimeMills = (Long) data.get("fields").get(refDateFieldName);
-                Calendar c = Calendar.getInstance();
-                c.setTimeInMillis(refDatetimeMills);
-                refDate = c.getTime();
-            } catch (Exception e) {
-                e.printStackTrace();
-                result.setMsg("时间不正确");
-                return result;
-            }
-            if (refDate == null) {
-                result.setMsg("时间不正确");
-                return result;
-            }
-            Date beginDate = DateUtils.addDate(refDate, dateType, interval * -1).getTime();
+            Date beginDate = DateUtils.addDate(radar_ref_datetime, dateType, interval * -1).getTime();
             Object calResult = null;
             Object searchFieldVal = data.get("fields").get(searchField);
             if (searchFieldVal == null) {
@@ -174,53 +160,69 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
             }
 
             switch (aggregateType) {
-            case AggregateType.COUNT:
-                calResult = aggregateCommand.count(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate);
-                break;
-            case AggregateType.DISTINCT_COUNT:
-                calResult = aggregateCommand.distinctCount(modelId.toString(), searchField, searchFieldVal,
-                        refDateFieldName, beginDate, refDate, funcionField);
-                break;
-            case AggregateType.SUM:
-                calResult = aggregateCommand.sum(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            case AggregateType.AVERAGE:
-                calResult = aggregateCommand.average(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            case AggregateType.MAX:
-                calResult = aggregateCommand.max(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            case AggregateType.MIN:
-                calResult = aggregateCommand.min(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            case AggregateType.SD:
-                calResult = aggregateCommand.sd(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField, functionFieldType);
-                break;
-            case AggregateType.VARIANCE:
-                calResult = aggregateCommand.variance(modelId.toString(), searchField, searchFieldVal,
-                        refDateFieldName, beginDate, refDate, funcionField, functionFieldType);
-                break;
-            case AggregateType.DEVIATION:
-                Object val = data.get("fields").get(funcionField);
-                calResult = aggregateCommand.deviation(modelId.toString(), searchField, searchFieldVal,
-                        refDateFieldName, beginDate, refDate, funcionField, functionFieldType,
-                        new BigDecimal(val.toString()));
-                break;
-            case AggregateType.MEDIAN:
-                calResult = aggregateCommand.median(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            default:
+                case AggregateType.COUNT:
+                    calResult = aggregateCommand
+                            .count(modelId.toString(), searchField, searchFieldVal,
+                                    refDateFieldName,
+                                    beginDate, radar_ref_datetime);
+                    break;
+                case AggregateType.DISTINCT_COUNT:
+                    calResult = aggregateCommand
+                            .distinctCount(modelId.toString(), searchField, searchFieldVal,
+                                    refDateFieldName, beginDate, radar_ref_datetime, funcionField);
+                    break;
+                case AggregateType.SUM:
+                    calResult = aggregateCommand
+                            .sum(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
+                                    beginDate, radar_ref_datetime, funcionField);
+                    break;
+                case AggregateType.AVERAGE:
+                    calResult = aggregateCommand
+                            .average(modelId.toString(), searchField, searchFieldVal,
+                                    refDateFieldName,
+                                    beginDate, radar_ref_datetime, funcionField);
+                    break;
+                case AggregateType.MAX:
+                    calResult = aggregateCommand
+                            .max(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
+                                    beginDate, radar_ref_datetime, funcionField);
+                    break;
+                case AggregateType.MIN:
+                    calResult = aggregateCommand
+                            .min(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
+                                    beginDate, radar_ref_datetime, funcionField);
+                    break;
+                case AggregateType.SD:
+                    calResult = aggregateCommand
+                            .sd(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
+                                    beginDate, radar_ref_datetime, funcionField, functionFieldType);
+                    break;
+                case AggregateType.VARIANCE:
+                    calResult = aggregateCommand
+                            .variance(modelId.toString(), searchField, searchFieldVal,
+                                    refDateFieldName, beginDate, radar_ref_datetime, funcionField,
+                                    functionFieldType);
+                    break;
+                case AggregateType.DEVIATION:
+                    Object val = data.get("fields").get(funcionField);
+                    calResult = aggregateCommand
+                            .deviation(modelId.toString(), searchField, searchFieldVal,
+                                    refDateFieldName, beginDate, radar_ref_datetime, funcionField,
+                                    functionFieldType,
+                                    new BigDecimal(val.toString()));
+                    break;
+                case AggregateType.MEDIAN:
+                    calResult = aggregateCommand
+                            .median(modelId.toString(), searchField, searchFieldVal,
+                                    refDateFieldName,
+                                    beginDate, radar_ref_datetime, funcionField);
+                    break;
+                default:
 
             }
             if (calResult instanceof BigDecimal) {
-                result.getAbstractionMap().put(abs.getName(), ((BigDecimal) calResult).doubleValue());
+                result.getAbstractionMap()
+                        .put(abs.getName(), ((BigDecimal) calResult).doubleValue());
             } else {
                 result.getAbstractionMap().put(abs.getName(), calResult);
             }
@@ -233,13 +235,11 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     }
 
     /**
-     *
      * 后续需要优化.delete from next version
      *
      * @param modelId
      * @return
-     * @author feihu.wang
-     * 2016年8月10日
+     * @author feihu.wang 2016年8月10日
      */
     private Map<String, Object> getPrepareDataCollection(Long modelId) {
         Map<String, Object> dataListMap = null;
@@ -248,7 +248,8 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
             return dataListMap;
         }
         dataListMap = new HashMap<>();
-        List<DataListsVO> list = dataListsService.listDataLists(modelId, StatusType.ACTIVE.getKey());
+        List<DataListsVO> list = dataListsService
+                .listDataLists(modelId, StatusType.ACTIVE.getKey());
         // 系统自带黑/白名单
         List<DataListsVO> list2 = dataListsService.listDataLists(0L, StatusType.ACTIVE.getKey());
         list.addAll(list2);
@@ -271,9 +272,9 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     public AdaptationResult executeAdaptation(Long modelId, Map<String, Map<String, ?>> data) {
         AdaptationResult result = new AdaptationResult();
 //      启动机器学习
-        if (machineLearning){
+        if (machineLearning) {
             Estimator estimator = estimatorContainer.getByModelId(modelId);
-            if(estimator != null) {
+            if (estimator != null) {
                 float score = estimator.predict(modelId, data);
                 result.getAdaptationMap().put("score", score);
             }
@@ -323,19 +324,19 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     }
                     extra = extra.multiply(rate);
                     switch (operator) {
-                    case ADD:
-                        extra = base.add(extra);
-                        break;
-                    case SUB:
-                        extra = base.subtract(extra);
-                        break;
-                    case MUL:
-                        extra = base.multiply(extra);
-                        break;
-                    case DIV:
-                        extra = base.divide(extra, 2, 4);
-                        break;
-                    default:
+                        case ADD:
+                            extra = base.add(extra);
+                            break;
+                        case SUB:
+                            extra = base.subtract(extra);
+                            break;
+                        case MUL:
+                            extra = base.multiply(extra);
+                            break;
+                        case DIV:
+                            extra = base.divide(extra, 2, 4);
+                            break;
+                        default:
                     }
                     BigDecimal account = initScore.add(extra);
                     HitObject hit = new HitObject();
@@ -343,7 +344,8 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     hit.setDesc(rule.getLabel());
                     hit.setValue(account.setScale(2, 4).doubleValue());
                     result.getHitRulesMap().get(act.getActivationName()).add(hit);
-                    result.getHitRulesMap2().get(act.getActivationName()).put("rule_"+ hit.getKey(), hit);
+                    result.getHitRulesMap2().get(act.getActivationName())
+                            .put("rule_" + hit.getKey(), hit);
                     sum = sum.add(account);
                 }
 
@@ -372,18 +374,17 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     }
 
     /**
-     *
      * 检查数据是否符合条件.
      *
-     * @param ruleScript string
-     * @param entity map of params
+     * @param ruleScript        string
+     * @param entity            map of params
      * @param dataCollectionMap like black list
      * @return true data is valid, other is false, {@link Boolean}
-     * @author feihu.wang
-     * 2016年8月2日
+     * @author feihu.wang 2016年8月2日
      */
-    private boolean checkAbstractionScript(String ruleScript, Map entity, Map<String, Object> dataCollectionMap) {
-        Object[] args = { entity, dataCollectionMap };
+    private boolean checkAbstractionScript(String ruleScript, Map entity,
+            Map<String, Object> dataCollectionMap) {
+        Object[] args = {entity, dataCollectionMap};
         Boolean ret = false;
         try {
             ret = (Boolean) GroovyScriptUtil.invokeMethod(ruleScript, "check", args);
@@ -394,8 +395,9 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
         return ret;
     }
 
-    private boolean checkActivationScript(String ruleScript, Map data, Map<String, Object> dataCollectionMap) {
-        Object[] args = { data, dataCollectionMap };
+    private boolean checkActivationScript(String ruleScript, Map data,
+            Map<String, Object> dataCollectionMap) {
+        Object[] args = {data, dataCollectionMap};
         Boolean ret = false;
         try {
             ret = (Boolean) GroovyScriptUtil.invokeMethod(ruleScript, "check", args);

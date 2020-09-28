@@ -39,7 +39,7 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
 
     private final CacheService cacheService;
 
-    private final  RiskResultService riskResultService;
+    private final RiskResultService riskResultService;
 
     private final ValidateService validateService;
 
@@ -95,14 +95,18 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
             if (isDuplicate != null && isDuplicate.equals("true")) {
                 isAllowDuplicate = true;
             }
-            entityService
+            Date radar_ref_datetime = entityService
                     .save(model.getId(), eventJson.toJSONString(), JSON.toJSONString(preItemMap),
                             isAllowDuplicate);
+            if (radar_ref_datetime == null) {
+                result.setMsg("保存事件信息至mongoDB 失败");
+                return result;
+            }
 
             // 4. 执行分析
             context.put("fields", eventJson);
             context.put("preItems", preItemMap);
-            result = antiFraudService.process(model.getId(), context);
+            result = antiFraudService.process(model.getId(), context, radar_ref_datetime);
 
             // 5. for elastic analysis
             Long eventTimeMillis = (Long) eventJson.get(model.getReferenceDate());
