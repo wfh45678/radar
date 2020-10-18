@@ -14,6 +14,7 @@ import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.HitObject;
 import com.pgmmers.radar.service.engine.vo.RiskObject;
 import com.pgmmers.radar.service.impl.dnn.EstimatorContainer;
+import com.pgmmers.radar.service.impl.util.JsonParserUtil;
 import com.pgmmers.radar.service.model.AbstractionService;
 import com.pgmmers.radar.service.model.ActivationService;
 import com.pgmmers.radar.service.model.DataListsService;
@@ -149,6 +150,9 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
             Object searchFieldVal = data.get("fields").get(searchField);
             if (searchFieldVal == null) {
                 searchFieldVal = data.get("preItems").get(searchField);
+                if (searchFieldVal == null) {
+                    searchFieldVal = JsonParserUtil.value(data.get("preItems"), searchField, null);
+                }
             }
             if (searchFieldVal == null) {
                 result.setMsg("search field value eq null!");
@@ -168,8 +172,11 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     }
                 }
                 if (functionFieldType == null) {
-                    result.setMsg("function field type is null");
-                    return result;
+                    // 如果field字段里面没有改字段，因为预处理字段没有字段类型，暂时设置为String
+                    // TODO:  目前只有高级函数使用了 functionFieldType。
+                    //result.setMsg("function field type is null");
+                    //return result;
+                    functionFieldType = FieldType.valueOf("STRING");
                 }
             }
 
