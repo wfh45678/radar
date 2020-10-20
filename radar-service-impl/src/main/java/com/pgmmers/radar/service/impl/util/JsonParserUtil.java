@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
  */
 public class JsonParserUtil {
 
-    private final static Logger logger = LoggerFactory.getLogger(JsonParserUtil.class);
+    private static final  Logger logger = LoggerFactory.getLogger(JsonParserUtil.class);
 
     private static final String AQL_SEPARATOR = ".";
 
@@ -25,8 +25,8 @@ public class JsonParserUtil {
         StringTokenizer token = new StringTokenizer(aql, AQL_SEPARATOR);
         try {
             while (token.hasMoreElements()) {
-                String args_string = token.nextToken();
-                json = json.getJSONObject(args_string);
+                String argsString = token.nextToken();
+                json = json.getJSONObject(argsString);
             }
             return json;
         } catch (Exception e) {
@@ -44,11 +44,11 @@ public class JsonParserUtil {
         StringTokenizer token = new StringTokenizer(aql, AQL_SEPARATOR);
         try {
             while (token.hasMoreElements()) {
-                String args_string = token.nextToken();
+                String argsString = token.nextToken();
                 if (token.hasMoreElements()) {
-                    json = json.getJSONObject(args_string);
+                    json = json.getJSONObject(argsString);
                 } else {
-                    json_array = json.getJSONArray(args_string);
+                    json_array = json.getJSONArray(argsString);
                 }
             }
         } catch (Exception e) {
@@ -64,26 +64,26 @@ public class JsonParserUtil {
      * 获取安全方法链的值，方法中出现错误返回传入的 value
      */
     @SuppressWarnings("unchecked")
-    public static <T> T value(String jsonStr, String aql, T default_result) {
+    public static <T> T value(String jsonStr, String aql, T defaultResult) {
         logger.debug("#获取 json 节点 safety ".concat(aql));
-        JSONObject json_object = JSONObject.parseObject(jsonStr);
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
         StringTokenizer token = new StringTokenizer(aql, AQL_SEPARATOR);
         T tmp_result = null;
         try {
             while (token.hasMoreElements()) {
-                String args_string = token.nextToken();
+                String argsString = token.nextToken();
                 if (token.hasMoreElements()) {
-                    json_object = json_object.getJSONObject(args_string);
+                    jsonObject = jsonObject.getJSONObject(argsString);
                 } else {
-                    tmp_result = (T) json_object.get(args_string);
+                    tmp_result = (T) jsonObject.get(argsString);
                 }
             }
         } catch (Exception e) {
             String message = "解析 json 节点".concat(aql).concat("错误:");
             logger.warn(message, e);
         }
-        default_result = (tmp_result == null) ? default_result : tmp_result;
-        return default_result;
+        defaultResult = (tmp_result == null) ? defaultResult : tmp_result;
+        return defaultResult;
     }
 
     /**
