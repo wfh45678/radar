@@ -13,5 +13,5 @@ public class CryptUtilTest {
         String str = CryptUtils.sha("123456", "admin").toUpperCase();
         System.out.println(str);
     }
-    
+
 }
