@@ -34,7 +34,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
     @Autowired
     private AntiFraudEngine antiFraudEngine;
 
-    @Autowired
+    @Autowired(required = false)
     private PluginService pluginService;
 
     @Autowired

@@ -40,13 +40,13 @@ public class HTTP_UTIL implements PluginServiceV2 {
     public Object handle(PreItemVO item, Map<String, Object> jsonInfo, String[] sourceField) {
         String url = item.getArgs();
         String reqType = item.getReqType();
-        String arg = jsonInfo.get(sourceField[0]).toString();
+        //String arg = jsonInfo.get(sourceField[0]).toString();
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);
         RestTemplate restTemplate = (RestTemplate) BeanUtils.getBean("restTemplate");
         ResponseEntity<JSONObject> responseEntity = restTemplate
-                .exchange(url, HttpMethod.valueOf(reqType), entity, JSONObject.class, arg);
-        logger.info("http plugin:{}\n{}\n {}", url, arg, responseEntity.toString());
+                .exchange(url, HttpMethod.valueOf(reqType), entity, JSONObject.class, sourceField);
+        logger.info("http plugin:{}\n{}\n {}", url, sourceField, responseEntity.toString());
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();
         }
