@@ -126,7 +126,6 @@ public class SearchEngineServiceImpl implements SearchEngineService {
     public Long count(String index, QueryBuilder query, QueryBuilder filter) throws IOException {
         SearchRequest request = new SearchRequest(index);
         request.searchType(SearchType.DFS_QUERY_THEN_FETCH);
-//        request.types(type);
         SearchSourceBuilder builder = new SearchSourceBuilder();
         builder.query(query)
                 .postFilter(filter)

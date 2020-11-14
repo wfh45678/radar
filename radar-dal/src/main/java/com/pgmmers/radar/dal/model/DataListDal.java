@@ -20,7 +20,11 @@ public interface DataListDal {
 
      List<DataListsVO> listDataLists(Long modelId, Integer status);
 
-    //
+    /**
+     * get by id.
+     * @param id
+     * @return
+     */
      DataListsVO get(Long id);
 
      List<DataListsVO> list(Long modelId);
@@ -31,14 +35,22 @@ public interface DataListDal {
 
      int delete(Long[] id);
 
-    //
+    /**
+     * get list meta.
+     * @param id
+     * @return
+     */
      DataListMetaVO getMeta(Long id);
 
      int saveMeta(DataListMetaVO dataListMeta);
 
      int deleteMeta(List<Long> listId);
 
-    //
+    /**
+     * get list record.
+     * @param id
+     * @return
+     */
      DataListRecordVO getRecord(Long id);
 
      PageResult<DataListRecordVO> queryRecord(DataListRecordQuery query);

@@ -227,7 +227,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
                 List<ModelVO> modelList = modelService.listModel(null);
                 // 加载系统数据名单列表
                 Map<String, Object> sysDataListMap = new HashMap<>(32);
-                List<DataListsVO> sysList = dataListDal.listDataLists(0L, null);
+                List<DataListsVO> sysList = dataListDal.listDataLists(1L, null);
                 buildList2Map(sysDataListMap, sysList);
                 for (ModelVO model : modelList) {
                     Map<String, Object> dataListMap = new HashMap<>(32);

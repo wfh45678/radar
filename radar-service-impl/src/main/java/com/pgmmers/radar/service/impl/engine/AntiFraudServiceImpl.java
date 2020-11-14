@@ -24,7 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * 反欺诈主要服务,仅在引擎端启动的时候才需要加载。
+ * @author feihu.wang
+ */
 @Service
 @ConditionalOnProperty(prefix = "sys.conf", name="app", havingValue = "engine")
 public class AntiFraudServiceImpl implements AntiFraudService {

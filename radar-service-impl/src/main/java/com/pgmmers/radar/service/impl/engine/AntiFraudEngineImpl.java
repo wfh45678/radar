@@ -49,7 +49,7 @@ import org.springframework.util.StringUtils;
 public class AntiFraudEngineImpl implements AntiFraudEngine {
     private static Logger logger = LoggerFactory.getLogger(AntiFraudEngineImpl.class);
 
-    private static Map<Long, Map<String, Object>> dataListCacheMap = new HashMap<Long, Map<String, Object>>();
+    private static Map<Long, Map<String, Object>> dataListCacheMap = new HashMap<>();
     @Value("${sys.conf.machine-learning: true}")
     private boolean machineLearning;
     @Autowired
@@ -172,7 +172,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     }
                 }
                 if (functionFieldType == null) {
-                    // 如果field字段里面没有改字段，因为预处理字段没有字段类型，暂时设置为String
+                    // 因为预处理字段没有字段类型，暂时设置为String
                     // TODO:  目前只有高级函数使用了 functionFieldType。
                     //result.setMsg("function field type is null");
                     //return result;
@@ -248,6 +248,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
      * @author feihu.wang
      * 2016年8月10日
      */
+    @Deprecated
     private Map<String, Object> getPrepareDataCollection(Long modelId) {
         Map<String, Object> dataListMap = null;
         if (dataListCacheMap.containsKey(modelId)) {
@@ -257,14 +258,14 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
         dataListMap = new HashMap<>();
         List<DataListsVO> list = dataListsService.listDataLists(modelId, StatusType.ACTIVE.getKey());
         // 系统自带黑/白名单
-        List<DataListsVO> list2 = dataListsService.listDataLists(0L, StatusType.ACTIVE.getKey());
+        List<DataListsVO> list2 = dataListsService.listDataLists(1L, StatusType.ACTIVE.getKey());
         list.addAll(list2);
 
         Map<String, String> dataListRecords;
         for (DataListsVO vo : list) {
             Long dataListId = vo.getId();
             List<DataListRecordVO> records = dataListsService.listDataListRecords(dataListId);
-            dataListRecords = new HashMap<String, String>();
+            dataListRecords = new HashMap<>();
             for (DataListRecordVO record : records) {
                 dataListRecords.put(record.getDataRecord(), "");
             }
@@ -389,7 +390,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
      * @author feihu.wang
      * 2016年8月2日
      */
-    private boolean checkAbstractionScript(String ruleScript, Map entity, Map<String, Object> dataCollectionMap) {
+    private Boolean checkAbstractionScript(String ruleScript, Map entity, Map<String, Object> dataCollectionMap) {
         Object[] args = { entity, dataCollectionMap };
         Boolean ret = false;
         try {
@@ -401,7 +402,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
         return ret;
     }
 
-    private boolean checkActivationScript(String ruleScript, Map data, Map<String, Object> dataCollectionMap) {
+    private Boolean checkActivationScript(String ruleScript, Map data, Map<String, Object> dataCollectionMap) {
         Object[] args = { data, dataCollectionMap };
         Boolean ret = false;
         try {
