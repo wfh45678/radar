@@ -168,15 +168,15 @@ CREATE TABLE `engine_data_lists` (
 -- ----------------------------
 -- Records of engine_data_lists
 -- ----------------------------
-INSERT INTO `engine_data_lists` VALUES ('1', 'radar_brand_black_List', '[系统]手机品牌黑名单', '0', '', 'BLACK', '1', '2016-08-10 16:02:29', '2016-08-10 16:02:31');
-INSERT INTO `engine_data_lists` VALUES ('3', 'radar_mobile_black_list', '[系统]手机号码黑名单', '0', '', 'BLACK', '1', '2016-08-24 18:37:52', '2016-08-24 18:37:55');
-INSERT INTO `engine_data_lists` VALUES ('5', 'radar_mobile_white_list', '[系统]手机号码白名单', '0', '', 'WHITE', '1', '2016-08-24 18:38:55', '2016-08-24 18:38:58');
-INSERT INTO `engine_data_lists` VALUES ('7', 'radar_ip_black_list', '[系统]IP黑名单', '0', '', 'BLACK', '1', '2016-08-25 11:22:12', '2016-08-25 11:22:16');
-INSERT INTO `engine_data_lists` VALUES ('9', 'radar_ip_white_list', '[系统]IP白名单', '0', '', 'WHITE', '1', '2016-09-18 10:27:25', '2016-09-18 10:27:25');
+INSERT INTO `engine_data_lists` VALUES ('1', 'radar_brand_black_List', '[系统]手机品牌黑名单', '1', '', 'BLACK', '1', '2016-08-10 16:02:29', '2016-08-10 16:02:31');
+INSERT INTO `engine_data_lists` VALUES ('3', 'radar_mobile_black_list', '[系统]手机号码黑名单', '1', '', 'BLACK', '1', '2016-08-24 18:37:52', '2016-08-24 18:37:55');
+INSERT INTO `engine_data_lists` VALUES ('5', 'radar_mobile_white_list', '[系统]手机号码白名单', '1', '', 'WHITE', '1', '2016-08-24 18:38:55', '2016-08-24 18:38:58');
+INSERT INTO `engine_data_lists` VALUES ('7', 'radar_ip_black_list', '[系统]IP黑名单', '1', '', 'BLACK', '1', '2016-08-25 11:22:12', '2016-08-25 11:22:16');
+INSERT INTO `engine_data_lists` VALUES ('9', 'radar_ip_white_list', '[系统]IP白名单', '1', '', 'WHITE', '1', '2016-09-18 10:27:25', '2016-09-18 10:27:25');
+INSERT INTO `engine_data_lists` VALUES ('10', 'mobile_brand_white_list', '[系统]手机品牌白名单', '1', '', 'WHITE', '1', '2016-11-23 16:07:31', '2016-11-23 16:07:31');
 INSERT INTO `engine_data_lists` VALUES ('29', 'mobile_white_list', '手机号码白名单', '101', '', 'WHITE', '1', '2016-11-21 14:07:29', '2016-11-21 14:07:29');
 INSERT INTO `engine_data_lists` VALUES ('31', 'mobile_white_list', '手机号码白名单', '103', '', 'WHITE', '1', '2016-11-21 14:09:57', '2016-11-21 14:09:57');
 INSERT INTO `engine_data_lists` VALUES ('33', 'mobile_white_list', '手机号码白名单', '99', '', 'WHITE', '1', '2016-11-21 14:11:37', '2016-11-21 14:11:37');
-INSERT INTO `engine_data_lists` VALUES ('35', 'mobile_brand_white_list', '[系统]手机品牌白名单', '0', '', 'WHITE', '1', '2016-11-23 16:07:31', '2016-11-23 16:07:31');
 INSERT INTO `engine_data_lists` VALUES ('84', 'mobile_white_list', '手机号码白名单', '222', '', 'WHITE', '1', '2019-09-10 11:16:12', '2019-09-10 11:16:12');
 INSERT INTO `engine_data_lists` VALUES ('85', 'mobile_white_list', '手机号码白名单', '224', '', 'WHITE', '1', '2019-09-11 18:05:35', '2019-09-11 18:05:35');
 
