@@ -17,6 +17,7 @@ import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.util.GroovyScriptUtil;
 import com.pgmmers.radar.vo.model.*;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,6 +147,12 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
 
     @Override
     public CommonResult getHitSorts(Long modelId) {
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.MONTH , -1);
+        return getHitSorts(modelId, now.getTimeInMillis(), Calendar.getInstance().getTimeInMillis());
+    }
+
+    public CommonResult getHitSorts(Long modelId, Long beginTime, Long endTime) {
         CommonResult result = new CommonResult();
         Set<RuleHitsVO> treeSet = new TreeSet<>();
         ModelVO model = modelDal.getModelById(modelId);
@@ -168,8 +175,11 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
                 keyStr = keyStr.replace("${ruleId}", rule.getId() + "");
                 long qty = 0;
                 try {
+                    QueryBuilder filter = QueryBuilders
+                            .rangeQuery("fields." + model.getReferenceDate())
+                            .from(beginTime).to(endTime);
                     qty = searchService.count(model.getGuid().toLowerCase(),
-                            QueryBuilders.termQuery(keyStr,rule.getId() + ""), null);
+                            QueryBuilders.termQuery(keyStr,rule.getId() + ""), filter);
                 } catch (Exception e) {
                     logger.error("search error", e);
                 }
