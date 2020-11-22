@@ -78,7 +78,7 @@ public class EventApiController {
     @PostMapping("/search")
     public CommonResult search(@RequestBody TermQuery term, HttpSession session) {
         CommonResult result = new CommonResult();
-        PageResult<Object> page = new PageResult<>(1, 10, 0, new ArrayList<>());
+        PageResult<Object> page ;
         page = eventService.query(term);
         if (page != null) {
             result.getData().put("page", page);
@@ -242,9 +242,10 @@ public class EventApiController {
         String file = "e:\\tmp\\" + System.currentTimeMillis() + ".xlsx";
         FileOutputStream fos = null;
 
-
-        response.setContentType("application/ms-excel");// 设置相应类型,告诉浏览器输出的内容为图片
-        response.setHeader("Pragma", "No-cache");// 设置响应头信息，告诉浏览器不要缓存此内容
+        // 设置相应类型,告诉浏览器输出的内容为图片
+        response.setContentType("application/ms-excel");
+        // 设置响应头信息，告诉浏览器不要缓存此内容
+        response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");
         response.setDateHeader("Expire", 0);
         OutputStream os = null;

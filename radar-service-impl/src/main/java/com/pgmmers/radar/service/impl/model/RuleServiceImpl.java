@@ -14,6 +14,7 @@ import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.RuleService;
 import com.pgmmers.radar.service.search.SearchEngineService;
+import com.pgmmers.radar.util.DateUtils;
 import com.pgmmers.radar.util.GroovyScriptUtil;
 import com.pgmmers.radar.vo.model.*;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.text.ParseException;
 import java.util.*;
 
 @Service
@@ -152,6 +154,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
         return getHitSorts(modelId, now.getTimeInMillis(), Calendar.getInstance().getTimeInMillis());
     }
 
+    @Override
     public CommonResult getHitSorts(Long modelId, Long beginTime, Long endTime) {
         CommonResult result = new CommonResult();
         Set<RuleHitsVO> treeSet = new TreeSet<>();
@@ -200,7 +203,24 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
         return result;
     }
 
-	@Override
+    @Override
+    public CommonResult getHitSorts(Long modelId, String beginTime, String endTime) {
+        CommonResult result = new CommonResult();
+        try {
+            logger.info("search hits:{},{}", beginTime, endTime);
+            long begin = DateUtils.parseDateTime(beginTime).getTime();
+            long end = DateUtils.parseDateTime(endTime).getTime();
+            if (end > begin) {
+                return getHitSorts(modelId, begin, end);
+            }
+        } catch (ParseException e) {
+            logger.error("时间格式错误", e);
+            result.setMsg("时间格式错误！");
+        }
+        return result;
+    }
+
+    @Override
 	public CommonResult queryHistory(RuleHistoryQuery query) {
 		CommonResult result = new CommonResult();
 

@@ -20,7 +20,11 @@ public interface RuleService {
     CommonResult delete(Long[] id);
 
     CommonResult getHitSorts(Long modelId);
-    
+
+    CommonResult getHitSorts(Long modelId, Long beginTime, Long endTime);
+
+    CommonResult getHitSorts(Long modelId, String beginTime, String endTime);
+
     CommonResult queryHistory(RuleHistoryQuery query);
     
     List<RuleVO> listRuleByModelId(Long modelId);

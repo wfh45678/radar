@@ -47,7 +47,6 @@ logging:
     root: info
     com.pgmmers.radar: info
     com.pgmmers.radar.mapper: debug
-    org.elasticsearch: info
-
+    org.elasticsearch.client: debug
 server:
   port: 6580

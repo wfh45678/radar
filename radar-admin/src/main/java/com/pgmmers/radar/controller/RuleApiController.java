@@ -1,12 +1,12 @@
 package com.pgmmers.radar.controller;
 
+import com.pgmmers.radar.dal.bean.EventQuery;
 import com.pgmmers.radar.dal.bean.RuleHistoryQuery;
 import com.pgmmers.radar.dal.bean.RuleQuery;
 import com.pgmmers.radar.intercpt.ContextHolder;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.model.RuleService;
-import com.pgmmers.radar.vo.admin.UserVO;
 import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.RuleVO;
 import io.swagger.annotations.Api;
@@ -55,14 +55,14 @@ public class RuleApiController {
         return ruleService.delete(id);
     }
 
-    @GetMapping("/hitsSort/{modelId}")
-    public CommonResult hitsSort(@PathVariable Long modelId) {
+    @PostMapping("/hitsSort/{modelId}")
+    public CommonResult hitsSort(@PathVariable Long modelId, @RequestBody EventQuery query) {
         CommonResult result = new CommonResult();
         ModelVO modelVO = modelService.getModelById(modelId);
         if (modelVO == null) {
             return result; 
         }
-        return ruleService.getHitSorts(modelId);
+        return ruleService.getHitSorts(modelId, query.getBeginTime(), query.getEndTime());
     }
 
 	@PostMapping("/ruleHistory")
