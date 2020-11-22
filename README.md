@@ -68,28 +68,6 @@ The project code called Radar, like the code, monitor the transaction at the bac
 
 * Swagger:  Rest API 管理
 
-## 名词解释
-### Model: 事件模型
-  用户行为事件， 例如：注册，登录，购买，提现等具体的业务行为。
-### 事件模型三要素 
-  也就是事件行为三要素，风控系统的核心定义：事件流水ID(例如：交易流水号)，实体ID（例如：userId,表示某个人或物），事件发生时间（例如：交易时间）,
-  简单来说就是谁（可以是人，也可以是物）什么时候做了什么事。（who, when, what）
-### PreItem: 预处理 
- 像经纬度，IP，手机号码段等事件属性，可能无法直接计算，通过预处理插件 转换成 其他格式，
- 例如:经纬度，ip 可以通过对应插件变成位置和地址，手机号码可以通过插件获取其它系统的用户画像信息等。  
-### Abstraction: 特征
-特征工程，例如用户小时交易次数，IP 一天交易金额，设备一小时交易次数。。。
-### Adaptation: 机器学习模型适配器
- 使用训练好的机器学习模型，进行检测
-### Activation: 激活器
-概念类似于机器学习里面的 (Activation Function)， 一个模型可以定义多个 activation（相当于不同维度的检测报告）,每个activation都可以独立配置规则，单独打分。
-例如，用户注册行为， 可以定义：异常注册， 垃圾注册， 可以输出多个activation。
-### Rule: 规则
-在计算 abstraction 和 activation 之前，需要先检查数据是否正常，检查就是按照rule 配置进行检测。
-### Plugin：插件
- 为了通用性，项目自身并不提供敏感数据能力，但是通过扩展插件来获得其它系统或者中间数据功能，
- 目前项目自带手机号码段和IP地址转换两款插件，理论上可以通过扩展插件集成任何其它数据的能力，
- 例如：如果商户自身带有内部用户画像，可以自定义一个插件用过用户ID来获取用户画像数据。
 
 ---
 
@@ -99,16 +77,14 @@ https://gitee.com/freshday/radar/wikis/manual
 
 
 ## 演示入口
-演示Demo只提供管理端配置功能，暂时不提供引擎计算功能。  
 通过管理端能够快速了解系统是怎么从风险的定义到风险的量化再到风险的集中管理的整个工作流程。  
 为了更好的体验，请花一分钟观看 [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)  
 [Demo URL：](http://radar.pgmmer.top) http://radar.pgmmer.top   
 建议大家自行注册用户，避免使用同样的测试账号受干扰.   
 
-## 未完待续
-[Release Note:](https://gitee.com/freshday/radar/wikis/release%20note?sort_id=1723765) https://gitee.com/freshday/radar/wikis/release%20note
-### 重大特性预告
-* 新建模型支持一键自动提取特征 自动生成规则 自动设置阈值
+## 相关文档
+[WIKI:](https://gitee.com/freshday/radar/wikis/home?sort_id=1637444) https://gitee.com/freshday/radar/wikis/home?sort_id=1637444
+
 
 
 ## 致谢
@@ -122,4 +98,7 @@ https://gitee.com/freshday/radar/wikis/manual
  提示：进群需要捐赠到gitee，0.1元起  
  ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)   
  
+ ## 特别说明
+ 前端源码仅对企业级用户开放，需付费购买。   
+ 未经授权，禁止使用本项目源码申请软著和专利，保留追究法律责任的权力！   
  Copyright ©  2019-2020 WangFeiHu
