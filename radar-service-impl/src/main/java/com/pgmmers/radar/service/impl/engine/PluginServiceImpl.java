@@ -26,7 +26,11 @@ import javax.annotation.PostConstruct;
 import java.util.Calendar;
 import java.util.List;
 
-@Service
+/**
+ * 建议使用v2.
+ */
+@Deprecated
+//@Service
 @ConditionalOnProperty(prefix = "sys.conf",name="app", havingValue = "engine")
 public class PluginServiceImpl implements PluginService {
 
@@ -40,7 +44,7 @@ public class PluginServiceImpl implements PluginService {
     @Autowired
     private MobileInfoService mobileInfoService;
 
-    @Autowired
+    @Autowired(required = false)
     private RestTemplate restTemplate;
 
     @PostConstruct

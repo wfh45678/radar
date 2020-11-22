@@ -81,7 +81,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 特征工程，例如用户小时交易次数，IP 一天交易金额，设备一小时交易次数。。。
 ### Adaptation: 机器学习模型适配器
  使用训练好的机器学习模型，进行检测
-### Activation: 激活点
+### Activation: 激活器
 概念类似于机器学习里面的 (Activation Function)， 一个模型可以定义多个 activation（相当于不同维度的检测报告）,每个activation都可以独立配置规则，单独打分。
 例如，用户注册行为， 可以定义：异常注册， 垃圾注册， 可以输出多个activation。
 ### Rule: 规则

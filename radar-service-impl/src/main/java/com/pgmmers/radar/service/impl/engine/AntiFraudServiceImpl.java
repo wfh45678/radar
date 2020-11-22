@@ -10,7 +10,7 @@ import com.pgmmers.radar.service.engine.vo.AbstractionResult;
 import com.pgmmers.radar.service.engine.vo.ActivationResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.AntiFraudProcessResult;
-import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.model.PreItemService;
 import com.pgmmers.radar.vo.model.PreItemVO;
@@ -24,7 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * 反欺诈主要服务,仅在引擎端启动的时候才需要加载。
+ * @author feihu.wang
+ */
 @Service
 @ConditionalOnProperty(prefix = "sys.conf", name="app", havingValue = "engine")
 public class AntiFraudServiceImpl implements AntiFraudService {
@@ -34,7 +37,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
     @Autowired
     private AntiFraudEngine antiFraudEngine;
 
-    @Autowired
+    @Autowired(required = false)
     private PluginService pluginService;
 
     @Autowired

@@ -224,53 +224,40 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     public void init() {
         cacheService.subscribeDataList(this);
         new Thread(() ->{
-
                 List<ModelVO> modelList = modelService.listModel(null);
                 // 加载系统数据名单列表
-                Map<String, Object> sysDataListMap = new HashMap<>();
-                List<DataListsVO> sysList = dataListDal.listDataLists(0L, null);
-                for (DataListsVO dataListVO : sysList) {
-                    Map<String, String> dataListRecords = new HashMap<String, String>();
-                    // record list
-                    List<DataListRecordVO> recordVOList = dataListDal.listDataRecord(dataListVO.getId());
-                    if (recordVOList != null) {
-                        for (DataListRecordVO record : recordVOList) {
-                            dataListRecords.put(record.getDataRecord(), "");
-                        }
-                    }
-                    sysDataListMap.put(dataListVO.getName(), dataListRecords);
-                }
-
-
+                Map<String, Object> sysDataListMap = new HashMap<>(32);
+                List<DataListsVO> sysList = dataListDal.listDataLists(1L, null);
+                buildList2Map(sysDataListMap, sysList);
                 for (ModelVO model : modelList) {
-                    Map<String, Object> dataListMap = new HashMap<>();
+                    Map<String, Object> dataListMap = new HashMap<>(32);
                     // datalist list
                     List<DataListsVO> dataLists = dataListDal.listDataLists(model.getId(), null);
                     if (dataLists != null) {
-                        for (DataListsVO dataListVO : dataLists) {
-                            Map<String, String> dataListRecords = new HashMap<>();
-                            // record list
-                            List<DataListRecordVO> recordVOList = dataListDal.listDataRecord(dataListVO.getId());
-                            if (recordVOList != null) {
-                                for (DataListRecordVO record : recordVOList) {
-                                    dataListRecords.put(record.getDataRecord(), "");
-                                }
-                            }
-                            dataListMap.put(dataListVO.getName(), dataListRecords);
-
-                        }
+                        buildList2Map(dataListMap, dataLists);
                     }
-
-
                     // add sys data list
                     dataListMap.putAll(sysDataListMap);
                     dataListRecordCacheMap.put(model.getId(), dataListMap);
                 }
-
                 logger.info("data list has loaded.");
 
-
         }).start();
+    }
+
+    private void buildList2Map(Map<String, Object> dataListMap, List<DataListsVO> dataLists) {
+        for (DataListsVO dataListVO : dataLists) {
+            Map<String, String> dataListRecords = new HashMap<>();
+            // record list
+            List<DataListRecordVO> recordVOList = dataListDal.listDataRecord(dataListVO.getId());
+            if (recordVOList != null) {
+                for (DataListRecordVO record : recordVOList) {
+                    dataListRecords.put(record.getDataRecord(), "");
+                }
+            }
+            dataListMap.put(dataListVO.getName(), dataListRecords);
+
+        }
     }
 
     @Override

@@ -121,7 +121,7 @@ public class SysLoginApiController {
         userVO.setUserName(loginName);
         userVO.setPasswd(encrypt);
         userVO.setStatus("1");
-        userVO.setVipLevel(0);
+        userVO.setVipLevel(1);
         userVO.setGiteeAccount(giteeAccount);
         userVO.setCode(loginName);
         userVO.setCreateTime(new Date());

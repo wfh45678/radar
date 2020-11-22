@@ -110,7 +110,7 @@ public class DataListDalImpl implements DataListDal {
     public List<DataListsVO> list(Long modelId) {
         Example example = new Example(DataListsPO.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andIn("modelId", Arrays.asList(modelId, 0L));
+        criteria.andIn("modelId", Arrays.asList(modelId, 1L));
         List<DataListsPO> list = dataListMapper.selectByExample(example);
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<>();

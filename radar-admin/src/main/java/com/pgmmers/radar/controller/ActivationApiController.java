@@ -9,7 +9,7 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.DataColumnInfo;
 import com.pgmmers.radar.service.enums.DataType;
-import com.pgmmers.radar.service.impl.engine.Plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.model.AbstractionService;
 import com.pgmmers.radar.service.model.ActivationService;
 import com.pgmmers.radar.service.model.FieldService;

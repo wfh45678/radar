@@ -14,9 +14,11 @@ import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.RuleService;
 import com.pgmmers.radar.service.search.SearchEngineService;
+import com.pgmmers.radar.util.DateUtils;
 import com.pgmmers.radar.util.GroovyScriptUtil;
 import com.pgmmers.radar.vo.model.*;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.text.ParseException;
 import java.util.*;
 
 @Service
@@ -146,6 +149,13 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
 
     @Override
     public CommonResult getHitSorts(Long modelId) {
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.MONTH , -1);
+        return getHitSorts(modelId, now.getTimeInMillis(), Calendar.getInstance().getTimeInMillis());
+    }
+
+    @Override
+    public CommonResult getHitSorts(Long modelId, Long beginTime, Long endTime) {
         CommonResult result = new CommonResult();
         Set<RuleHitsVO> treeSet = new TreeSet<>();
         ModelVO model = modelDal.getModelById(modelId);
@@ -168,8 +178,11 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
                 keyStr = keyStr.replace("${ruleId}", rule.getId() + "");
                 long qty = 0;
                 try {
+                    QueryBuilder filter = QueryBuilders
+                            .rangeQuery("fields." + model.getReferenceDate())
+                            .from(beginTime).to(endTime);
                     qty = searchService.count(model.getGuid().toLowerCase(),
-                            QueryBuilders.termQuery(keyStr,rule.getId() + ""), null);
+                            QueryBuilders.termQuery(keyStr,rule.getId() + ""), filter);
                 } catch (Exception e) {
                     logger.error("search error", e);
                 }
@@ -190,7 +203,24 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
         return result;
     }
 
-	@Override
+    @Override
+    public CommonResult getHitSorts(Long modelId, String beginTime, String endTime) {
+        CommonResult result = new CommonResult();
+        try {
+            logger.info("search hits:{},{}", beginTime, endTime);
+            long begin = DateUtils.parseDateTime(beginTime).getTime();
+            long end = DateUtils.parseDateTime(endTime).getTime();
+            if (end > begin) {
+                return getHitSorts(modelId, begin, end);
+            }
+        } catch (ParseException e) {
+            logger.error("时间格式错误", e);
+            result.setMsg("时间格式错误！");
+        }
+        return result;
+    }
+
+    @Override
 	public CommonResult queryHistory(RuleHistoryQuery query) {
 		CommonResult result = new CommonResult();
 

@@ -40,78 +40,6 @@ public class DateUtils {
         return dateTimeFormat.parse(str);
     }
 
-    /**
-     * <p>getStartCurrentDate.</p>
-     *
-     * @return a {@link Date} object.
-     */
-    public static Date getStartCurrentDate() {
-//        Calendar cal = Calendar.getInstance();
-//        cal.set(Calendar.HOUR_OF_DAY, 0);
-//        cal.set(Calendar.MINUTE, 0);
-//        cal.set(Calendar.SECOND, 0);
-//        try {
-//            return dateTimeFormat.parse(dateTimeFormat.format(cal.getTime()));
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-        return getCurrentDate();
-    }
-
-    /**
-     * <p>getEndCurrentDate.</p>
-     *
-     * @return a {@link Date} object.
-     */
-    public static Date getEndCurrentDate() {
-//        Calendar cal = Calendar.getInstance();
-//        cal.set(Calendar.HOUR_OF_DAY, 23);
-//        cal.set(Calendar.MINUTE, 59);
-//        cal.set(Calendar.SECOND, 59);
-//
-//        try {
-//            return dateTimeFormat.parse(dateTimeFormat.format(cal.getTime()));
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-        return addDate(1,getCurrentDate());
-    }
-
-    /**
-     * <p>getDateTime.</p>
-     *
-     * @return a long.
-     */
-    public static long getDateTime() {
-        return new Date().getTime();
-    }
-
-    /**
-     * <p>getCurrentDate.</p>
-     *
-     * @return a {@link Date} object.
-     */
-    public static Date getCurrentDate() {
-        return new Date();
-    }
-
-    /**
-     * <p>getCurrentGMTDate.</p>
-     *
-     * @return a {@link Date} object.
-     */
-    public static Date getCurrentGMTDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
-        try {
-            return dateTimeFormat.parse(dateFormat.format(new Date()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * <p>formatDate.</p>
@@ -148,8 +76,6 @@ public class DateUtils {
         startCal.setTime(startDate);
         Calendar endCal = Calendar.getInstance();
         endCal.setTime(endDate);
-        System.out.println(startCal.getTimeInMillis());
-        System.out.println(endCal.getTimeInMillis());
         return (startCal.getTimeInMillis() - endCal.getTimeInMillis()) / (1000);
     }
 
@@ -200,9 +126,6 @@ public class DateUtils {
      * @param args an array of {@link String} objects.
      */
     public static void main(String[] args) {
-        System.out.println(getStartCurrentDate());
-        System.out.println(getEndCurrentDate());
-        
         System.out.println(formatDate(new Date(), "yyyy-MM-ww-dd"));
         
     }
