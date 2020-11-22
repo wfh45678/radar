@@ -98,4 +98,7 @@ https://gitee.com/freshday/radar/wikis/manual
  提示：进群需要捐赠到gitee，0.1元起  
  ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)   
  
+ ## 特别说明
+ 前端源码仅对企业级用户开放，需付费购买。   
+ 未经授权，禁止使用本项目源码申请软著和专利，保留追究法律责任的权力！   
  Copyright ©  2019-2020 WangFeiHu
