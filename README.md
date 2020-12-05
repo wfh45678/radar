@@ -91,12 +91,18 @@ https://gitee.com/freshday/radar/wikis/manual
 感恩 XWF 团队，感谢参入的每一位小伙伴，后续征得同意后会一一列出名字。  
 千面怪, 烈日下的从容, DerekDingLu, king, sanying2012, 紫泉夜, 玄梦     
 成书平, 徐帅，郭锐， 王成，马兆永...
+
+## 赞助商
+* 中和农信项目管理有限公司  
+
+感谢赞助商大大们对本项目的认可和支持。
+
 ## Contact to
 
  如果喜欢本项目，Star支持一下, 让更多人了解本项目，谢谢！   
  独乐乐不如众乐乐，微信（nicedream7758）加群一起嗨！  
- 提示：进群需要捐赠到gitee，0.1元起  
- ![微信交流群](http://radar.pgmmer.top/radar/wx2.jpg)   
+ 提示：进群需要捐赠到gitee  
+
  
  ## 特别说明
  前端源码仅对企业级用户开放，需付费购买。   
