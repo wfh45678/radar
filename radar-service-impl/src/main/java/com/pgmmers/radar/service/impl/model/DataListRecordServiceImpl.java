@@ -40,7 +40,7 @@ public class DataListRecordServiceImpl implements DataListRecordService,
         Map<String, String> dataListRecords = (Map<String, String>) listRecordMap
                 .get(dataListVO.getName());
         String opt = record.getOpt();
-        if (opt.equals("delete")) {
+        if (("delete").equals(opt)) {
             dataListRecords.remove(record.getDataRecord());
         } else {
             dataListRecords.put(record.getDataRecord(), "");

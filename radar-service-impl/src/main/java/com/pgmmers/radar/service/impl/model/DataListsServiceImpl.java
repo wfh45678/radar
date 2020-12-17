@@ -177,12 +177,19 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     @Override
     public CommonResult saveRecord(DataListRecordVO dataListRecord) {
         CommonResult result = new CommonResult();
+        DataListsVO dataListVO = dataListDal.get(dataListRecord.getDataListId());
+        if (dataListRecord.getId() != null) {
+            // 通知engine 先删除已经存在的，再update.
+            DataListRecordVO oldRecord = dataListDal.getRecord(dataListRecord.getId());
+            oldRecord.setModelId(dataListVO.getModelId());
+            oldRecord.setOpt("delete");
+            cacheService.publishDataListRecord(oldRecord);
+        }
         int count = dataListDal.saveRecord(dataListRecord);
         if (count > 0) {
             result.getData().put("id", dataListRecord.getId());
             result.setSuccess(true);
             // 通知更新
-            DataListsVO dataListVO = dataListDal.get(dataListRecord.getDataListId());
             dataListRecord.setModelId(dataListVO.getModelId());
             dataListRecord.setOpt("update");
             cacheService.publishDataListRecord(dataListRecord);
