@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AbstractionMapping extends BaseMapping<AbstractionPO, AbstractionVO> {
 
-    @Mapping(target = "dataCollectionNames", source = "")
+    @Mapping(target = "dataCollectionNames", ignore = true)
     @Mapping(target = "ruleDefinition", expression = "java(com.pgmmers.radar.util.JsonUtils.getJsonNode(var1.getRuleDefinition()))")
     @Override
     AbstractionVO sourceToTarget(AbstractionPO var1);
