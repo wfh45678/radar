@@ -72,6 +72,7 @@ public class SysLoginApiController {
                 }));
                 ret.getData().put("x-auth-token", token);
                 ret.setSuccess(true);
+                userService.updateLastLoginTime(users.get(0));
             } else {
                 ret.setMsg("用户名和密码错误！");
             }

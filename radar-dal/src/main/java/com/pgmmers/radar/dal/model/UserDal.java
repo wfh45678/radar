@@ -12,4 +12,6 @@ public interface UserDal {
      List<UserPO> list(String name, String pass);
 
      Integer insert(UserPO userPO);
+
+     Integer update(UserPO userPO);
 }

@@ -9,6 +9,8 @@ import com.pgmmers.radar.model.UserPO;
 import com.pgmmers.radar.service.admin.UserService;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.vo.admin.UserVO;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,5 +61,13 @@ public class UserServiceImpl implements UserService {
         UserPO userPO = userMapping.targetToSource(userVO);
         Integer integer = userDal.insert(userPO);
         return integer;
+    }
+
+    @Override
+    public void updateLastLoginTime(UserVO user) {
+        UserPO userPO = new UserPO();
+        userPO.setId(user.getId());
+        userPO.setUpdateTime(new Date());
+        userDal.update(userPO);
     }
 }

@@ -59,4 +59,9 @@ public class UserDalImpl implements UserDal {
         return integer;
     }
 
+    @Override
+    public Integer update(UserPO userPO) {
+        return userMapper.updateByPrimaryKeySelective(userPO);
+    }
+
 }
