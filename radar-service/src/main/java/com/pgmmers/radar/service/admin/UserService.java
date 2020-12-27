@@ -17,4 +17,6 @@ public interface UserService {
     UserVO getByUserName(String userName);
 
     Integer insert(UserVO userVO);
+
+    void updateLastLoginTime(UserVO user);
 }
