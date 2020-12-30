@@ -324,9 +324,24 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     BigDecimal extra = BigDecimal.ZERO;
                     String by = rule.getAbstractionName();
                     if (!StringUtils.isEmpty(by)) {
-                        Object abs = data.get("abstractions").get(rule.getAbstractionName());
-                        if (abs != null) {
-                            extra = new BigDecimal(abs.toString());
+                        if (by.indexOf(".") != -1) {
+                            //目前 被操作数 支持 基础字段和抽象字段。
+                            String[] varNames = by.split(".");
+                            Object val = null;
+                            if (varNames[0].equals("fields")) {
+                                val = data.get("fields").get(varNames[1]);
+                            } else if (varNames[0].equals("abstractions")) {
+                                val = data.get("abstractions").get(varNames[1]);
+                            }
+                            if (val instanceof Number) {
+                                extra = new BigDecimal(val.toString());
+                            }
+                        } else {
+                            //兼容以前的处理。
+                            Object abs = data.get("abstractions").get(rule.getAbstractionName());
+                            if (abs != null) {
+                                extra = new BigDecimal(abs.toString());
+                            }
                         }
                     }
                     extra = extra.multiply(rate);
