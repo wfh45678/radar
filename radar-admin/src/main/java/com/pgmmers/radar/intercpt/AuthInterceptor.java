@@ -41,7 +41,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         logger.info("uri:{}", uri);
         CommonResult result = new CommonResult();
         Map<String, Object> additionalProperties = Maps.newHashMap();
-        if (uri.startsWith("/services") && !uri.contains("/merchant/login") && !uri.contains("/merchant/regist") && !uri.contains("/common")) {
+        if (uri.startsWith("/services") && !uri.contains("/user/login") && !uri.contains("/user/regist") && !uri.contains("/common")) {
             Context context = new Context();
             String accessToken = request.getHeader("x-auth-token");
             if(StringUtils.isEmpty(accessToken)) {

@@ -19,7 +19,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 ## 相关站点
     Gitee:  https://gitee.com/freshday/radar  // 码云为镜像网站，贡献代码请提交到 github   
     Github: https://github.com/wfh45678/radar  
-    官网：  https://www.pgmmer.top  
+    官网：  https://www.91risk.com  
     Wiki:   https://gitee.com/freshday/radar/wikis/home
 
 
@@ -48,7 +48,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 前端技术框架： React(SPA) 
 
 ### 架构图
-![系统模块](https://www.pgmmer.top/radar/sys_model_arch.png)
+![系统模块](https://www.91risk.com/radar/sys_model_arch.png) 
 
 ## 技术选型
 * Springboot：笔者是java 出生， 选择 Springboot 理所当然，方便自己， 也方便其他Java使用者进行扩展。
@@ -79,7 +79,7 @@ https://gitee.com/freshday/radar/wikis/manual
 ## 演示入口
 通过管理端能够快速了解系统是怎么从风险的定义到风险的量化再到风险的集中管理的整个工作流程。  
 为了更好的体验，请花一分钟观看 [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)  
-[Demo URL：](https://www.pgmmer.top) https://www.pgmmer.top   
+[Demo URL：](https://www.91risk.com) https://www.91risk.com   
 建议大家自行注册用户，避免使用同样的测试账号受干扰.   
 
 ## 相关文档
@@ -107,4 +107,4 @@ https://gitee.com/freshday/radar/wikis/manual
  ## 特别说明
  前端源码仅对企业级用户开放，需付费购买。   
  未经授权，禁止使用本项目源码申请软著和专利，保留追究法律责任的权力！   
- Copyright ©  2019-2020 WangFeiHu
+ Copyright ©  2019-2021 WangFeiHu

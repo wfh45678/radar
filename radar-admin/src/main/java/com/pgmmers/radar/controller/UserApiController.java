@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2019 WangFeiHu
+ *  Radar is licensed under Mulan PSL v2.
+ *  You can use this software according to the terms and conditions of the Mulan PSL v2.
+ *  You may obtain a copy of Mulan PSL v2 at:
+ *  http://license.coscl.org.cn/MulanPSL2
+ *  THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ *  See the Mulan PSL v2 for more details.
+ */
+
 package com.pgmmers.radar.controller;
 
 
@@ -29,9 +39,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/services/v1")
 @Api(value = "SysLoginAPI", description = "用户登录相关操作接口",  tags = {"用户登录相关API"})
-public class SysLoginApiController {
+public class UserApiController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SysLoginApiController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserApiController.class);
 
     @Autowired
     private UserService userService;
@@ -45,7 +55,7 @@ public class SysLoginApiController {
     @Autowired
     private CacheService cacheService;
 
-    @PostMapping("/merchant/login")
+    @PostMapping("/user/login")
     public CommonResult login(String loginName, String passwd, String captcha) {
         CommonResult ret = new CommonResult();
         ret.setSuccess(false);
@@ -84,7 +94,7 @@ public class SysLoginApiController {
         return ret;
     }
 
-    @GetMapping("/merchant/logout")
+    @GetMapping("/user/logout")
 	public CommonResult logout(HttpServletRequest request) {
 		CommonResult ret = new CommonResult();
         String accessToken = contextHolder.getAttributeByType("x-auth-token", String.class);
@@ -99,7 +109,7 @@ public class SysLoginApiController {
      * @return
      * @author xushuai
      */
-    @PostMapping("/merchant/regist")
+    @PostMapping("/user/regist")
     public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha, String giteeAccount) {
         CommonResult result = new CommonResult();
 
