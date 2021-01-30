@@ -39,9 +39,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/services/v1")
 @Api(value = "SysLoginAPI", description = "用户登录相关操作接口",  tags = {"用户登录相关API"})
-public class SysLoginApiController {
+public class UserApiController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SysLoginApiController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserApiController.class);
 
     @Autowired
     private UserService userService;

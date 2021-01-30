@@ -1,6 +1,5 @@
 package com.pgmmers.radar.intercpt;
 
-import com.pgmmers.radar.controller.SysLoginApiController;
 import com.pgmmers.radar.service.cache.RedisService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,7 +28,7 @@ public class JsonWebTokenService {
     //单位是秒   2 * 3600=10*60*60=10*60分钟=2小时
     private Integer accessTokenValidTimeInSeconds = 2 * 3600;
 
-    private static final Logger logger = LoggerFactory.getLogger(SysLoginApiController.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonWebTokenService.class);
 
     public JsonWebTokenService(String signatureAlgorithm, String secret) {
         this.signatureAlgorithm = SignatureAlgorithm.forName(signatureAlgorithm);
