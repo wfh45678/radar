@@ -55,7 +55,7 @@ public class SysLoginApiController {
     @Autowired
     private CacheService cacheService;
 
-    @PostMapping("/merchant/login")
+    @PostMapping("/user/login")
     public CommonResult login(String loginName, String passwd, String captcha) {
         CommonResult ret = new CommonResult();
         ret.setSuccess(false);
@@ -94,7 +94,7 @@ public class SysLoginApiController {
         return ret;
     }
 
-    @GetMapping("/merchant/logout")
+    @GetMapping("/user/logout")
 	public CommonResult logout(HttpServletRequest request) {
 		CommonResult ret = new CommonResult();
         String accessToken = contextHolder.getAttributeByType("x-auth-token", String.class);
@@ -109,7 +109,7 @@ public class SysLoginApiController {
      * @return
      * @author xushuai
      */
-    @PostMapping("/merchant/regist")
+    @PostMapping("/user/regist")
     public CommonResult regist(String loginName, String passwd, String verifyPasswd, String captcha, String giteeAccount) {
         CommonResult result = new CommonResult();
 
