@@ -48,7 +48,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 前端技术框架： React(SPA) 
 
 ### 架构图
-![系统模块](https://www.pgmmer.top/radar/sys_model_arch.png)
+![系统模块](https://www.91risk.com/radar/sys_model_arch.png)
 
 ## 技术选型
 * Springboot：笔者是java 出生， 选择 Springboot 理所当然，方便自己， 也方便其他Java使用者进行扩展。
