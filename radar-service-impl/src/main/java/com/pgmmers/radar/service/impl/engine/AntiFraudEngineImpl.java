@@ -326,7 +326,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     if (!StringUtils.isEmpty(by)) {
                         if (by.indexOf(".") != -1) {
                             //目前 被操作数 支持 基础字段和抽象字段。
-                            String[] varNames = by.split(".");
+                            String[] varNames = by.split("\\.");
                             Object val = null;
                             if (varNames[0].equals("fields")) {
                                 val = data.get("fields").get(varNames[1]);
