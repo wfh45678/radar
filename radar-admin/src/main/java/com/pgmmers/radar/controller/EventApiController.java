@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2019 WangFeiHu
+ *  Radar is licensed under Mulan PSL v2.
+ *  You can use this software according to the terms and conditions of the Mulan PSL v2.
+ *  You may obtain a copy of Mulan PSL v2 at:
+ *  http://license.coscl.org.cn/MulanPSL2
+ *  THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ *  See the Mulan PSL v2 for more details.
+ */
+
 package com.pgmmers.radar.controller;
 
 import com.alibaba.fastjson.JSONArray;
@@ -45,7 +55,6 @@ import org.springframework.web.bind.annotation.RestController;
  * 以后会独立拆分到分析子项目里面去。
  * @author  feihu.wang
  */
-@Deprecated
 @RestController
 @RequestMapping("/services/v1/event")
 @Api(value = "EventApi", description = "事件信息检索接口相关操作",  tags = {"事件信息检索分析API"}, hidden = true)
