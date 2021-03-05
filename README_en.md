@@ -36,11 +36,11 @@ Front-end： React(SPA)
 
 * Mybatis + tkMapper： data persistence layer framework.
 
-* Mysql ： model meta data.
+* Mysql ： model meta data storage.
 
-* MongoDB： event data.
+* MongoDB： event data storage.
 
-* ES： report data query.
+* ES： report data analysis.
 
 * Redis： cache, pub sub.
 
