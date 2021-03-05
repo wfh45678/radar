@@ -20,7 +20,7 @@
     </parent>
     <groupId>com.pgmmers</groupId>
     <artifactId>radar</artifactId>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.0.8-SNAPSHOT</version>
     <name>radar</name>
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
