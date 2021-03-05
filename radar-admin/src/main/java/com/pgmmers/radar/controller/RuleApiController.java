@@ -56,7 +56,7 @@ public class RuleApiController {
     }
 
     @PutMapping
-    public CommonResult save(@RequestBody RuleVO rule, HttpServletRequest request) {
+    public CommonResult save(@RequestBody RuleVO rule) {
         return ruleService.save(rule, contextHolder.getContext().getUsername());
     }
 

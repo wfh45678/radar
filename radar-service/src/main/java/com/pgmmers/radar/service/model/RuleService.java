@@ -15,7 +15,7 @@ public interface RuleService {
 
     CommonResult query(RuleQuery query);
 
-    CommonResult save(RuleVO rule, String merchantCode);
+    CommonResult save(RuleVO rule, String userCode);
 
     CommonResult delete(Long[] id);
 
