@@ -29,12 +29,12 @@ public class GroovyScriptUtil {
      * 2016年8月2日
      */
     public static GroovyObject loadScript(String script) {
-        GroovyObject groovyObject = passedClassMap.get(script.hashCode() + "");
+        GroovyObject groovyObject = passedClassMap.get(CryptUtils.md5(script));
         if (groovyObject == null) {
             Class groovyClass = groovyClassLoader.parseClass(script);
             try {
                 groovyObject = (GroovyObject) groovyClass.newInstance();
-                passedClassMap.put(script.hashCode() + "", groovyObject);
+                passedClassMap.put(CryptUtils.md5(script), groovyObject);
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -62,6 +62,6 @@ public class GroovyScriptUtil {
      * 删除不在使用的脚本关联的groovy object, 不然内存有溢出风险。
      */
     public static void removeInactiveScript(String  script){
-        passedClassMap.remove(script.hashCode() + "");
+        passedClassMap.remove(CryptUtils.md5(script));
     }
 }
