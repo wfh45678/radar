@@ -71,6 +71,12 @@ public class RulePO {
     private Integer rate;
 
     /**
+     * 最大值
+     */
+    @Column(name = "MAX")
+    private Integer max;
+
+    /**
      * 状态
      */
     @Column(name = "STATUS")
@@ -277,6 +283,24 @@ public class RulePO {
      */
     public void setRate(Integer rate) {
         this.rate = rate;
+    }
+
+    /**
+     * 获取最大值
+     *
+     * @return MAX - 最大值
+     */
+    public Integer getMax() {
+        return max;
+    }
+
+    /**
+     * 设置最大值
+     *
+     * @param max 最大值
+     */
+    public void setMax(Integer max) {
+        this.max = max;
     }
 
     /**

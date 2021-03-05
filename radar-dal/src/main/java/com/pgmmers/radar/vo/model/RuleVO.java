@@ -46,6 +46,11 @@ public class RuleVO implements Serializable{
 
     private Integer rate;
 
+    /**
+     * 最大得分值.
+     */
+    private Integer max;
+
     @JsonProperty
     private JsonNode ruleDefinition;
 
@@ -197,6 +202,12 @@ public class RuleVO implements Serializable{
     public void setLabel(String label) {
         this.label = label;
     }
-    
-    
+
+    public Integer getMax() {
+        return max;
+    }
+
+    public void setMax(Integer max) {
+        this.max = max;
+    }
 }

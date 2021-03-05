@@ -49,6 +49,9 @@ public class PreItemPO {
     @Column(name = "PLUGIN")
     private String plugin;
 
+    /**
+     * 响应字段配置信息
+     */
     @Column(name = "CONFIG_JSON")
     private String configJson;
 
@@ -204,14 +207,18 @@ public class PreItemPO {
     }
 
     /**
-     * @return CONFIG_JSON
+     * 获取响应字段配置信息
+     *
+     * @return CONFIG_JSON - 响应字段配置信息
      */
     public String getConfigJson() {
         return configJson;
     }
 
     /**
-     * @param configJson
+     * 设置响应字段配置信息
+     *
+     * @param configJson 响应字段配置信息
      */
     public void setConfigJson(String configJson) {
         this.configJson = configJson;
