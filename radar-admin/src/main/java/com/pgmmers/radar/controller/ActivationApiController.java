@@ -186,7 +186,7 @@ public class ActivationApiController {
         ds.addChildren(preItem.getLabel(), preItem.getDestField(), children);
     }
 
-    @GetMapping("/disable/{activationId}")
+    @PostMapping("/disable/{activationId}")
     public CommonResult disable(@PathVariable Long activationId) {
         return activationService.updateStatus(activationId, 0);
     }
