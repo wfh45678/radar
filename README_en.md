@@ -38,11 +38,11 @@ Front-end： React(SPA)
 
 * Mysql ： model meta data storage.
 
-* MongoDB： event data storage.
+* MongoDB： for event data storage.
 
-* ES： report data analysis.
+* ES： risk result data analysis.
 
-* Redis： cache, pub sub.
+* Redis： cache, pub sub when model meta data change.
 
 * Groovy： rule engine. 
 
