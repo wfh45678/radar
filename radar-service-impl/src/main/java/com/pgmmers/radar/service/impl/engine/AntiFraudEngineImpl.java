@@ -362,17 +362,19 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     default:
                     }
                     BigDecimal amount = initScore.add(extra);
+                    // 规则得分设置最大值.
+                    if (maxScore.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(maxScore) > 0) {
+                        amount = maxScore;
+                    }
+                    sum = sum.add(amount);
+
+                    // hit detail
                     HitObject hit = new HitObject();
                     hit.setKey(rule.getId().toString());
                     hit.setDesc(rule.getLabel());
                     hit.setValue(amount.setScale(2, 4).doubleValue());
                     result.getHitRulesMap().get(act.getActivationName()).add(hit);
                     result.getHitRulesMap2().get(act.getActivationName()).put("rule_"+ hit.getKey(), hit);
-                    // 规则得分设置最大值.
-                    if (maxScore.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(maxScore) > 0) {
-                        amount = maxScore;
-                    }
-                    sum = sum.add(amount);
                 }
 
             }
