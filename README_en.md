@@ -31,7 +31,7 @@ Front-end： React(SPA)
 ### System Component Diagram
 ![Architecture](https://www.91risk.com/radar/sys_model_arch.png) 
 
-## Framework & Middleware
+## Technology stack
 * Springboot：base spring boot 2.x framework.
 
 * Mybatis + tkMapper： data persistence layer framework.
