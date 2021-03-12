@@ -43,10 +43,6 @@ import org.springframework.stereotype.Service;
 public class ModelServiceImpl extends BaseLocalCacheService implements ModelService,
         SubscribeHandle {
 
-    @Override
-    public Object query(Long modelId) {
-        return modelDal.getModelById(modelId);
-    }
 
     public static Logger logger = LoggerFactory
             .getLogger(ModelServiceImpl.class);
@@ -365,6 +361,11 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     @Override
     public List<ModelVO> listTemplateModel(boolean isTemplate) {
         return modelDal.listModel(null, null, true);
+    }
+
+    @Override
+    public Object query(Long modelId) {
+        return modelDal.getModelById(modelId);
     }
 
 }

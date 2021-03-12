@@ -56,13 +56,7 @@ public class ModelApiController  {
 
     @GetMapping("/list")
 	public CommonResult list(HttpServletRequest request) {
-//        HttpSession session = request.getSession();
-//        UserVO user = (UserVO) session.getAttribute("user");
         CommonResult result = new CommonResult();
-//        if (user == null) {
-//            result.setMsg("session已过期");
-//            return result;
-//        }
         result.setSuccess(true);
         result.getData().put("modelList",  modelService.listModel(contextHolder.getContext().getCode(), null));
         return result;
@@ -79,14 +73,6 @@ public class ModelApiController  {
     @PostMapping
     public CommonResult query(@RequestBody ModelQuery query, HttpServletRequest request) {
 	    CommonResult result = new CommonResult();
-
-//        HttpSession session = request.getSession();
-//        UserVO user = (UserVO) session.getAttribute("user");
-//        if (user == null) {
-//            result.setMsg("session已过期");
-//            return result;
-//        }
-//        query.setMerchantCode(user.getCode());
         query.setMerchantCode(contextHolder.getContext().getCode());
         return modelService.query(query);
     }
@@ -94,9 +80,6 @@ public class ModelApiController  {
 
     @PutMapping
     public CommonResult save(@RequestBody ModelVO model, HttpServletRequest request) {
-//    	HttpSession session = request.getSession();
-//        UserVO user = (UserVO) session.getAttribute("user");
-//        model.setCode(user.getCode());
         model.setCode(contextHolder.getContext().getCode());
         return modelService.save(model);
     }

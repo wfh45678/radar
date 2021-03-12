@@ -445,12 +445,12 @@ public class ModelDalImpl implements ModelDal {
     }
 
     @Override
-    public List<ModelVO> listModel(String merchantCode, Integer status,
+    public List<ModelVO> listModel(String code, Integer status,
             Boolean isTemplate) {
         Example example = new Example(ModelPO.class);
         Example.Criteria criteria = example.createCriteria();
-        if (!StringUtils.isEmpty(merchantCode)) {
-            criteria.andEqualTo("code", merchantCode);
+        if (!StringUtils.isEmpty(code)) {
+            criteria.andEqualTo("code", code);
         }
         if (status != null) {
             criteria.andEqualTo("status", status);

@@ -17,7 +17,7 @@ public interface ModelDal {
     
      List<ModelVO> listModel(String merchantCode,Integer status);
     
-     List<ModelVO> listModel(String merchantCode,Integer status, Boolean isTemplate);
+     List<ModelVO> listModel(String code,Integer status, Boolean isTemplate);
     
      List<ModelVO> listModel(Integer status);
     
