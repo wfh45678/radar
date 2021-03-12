@@ -108,7 +108,20 @@ public class ActivationServiceImpl extends BaseLocalCacheService implements Acti
 		return result;
 	}
 
-	@PostConstruct
+    @Override
+    public CommonResult updateStatus(Long activationId, Integer status) {
+        CommonResult result = new CommonResult();
+        ActivationVO activation = activationDal.get(activationId);
+        if (activation == null) return result;
+        activation = new ActivationVO();
+        activation.setId(activationId);
+        activation.setStatus(status);
+        activationDal.save(activation);
+        result.setSuccess(true);
+        return result;
+    }
+
+    @PostConstruct
     public void init() {
         cacheService.subscribeActivation(this);
     }

@@ -91,7 +91,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     }
 
     @Override
-    public CommonResult save(RuleVO rule,String merchantCode) {
+    public CommonResult save(RuleVO rule,String userCode) {
         CommonResult result = new CommonResult();
         if (rule.getId() != null) {
             RuleVO oldRule = ruleDal.get(rule.getId());
@@ -112,7 +112,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
             // 存储History
             RuleHistoryVO ruleHistoryVO=new RuleHistoryVO();
             ruleHistoryVO.setRuleId(rule.getId());
-            ruleHistoryVO.setMerchantCode(merchantCode);
+            ruleHistoryVO.setMerchantCode(userCode);
             ruleHistoryVO.setLabel(rule.getLabel());
             ruleHistoryVO.setInitScore(rule.getInitScore());
             ruleHistoryVO.setBaseNum(rule.getBaseNum());

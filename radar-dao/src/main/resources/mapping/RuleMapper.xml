@@ -16,6 +16,7 @@
     <result column="OPERATOR" jdbcType="VARCHAR" property="operator" />
     <result column="ABSTRACTION_NAME" jdbcType="VARCHAR" property="abstractionName" />
     <result column="RATE" jdbcType="INTEGER" property="rate" />
+    <result column="MAX" jdbcType="INTEGER" property="max" />
     <result column="STATUS" jdbcType="INTEGER" property="status" />
     <result column="RULE_DEFINITION" jdbcType="VARCHAR" property="ruleDefinition" />
     <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />

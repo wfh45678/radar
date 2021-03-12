@@ -58,13 +58,18 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
 
     @Override
     public CommonResult uploadInfo(String modelGuid, String reqId, String jsonInfo) {
+        return uploadInfo(modelGuid, reqId, JSON.parseObject(jsonInfo));
+    }
+
+    @Override
+    public CommonResult uploadInfo(String modelGuid, String reqId, JSONObject jsonInfo) {
         logger.info("req info:{},{},{}", modelGuid, reqId, jsonInfo);
         CommonResult result = new CommonResult();
         Map<String, Map<String, ?>> context = new HashMap<>();
         ModelVO model;
         try {
             // 1. check
-            JSONObject eventJson = JSON.parseObject(jsonInfo);
+            JSONObject eventJson = jsonInfo;
 
             model = modelService.getModelByGuid(modelGuid);
 
@@ -110,8 +115,9 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
                     .formatDate(new Date(eventTimeMillis), "yyyy-MM-dd'T'HH:mm:ssZ");
             preItemMap.put("radar_ref_datetime", timeStr);
         } catch (Exception e) {
-            e.printStackTrace();
-            result.setMsg("数据异常!");
+            logger.error("process error", e);
+            //result.setMsg("数据异常!" + e.getMessage());
+            throw new RuntimeException("数据处理异常:" + e.getMessage());
         }
 
         // 缓存分析结果
@@ -134,5 +140,6 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
         }
         return result;
     }
+
 
 }

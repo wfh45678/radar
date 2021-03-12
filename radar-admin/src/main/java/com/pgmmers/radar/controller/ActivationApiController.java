@@ -77,7 +77,7 @@ public class ActivationApiController {
         return activationService.query(query);
     }
 
-    @GetMapping("/datacolumns/{modelId}")
+    @GetMapping("/feature/columns/{modelId}")
     public CommonResult getDataColumns(@PathVariable Long modelId) {
         List<DataColumnInfo> list = new ArrayList<DataColumnInfo>();
         // 1、Data
@@ -124,7 +124,7 @@ public class ActivationApiController {
         return result;
     }
 
-    @GetMapping("/absColumns/{modelId}")
+    @GetMapping("/abstraction/columns/{modelId}")
     public CommonResult getAbstractionColumns(@PathVariable Long modelId) {
         CommonResult result = new CommonResult();
         result.setSuccess(true);
@@ -140,7 +140,7 @@ public class ActivationApiController {
         return result;
     }
 
-    @GetMapping("/rulecolumns/{modelId}")
+    @GetMapping("/rule/columns/{modelId}")
 	public CommonResult getRuleColumns(@PathVariable Long modelId) {
 		List<DataColumnInfo> list = new ArrayList<>();
 		List<ActivationVO> listActivation=activationService.listActivation(modelId);
@@ -184,5 +184,15 @@ public class ActivationApiController {
                     .getString("type")));
         }
         ds.addChildren(preItem.getLabel(), preItem.getDestField(), children);
+    }
+
+    @PostMapping("/disable/{activationId}")
+    public CommonResult disable(@PathVariable Long activationId) {
+        return activationService.updateStatus(activationId, 0);
+    }
+
+    @PostMapping("/enable/{activationId}")
+    public CommonResult enable(@PathVariable Long activationId) {
+        return activationService.updateStatus(activationId, 1);
     }
 }

@@ -1,6 +1,7 @@
 package com.pgmmers.radar.service;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.pgmmers.radar.service.common.CommonResult;
 
 
@@ -24,9 +25,17 @@ public interface RiskAnalysisEngineService {
      * @author feihu.wang
      *
      */
-     CommonResult uploadInfo( String modelGuid,
-                                    String reqId,
-                                    String jsonInfo);
+     CommonResult uploadInfo(String modelGuid, String reqId, String jsonInfo);
+
+    /**
+     * 上传信息.
+     * @param modelGuid
+     * @param reqId
+     * @param jsonInfo
+     * @return
+     * @see "uploadInfo(String modelGuid, String reqId, String jsonInfo)"
+     */
+     CommonResult uploadInfo(String modelGuid, String reqId, JSONObject jsonInfo);
 
     /**
      * 

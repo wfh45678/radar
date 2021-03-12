@@ -323,6 +323,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     BigDecimal base = new BigDecimal(rule.getBaseNum());
                     BigDecimal extra = BigDecimal.ZERO;
                     String by = rule.getAbstractionName();
+                    BigDecimal maxScore = new BigDecimal(rule.getMax());
                     if (!StringUtils.isEmpty(by)) {
                         if (by.indexOf(".") != -1) {
                             //目前 被操作数 支持 基础字段和抽象字段。
@@ -360,14 +361,20 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                         break;
                     default:
                     }
-                    BigDecimal account = initScore.add(extra);
+                    BigDecimal amount = initScore.add(extra);
+                    // 规则得分设置最大值.
+                    if (maxScore.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(maxScore) > 0) {
+                        amount = maxScore;
+                    }
+                    sum = sum.add(amount);
+
+                    // hit detail
                     HitObject hit = new HitObject();
                     hit.setKey(rule.getId().toString());
                     hit.setDesc(rule.getLabel());
-                    hit.setValue(account.setScale(2, 4).doubleValue());
+                    hit.setValue(amount.setScale(2, 4).doubleValue());
                     result.getHitRulesMap().get(act.getActivationName()).add(hit);
                     result.getHitRulesMap2().get(act.getActivationName()).put("rule_"+ hit.getKey(), hit);
-                    sum = sum.add(account);
                 }
 
             }

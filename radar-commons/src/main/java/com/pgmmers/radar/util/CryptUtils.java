@@ -12,17 +12,17 @@ import java.security.SecureRandom;
 public class CryptUtils {
 
     private final static String DES = "DES";
-    //private final static String MD5 = "MD5";
+    private final static String MD5 = "MD5";
     private final static String SHA = "SHA1";
 
     public static void main(String args[]){
-//    	System.out.println( md5("123") );
+    	System.out.println( md5("123") );
     	System.out.println( sha("222222") );
     }
-//    
-//	public static String md5(String source) {
-//		return encryption(source, MD5);
-//	}
+
+	public static String md5(String source) {
+		return encryption(source, MD5);
+	}
 
 	public static String sha(String source) {
 		return encryption(source, SHA);

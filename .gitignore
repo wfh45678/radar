@@ -21,3 +21,4 @@ webapp/node_modules/
 .settings
 .classpath
 .factorypath
+/radar-kafka-demo/target/

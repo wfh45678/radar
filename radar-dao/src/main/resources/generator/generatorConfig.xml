@@ -25,6 +25,8 @@
                         connectionURL="${jdbc.url}"
                         userId="${jdbc.user}"
                         password="${jdbc.password}">
+            <property name="serverTimezone" value="Asia/Shanghai"/>
+            <property name="nullCatalogMeansCurrent" value="true"/>
         </jdbcConnection>
 
         <javaModelGenerator targetPackage="com.pgmmers.radar.model"
@@ -38,7 +40,7 @@
                              type="XMLMAPPER"/>
 
 
-        <table tableName="USERS" domainObjectName="User">
+        <table tableName="radar.USERS" domainObjectName="User">
             <generatedKey column="ID" sqlStatement="JDBC"/>
         </table>
 

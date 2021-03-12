@@ -19,6 +19,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/services/v1")
 @Api(value = "RiskApi", description = "接受用户事件数据，实时进行分析并返回分析结果。",  tags = {"风险分析API(引擎端)"})
@@ -28,6 +30,7 @@ public class MainController {
     private RiskAnalysisEngineService engineApi;
 
 
+    @Deprecated
     @PostMapping("/uploadInfo")
     @ApiOperation(value = "事件数据提交接口")
     public CommonResult upload(@RequestParam @ApiParam(name="modelGuid", value="模型Guid", required=true) String modelGuid,
@@ -42,6 +45,13 @@ public class MainController {
     public CommonResult getScore(@RequestParam  @ApiParam(name="modelGuid",value="模型Guid",required=true)  String modelGuid,
                            @RequestParam  @ApiParam(name="reqId",value="请求流水号",required=true)  String reqId) {
         CommonResult result = engineApi.getScore(modelGuid, reqId);
+        return result;
+    }
+
+    @PostMapping("/upload")
+    @ApiOperation(value = "事件数据提交接口")
+    public CommonResult upload(@Valid @RequestBody EventRequest request) {
+        CommonResult result = engineApi.uploadInfo(request.getGuid(), request.getReqId(), request.getJsonInfo());
         return result;
     }
 }

@@ -1,0 +1,2 @@
+ALTER TABLE `engine_rule`
+    ADD COLUMN `MAX` int(11)  NOT NULL DEFAULT 0 COMMENT '最大得分值' AFTER `RATE`;

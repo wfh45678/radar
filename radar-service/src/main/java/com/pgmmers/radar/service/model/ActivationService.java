@@ -21,4 +21,14 @@ public interface ActivationService {
 	
 	 CommonResult updateOrder(Long activationId, String ruleOrder);
 
+	/**
+	 * update status of activation.
+	 * @param activationId
+	 * @param status
+	 * @return
+	 *
+	 * @author feihu.wang
+	 */
+	 CommonResult updateStatus(Long activationId, Integer status);
+
 }

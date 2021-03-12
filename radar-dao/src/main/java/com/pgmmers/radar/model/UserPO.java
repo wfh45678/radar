@@ -5,6 +5,9 @@ import javax.persistence.*;
 
 @Table(name = "users")
 public class UserPO {
+    /**
+     * 主键
+     */
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "JDBC")
@@ -41,14 +44,18 @@ public class UserPO {
     private Date updateTime;
 
     /**
-     * @return ID
+     * 获取主键
+     *
+     * @return ID - 主键
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * @param id
+     * 设置主键
+     *
+     * @param id 主键
      */
     public void setId(Long id) {
         this.id = id;
