@@ -28,19 +28,18 @@ public class ALLINONE implements PluginServiceV2 {
 
     @Override
     public Object handle(PreItemVO item, Map<String, Object> jsonInfo,
-            String[] sourceField) {
-        List<Object> fields = new ArrayList<>();
-        for (String field : sourceField) {
-            fields.add(jsonInfo.get(field));
+                         String[] sourceField) {
+        if (sourceField == null || sourceField.length == 0) {
+            return "";
         }
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < fields.size(); i++) {
-            Object f = fields.get(i);
+        for (String field : sourceField) {
+            Object f = jsonInfo.get(field);
             builder.append(f == null ? "" : f.toString());
-            if (i < fields.size() - 1) {
-                builder.append("_");
-            }
+            builder.append("_");
         }
+        builder.deleteCharAt(builder.length() - 1);
         return builder.toString();
     }
+    
 }
