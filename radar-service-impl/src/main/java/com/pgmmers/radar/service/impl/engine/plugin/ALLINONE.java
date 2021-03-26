@@ -32,13 +32,14 @@ public class ALLINONE implements PluginServiceV2 {
         if (sourceField == null || sourceField.length == 0) {
             return "";
         }
-        StringBuilder builder = new StringBuilder();
-        for (String field : sourceField) {
-            Object f = jsonInfo.get(field);
-            builder.append(f == null ? "" : f.toString());
-            builder.append("_");
+        // 优化下此处代码
+        StringJoiner stringJoiner = new StringJoiner("_");
+        for (String sf : sourceField) {
+            stringJoiner.add(Optional.ofNullable(jsonInfo.getOrDefault(sf, ""))
+                    .map(String::valueOf)
+                    .orElse(""));
         }
-        builder.deleteCharAt(builder.length() - 1);
-        return builder.toString();
+        return stringJoiner.toString();
     }
+    
 }
