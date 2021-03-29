@@ -2,9 +2,10 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.vo.model.PreItemVO;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * author: wangcheng Date: 2020/5/19 Time: 上午11:45 Description:
@@ -32,14 +33,10 @@ public class ALLINONE implements PluginServiceV2 {
         if (sourceField == null || sourceField.length == 0) {
             return "";
         }
-        // 优化下此处代码
-        StringJoiner stringJoiner = new StringJoiner("_");
-        for (String sf : sourceField) {
-            stringJoiner.add(Optional.ofNullable(jsonInfo.getOrDefault(sf, ""))
-                    .map(String::valueOf)
-                    .orElse(""));
-        }
-        return stringJoiner.toString();
+        String str = Arrays.asList(sourceField).stream()
+                .map(f -> jsonInfo.get(f) == null ? "" : f.toString())
+                .collect(Collectors.joining("_"));
+        return str;
     }
     
 }
