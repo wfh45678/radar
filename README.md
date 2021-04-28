@@ -19,7 +19,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 ## 相关站点
     Gitee:  https://gitee.com/freshday/radar  // 码云为镜像网站，贡献代码请提交到 github   
     Github: https://github.com/wfh45678/radar  
-    官网：  https://www.91risk.com  
+    官网：  http://www.riskengine.cn  
     Wiki:   https://gitee.com/freshday/radar/wikis/home
 
 
@@ -79,7 +79,7 @@ https://gitee.com/freshday/radar/wikis/manual
 ## 演示入口
 通过管理端能够快速了解系统是怎么从风险的定义到风险的量化再到风险的集中管理的整个工作流程。  
 为了更好的体验，请花一分钟观看 [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)  
-[Demo URL：](https://www.91risk.com) https://www.91risk.com   
+[Demo URL：](http://www.riskengine.cn) http://www.riskengine.cn   
 建议大家自行注册用户，避免使用同样的测试账号受干扰.   
 
 ## 相关文档
