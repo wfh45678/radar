@@ -147,7 +147,7 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public void cacheCaptcha(String captcha) {
-        redisService.setex(LOGIN_CAPTCHA_PREFIX + captcha, captcha, 60);
+        redisService.setex(LOGIN_CAPTCHA_PREFIX + captcha, captcha, 60 * 2);
     }
 
     @Override
