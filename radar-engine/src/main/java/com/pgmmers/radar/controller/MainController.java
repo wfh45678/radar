@@ -54,4 +54,11 @@ public class MainController {
         CommonResult result = engineApi.uploadInfo(request.getGuid(), request.getReqId(), request.getJsonInfo());
         return result;
     }
+
+    @PostMapping("/syncStatus")
+    @ApiOperation(value = "事件状态同步接口")
+    public CommonResult syncStatus(@Valid @RequestBody StatusSyncRequest request) {
+        CommonResult result = engineApi.syncStatus(request.getGuid(), request.getEventId(), request.getStatus());
+        return result;
+    }
 }
