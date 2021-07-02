@@ -17,8 +17,8 @@ The project code called Radar, like the code, monitor the transaction at the bac
  * 配置简单，开箱即用！
 
 ## 相关站点
-    Gitee:  https://gitee.com/freshday/radar  // 码云为镜像网站，贡献代码请提交到 github   
-    Github: https://github.com/wfh45678/radar  
+    Gitee:  https://gitee.com/freshday/radar    
+    Github: https://github.com/wfh45678/radar  // github 为镜像网站，贡献代码请提交到 gitee  
     官网：  https://www.riskengine.cn  
     Wiki:   https://gitee.com/freshday/radar/wikis/home
 
