@@ -4,13 +4,18 @@ import com.alibaba.fastjson.JSON;
 import com.pgmmers.radar.dal.bean.ActivationQuery;
 import com.pgmmers.radar.dal.model.ActivationDal;
 import com.pgmmers.radar.dal.model.ModelDal;
+import com.pgmmers.radar.dal.model.RuleDal;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.ActivationService;
 import com.pgmmers.radar.vo.model.ActivationVO;
+
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
+
+import com.pgmmers.radar.vo.model.RuleVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +37,9 @@ public class ActivationServiceImpl extends BaseLocalCacheService implements Acti
 
     @Autowired
     private ActivationDal activationDal;
+
+    @Autowired
+    private RuleDal ruleDal;
 
     @Autowired
     private CacheService cacheService;
@@ -107,6 +115,28 @@ public class ActivationServiceImpl extends BaseLocalCacheService implements Acti
 		}
 		return result;
 	}
+
+    @Override
+    public CommonResult copy(Long id) {
+        CommonResult result = new CommonResult();
+        ActivationVO origVO = activationDal.get(id);
+        if (origVO == null) {
+            return result;
+        }
+        List<RuleVO> ruleList = ruleDal.listByActId(id);
+        origVO.setId(null);
+        origVO.setLabel(origVO.getLabel() + "_copy");
+        origVO.setCreateTime(new Date());
+        activationDal.save(origVO);
+        for (RuleVO ruleVO : ruleList) {
+            ruleVO.setId(null);
+            ruleVO.setActivationId(origVO.getId());
+            ruleVO.setCreateTime(new Date());
+            ruleDal.save(ruleVO);
+        }
+        result.setSuccess(true);
+        return result;
+    }
 
     @Override
     public CommonResult updateStatus(Long activationId, Integer status) {

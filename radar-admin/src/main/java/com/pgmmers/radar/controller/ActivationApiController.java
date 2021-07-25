@@ -195,4 +195,10 @@ public class ActivationApiController {
     public CommonResult enable(@PathVariable Long activationId) {
         return activationService.updateStatus(activationId, 1);
     }
+
+    @PostMapping("/copy")
+    public CommonResult copy(@RequestBody Long id) {
+        CommonResult result = activationService.copy(id);
+        return result;
+    }
 }
