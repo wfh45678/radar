@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 WangFeiHu
+ * Copyright (c) 2019-2022 WangFeiHu
  *  Radar is licensed under Mulan PSL v2.
  *  You can use this software according to the terms and conditions of the Mulan PSL v2.
  *  You may obtain a copy of Mulan PSL v2 at:
@@ -52,6 +52,13 @@ public class MainController {
     @ApiOperation(value = "事件数据提交接口")
     public CommonResult upload(@Valid @RequestBody EventRequest request) {
         CommonResult result = engineApi.uploadInfo(request.getGuid(), request.getReqId(), request.getJsonInfo());
+        return result;
+    }
+
+    @PostMapping("/syncStatus")
+    @ApiOperation(value = "事件状态同步接口")
+    public CommonResult syncStatus(@Valid @RequestBody StatusSyncRequest request) {
+        CommonResult result = engineApi.syncStatus(request.getGuid(), request.getEventId(), request.getStatus());
         return result;
     }
 }

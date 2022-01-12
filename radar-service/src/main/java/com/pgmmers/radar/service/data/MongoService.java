@@ -55,4 +55,9 @@ public interface MongoService {
         MongoCollection<Document> collection = getCollection(collectionName);
         return collection.find(filter);
     }
+
+    default long update(String collectionName, Bson filter, Document updateDoc) {
+        MongoCollection<Document> collection = getCollection(collectionName);
+        return collection.updateOne(filter, updateDoc).getModifiedCount();
+    }
 }

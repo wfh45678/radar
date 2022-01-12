@@ -27,8 +27,14 @@ public class AggregateCommandImpl implements AggregateCommand {
     @Override
     public long count(String modelId, String searchField, Object searchFieldValue, String refDateName, Date begin,
             Date end) {
+        return count(modelId, searchField, searchFieldValue, refDateName,"1", begin, end);
+    }
+
+    public long count(String modelId, String searchField, Object searchFieldValue, String refDateName, String status, Date begin,
+                      Date end) {
         String collectionName = "entity_" + modelId;
         Long qty = mongoService.count(collectionName, Filters.and(Filters.eq(searchField, searchFieldValue),
+                Filters.eq("status", status),
                 Filters.gte(refDateName, begin.getTime()), Filters.lte(refDateName, end.getTime())));
         return qty;
     }
@@ -36,6 +42,12 @@ public class AggregateCommandImpl implements AggregateCommand {
     @Override
     public long distinctCount(String modelId, String searchField, Object searchFieldValue, String refDateName,
             Date begin, Date end, String distinctBy) {
+        return distinctCount(modelId,searchField,searchFieldValue,refDateName,"1", begin, end, distinctBy);
+    }
+
+    @Override
+    public long distinctCount(String modelId, String searchField, Object searchFieldValue, String refDateName,
+                              String status, Date begin, Date end, String distinctBy) {
         String collectionName = "entity_" + modelId;
         Long qty = mongoService.distinctCount(collectionName, Filters.and(Filters.eq(searchField, searchFieldValue),
                 Filters.gte(refDateName, begin.getTime()), Filters.lte(refDateName, end.getTime())), distinctBy);

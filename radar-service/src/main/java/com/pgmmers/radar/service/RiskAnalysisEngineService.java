@@ -47,7 +47,14 @@ public interface RiskAnalysisEngineService {
      * @author feihu.wang
      *
      */
-
      CommonResult getScore(String modelGuid, String reqId);
 
+    /**
+     * sync event status.
+     * @param modelGuid
+     * @param eventId
+     * @param status
+     * @return
+     */
+     CommonResult syncStatus(String modelGuid, String eventId, String status);
 }
