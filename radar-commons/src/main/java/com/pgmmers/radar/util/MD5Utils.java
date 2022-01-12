@@ -83,13 +83,4 @@ public class MD5Utils {
 		return md5StrBuff.toString();
 	}
 
-	/**
-	 * <p>main.</p>
-	 *
-	 * @param args an array of {@link String} objects.
-	 */
-	public static void main(String[] args) {
-		System.out.println(encrypt("222222","admin"));
-		System.out.println(encrypt("123456","test"));
-	}
 }

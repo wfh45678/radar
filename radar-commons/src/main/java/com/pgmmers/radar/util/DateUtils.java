@@ -120,13 +120,5 @@ public class DateUtils {
         return c;
     }
 
-    /**
-     * <p>main.</p>
-     *
-     * @param args an array of {@link String} objects.
-     */
-    public static void main(String[] args) {
-        System.out.println(formatDate(new Date(), "yyyy-MM-ww-dd"));
-        
-    }
+
 }
