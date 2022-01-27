@@ -8,10 +8,12 @@ import com.pgmmers.radar.vo.data.MobileInfoVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * author: wangcheng Date: 2020/5/19 Time: 上午11:46 Description:
  */
+@Component
 public class MOBILE2LOCATION implements PluginServiceV2 {
 
     @Override

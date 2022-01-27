@@ -15,15 +15,12 @@ import com.alibaba.excel.util.IoUtils;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManagerV2;
 import com.pgmmers.radar.util.CaptchaUtil;
 import com.pgmmers.radar.util.ZipUtils;
 import com.pgmmers.radar.vo.common.PluginVO;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
-
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/services/v1/common")
@@ -54,12 +52,14 @@ public class CommonApiController {
 
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private PluginManagerV2 pluginManagerV2;
 
 
     @GetMapping("/plugins")
     public CommonResult plugins() {
         CommonResult result = new CommonResult();
-        List<PluginVO> plugins=PluginManager.pluginServiceMap()
+        List<PluginVO> plugins = pluginManagerV2.getPluginServiceMap()
                 .values()
                 .stream()
                 .map(t-> new PluginVO(t.key(),t.pluginName(),t.desc()))

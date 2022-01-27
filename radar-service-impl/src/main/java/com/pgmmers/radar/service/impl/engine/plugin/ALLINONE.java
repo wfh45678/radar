@@ -2,6 +2,7 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.vo.model.PreItemVO;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 /**
  * author: wangcheng Date: 2020/5/19 Time: 上午11:45 Description:
  */
+@Component
 public class ALLINONE implements PluginServiceV2 {
 
     @Override

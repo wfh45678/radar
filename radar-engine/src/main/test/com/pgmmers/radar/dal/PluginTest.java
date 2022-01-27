@@ -5,19 +5,22 @@ import com.pgmmers.radar.EngineApplication;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.Location;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManagerV2;
 import com.pgmmers.radar.vo.model.PreItemVO;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -27,13 +30,29 @@ public class PluginTest {
 
     private static final Logger logger = LoggerFactory.getLogger(PluginTest.class);
 
+    @Autowired
+    private PluginManagerV2 pluginManagerV2;
+
     @Test
+    public void pluginListV2() {
+        pluginManagerV2.getPluginServiceMap().values()
+                .stream()
+                .sorted(Comparator.comparing(PluginServiceV2::key))
+                .forEach(t -> logger.info(t.info()));
+    }
+
+    @Test
+    @Deprecated
     public void pluginList() {
         PluginManager.pluginServiceMap().values()
                 .stream()
                 .sorted(Comparator.comparing(PluginServiceV2::key))
                 .forEach(t -> logger.info(t.info()));
     }
+
+
+
+
 
     private Map<String, Object> jsonInfo;
 

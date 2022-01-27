@@ -4,8 +4,9 @@ import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import java.util.Map;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class DATEFORMAT implements PluginServiceV2 {
 
     @Override

@@ -1,12 +1,14 @@
 package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.pgmmers.radar.service.engine.PluginServiceV2;
+import org.springframework.core.io.support.SpringFactoriesLoader;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.springframework.core.io.support.SpringFactoriesLoader;
 
 
+@Deprecated
 public class PluginManager {
 
     private PluginManager() {
