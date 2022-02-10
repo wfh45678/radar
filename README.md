@@ -100,8 +100,7 @@ https://gitee.com/freshday/radar/wikis/manual
 ## Contact to
 
  如果喜欢本项目，Star支持一下, 让更多人了解本项目，谢谢！   
- 独乐乐不如众乐乐，微信（nicedream7758）加群一起嗨！  
- 提示：进群需要捐赠到gitee  
+
 
  
  ## 特别说明
