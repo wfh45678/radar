@@ -18,7 +18,7 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.DataColumnInfo;
 import com.pgmmers.radar.service.enums.DataType;
-import com.pgmmers.radar.service.impl.engine.plugin.PluginManagerV2;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.model.AbstractionService;
 import com.pgmmers.radar.service.model.FieldService;
 import com.pgmmers.radar.service.model.PreItemService;
@@ -46,7 +46,7 @@ public class AbstractionApiController {
     private PreItemService preItemService;
 
     @Autowired
-    private PluginManagerV2 pluginManagerV2;
+    private PluginManager pluginManager;
 
     @GetMapping("/{id}")
     public CommonResult get(@PathVariable Long id) {
@@ -87,7 +87,7 @@ public class AbstractionApiController {
         List<PreItemVO> listPreItem = preItemService.listPreItem(modelId);
         if(listPreItem != null && listPreItem.size()!= 0){
 	        for (PreItemVO preItem : listPreItem) {
-                PluginServiceV2 pt= pluginManagerV2.pluginServiceMap(preItem.getPlugin());
+                PluginServiceV2 pt = pluginManager.pluginServiceMap(preItem.getPlugin());
 	            if (StringUtils.isNotEmpty(pt.getType()) && pt.getType().equals("JSON")) {
 	                //load  http request data
                     JsonNode json = preItem.getConfigJson();

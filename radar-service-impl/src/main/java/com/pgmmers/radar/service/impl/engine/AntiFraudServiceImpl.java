@@ -10,7 +10,7 @@ import com.pgmmers.radar.service.engine.vo.AbstractionResult;
 import com.pgmmers.radar.service.engine.vo.ActivationResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.AntiFraudProcessResult;
-import com.pgmmers.radar.service.impl.engine.plugin.PluginManagerV2;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.model.PreItemService;
 import com.pgmmers.radar.vo.model.PreItemVO;
@@ -47,7 +47,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
     private ModelService modelService;
 
     @Autowired
-    private PluginManagerV2 pluginManagerV2;
+    private PluginManager pluginManager;
 
     @Override
     public CommonResult process(Long modelId, Map<String, Map<String, ?>> context) {
@@ -113,7 +113,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
                 continue;
             }
             String[] sourceField = item.getSourceField().split(",");
-            Object transfer = pluginManagerV2.pluginServiceMap(item.getPlugin()).handle(item,jsonInfo,sourceField);
+            Object transfer = pluginManager.pluginServiceMap(item.getPlugin()).handle(item,jsonInfo,sourceField);
             result.put(item.getDestField(), transfer);
         }
         return result;

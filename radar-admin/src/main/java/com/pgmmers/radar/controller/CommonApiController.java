@@ -15,7 +15,7 @@ import com.alibaba.excel.util.IoUtils;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.service.impl.engine.plugin.PluginManagerV2;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.util.CaptchaUtil;
 import com.pgmmers.radar.util.ZipUtils;
 import com.pgmmers.radar.vo.common.PluginVO;
@@ -53,13 +53,13 @@ public class CommonApiController {
     @Autowired
     private CacheService cacheService;
     @Autowired
-    private PluginManagerV2 pluginManagerV2;
+    private PluginManager pluginManager;
 
 
     @GetMapping("/plugins")
     public CommonResult plugins() {
         CommonResult result = new CommonResult();
-        List<PluginVO> plugins = pluginManagerV2.getPluginServiceMap()
+        List<PluginVO> plugins = pluginManager.getPluginServiceMap()
                 .values()
                 .stream()
                 .map(t-> new PluginVO(t.key(),t.pluginName(),t.desc()))

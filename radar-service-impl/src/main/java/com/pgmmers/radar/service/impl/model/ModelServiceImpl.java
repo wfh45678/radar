@@ -14,7 +14,7 @@ import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.data.MongoService;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
-import com.pgmmers.radar.service.impl.engine.plugin.PluginManagerV2;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.util.JsonUtils;
@@ -60,7 +60,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     private MongoService mongoService;
 
     @Autowired
-    private PluginManagerV2 pluginManagerV2;
+    private PluginManager pluginManager;
 
     //  维护GUID到modelId的映射
     private Map<String, Long> guidMap;
@@ -252,7 +252,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         // pre item mapping
         JSONObject preItemJson = new JSONObject();
         for (PreItemVO item : items) {
-            PluginServiceV2 plugin = pluginManagerV2.pluginServiceMap(item.getPlugin());
+            PluginServiceV2 plugin = pluginManager.pluginServiceMap(item.getPlugin());
             String columns = plugin.getMeta();
             if (columns == null) {
                 String fieldType = plugin.getType();
