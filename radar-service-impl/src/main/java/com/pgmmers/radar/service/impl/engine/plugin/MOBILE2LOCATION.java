@@ -3,16 +3,22 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 import com.pgmmers.radar.service.data.MobileInfoService;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.Location;
-import com.pgmmers.radar.service.impl.util.BeanUtils;
 import com.pgmmers.radar.vo.data.MobileInfoVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * author: wangcheng Date: 2020/5/19 Time: 上午11:46 Description:
  */
+@Component
 public class MOBILE2LOCATION implements PluginServiceV2 {
+
+    @Autowired
+    private MobileInfoService mobileInfoService;
 
     @Override
     public Integer key() {
@@ -40,7 +46,9 @@ public class MOBILE2LOCATION implements PluginServiceV2 {
         if (!StringUtils.isEmpty(mobile) && mobile.length() == 11) {
             mobile = mobile.substring(0, 7);
         }
-        MobileInfoVO vo = BeanUtils.getBean(MobileInfoService.class).getMobileInfoByMobile(mobile);
+        // 注入bean后不需通过BeanUtils.getBean获取实列
+        // MobileInfoVO vo = BeanUtils.getBean(MobileInfoService.class).getMobileInfoByMobile(mobile);
+        MobileInfoVO vo = mobileInfoService.getMobileInfoByMobile(mobile);
         Location location = new Location();
         if (vo != null) {
             location.setProvince(vo.getProvince());

@@ -32,6 +32,13 @@ import com.pgmmers.radar.vo.model.FieldVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import com.pgmmers.radar.vo.model.RuleVO;
 import io.swagger.annotations.Api;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,17 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 以后会独立拆分到分析子项目里面去。
@@ -72,6 +68,8 @@ public class EventApiController {
 
     @Autowired
     private RuleService ruleService;
+    @Autowired
+    private PluginManager pluginManager;
 
 
     @PostMapping("/query")
@@ -192,7 +190,7 @@ public class EventApiController {
             if (!itemsIdMap.containsKey(item.getDestField())) {
                 continue;
             }
-            PluginServiceV2 plugin= PluginManager.pluginServiceMap().get(item.getPlugin());
+            PluginServiceV2 plugin = pluginManager.pluginServiceMap(item.getPlugin());
             String type = plugin.getType();
             String meta = plugin.getMeta();
 

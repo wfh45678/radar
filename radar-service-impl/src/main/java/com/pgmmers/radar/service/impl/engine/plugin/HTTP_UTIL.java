@@ -12,11 +12,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * author: wangcheng Date: 2020/5/19 Time: 上午11:47 Description:
  */
+@Component
 public class HTTP_UTIL implements PluginServiceV2 {
 
     private static final Logger logger = LoggerFactory.getLogger(HTTP_UTIL.class);

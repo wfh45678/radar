@@ -2,12 +2,15 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.vo.model.PreItemVO;
+import org.springframework.stereotype.Component;
+
 import java.util.Calendar;
 import java.util.Map;
 
 /**
  * author: wangcheng Date: 2020/5/19 Time: 上午11:46 Description:
  */
+@Component
 public class SENSITIVE_TIME implements PluginServiceV2 {
 
     @Override

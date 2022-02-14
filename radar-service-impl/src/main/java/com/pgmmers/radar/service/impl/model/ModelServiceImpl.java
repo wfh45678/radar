@@ -21,15 +21,6 @@ import com.pgmmers.radar.util.JsonUtils;
 import com.pgmmers.radar.vo.model.FieldVO;
 import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -37,6 +28,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -61,6 +58,9 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
 
     @Autowired
     private MongoService mongoService;
+
+    @Autowired
+    private PluginManager pluginManager;
 
     //  维护GUID到modelId的映射
     private Map<String, Long> guidMap;
@@ -252,8 +252,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         // pre item mapping
         JSONObject preItemJson = new JSONObject();
         for (PreItemVO item : items) {
-            String pluginType = item.getPlugin();
-            PluginServiceV2 plugin= PluginManager.pluginServiceMap().get(pluginType);
+            PluginServiceV2 plugin = pluginManager.pluginServiceMap(item.getPlugin());
             String columns = plugin.getMeta();
             if (columns == null) {
                 String fieldType = plugin.getType();

@@ -1,12 +1,13 @@
-com.pgmmers.radar.service.engine.PluginServiceV2=\
-    com.pgmmers.radar.service.impl.engine.plugin.DATEFORMAT,\
-    com.pgmmers.radar.service.impl.engine.plugin.ALLINONE,\
-    com.pgmmers.radar.service.impl.engine.plugin.GPS2LOCATION,\
-    com.pgmmers.radar.service.impl.engine.plugin.HTTP_UTIL,\
-    com.pgmmers.radar.service.impl.engine.plugin.IP2LOCATION,\
-    com.pgmmers.radar.service.impl.engine.plugin.MOBILE2LOCATION,\
-    com.pgmmers.radar.service.impl.engine.plugin.SENSITIVE_TIME,\
-    com.pgmmers.radar.service.impl.engine.plugin.SUBSTRING
+# PluginManager reset
+#com.pgmmers.radar.service.engine.PluginServiceV2=\
+#    com.pgmmers.radar.service.impl.engine.plugin.DATEFORMAT,\
+#    com.pgmmers.radar.service.impl.engine.plugin.ALLINONE,\
+#    com.pgmmers.radar.service.impl.engine.plugin.GPS2LOCATION,\
+#    com.pgmmers.radar.service.impl.engine.plugin.HTTP_UTIL,\
+#    com.pgmmers.radar.service.impl.engine.plugin.IP2LOCATION,\
+#    com.pgmmers.radar.service.impl.engine.plugin.MOBILE2LOCATION,\
+#    com.pgmmers.radar.service.impl.engine.plugin.SENSITIVE_TIME,\
+#    com.pgmmers.radar.service.impl.engine.plugin.SUBSTRING
 
 
 

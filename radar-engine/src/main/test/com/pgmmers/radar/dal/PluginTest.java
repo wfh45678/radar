@@ -6,18 +6,20 @@ import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.Location;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.vo.model.PreItemVO;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -27,13 +29,26 @@ public class PluginTest {
 
     private static final Logger logger = LoggerFactory.getLogger(PluginTest.class);
 
+    @Autowired
+    private PluginManager pluginManager;
+
+
     @Test
+    @Deprecated
     public void pluginList() {
-        PluginManager.pluginServiceMap().values()
+//        PluginManager.pluginServiceMap().values()
+//                .stream()
+//                .sorted(Comparator.comparing(PluginServiceV2::key))
+//                .forEach(t -> logger.info(t.info()));
+        pluginManager.getPluginServiceMap().values()
                 .stream()
                 .sorted(Comparator.comparing(PluginServiceV2::key))
                 .forEach(t -> logger.info(t.info()));
     }
+
+
+
+
 
     private Map<String, Object> jsonInfo;
 
@@ -49,7 +64,8 @@ public class PluginTest {
         jsonInfo.put("firsName", "aaa");
         jsonInfo.put("lastName", "ccc");
         String[] sourceField = item.getSourceField().split(",");
-        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("ALLINONE");
+//        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("ALLINONE");
+        PluginServiceV2 pluginServiceV2 = pluginManager.getPluginServiceMap().get("ALLINONE");
         String result = (String) pluginServiceV2
                 .handle(item, jsonInfo, sourceField);
         Assert.assertNotNull(result);
@@ -63,7 +79,8 @@ public class PluginTest {
         item.setSourceField("time");
         jsonInfo.put("time", System.currentTimeMillis());
         String[] sourceField = item.getSourceField().split(",");
-        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("DATEFORMAT");
+//        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("DATEFORMAT");
+        PluginServiceV2 pluginServiceV2 = pluginManager.getPluginServiceMap().get("DATEFORMAT");
         String result = (String) pluginServiceV2
                 .handle(item, jsonInfo, sourceField);
         Assert.assertNotNull(result);
@@ -83,7 +100,8 @@ public class PluginTest {
         item.setSourceField("json");
         jsonInfo.put("json","");
         String[] sourceField = item.getSourceField().split(",");
-        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("HTTP_UTIL");
+//        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("HTTP_UTIL");
+        PluginServiceV2 pluginServiceV2 = pluginManager.getPluginServiceMap().get("HTTP_UTIL");
         JSONObject result = (JSONObject) pluginServiceV2
                 .handle(item, jsonInfo, sourceField);
         Assert.assertNotNull(result);
@@ -96,7 +114,8 @@ public class PluginTest {
         item.setSourceField("ip");
         jsonInfo.put("ip", "1.1.1.1");
         String[] sourceField = item.getSourceField().split(",");
-        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("IP2LOCATION");
+//        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("IP2LOCATION");
+        PluginServiceV2 pluginServiceV2 = pluginManager.getPluginServiceMap().get("IP2LOCATION");
         Location location = (Location) pluginServiceV2
                 .handle(item, jsonInfo, sourceField);
         Assert.assertNotNull(location);
@@ -109,7 +128,8 @@ public class PluginTest {
         item.setSourceField("phone");
         jsonInfo.put("phone", "18657150000");
         String[] sourceField = item.getSourceField().split(",");
-        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("MOBILE2LOCATION");
+//        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("MOBILE2LOCATION");
+        PluginServiceV2 pluginServiceV2 = pluginManager.getPluginServiceMap().get("MOBILE2LOCATION");
         Location location = (Location) pluginServiceV2
                 .handle(item, jsonInfo, sourceField);
         Assert.assertNotNull(location);
@@ -122,7 +142,8 @@ public class PluginTest {
         item.setSourceField("time");
         jsonInfo.put("time",System.currentTimeMillis());
         String[] sourceField = item.getSourceField().split(",");
-        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("SENSITIVE_TIME");
+//        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("SENSITIVE_TIME");
+        PluginServiceV2 pluginServiceV2 = pluginManager.getPluginServiceMap().get("SENSITIVE_TIME");
         String location = (String) pluginServiceV2
                 .handle(item, jsonInfo, sourceField);
         Assert.assertNotNull(location);
@@ -137,7 +158,8 @@ public class PluginTest {
         item.setSourceField("phone");
         jsonInfo.put("phone", "18657150000");
         String[] sourceField = item.getSourceField().split(",");
-        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("SUBSTRING");
+//        PluginServiceV2 pluginServiceV2 = PluginManager.pluginServiceMap().get("SUBSTRING");
+        PluginServiceV2 pluginServiceV2 = pluginManager.getPluginServiceMap().get("SUBSTRING");
         String location = (String) pluginServiceV2
                 .handle(item, jsonInfo, sourceField);
         Assert.assertNotNull(location);
