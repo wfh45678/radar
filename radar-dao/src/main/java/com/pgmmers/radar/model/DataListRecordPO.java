@@ -25,6 +25,12 @@ public class DataListRecordPO {
     @Column(name = "DATA_RECORD")
     private String dataRecord;
 
+    /**
+     * 数据描述
+     */
+    @Column(name = "DATA_REMARK")
+    private String dataRemark;
+
     @Column(name = "CREATE_TIME")
     private Date createTime;
 
@@ -111,5 +117,13 @@ public class DataListRecordPO {
      */
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getDataRemark() {
+        return dataRemark;
+    }
+
+    public void setDataRemark(String dataRemark) {
+        this.dataRemark = dataRemark;
     }
 }

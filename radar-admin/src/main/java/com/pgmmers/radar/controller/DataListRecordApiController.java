@@ -106,6 +106,7 @@ public class DataListRecordApiController {
     private ExportExcelInfo<DataListRecordVO> getImportMeta() {
         ExportExcelInfo<DataListRecordVO> info = new ExportExcelInfo<DataListRecordVO>(null);
         info.addExcelColumn("dataRecord", "dataRecord");
+        info.addExcelColumn("dataRemark", "dataRemark");
         return info;
     }
 

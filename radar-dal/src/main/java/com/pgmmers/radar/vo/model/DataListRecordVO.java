@@ -14,14 +14,15 @@ public class DataListRecordVO implements Serializable{
 
     private String dataRecord;
 
+    private String dataRemark;
 
     private Date createTime;
 
 
     private Date updateTime;
-    
+
     private Long modelId;
-    
+
     /**
      * operate
      */
@@ -94,6 +95,14 @@ public class DataListRecordVO implements Serializable{
 
     public void setOpt(String opt) {
         this.opt = opt;
+    }
+
+    public String getDataRemark() {
+        return dataRemark;
+    }
+
+    public void setDataRemark(String dataRemark) {
+        this.dataRemark = dataRemark;
     }
 
     @Override
