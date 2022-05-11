@@ -37,6 +37,13 @@ public class DataColumnInfo {
         this.children = children;
     }
 
+    public DataColumnInfo(String label, String value, String type, List<DataColumnInfo> children) {
+        this.label = label;
+        this.value = value;
+        this.type = type;
+        this.children = children;
+    }
+
     public String getLabel() {
         return label;
     }

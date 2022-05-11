@@ -83,13 +83,11 @@ public class ActivationApiController {
             if (StringUtils.isNotEmpty(pt.getType()) && pt.getType().equals("JSON")) {
                 //load  http request data
                 JsonNode json = preItem.getConfigJson();
-                List<DataColumnInfo> children = new ArrayList<>();
-                extractMetaColumn(ds, preItem, json.toString(), children);
+                extractMetaColumn(ds, preItem, json.toString());
             } else if (StringUtils.isNotEmpty(pt.getType())) {
                 ds.addChildren(preItem.getLabel(), preItem.getDestField(), pt.getType());
             } else {
-                List<DataColumnInfo> children = new ArrayList<>();
-                extractMetaColumn(ds, preItem, pt.getMeta(), children);
+                extractMetaColumn(ds, preItem, pt.getMeta());
             }
         }
         list.add(ds);
@@ -163,14 +161,23 @@ public class ActivationApiController {
 		return activationService.updateOrder(activationId,ruleOrder);
 	}
 
-    private void extractMetaColumn(DataColumnInfo ds, PreItemVO preItem, String jsonStr, List<DataColumnInfo> children) {
-        JSONArray array = JSONArray.parseArray(jsonStr);
+    private void extractMetaColumn(DataColumnInfo ds, PreItemVO preItem, String jsonStr) {
+        JSONArray jsonArray = JSONArray.parseArray(jsonStr);
+        List<DataColumnInfo> children = getColumnInfos(jsonArray);
+        ds.addChildren(preItem.getLabel(), preItem.getDestField(), children);
+    }
+
+    private static List<DataColumnInfo> getColumnInfos(JSONArray array) {
+        if(array == null){
+            return null;
+        }
+        List<DataColumnInfo> children = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
             JSONObject obj = array.getJSONObject(i);
             children.add(new DataColumnInfo(obj.getString("title"), obj.getString("column"), obj
-                    .getString("type")));
+                    .getString("type"), getColumnInfos((JSONArray)obj.get("children"))));
         }
-        ds.addChildren(preItem.getLabel(), preItem.getDestField(), children);
+        return children;
     }
 
     @PostMapping("/disable/{activationId}")
