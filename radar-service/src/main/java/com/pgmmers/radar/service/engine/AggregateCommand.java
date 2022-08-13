@@ -28,7 +28,10 @@ public interface AggregateCommand {
      * 2016年8月4日
      */
     public long count(String modelId, String searchField, Object searchFieldValue, String refDateName, Date begin, Date end);
-    
+
+    public long count(String modelId, String searchField, Object searchFieldValue, String refDateName, String status, Date begin, Date end);
+
+
     /**
      * 
      * 累计去重.
@@ -45,6 +48,9 @@ public interface AggregateCommand {
      * 2016年8月4日
      */
     public long distinctCount(String modelId, String searchField, Object searchFieldValue, String refDateName, Date begin, Date end,
+                              String distinctBy);
+
+    public long distinctCount(String modelId, String searchField, Object searchFieldValue, String refDateName, String status, Date begin, Date end,
                               String distinctBy);
 
     /**

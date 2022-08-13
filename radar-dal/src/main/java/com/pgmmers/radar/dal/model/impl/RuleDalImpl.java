@@ -146,4 +146,13 @@ public class RuleDalImpl implements RuleDal {
         return count;
     }
 
+    @Override
+    public List<RuleVO> listByActId(Long actId) {
+        Example example = new Example(RulePO.class);
+        Example.Criteria ruleCriteria = example.createCriteria();
+        ruleCriteria.andEqualTo("activationId", actId);
+        List<RulePO> ruleList = ruleMapper.selectByExample(example);
+        return ruleMapping.sourceToTarget(ruleList);
+    }
+
 }

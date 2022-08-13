@@ -46,6 +46,9 @@ public class AntiFraudServiceImpl implements AntiFraudService {
     @Autowired
     private ModelService modelService;
 
+    @Autowired
+    private PluginManager pluginManager;
+
     @Override
     public CommonResult process(Long modelId, Map<String, Map<String, ?>> context) {
         AntiFraudProcessResult analysisResult = new AntiFraudProcessResult();
@@ -110,7 +113,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
                 continue;
             }
             String[] sourceField = item.getSourceField().split(",");
-            Object transfer = PluginManager.pluginServiceMap().get(item.getPlugin()).handle(item,jsonInfo,sourceField);
+            Object transfer = pluginManager.pluginServiceMap(item.getPlugin()).handle(item,jsonInfo,sourceField);
             result.put(item.getDestField(), transfer);
         }
         return result;

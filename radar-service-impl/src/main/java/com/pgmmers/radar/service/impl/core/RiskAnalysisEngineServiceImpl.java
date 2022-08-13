@@ -141,5 +141,18 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
         return result;
     }
 
+    @Override
+    public CommonResult syncStatus(String modelGuid, String eventId, String status) {
+        CommonResult result = new CommonResult();
+        ModelVO model = modelService.getModelByGuid(modelGuid);
+        if (model == null) {
+            result.setMsg("模型不存在!");
+            return result;
+        }
+        long cnt = entityService.update(model.getId(), eventId, status);
+        result.setSuccess(cnt > 0 ? true : false);
+        return result;
+    }
+
 
 }

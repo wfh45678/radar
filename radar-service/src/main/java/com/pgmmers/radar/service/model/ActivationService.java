@@ -21,6 +21,8 @@ public interface ActivationService {
 	
 	 CommonResult updateOrder(Long activationId, String ruleOrder);
 
+	 CommonResult copy(Long id);
+
 	/**
 	 * update status of activation.
 	 * @param activationId

@@ -13,6 +13,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
 
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.Map;
 /**
  * author: wangcheng Date: 2020/5/19 Time: 上午11:44 Description:
  */
+@Component
 public class GPS2LOCATION implements PluginServiceV2 {
 
     private static final Logger logger = LoggerFactory.getLogger(GPS2LOCATION.class);

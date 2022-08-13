@@ -7,6 +7,8 @@ import com.pgmmers.radar.dal.bean.RuleQuery;
 import com.pgmmers.radar.vo.model.RuleHistoryVO;
 import com.pgmmers.radar.vo.model.RuleVO;
 
+import java.util.List;
+
 
 public interface RuleDal {
 
@@ -22,4 +24,5 @@ public interface RuleDal {
     
      int saveHistory(RuleHistoryVO model);
 
+     List<RuleVO> listByActId(Long actId);
 }

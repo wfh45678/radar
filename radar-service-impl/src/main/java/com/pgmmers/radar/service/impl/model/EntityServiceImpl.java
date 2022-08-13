@@ -12,14 +12,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 @Service
 public class EntityServiceImpl implements EntityService {
 
     private Logger logger = LoggerFactory.getLogger(EntityServiceImpl.class);
 
-    @Autowired
+    @Resource
     private ModelService modelService;
-    @Autowired
+    @Resource
     private MongoService mongoService;
 
 
@@ -48,26 +50,41 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
+    public long update(Long modelId, String eventId, String status) {
+        ModelVO model = modelService.getModelById(modelId);
+        Document filter = new Document();
+        filter.append(model.getEntryName(), eventId);
+        Document updateDoc = new Document();
+        updateDoc.append("status",status);
+        String collectionName = buildCollectionName(modelId);
+        return mongoService.update(collectionName, filter, updateDoc);
+    }
+
+    @Override
     public int save(Long modelId, String jsonString, String attachJson,
             boolean isAllowDuplicate) {
-        String tmpUrl = "entity_" + modelId;
+        String collectionName = buildCollectionName(modelId);
         Document doc = Document.parse(jsonString);
-        Document atta = Document.parse(attachJson);
+        Document attach = Document.parse(attachJson);
         ModelVO model = modelService.getModelById(modelId);
-        atta.put("radar_ref_datetime", new Date(doc.getLong(model.getReferenceDate())));
-        doc.putAll(atta);
+        attach.put("radar_ref_datetime", new Date(doc.getLong(model.getReferenceDate())));
+        doc.putAll(attach);
         if (!isAllowDuplicate) {
             //设置查询条件
             Document filter = new Document();
             filter.append(model.getEntryName(), doc.get(model.getEntryName()));
-            long qty = mongoService.count(tmpUrl, filter);
+            long qty = mongoService.count(collectionName, filter);
             if (qty > 0) {
                 logger.info("record has already exsit!");
                 return 1;
             }
         }
-        mongoService.insert(tmpUrl, doc);
+        mongoService.insert(collectionName, doc);
         return 1;
+    }
+
+    private String buildCollectionName(Long modelId) {
+        return "entity_" + modelId;
     }
 
 }

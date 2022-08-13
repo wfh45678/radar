@@ -4,19 +4,21 @@ import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.Location;
 import com.pgmmers.radar.service.impl.util.BeanUtils;
 import com.pgmmers.radar.vo.model.PreItemVO;
-import java.util.Map;
 import org.lionsoul.ip2region.DataBlock;
 import org.lionsoul.ip2region.DbConfig;
 import org.lionsoul.ip2region.DbSearcher;
 import org.lionsoul.ip2region.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.Objects;
 
+@Component
 public class IP2LOCATION implements PluginServiceV2 {
 
     private static final Logger logger = LoggerFactory.getLogger(IP2LOCATION.class);
-    private DbSearcher ipSearcher;
 
     @Override
     public Integer key() {
@@ -38,16 +40,20 @@ public class IP2LOCATION implements PluginServiceV2 {
         return "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"province\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]";
     }
 
-    public IP2LOCATION() {
+    static DbSearcher getDbSearcher() {
+        final DbSearcher ipSearcher;
         try {
             String ipFilePath = BeanUtils.getApplicationContext().getEnvironment()
                     .getProperty("ip2region.db.path");
             DbConfig conf = new DbConfig();
+
             ipSearcher = new DbSearcher(conf, ipFilePath);
             logger.info("IP2LOCATION Plugin load success");
+            return ipSearcher;
         } catch (Exception e) {
             logger.error("ip2region init failed", e);
         }
+        return null;
     }
 
     @Override
@@ -59,7 +65,7 @@ public class IP2LOCATION implements PluginServiceV2 {
             return null;
         }
         try {
-            DataBlock block = ipSearcher.memorySearch(ip);
+            DataBlock block = Objects.requireNonNull(IP2LOCATION.getDbSearcher()).memorySearch(ip);
             String[] detail = block.getRegion().split("\\|");
             location = new Location();
             location.setCountry(detail[0]);

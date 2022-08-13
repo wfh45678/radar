@@ -19,11 +19,8 @@ import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.util.CaptchaUtil;
 import com.pgmmers.radar.util.ZipUtils;
 import com.pgmmers.radar.vo.common.PluginVO;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
-
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/services/v1/common")
@@ -54,12 +52,14 @@ public class CommonApiController {
 
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private PluginManager pluginManager;
 
 
     @GetMapping("/plugins")
     public CommonResult plugins() {
         CommonResult result = new CommonResult();
-        List<PluginVO> plugins=PluginManager.pluginServiceMap()
+        List<PluginVO> plugins = pluginManager.getPluginServiceMap()
                 .values()
                 .stream()
                 .map(t-> new PluginVO(t.key(),t.pluginName(),t.desc()))
