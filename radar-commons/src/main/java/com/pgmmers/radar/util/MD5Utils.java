@@ -75,10 +75,12 @@ public class MD5Utils {
 
 		for (int i = 0; i < byteArray.length; i++) {
 			String hexString = Integer.toHexString(0xFF & byteArray[i]);
-			if (hexString.length() == 1)
+			if (hexString.length() == 1) {
 				md5StrBuff.append("0").append(hexString);
-			else
+			}
+			else {
 				md5StrBuff.append(hexString);
+			}
 		}
 		return md5StrBuff.toString();
 	}
