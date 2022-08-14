@@ -204,8 +204,13 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         IndexOptions options = new IndexOptions();
         options.expireAfter((long) eventExpireDays, TimeUnit.DAYS);
         IndexModel ttlIndex = new IndexModel(ttlKeys, options);
-
         indexes.add(ttlIndex);
+
+        // add status.
+        Document statusKey = new Document();
+        statusKey.put("status", 1);
+        IndexModel statusIndex = new IndexModel(statusKey);
+        indexes.add(statusIndex);
 
         mongoService.getCollection(collectionName).createIndexes(indexes);
 //

@@ -68,6 +68,7 @@ public class EntityServiceImpl implements EntityService {
         Document attach = Document.parse(attachJson);
         ModelVO model = modelService.getModelById(modelId);
         attach.put("radar_ref_datetime", new Date(doc.getLong(model.getReferenceDate())));
+        attach.put("status", 1);
         doc.putAll(attach);
         if (!isAllowDuplicate) {
             //设置查询条件
