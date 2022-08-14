@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 
 @Service
-@ConditionalOnProperty(prefix = "sys.conf",name="app", havingValue = "engine")
+//@ConditionalOnProperty(prefix = "sys.conf",name="app", havingValue = "engine")
 public class MobileInfoServiceImpl implements MobileInfoService {
 
     public static Logger logger = LoggerFactory.getLogger(MobileInfoServiceImpl.class);

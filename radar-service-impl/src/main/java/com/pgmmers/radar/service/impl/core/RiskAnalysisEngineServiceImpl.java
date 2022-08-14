@@ -97,7 +97,7 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
 
             // 3. save to db
             boolean isAllowDuplicate = false;
-            if (isDuplicate != null && isDuplicate.equals("true")) {
+            if (isDuplicate != null && "true".equals(isDuplicate)) {
                 isAllowDuplicate = true;
             }
             entityService
