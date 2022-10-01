@@ -222,7 +222,6 @@ CREATE TABLE `engine_data_list_records` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `DATA_LIST_ID` bigint(20) NOT NULL COMMENT '数据列表ID',
   `DATA_RECORD` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT '数据记录',
-  `DATA_REMARK` varchar(32) NULL COMMENT '数据备注',
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   PRIMARY KEY (`ID`)
