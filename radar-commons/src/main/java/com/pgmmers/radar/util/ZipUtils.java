@@ -41,7 +41,10 @@ public class ZipUtils {
             ZipEntry ze = zis.getNextEntry();
             while (ze != null) {
                 String fileName = ze.getName();
-                File newFile = new File(outputFolder + File.separator + fileName);
+                File newFile = new File(outputFolder, fileName);
+                if (!newFile.toPath().normalize().startsWith(outputFolder)) {
+                    throw new IOException("Bad zip entry");
+                }
                 System.out.println("file unzip : " + newFile.getAbsoluteFile());
                 //create all non exists folders
                 //else you will hit FileNotFoundException for compressed folder
@@ -75,6 +78,10 @@ public class ZipUtils {
             while (entry != null) {
 
                 File file = new File(out, entry.getName());
+
+                if (!file.toPath().normalize().startsWith(out)) {
+                    throw new IOException("Bad zip entry");
+                }
 
                 if (entry.isDirectory()) {
                     file.mkdirs();
