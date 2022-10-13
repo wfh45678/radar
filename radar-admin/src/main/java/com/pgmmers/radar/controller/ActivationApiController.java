@@ -34,6 +34,9 @@ import java.util.List;
 @Api(value = "ActivationApi", description = "策略集管理相关操作",  tags = {"策略集API"})
 public class ActivationApiController {
 
+    /**
+     * service.
+     */
     @Autowired
     private ActivationService activationService;
 
