@@ -11,7 +11,10 @@ import com.pgmmers.radar.vo.model.ModelVO;
 import com.pgmmers.radar.vo.model.PreItemVO;
 import com.pgmmers.radar.vo.model.RuleVO;
 
-
+/**
+ * cache service.
+ * @author feihu.wang
+ */
 public interface CacheService {
      void saveAntiFraudResult(String modelId, String sessionId, CommonResult result);
 
