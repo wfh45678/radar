@@ -30,6 +30,7 @@ public class AggregateCommandImpl implements AggregateCommand {
         return count(modelId, searchField, searchFieldValue, refDateName,"1", begin, end);
     }
 
+    @Override
     public long count(String modelId, String searchField, Object searchFieldValue, String refDateName, String status, Date begin,
                       Date end) {
         String collectionName = "entity_" + modelId;
