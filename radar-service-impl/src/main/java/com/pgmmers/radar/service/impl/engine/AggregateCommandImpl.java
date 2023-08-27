@@ -30,6 +30,7 @@ public class AggregateCommandImpl implements AggregateCommand {
         return count(modelId, searchField, searchFieldValue, refDateName,"1", begin, end);
     }
 
+    @Override
     public long count(String modelId, String searchField, Object searchFieldValue, String refDateName, String status, Date begin,
                       Date end) {
         String collectionName = "entity_" + modelId;
@@ -123,12 +124,14 @@ public class AggregateCommandImpl implements AggregateCommand {
         } else {
             int model = docList.size() % 2;
             if (model == 1) {
-                doc = docList.get(model);
+                int pos = docList.size() / 2;
+                doc = docList.get(pos);
                 median = new BigDecimal(doc.get(funcField).toString());
             } else {
-                doc = docList.get(model);
+                int pos = docList.size() / 2;
+                doc = docList.get(pos);
                 median = new BigDecimal(doc.get(funcField).toString());
-                doc = docList.get(model - 1);
+                doc = docList.get(pos - 1);
                 BigDecimal tmp = new BigDecimal(doc.get(funcField).toString());
                 median = median.add(tmp).divide(new BigDecimal(2), 2, 4);
             }

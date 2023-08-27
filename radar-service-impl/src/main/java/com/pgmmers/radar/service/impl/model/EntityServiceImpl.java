@@ -55,7 +55,7 @@ public class EntityServiceImpl implements EntityService {
         Document filter = new Document();
         filter.append(model.getEntryName(), eventId);
         Document updateDoc = new Document();
-        updateDoc.append("status",status);
+        updateDoc.append("status", status);
         String collectionName = buildCollectionName(modelId);
         return mongoService.update(collectionName, filter, updateDoc);
     }
@@ -68,7 +68,7 @@ public class EntityServiceImpl implements EntityService {
         Document attach = Document.parse(attachJson);
         ModelVO model = modelService.getModelById(modelId);
         attach.put("radar_ref_datetime", new Date(doc.getLong(model.getReferenceDate())));
-        attach.put("status", 1);
+        attach.put("status", "1");
         doc.putAll(attach);
         if (!isAllowDuplicate) {
             //设置查询条件
