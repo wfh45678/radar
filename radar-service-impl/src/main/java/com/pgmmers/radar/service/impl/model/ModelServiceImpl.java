@@ -208,7 +208,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
 
         // add status.
         Document statusKey = new Document();
-        statusKey.put("status", "1");
+        statusKey.put("status", 1);
         IndexModel statusIndex = new IndexModel(statusKey);
         indexes.add(statusIndex);
 
