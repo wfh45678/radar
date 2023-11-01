@@ -33,7 +33,7 @@
         <mysql.version>8.0.16</mysql.version>
         <springboot.version>2.2.5.RELEASE</springboot.version>
         <tensorflow.version>1.12.0</tensorflow.version>
-        <es.version>7.11.2</es.version>
+        <es.version>7.13.4</es.version>
         <mapstruct.version>1.4.1.Final</mapstruct.version>
     </properties>
 
