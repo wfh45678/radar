@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -35,8 +36,8 @@ public class ALLINONE implements PluginServiceV2 {
         if (sourceField == null || sourceField.length == 0) {
             return "";
         }
-        String str = Arrays.asList(sourceField).stream()
-                .map(f -> jsonInfo.get(f) == null ? "" : f.toString())
+        String str = Arrays.stream(sourceField)
+                .map(f -> Optional.ofNullable(jsonInfo.get(f)).map(Object::toString).orElse(""))
                 .collect(Collectors.joining("_"));
         return str;
     }
