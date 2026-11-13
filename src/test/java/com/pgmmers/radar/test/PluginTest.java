@@ -1,11 +1,11 @@
 package com.pgmmers.radar.test;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.pgmmers.radar.RadarApplication;
 import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.Location;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.pgmmers.radar.support.AbstractIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 
 
@@ -22,9 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * L3 集成测试：preItems 插件管理器（依赖 AbstractIntegrationTest 容器）。
+ * 注意 HTTP_UTIL 依赖外部天气 API，网络抖动会影响 CI，S3 时考虑隔离。
+ */
 @SuppressWarnings("SpellCheckingInspection")
-@SpringBootTest(classes = RadarApplication.class)
-public class PluginTest {
+public class PluginTest extends AbstractIntegrationTest {
 
     private static final Logger logger = LoggerFactory.getLogger(PluginTest.class);
 

@@ -1,0 +1,30 @@
+# 集成测试 profile（配合 AbstractIntegrationTest 使用）
+# MySQL / MongoDB / Redis 的连接信息由 Testcontainers @ServiceConnection 自动注入，
+# 此处仅提供容器模式覆盖不到的自定义属性与无 Docker 时的兜底值。
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/radar-test
+    redis:
+      host: localhost
+      timeout: 2000ms
+      database: 1  #与 dev 保持一致，验证码/配置发布订阅均落在 db1
+  datasource:
+    url: jdbc:mysql://localhost:3306/radar?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: ""
+elasticsearch:
+  url: http://localhost:9200   #容器模式下被 AbstractIntegrationTest 的 DynamicPropertySource 覆盖
+  username: ""   #EsConfig @Value 必需属性，不存在则留空
+  password: ""
+mobile:
+  info:
+    path: resources/moble_info.csv   #仓库根 resources/（相对模块 basedir，surefire 工作目录）
+ip2region:
+  db:
+    path: resources/ip2region.db
+sys:
+  conf:
+    entity-duplicate-insert: false
+    mongo-restore-days: 93
+    workdir: target/workdir
