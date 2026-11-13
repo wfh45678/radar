@@ -43,9 +43,26 @@ The project code called Radar, like the code, monitor the transaction at the bac
 
 前后端分离架构
 
-后端技术框架： SpringBoot + Mybatis + tkMapper + Mysql +  MongoDB + Redis + Groovy + ES + Swagger
+后端技术框架： SpringBoot 3 + MyBatis-Plus + Mysql +  MongoDB + Redis + Groovy + ES + springdoc-openapi
 
 前端技术框架： React(SPA) 
+
+> 自 v2.0 起，工程由 8 个 Maven 模块合并为**单模块单体应用**（Java 17 + Spring Boot 3.5），
+> 一个 jar 同时提供管理端与引擎端 API（默认端口 6580），持久层由 tk.mybatis/PageHelper 迁移至 MyBatis-Plus，
+> 原雷达 `radar-dal` 转发层已删除，service 直连 mapper。详见 `docs/upgrade-plan-java17-boot3.md`。
+
+## 快速开始
+
+```bash
+# 构建（需 JDK 17+，Maven 配置见 .mvn/settings.xml）
+mvn package -DskipTests
+
+# 运行（dev/local profile，配置见 src/main/resources/application*.yml）
+java -jar target/radar.jar
+
+# 管理端 UI:   http://localhost:6580/
+# API 文档:    http://localhost:6580/swagger-ui/index.html （分组：admin / engine）
+```
 
 ### 架构图
 ![系统模块](https://www.riskengine.cn/radar/sys_model_arch.png) 
@@ -53,7 +70,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 ## 技术选型
 * Springboot：笔者是java 出生， 选择 Springboot 理所当然，方便自己， 也方便其他Java使用者进行扩展。
 
-* Mybatis + tkMapper： 持久层框架， tkMapper 提供mapper 通用模板功能，减少重复代码的生成。
+* MyBatis-Plus： 持久层框架， 提供通用 CRUD 与分页能力，减少重复代码的生成。
 
 * Mysql ： 本项目中关系数据库，主要用于存放 风险模型的元信息。
 

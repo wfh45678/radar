@@ -1,0 +1,55 @@
+spring:
+  profiles:
+    active: @profileActive@
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 8
+      min-idle: 1
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runsMillis: 60000
+      min-evictable-idle-timeMillis: 300000
+      validation-query: select 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-open-prepared-statements: 20
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat,wall
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      use-global-data-source-stat: true
+      stat-view-servlet:
+        enabled: true
+        login-username: admin
+        login-password: 123456
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    #开发配置为false,避免修改模板还要重启服务器
+    cache: false
+    prefix: classpath:/templates
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 30 #最大连接数（使用负值表示没有限制） 默认 8
+          max-wait: -1ms #最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+          max-idle: 10  #最大空闲连接 默认 8
+          min-idle: 0
+
+mybatis-plus:
+  global-config:
+    banner: false
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: info
+    com.pgmmers.radar: info
+    com.pgmmers.radar.mapper: debug
+server:
+  port: 6580
