@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.5.RELEASE</version>
+        <version>3.5.16</version>
         <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -16,10 +16,10 @@
     <packaging>jar</packaging>
 
     <name>radar-kafka-demo</name>
-    <description> kafka 集成 radar 调用 demo（独立示例，不参与主构建，基于旧版 Boot 2 自行构建运行）</description>
+    <description> kafka 集成 radar 调用 demo（独立示例，不参与主构建，需自行构建运行，需 JDK 17+）</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -40,23 +40,14 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-
-
-        <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
 
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>2.0.66</version>
         </dependency>
     </dependencies>
 

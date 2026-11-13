@@ -13,7 +13,7 @@ spring:
 sys:
   conf:
     app: kafka-demo
-    engine-url: http://localhost:6581/services/v1/uploadInfo # radar engine url
+    engine-url: http://localhost:6580/services/v1/uploadInfo # radar engine url（v2.0 单体默认端口 6580）
 logging:
   level:
     root: info
