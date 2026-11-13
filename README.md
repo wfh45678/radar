@@ -54,15 +54,20 @@ The project code called Radar, like the code, monitor the transaction at the bac
 ## 快速开始
 
 ```bash
-# 构建（需 JDK 17+，Maven 配置见 .mvn/settings.xml）
-mvn package -DskipTests
+# 方式一：Docker 一键环境（MySQL/Mongo/Redis/ES 自动导入种子数据；--profile app 额外启动应用镜像）
+docker compose up -d
 
-# 运行（dev/local profile，配置见 src/main/resources/application*.yml）
+# 方式二：源码构建（需 JDK 17+，Maven 配置见 .mvn/settings.xml）
+mvn package -s .mvn/settings.xml -DskipTests
+# （可先 docker compose up -d 起中间件，再）运行：
 java -jar target/radar.jar
 
 # 管理端 UI:   http://localhost:6580/
 # API 文档:    http://localhost:6580/swagger-ui/index.html （分组：admin / engine）
 ```
+
+> 测试分 L1/L2（纯单测，`mvn test` 秒级全绿）与 L3（Testcontainers 集成测试，需 Docker / CI 全量跑），
+> 详见 [CONTRIBUTING.md](CONTRIBUTING.md)、[docs/plan-v2.1.md](docs/plan-v2.1.md)。
 
 ### 架构图
 ![系统模块](https://www.riskengine.cn/radar/sys_model_arch.png) 
