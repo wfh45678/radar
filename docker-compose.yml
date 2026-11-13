@@ -1,0 +1,96 @@
+# Radar 一键环境：MySQL/MongoDB/Redis/Elasticsearch 四件套（应用容器在 app profile，按需启动）
+# 用法：
+#   仅基础设施：  docker compose up -d
+#   含应用镜像：  docker compose --profile app up -d --build
+#   本地 jar 直连基础设施（application-dev.yml 已按 localhost:3306/27017/9200 配置）
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: radar-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: radar123
+      MYSQL_DATABASE: radar
+    volumes:
+      # 首次启动自动建库：基线 + 1.0.6/1.0.7/1.0.8 增量（按文件名字母序执行）
+      - ./sql:/docker-entrypoint-initdb.d:ro
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pradar123"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mongo:
+    image: mongo:4.4
+    container_name: radar-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: radar123
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--quiet", "admin", "--eval", "db.runCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: radar-redis
+    command: ["redis-server", "--requirepass", "radar123"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "radar123", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.15
+    container_name: radar-es
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  # 应用镜像（可选）：docker compose --profile app up -d --build
+  app:
+    image: ghcr.io/wfh45678/radar:latest
+    container_name: radar-app
+    profiles: ["app"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      es:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/radar?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: radar123
+      SPRING_DATA_MONGODB_URI: mongodb://admin:radar123@mongo:27017/radar?authSource=admin
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PASSWORD: radar123
+      ELASTICSEARCH_URL: http://es:9200
+      # 覆盖 local profile 的 Windows 路径（镜像内数据文件见 Dockerfile）
+      MOBILE_INFO_PATH: /radar/resources/moble_info.csv
+      IP2REGION_DB_PATH: /radar/resources/ip2region.db
+      SYSCONF_WORKDIR: /radar/workdir
+    ports:
+      - "6580:6580"
+
+volumes:
+  mysql-data:
+  mongo-data:
+  redis-data:
+  es-data:
