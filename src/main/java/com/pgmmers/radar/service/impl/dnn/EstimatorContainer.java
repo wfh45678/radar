@@ -18,8 +18,15 @@ public class EstimatorContainer {
     @Resource
     private ModelConfService modelConfService;
 
-    @Autowired
+    /**
+     * TensorFlow DNN 移除后暂无 Estimator 实现（required=false 容许空集），
+     * 后续基于 TF-Java 或外部推理服务重接时自动注入。
+     */
+    @Autowired(required = false)
     public void set(Estimator[] estimators) {
+        if (estimators == null) {
+            return;
+        }
         for (Estimator estimator : estimators) {
             estimatorMap.put(estimator.getType(), estimator);
         }
