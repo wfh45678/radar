@@ -29,7 +29,7 @@ import org.testcontainers.utility.MountableFile;
  * 四个脚本以文件名字母序在 /docker-entrypoint-initdb.d/ 内依序执行；
  * 该脚本组合已在 v2.0 冒烟回归的 MySQL80 实例上实证可用。</p>
  */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Tag("integration")
 public abstract class AbstractIntegrationTest {
