@@ -380,17 +380,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
             }
             sum = sum.setScale(0, 4);
             // 计算风险级别
-            BigDecimal high = new BigDecimal(act.getHigh());
-            BigDecimal median = new BigDecimal(act.getMedian());
-            BigDecimal bottom = new BigDecimal(act.getBottom());
-            String risk = "pass";
-            if (sum.compareTo(high) >= 0) {
-                risk = "reject";
-            } else if (sum.compareTo(median) >= 0) {
-                risk = "review";
-            } else {
-                risk = "pass";
-            }
+            String risk = riskLevel(sum, act.getHigh(), act.getMedian());
             RiskObject riskObj = new RiskObject();
             riskObj.setRisk(risk);
             riskObj.setScore(sum.intValue());
@@ -399,6 +389,25 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
         data.put("activations", result.getActivationMap());
         result.setSuccess(true);
         return result;
+    }
+
+    /**
+     * 风险级别决策：sum ≥ high → reject（拒绝），sum ≥ median → review（人工审核），否则 pass（通过）。
+     * 激活器 bottom（底部阈值）为历史遗留字段，不参与决策，见 docs/roadmap.md。
+     *
+     * @param sum    命中规则风险分数总和
+     * @param high   顶部阈值
+     * @param median 中间阈值
+     * @return pass / review / reject
+     */
+    static String riskLevel(BigDecimal sum, Integer high, Integer median) {
+        if (sum.compareTo(new BigDecimal(high)) >= 0) {
+            return "reject";
+        }
+        if (sum.compareTo(new BigDecimal(median)) >= 0) {
+            return "review";
+        }
+        return "pass";
     }
 
     /**
