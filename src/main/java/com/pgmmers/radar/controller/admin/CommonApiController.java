@@ -18,7 +18,6 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.util.CaptchaUtil;
 import com.pgmmers.radar.common.util.ZipUtils;
-import com.pgmmers.radar.model.vo.common.PluginVO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
@@ -37,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,13 +56,25 @@ public class CommonApiController {
     private PluginManager pluginManager;
 
 
+    /** 插件清单（v3.0）：含参数 schema 与输出列元信息，管理端据此动态渲染配置表单。 */
     @GetMapping("/plugins")
     public CommonResult plugins() {
         CommonResult result = new CommonResult();
-        List<PluginVO> plugins = pluginManager.getPluginServiceMap()
-                .values()
+        List<Map<String, Object>> plugins = pluginManager.entries()
                 .stream()
-                .map(t-> new PluginVO(t.key(),t.pluginName(),t.desc()))
+                .map(e -> {
+                    Map<String, Object> item = new LinkedHashMap<>();
+                    item.put("key", e.getKey());
+                    item.put("method", e.getKey());
+                    item.put("pluginName", e.getName());
+                    item.put("desc", e.getDesc());
+                    item.put("type", e.getType());
+                    item.put("remote", e.isRemote());
+                    item.put("source", e.getSource().name());
+                    item.put("paramSchema", e.getParamSchema());
+                    item.put("outputMeta", e.getOutputMeta());
+                    return item;
+                })
                 .collect(Collectors.toList());
         result.setSuccess(true);
         result.getData().put("plugins", plugins);

@@ -8,3 +8,4 @@ webapp/node_modules/
 .classpath
 .factorypath
 /samples/radar-kafka-demo/target/
+radar-plugin-api/target/

@@ -28,6 +28,8 @@ public class EngineMetrics {
     private static final String DECISION = "radar_activation_decision_total";
     private static final String RULE_HITS = "radar_rule_hits_total";
     private static final String GROOVY_COMPILES = "radar_groovy_compiles_total";
+    private static final String PLUGIN_EXEC = "radar_plugin_executions_total";
+    private static final String PLUGIN_SECONDS = "radar_plugin_seconds";
 
     private final MeterRegistry registry;
 
@@ -84,5 +86,22 @@ public class EngineMetrics {
                 .publishPercentiles(0.95, 0.99)
                 .register(registry)
                 .record(elapsedNanos, TimeUnit.NANOSECONDS);
+    }
+
+    /**
+     * preItem 插件执行计数 + 耗时（v3.0 插件加固）。
+     *
+     * <p>plugin 标签取注册表插件 key；插件缺失时统一记为 {@code unknown}（防标签基数爆炸）。
+     * result: success / fail / not_found。</p>
+     */
+    public void recordPluginExecution(String plugin, String result, long elapsedMillis) {
+        String boundedPlugin = plugin == null || plugin.isEmpty() ? "unknown" : plugin;
+        Counter.builder(PLUGIN_EXEC).tag("plugin", boundedPlugin).tag("result", result)
+                .description("preItem 插件执行计数").register(registry).increment();
+        Timer.builder(PLUGIN_SECONDS).tag("plugin", boundedPlugin)
+                .description("preItem 插件执行耗时")
+                .publishPercentiles(0.5, 0.95, 0.99)
+                .register(registry)
+                .record(elapsedMillis, TimeUnit.MILLISECONDS);
     }
 }

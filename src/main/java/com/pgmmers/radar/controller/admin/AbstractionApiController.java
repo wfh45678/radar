@@ -15,10 +15,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.pgmmers.radar.model.query.AbstractionQuery;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.DataColumnInfo;
 import com.pgmmers.radar.service.enums.DataType;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginEntry;
 import com.pgmmers.radar.service.model.AbstractionService;
 import com.pgmmers.radar.service.model.FieldService;
 import com.pgmmers.radar.service.model.PreItemService;
@@ -87,7 +87,7 @@ public class AbstractionApiController {
         List<PreItemVO> listPreItem = preItemService.listPreItem(modelId);
         if(listPreItem != null && listPreItem.size()!= 0){
 	        for (PreItemVO preItem : listPreItem) {
-                PluginServiceV2 pt = pluginManager.pluginServiceMap(preItem.getPlugin());
+                PluginEntry pt = pluginManager.entry(preItem.getPlugin());
 	            if (StringUtils.isNotEmpty(pt.getType()) && pt.getType().equals("JSON")) {
 	                //load  http request data
                     JsonNode json = preItem.getConfigJson();
@@ -97,7 +97,7 @@ public class AbstractionApiController {
 	                ds.addChildren(preItem.getLabel(), preItem.getDestField(), pt.getType());
 	            } else {
 	                List<DataColumnInfo> children = new ArrayList<>();
-                    extractMetaColumn(ds, preItem, pt.getMeta(), children);
+                    extractMetaColumn(ds, preItem, pt.legacyMetaJson(), children);
                 }
 	        }
 	        list.add(ds);

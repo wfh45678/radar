@@ -1,82 +1,96 @@
 package com.pgmmers.radar.service.impl.engine.plugin;
 
-import com.pgmmers.radar.service.engine.PluginServiceV2;
-import com.pgmmers.radar.service.engine.vo.Location;
-import com.pgmmers.radar.service.impl.util.BeanUtils;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.radar.plugin.api.OutputColumn;
+import com.radar.plugin.api.Plugin;
+import com.radar.plugin.api.ParamDescriptor;
+import com.radar.plugin.api.PluginMeta;
+import com.radar.plugin.api.PluginRequest;
+import com.radar.plugin.api.PluginResult;
+import jakarta.annotation.PostConstruct;
+import java.time.Duration;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.lionsoul.ip2region.DataBlock;
 import org.lionsoul.ip2region.DbConfig;
 import org.lionsoul.ip2region.DbSearcher;
 import org.lionsoul.ip2region.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Objects;
-
+/**
+ * IP -> 国家/省/市（本地 ip2region 数据文件）。
+ *
+ * <p>v3 迁移：searcher 启动加载一次并复用（旧实现每次请求重建读盘），结果接入插件缓存。</p>
+ */
 @Component
-public class IP2LOCATION implements PluginServiceV2 {
+@PluginMeta(key = "IP2LOCATION", name = "IP2LOCATION", desc = "IP转换成地址", type = "")
+public class IP2LOCATION implements Plugin {
 
     private static final Logger logger = LoggerFactory.getLogger(IP2LOCATION.class);
 
-    @Override
-    public Integer key() {
-        return 1;
-    }
+    @Value("${ip2region.db.path}")
+    private String ipFilePath;
 
-    @Override
-    public String desc() {
-        return "IP转换成地址";
-    }
+    private volatile DbSearcher searcher;
 
-    @Override
-    public String getType() {
-        return null;
-    }
-
-    @Override
-    public String getMeta() {
-        return "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"province\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]";
-    }
-
-    static DbSearcher getDbSearcher() {
-        final DbSearcher ipSearcher;
+    @PostConstruct
+    public void init() {
         try {
-            String ipFilePath = BeanUtils.getApplicationContext().getEnvironment()
-                    .getProperty("ip2region.db.path");
-            DbConfig conf = new DbConfig();
-
-            ipSearcher = new DbSearcher(conf, ipFilePath);
+            searcher = new DbSearcher(new DbConfig(), ipFilePath);
             logger.info("IP2LOCATION Plugin load success");
-            return ipSearcher;
         } catch (Exception e) {
             logger.error("ip2region init failed", e);
         }
-        return null;
     }
 
     @Override
-    public Object handle(PreItemVO item, Map<String, Object> jsonInfo,
-            String[] sourceField) {
-        Location location;
-        String ip = jsonInfo.get(sourceField[0]).toString();
+    public List<ParamDescriptor> paramSchema() {
+        return List.of();
+    }
+
+    @Override
+    public List<OutputColumn> outputMeta() {
+        return List.of(
+                OutputColumn.of("country", "国家"),
+                OutputColumn.of("province", "省份"),
+                OutputColumn.of("city", "城市"));
+    }
+
+    @Override
+    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context) {
+        Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
+        if (raw == null) {
+            return PluginResult.of(null);
+        }
+        String ip = raw.toString();
         if (!Util.isIpAddress(ip)) {
-            return null;
+            return PluginResult.of(null);
         }
-        try {
-            DataBlock block = Objects.requireNonNull(IP2LOCATION.getDbSearcher()).memorySearch(ip);
-            String[] detail = block.getRegion().split("\\|");
-            location = new Location();
-            location.setCountry(detail[0]);
-            location.setRegion(detail[1]);
-            location.setProvince(detail[2]);
-            location.setCity(detail[3]);
-            location.setAddress(detail[4]);
-        } catch (Exception e) {
-            location = new Location();
-            logger.error("ip2region error", e);
+        DbSearcher dbSearcher = this.searcher;
+        if (dbSearcher == null) {
+            return PluginResult.of(null);
         }
-        return location;
+        Map<String, Object> location = context.cache("ip2location", Duration.ofHours(1))
+                .get(ip, key -> {
+                    try {
+                        DataBlock block = Objects.requireNonNull(dbSearcher).memorySearch(key);
+                        String[] detail = block.getRegion().split("\\|");
+                        Map<String, Object> loc = new LinkedHashMap<>();
+                        loc.put("country", detail[0]);
+                        loc.put("region", detail[1]);
+                        loc.put("province", detail[2]);
+                        loc.put("city", detail[3]);
+                        loc.put("address", detail[4]);
+                        return loc;
+                    } catch (Exception e) {
+                        logger.error("ip2region error", e);
+                        return null;
+                    }
+                });
+        return PluginResult.of(location);
     }
 }

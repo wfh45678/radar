@@ -1,60 +1,63 @@
 package com.pgmmers.radar.service.impl.engine.plugin;
 
-import com.pgmmers.radar.service.data.MobileInfoService;
-import com.pgmmers.radar.service.engine.PluginServiceV2;
-import com.pgmmers.radar.service.engine.vo.Location;
 import com.pgmmers.radar.model.vo.data.MobileInfoVO;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.pgmmers.radar.service.data.MobileInfoService;
+import com.radar.plugin.api.OutputColumn;
+import com.radar.plugin.api.Plugin;
+import com.radar.plugin.api.ParamDescriptor;
+import com.radar.plugin.api.PluginMeta;
+import com.radar.plugin.api.PluginRequest;
+import com.radar.plugin.api.PluginResult;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 /**
- * author: wangcheng Date: 2020/5/19 Time: 上午11:46 Description:
+ * 手机号（前 7 位）-> 归属地（本地号段库）。
+ *
+ * <p>v3 迁移：删除旧实现中永不执行的百度 API 回填死代码（失效 key + 明文密钥）。</p>
  */
 @Component
-public class MOBILE2LOCATION implements PluginServiceV2 {
+@PluginMeta(key = "MOBILE2LOCATION", name = "MOBILE2LOCATION", desc = "手机号码归属地", type = "")
+public class MOBILE2LOCATION implements Plugin {
 
     @Autowired
     private MobileInfoService mobileInfoService;
 
     @Override
-    public Integer key() {
-        return 5;
+    public List<ParamDescriptor> paramSchema() {
+        return List.of();
     }
 
     @Override
-    public String desc() {
-        return "手机号码归属地";
+    public List<OutputColumn> outputMeta() {
+        return List.of(
+                OutputColumn.of("country", "国家"),
+                OutputColumn.of("province", "省份"),
+                OutputColumn.of("city", "城市"));
     }
 
     @Override
-    public String getType() {
-        return null;
-    }
-
-    @Override
-    public String getMeta() {
-        return "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"province\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]";
-    }
-
-    @Override
-    public Object handle(PreItemVO item, Map<String, Object> jsonInfo, String[] sourceField) {
-        String mobile = jsonInfo.get(sourceField[0]).toString();
+    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context) {
+        Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
+        if (raw == null) {
+            return PluginResult.of(null);
+        }
+        String mobile = raw.toString();
         if (!StringUtils.isEmpty(mobile) && mobile.length() == 11) {
             mobile = mobile.substring(0, 7);
         }
-        // 注入bean后不需通过BeanUtils.getBean获取实列
-        // MobileInfoVO vo = BeanUtils.getBean(MobileInfoService.class).getMobileInfoByMobile(mobile);
         MobileInfoVO vo = mobileInfoService.getMobileInfoByMobile(mobile);
-        Location location = new Location();
-        if (vo != null) {
-            location.setProvince(vo.getProvince());
-            location.setCity(vo.getCity());
-            location.setCountry("中国");
+        if (vo == null) {
+            return PluginResult.of(null);
         }
-        return location;
+        Map<String, Object> location = new LinkedHashMap<>();
+        location.put("country", "中国");
+        location.put("province", vo.getProvince());
+        location.put("city", vo.getCity());
+        return PluginResult.of(location);
     }
 }

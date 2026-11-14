@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.pgmmers</groupId>
+    <artifactId>radar-plugin-api</artifactId>
+    <version>3.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Radar Plugin API</name>
+    <description>
+        Radar 风控引擎 preItem 插件开发契约（SDK）。
+        零第三方依赖（仅 slf4j-api provided）：厂商只需依赖本模块即可开发插件 jar，
+        放入引擎 plugins/ 目录即可被发现。详见 docs/plugin-dev-guide.md。
+        注意：独立工程，构建主工程前需先 `mvn install` 本模块（CI/脚本已编排）。
+    </description>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- 唯一对外暴露的依赖：日志门面（provided，运行时由引擎类路径提供，厂商插件不打包） -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.16</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
