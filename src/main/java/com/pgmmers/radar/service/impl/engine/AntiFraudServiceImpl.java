@@ -1,6 +1,7 @@
 package com.pgmmers.radar.service.impl.engine;
 
 
+import com.pgmmers.radar.config.EngineMetrics;
 import com.pgmmers.radar.enums.StatusType;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.engine.AntiFraudEngine;
@@ -47,6 +48,9 @@ public class AntiFraudServiceImpl implements AntiFraudService {
     @Autowired
     private PluginManager pluginManager;
 
+    @Autowired
+    private EngineMetrics engineMetrics;
+
     @Override
     public CommonResult process(Long modelId, Map<String, Map<String, ?>> context) {
         AntiFraudProcessResult analysisResult = new AntiFraudProcessResult();
@@ -60,6 +64,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
         AbstractionResult absResult = antiFraudEngine.executeAbstraction(modelId, context);
         end = System.currentTimeMillis();
         analysisResult.getRespTimes().put("abstractions", end - start);
+        engineMetrics.recordStage("abstractions", end - start);
         logger.info("takes:{}ms", end - start);
         if (!absResult.isSuccess()) {
             analysisResult.setMsg("abstraction 异常:" + absResult.getMsg());
@@ -74,6 +79,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
         AdaptationResult adaptResult = antiFraudEngine.executeAdaptation(modelId, context);
         end = System.currentTimeMillis();
         analysisResult.getRespTimes().put("adaptations", end - start);
+        engineMetrics.recordStage("adaptations", end - start);
         logger.info("takes:{}ms", end - start);
         if (!adaptResult.isSuccess()) {
             analysisResult.setMsg("adaptation 异常");
@@ -88,6 +94,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
         ActivationResult actResult = antiFraudEngine.executeActivation(modelId, context);
         end = System.currentTimeMillis();
         analysisResult.getRespTimes().put("activations", end - start);
+        engineMetrics.recordStage("activations", end - start);
         logger.info("takes:{}ms", end - start);
         if (!actResult.isSuccess()) {
             analysisResult.setMsg("Activation 异常");

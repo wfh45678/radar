@@ -2,6 +2,7 @@ package com.pgmmers.radar.service.impl.engine;
 
 
 import com.pgmmers.radar.enums.AggregateType;
+import com.pgmmers.radar.config.EngineMetrics;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.enums.Operator;
 import com.pgmmers.radar.enums.StatusType;
@@ -78,6 +79,9 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
 
     @Autowired
     private EstimatorContainer estimatorContainer;
+
+    @Autowired
+    private EngineMetrics engineMetrics;
 
     @Override
     public AbstractionResult executeAbstraction(Long modelId, Map<String, Map<String, ?>> data) {
@@ -375,12 +379,14 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     hit.setValue(amount.setScale(2, 4).doubleValue());
                     result.getHitRulesMap().get(act.getActivationName()).add(hit);
                     result.getHitRulesMap2().get(act.getActivationName()).put("rule_"+ hit.getKey(), hit);
+                    engineMetrics.recordRuleHit();
                 }
 
             }
             sum = sum.setScale(0, 4);
             // 计算风险级别
             String risk = riskLevel(sum, act.getHigh(), act.getMedian());
+            engineMetrics.recordDecision(risk);
             RiskObject riskObj = new RiskObject();
             riskObj.setRisk(risk);
             riskObj.setScore(sum.intValue());

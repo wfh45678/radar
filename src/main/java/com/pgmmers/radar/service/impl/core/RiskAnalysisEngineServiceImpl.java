@@ -12,6 +12,7 @@ import com.pgmmers.radar.service.engine.ValidateService;
 import com.pgmmers.radar.service.model.EntityService;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.common.util.DateUtils;
+import com.pgmmers.radar.config.EngineMetrics;
 import com.pgmmers.radar.model.vo.model.ModelVO;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,17 +42,20 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
 
     private final ValidateService validateService;
 
+    private final EngineMetrics engineMetrics;
+
     public RiskAnalysisEngineServiceImpl(
             ModelService modelService, EntityService entityService,
             AntiFraudService antiFraudService, CacheService cacheService,
             @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") RiskResultService riskResultService,
-            ValidateService validateService) {
+            ValidateService validateService, EngineMetrics engineMetrics) {
         this.modelService = modelService;
         this.entityService = entityService;
         this.antiFraudService = antiFraudService;
         this.cacheService = cacheService;
         this.riskResultService = riskResultService;
         this.validateService = validateService;
+        this.engineMetrics = engineMetrics;
     }
 
     @Override
@@ -61,6 +65,17 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
 
     @Override
     public CommonResult uploadInfo(String modelGuid, String reqId, JSONObject jsonInfo) {
+        try {
+            CommonResult result = doUpload(modelGuid, reqId, jsonInfo);
+            engineMetrics.recordEvent(result.isSuccess());
+            return result;
+        } catch (RuntimeException e) {
+            engineMetrics.recordEvent(false);
+            throw e;
+        }
+    }
+
+    private CommonResult doUpload(String modelGuid, String reqId, JSONObject jsonInfo) {
         logger.info("req info:{},{},{}", modelGuid, reqId, jsonInfo);
         CommonResult result = new CommonResult();
         Map<String, Map<String, ?>> context = new HashMap<>();
@@ -91,16 +106,20 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
             }
 
             // 2. pre process
+            long stageBegin = System.nanoTime();
             Map<String, Object> preItemMap = antiFraudService.prepare(model.getId(), eventJson);
+            engineMetrics.recordStage("preItems", (System.nanoTime() - stageBegin) / 1_000_000);
 
             // 3. save to db
             boolean isAllowDuplicate = false;
             if (isDuplicate != null && "true".equals(isDuplicate)) {
                 isAllowDuplicate = true;
             }
+            stageBegin = System.nanoTime();
             entityService
                     .save(model.getId(), eventJson.toJSONString(), JSON.toJSONString(preItemMap),
                             isAllowDuplicate);
+            engineMetrics.recordStage("entity", (System.nanoTime() - stageBegin) / 1_000_000);
 
             // 4. 执行分析
             context.put("fields", eventJson);

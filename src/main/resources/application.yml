@@ -46,6 +46,15 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: radar
+
 logging:
   level:
     root: info
