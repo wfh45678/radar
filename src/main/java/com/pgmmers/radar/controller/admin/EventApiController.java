@@ -17,10 +17,11 @@ import com.pgmmers.radar.model.query.EventQuery;
 import com.pgmmers.radar.model.query.PageResult;
 import com.pgmmers.radar.model.query.TermQuery;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.DataColumnInfo;
 import com.pgmmers.radar.service.enums.DataType;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginEntry;
+import org.apache.commons.lang3.StringUtils;
 import com.pgmmers.radar.service.logs.EventService;
 import com.pgmmers.radar.service.model.ActivationService;
 import com.pgmmers.radar.service.model.FieldService;
@@ -190,11 +191,11 @@ public class EventApiController {
             if (!itemsIdMap.containsKey(item.getDestField())) {
                 continue;
             }
-            PluginServiceV2 plugin = pluginManager.pluginServiceMap(item.getPlugin());
-            String type = plugin.getType();
-            String meta = plugin.getMeta();
+            PluginEntry plugin = pluginManager.entry(item.getPlugin());
+            String type = plugin == null ? null : plugin.getType();
+            String meta = plugin == null ? null : plugin.legacyMetaJson();
 
-            if (type != null) {
+            if (StringUtils.isNotEmpty(type)) {
                 keyList4Item.add(item.getDestField());
                 titleList4Item.add(item.getLabel());
             } else {

@@ -1,39 +1,32 @@
 package com.pgmmers.radar.service.impl.engine.plugin;
 
-import com.pgmmers.radar.service.engine.PluginServiceV2;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.radar.plugin.api.Plugin;
+import com.radar.plugin.api.ParamDescriptor;
+import com.radar.plugin.api.PluginMeta;
+import com.radar.plugin.api.PluginRequest;
+import com.radar.plugin.api.PluginResult;
+import java.util.Calendar;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
-import java.util.Map;
-
 /**
- * author: wangcheng Date: 2020/5/19 Time: 上午11:46 Description:
+ * 时间戳 -> 敏感时段（0-23 小时）。
  */
 @Component
-public class SENSITIVE_TIME implements PluginServiceV2 {
+@PluginMeta(key = "SENSITIVE_TIME", name = "SENSITIVE_TIME", desc = "敏感时间段(小时)", type = "STRING")
+public class SENSITIVE_TIME implements Plugin {
 
     @Override
-    public Integer key() {
-        return 6;
+    public List<ParamDescriptor> paramSchema() {
+        return List.of();
     }
 
     @Override
-    public String desc() {
-        return "敏感时间段(小时)";
-    }
-
-    @Override
-    public String getType() {
-        return "STRING";
-    }
-
-    @Override
-    public Object handle(PreItemVO item, Map<String, Object> jsonInfo, String[] sourceField) {
-        long millis = Long.parseLong(jsonInfo.get(sourceField[0]).toString());
+    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context) {
+        Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
+        long millis = Long.parseLong(raw.toString());
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(millis);
-        return c.get(Calendar.HOUR_OF_DAY) + "";
+        return PluginResult.of(c.get(Calendar.HOUR_OF_DAY) + "");
     }
 }
-

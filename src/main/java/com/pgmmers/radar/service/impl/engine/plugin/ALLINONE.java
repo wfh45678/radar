@@ -1,45 +1,33 @@
 package com.pgmmers.radar.service.impl.engine.plugin;
 
-import com.pgmmers.radar.service.engine.PluginServiceV2;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.radar.plugin.api.Plugin;
+import com.radar.plugin.api.ParamDescriptor;
+import com.radar.plugin.api.PluginMeta;
+import com.radar.plugin.api.PluginRequest;
+import com.radar.plugin.api.PluginResult;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 /**
- * author: wangcheng Date: 2020/5/19 Time: 上午11:45 Description:
+ * 多字段按配置顺序以 "_" 拼接。
+ *
+ * <p>v3 迁移：无参数，源字段顺序语义由 {@link PluginRequest#getSourceValues()} 保序承载。</p>
  */
 @Component
-public class ALLINONE implements PluginServiceV2 {
+@PluginMeta(key = "ALLINONE", name = "ALLINONE", desc = "字段合并", type = "STRING")
+public class ALLINONE implements Plugin {
 
     @Override
-    public Integer key() {
-        return 3;
+    public List<ParamDescriptor> paramSchema() {
+        return List.of();
     }
 
     @Override
-    public String desc() {
-        return "字段合并";
-    }
-
-    @Override
-    public String getType() {
-        return "STRING";
-    }
-
-    @Override
-    public Object handle(PreItemVO item, Map<String, Object> jsonInfo,
-            String[] sourceField) {
-        if (sourceField == null || sourceField.length == 0) {
-            return "";
-        }
-        String str = Arrays.stream(sourceField)
-                .map(f -> Optional.ofNullable(jsonInfo.get(f)).map(Object::toString).orElse(""))
+    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context) {
+        String str = request.getSourceValues().stream()
+                .map(v -> v == null ? "" : v.toString())
                 .collect(Collectors.joining("_"));
-        return str;
+        return PluginResult.of(str);
     }
-    
 }

@@ -1,42 +1,56 @@
 package com.pgmmers.radar.service.impl.engine.plugin;
 
-import com.pgmmers.radar.service.engine.PluginServiceV2;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.radar.plugin.api.ParamDescriptor;
+import com.radar.plugin.api.ParamType;
+import com.radar.plugin.api.Plugin;
+import com.radar.plugin.api.PluginMeta;
+import com.radar.plugin.api.PluginRequest;
+import com.radar.plugin.api.PluginResult;
+import com.radar.plugin.api.PluginException;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 /**
- * author: wangcheng Date: 2020/5/19 Time: 上午11:45 Description:
+ * 字符串截短（按起止下标）。
+ *
+ * <p>v3 迁移：start/end 进参数 schema；存量配置（args="0,7"）走 legacy 兜底。</p>
  */
 @Component
-public class SUBSTRING implements PluginServiceV2 {
+@PluginMeta(key = "SUBSTRING", name = "SUBSTRING", desc = "字符串截短", type = "STRING")
+public class SUBSTRING implements Plugin {
 
     @Override
-    public Integer key() {
-        return 4;
+    public List<ParamDescriptor> paramSchema() {
+        return List.of(
+                ParamDescriptor.name("start", "起始下标").type(ParamType.INTEGER).required().build(),
+                ParamDescriptor.name("end", "结束下标").type(ParamType.INTEGER).required().build());
     }
 
     @Override
-    public String desc() {
-        return "字符串截短";
-    }
-
-    @Override
-    public String getType() {
-        return "STRING";
-    }
-
-    @Override
-    public Object handle(PreItemVO item, Map<String, Object> jsonInfo, String[] sourceField) {
-        String[] args = item.getArgs().split(",");
-        String field = jsonInfo.get(sourceField[0]).toString();
-        int start =Integer.parseInt(args[0]);
-        int end = Integer.parseInt(args[1]);
-        if (field != null && field.length() > end) {
-            return field.substring(start, end);
+    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context)
+            throws PluginException {
+        int start;
+        int end;
+        Map<String, Object> args = request.getArgs();
+        if (!args.isEmpty()) {
+            start = ((Number) args.get("start")).intValue();
+            end = ((Number) args.get("end")).intValue();
         } else {
-            return field;
+            // 存量兼容：args="start,end"
+            String raw = request.getRawArgs();
+            if (raw == null || !raw.contains(",")) {
+                throw new PluginException("SUBSTRING 参数格式应为 \"start,end\"");
+            }
+            String[] parts = raw.split(",");
+            start = Integer.parseInt(parts[0].trim());
+            end = Integer.parseInt(parts[1].trim());
         }
+        Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
+        String field = raw == null ? null : raw.toString();
+        if (field != null && field.length() > end) {
+            return PluginResult.of(field.substring(start, end));
+        }
+        return PluginResult.of(field);
     }
 }

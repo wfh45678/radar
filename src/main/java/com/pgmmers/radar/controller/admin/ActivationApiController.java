@@ -16,10 +16,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.pgmmers.radar.model.query.ActivationQuery;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.engine.vo.DataColumnInfo;
 import com.pgmmers.radar.service.enums.DataType;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginEntry;
 import com.pgmmers.radar.service.model.*;
 import com.pgmmers.radar.model.vo.model.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -82,7 +82,7 @@ public class ActivationApiController {
         ds = new DataColumnInfo(DataType.PREITEMS.getDesc(), DataType.PREITEMS.getName());
         List<PreItemVO> listPreItem = preItemService.listPreItem(modelId);
         for (PreItemVO preItem : listPreItem) {
-            PluginServiceV2 pt = pluginManager.pluginServiceMap(preItem.getPlugin());
+            PluginEntry pt = pluginManager.entry(preItem.getPlugin());
             if (StringUtils.isNotEmpty(pt.getType()) && pt.getType().equals("JSON")) {
                 //load  http request data
                 JsonNode json = preItem.getConfigJson();
@@ -92,7 +92,7 @@ public class ActivationApiController {
                 ds.addChildren(preItem.getLabel(), preItem.getDestField(), pt.getType());
             } else {
                 List<DataColumnInfo> children = new ArrayList<>();
-                extractMetaColumn(ds, preItem, pt.getMeta(), children);
+                extractMetaColumn(ds, preItem, pt.legacyMetaJson(), children);
             }
         }
         list.add(ds);

@@ -73,6 +73,12 @@ cd frontend && npm ci && npm run dev
 > 测试分 L1/L2（纯单测，`mvn test` 秒级全绿）与 L3（Testcontainers 集成测试，需 Docker / CI 全量跑），
 > 详见 [CONTRIBUTING.md](CONTRIBUTING.md)、[docs/plan-v2.1.md](docs/plan-v2.1.md)。
 
+### 插件生态（v3.0）
+
+preItem 插件支持外置 jar 接入：实现 `radar-plugin-api` 的 `Plugin` 接口，打包放入 `plugins/` 目录重启即可，
+管理端表单按插件声明的参数 schema 自动生成。开发指南见 [docs/plugin-dev-guide.md](docs/plugin-dev-guide.md)，
+示例工程见 [samples/radar-plugin-demo](samples/radar-plugin-demo/README.md)。
+
 ### 可观测性
 
 ```bash

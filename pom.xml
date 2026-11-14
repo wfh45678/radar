@@ -10,12 +10,13 @@
     </parent>
     <groupId>com.pgmmers</groupId>
     <artifactId>radar</artifactId>
-    <version>2.4.1</version>
+    <version>3.0.0</version>
     <name>radar</name>
     <description>Real-time risk control engine (Java 17 + Spring Boot 3 single module)</description>
     <packaging>jar</packaging>
 
     <properties>
+        <radar-plugin-api.version>3.0.0</radar-plugin-api.version>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- 项目级默认值：防止 env.CI 等激活其他 profile 时 activeByDefault 的 local 失效，
@@ -76,6 +77,12 @@
     </profiles>
 
     <dependencies>
+        <!-- v3.0 插件契约模块（独立工程，先 mvn install 本模块再构建主工程；CI/脚本已编排） -->
+        <dependency>
+            <groupId>com.pgmmers</groupId>
+            <artifactId>radar-plugin-api</artifactId>
+            <version>${radar-plugin-api.version}</version>
+        </dependency>
         <!-- Web / 模板 / 切面 / 监控 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

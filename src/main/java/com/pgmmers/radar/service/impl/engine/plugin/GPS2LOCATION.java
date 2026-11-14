@@ -1,92 +1,84 @@
 package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.pgmmers.radar.service.engine.PluginServiceV2;
-import com.pgmmers.radar.service.engine.vo.Location;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import com.radar.plugin.api.HttpResult;
+import com.radar.plugin.api.OutputColumn;
+import com.radar.plugin.api.Plugin;
+import com.radar.plugin.api.ParamDescriptor;
+import com.radar.plugin.api.PluginMeta;
+import com.radar.plugin.api.PluginRequest;
+import com.radar.plugin.api.PluginResult;
+import jakarta.annotation.PostConstruct;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-
-import java.util.Map;
-
 /**
- * author: wangcheng Date: 2020/5/19 Time: 上午11:44 Description:
+ * GPS 经纬度 -> 地址（外部 HTTP 服务）。
+ *
+ * <p>v3 迁移：服务地址从硬编码移入配置（默认值保留兼容），改走引擎 HTTP 工具
+ * （强制超时 + 私网防护 + 连接复用），并声明 remote 型。</p>
  */
 @Component
-public class GPS2LOCATION implements PluginServiceV2 {
+@PluginMeta(key = "GPS2LOCATION", name = "GPS2LOCATION", desc = "GPS转换成地址", type = "", remote = true)
+public class GPS2LOCATION implements Plugin {
 
     private static final Logger logger = LoggerFactory.getLogger(GPS2LOCATION.class);
-    @Override
-    public Integer key() {
-        return 2;
+
+    /** 参考 http://jwd.funnyapi.com/#/index ，公共免费服务不可靠，生产建议自建本地库。 */
+    @Value("${plugin.gps.url:http://106.75.35.67:60000/gis}")
+    private String gpsUrl;
+
+    @PostConstruct
+    public void warn() {
+        logger.warn("GPS2LOCATION uses external free service ({}); set plugin.gps.url to your own service for production", gpsUrl);
     }
 
     @Override
-    public String desc() {
-        return "GPS转换成地址";
+    public List<ParamDescriptor> paramSchema() {
+        return List.of();
     }
 
     @Override
-    public String getType() {
-        return null;
+    public List<OutputColumn> outputMeta() {
+        return List.of(
+                OutputColumn.of("country", "国家"),
+                OutputColumn.of("province", "省份"),
+                OutputColumn.of("city", "城市"));
     }
 
     @Override
-    public String getMeta() {
-        return "[{\"column\":\"country\", \"title\":\"国家\", \"type\":\"STRING\"},{\"column\":\"province\", \"title\":\"省份\", \"type\":\"STRING\"},{\"column\":\"city\", \"title\":\"城市\", \"type\":\"STRING\"}]";
-    }
-
-    @Override
-    public Object handle(PreItemVO item, Map<String, Object> jsonInfo,
-            String[] sourceField) {
-        //参考 http://jwd.funnyapi.com/#/index , 最好是本地库。
-        Location location = new Location();
-        //纬度
-        String latitude = String.valueOf(jsonInfo.get(sourceField[0]));
-        //经度
-        String longitude = String.valueOf(jsonInfo.get(sourceField[1]));
-        if ("".equals(latitude) || "".equals(longitude)) {
-            return null;
+    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context) {
+        List<Object> values = request.getSourceValues();
+        if (values.size() < 2 || values.get(0) == null || values.get(1) == null) {
+            return PluginResult.of(null);
         }
+        // 纬度 / 经度
+        String latitude = values.get(0).toString();
+        String longitude = values.get(1).toString();
+        if (latitude.isEmpty() || longitude.isEmpty()) {
+            return PluginResult.of(null);
+        }
+        Map<String, Object> location = new LinkedHashMap<>();
         try {
-            String url ="http://106.75.35.67:60000/gis?auth_user=freevip&latitude="+latitude+"&longitude="+longitude;
-            //创建httpclient对象
-            CloseableHttpClient httpclient = HttpClients.createDefault();
-            //创建GET对象
-            HttpGet httpget = new HttpGet(url);
-            //执行请求
-            CloseableHttpResponse response = httpclient.execute(httpget);
-            if(response.getStatusLine().getStatusCode()== HttpStatus.OK.value()) {
-                HttpEntity entity = response.getEntity();
-                //所需内容都在entity里面，这里可以对数据操作
-                String detail = EntityUtils.toString(entity,"UTF-8");
-                JSONObject parseObject = JSONObject.parseObject(detail);
-                //String转map
-                String data = parseObject.getString("data");
-                Map stringToMap =  JSONObject.parseObject(data);
-
-                location.setCountry(String.valueOf(stringToMap.get("zh0")));
-                location.setRegion(String.valueOf(stringToMap.get("zh3")));
-                location.setProvince(String.valueOf(stringToMap.get("zh1")));
-                location.setCity(String.valueOf(stringToMap.get("zh2")));
-
+            String url = gpsUrl + "?auth_user=freevip&latitude=" + latitude + "&longitude=" + longitude;
+            HttpResult response = context.http().get(url);
+            if (response.isOk()) {
+                JSONObject body = JSONObject.parseObject(response.getBody());
+                String data = body.getString("data");
+                Map<String, Object> detail = JSONObject.parseObject(data);
+                location.put("country", String.valueOf(detail.get("zh0")));
+                location.put("region", String.valueOf(detail.get("zh3")));
+                location.put("province", String.valueOf(detail.get("zh1")));
+                location.put("city", String.valueOf(detail.get("zh2")));
             }
-            response.close();
-            httpclient.close();
-
         } catch (Exception e) {
             logger.error("GPS2LOCATION error", e);
         }
-        return location;
-
+        return PluginResult.of(location);
     }
 }

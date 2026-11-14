@@ -38,8 +38,8 @@ import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.data.MongoService;
-import com.pgmmers.radar.service.engine.PluginServiceV2;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.plugin.PluginEntry;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.common.util.JsonUtils;
@@ -416,11 +416,11 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         // pre item mapping
         JSONObject preItemJson = new JSONObject();
         for (PreItemVO item : items) {
-            PluginServiceV2 plugin = pluginManager.pluginServiceMap(item.getPlugin());
-            String columns = plugin.getMeta();
+            PluginEntry plugin = pluginManager.entry(item.getPlugin());
+            String columns = plugin == null ? null : plugin.legacyMetaJson();
             if (columns == null) {
-                String fieldType = plugin.getType();
-                if (fieldType.equals("JSON")) {
+                String fieldType = plugin == null ? "STRING" : plugin.getType();
+                if ("JSON".equals(fieldType)) {
                     //TODO: json类型需要另外处理
                 } else {
                     String elaType = convertFieldType2ElasticType(fieldType);
@@ -428,8 +428,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
                     preItemJson.put(item.getDestField(), JSON.parseObject(tmp));
                 }
             } else {
-                String meta = plugin.getMeta();
-                List<JSONObject> fieldsJson = JSON.parseArray(meta, JSONObject.class);
+                List<JSONObject> fieldsJson = JSON.parseArray(columns, JSONObject.class);
                 JSONObject properties = new JSONObject();
                 for (JSONObject json : fieldsJson) {
                     String fieldName = json.getString("column");
