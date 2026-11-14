@@ -26,7 +26,6 @@ import RuleGraph from './component/report/RuleGraph';
 import ListRule from './component/report/ListRule';
 import DashBoard from './component/report/dashboard';
 import ConfigCenter from './component/config/ConfigCenter';
-import ModelConfig from './component/modelconfig/ModelConfig';
 
 import Index from './component/Index';
 import Login from './component/Login';
@@ -91,7 +90,6 @@ const router = createHashRouter([
               { path: 'ruleList/:id/:activationId', element: <RuleList /> },
               { path: 'historyRecordList/:id/:activationId/:ruleId', element: <HistoryRecordList /> },
               { path: 'abstractionList/:id', element: <AbstractionList /> },
-              { path: 'modelConfig/:id', element: <ModelConfig /> },
             ],
           },
           { path: 'report', element: <Navigate to="/event" replace /> },

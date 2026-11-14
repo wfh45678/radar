@@ -1,7 +1,7 @@
 import React from 'react';
 import {Breadcrumb, Form, Row, Col, Switch, Modal, Input, Button, Table, Tooltip, Pagination, Select, Popconfirm, message, Menu} from 'antd';
 import {withLocation} from '../utils/routerUtil';
-import {AppstoreOutlined, CopyOutlined, FileTextOutlined, PictureOutlined, SettingOutlined, SolutionOutlined} from '@ant-design/icons';
+import {AppstoreOutlined, CopyOutlined, FileTextOutlined, PictureOutlined, SolutionOutlined} from '@ant-design/icons';
 import { Link, Outlet } from 'react-router';
 import dayjs from 'dayjs';
 const FormItem = Form.Item;
@@ -70,8 +70,6 @@ class Model extends React.Component{
             case 'ruleList':
             case 'historyRecordList':
                 key='activation';break;
-            case 'modelConfig':
-                key='modelConfig';break;
         }
         this.setState({
             current:key
@@ -176,7 +174,6 @@ class Model extends React.Component{
 					          { key:'preItem', label:<><CopyOutlined />预处理管理</> },
 					          { key:'datalist', label:<><AppstoreOutlined />黑/白名单管理</> },
 					          { key:'abstractionList', label:<><PictureOutlined />抽象处理</> },
-					          { key:'modelConfig', label:<><SettingOutlined />机器学习配置</> },
 					          { key:'activation', label:<><SolutionOutlined />策略管理</> },
 					        ]}
 					      />
