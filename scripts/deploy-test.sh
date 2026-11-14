@@ -20,8 +20,8 @@ if [ "${SKIP_BUILD:-0}" != "1" ]; then
 fi
 
 echo "==> [2/4] 同步部署物到 $SERVER_USER@$SERVER_HOST:$REMOTE_DIR"
-$SSH_CMD "sudo mkdir -p $REMOTE_DIR && sudo chown -R \$(whoami) $REMOTE_DIR"
-$SCP_CMD target/radar.jar "$SERVER_USER@$SERVER_HOST:$REMOTE_DIR/radar.jar"
+$SSH_CMD "sudo mkdir -p $REMOTE_DIR/target && sudo chown -R \$(whoami) $REMOTE_DIR"
+$SCP_CMD target/radar.jar "$SERVER_USER@$SERVER_HOST:$REMOTE_DIR/target/radar.jar"
 $SCP_CMD Dockerfile docker-compose.yml "$SERVER_USER@$SERVER_HOST:$REMOTE_DIR/"
 $SCP_CMD -r sql resources "$SERVER_USER@$SERVER_HOST:$REMOTE_DIR/"
 
