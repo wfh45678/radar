@@ -3,7 +3,6 @@ import {Form,Button,Table,Pagination,Input,Select,Modal,DatePicker,Cascader} fro
 import moment from 'moment';
 
 const FormItem=Form.Item;
-const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 
 import {FetchUtil} from '../utils/fetchUtil';

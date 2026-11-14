@@ -4,7 +4,6 @@ import {Form, Input, Row, Col, Card, Select, Button, Cascader, Tooltip} from 'an
 import {DeleteOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 const OptGroup = Select.OptGroup;
 
 import {Operator,operatorMap} from '../utils/operatorUtil';
@@ -134,20 +133,12 @@ export default class SimpleCondition extends React.Component{
 						readOnly={this.props.readOnly}
 
 					  />
-					<Select dropdownMatchSelectWidth={false} readOnly={this.props.readOnly} value={condition.operator} onChange={this.handleOperator}>
-                    	{operatorMap[expression.type].map(op=>
-                    		<Option key={op.value} value={op.value}>{op.label}</Option>
-                    	)}    	                        
-                    </Select>
+					<Select dropdownMatchSelectWidth={false} readOnly={this.props.readOnly} value={condition.operator} onChange={this.handleOperator} options={[...operatorMap[expression.type].map(op=>({label:op.label, value:op.value}))]}/>
 				{condition.operator==''?'':
 					Operator[condition.operator].nextType=='input'?(
 						<Input style={{width:200}} type="text" readOnly={this.props.readOnly} value={expressionOption==undefined?'':expressionOption.value} onChange={this.handleInput}/>):
 					Operator[condition.operator].nextType=='list'?(
-						<Select dropdownMatchSelectWidth={false} readOnly={this.props.readOnly} value={expressionOption==undefined?'':expressionOption.value} onChange={this.handleDataList}>
-                        	{this.props.dataList.map(op=>
-                        		<Option key={op.id} value={op.name}>{op.label}</Option>
-                        	)}    	                        
-                        </Select>
+						<Select dropdownMatchSelectWidth={false} readOnly={this.props.readOnly} value={expressionOption==undefined?'':expressionOption.value} onChange={this.handleDataList} options={[...this.props.dataList.map(op=>({label:op.label, value:op.name}))]}/>
 					):
 					Operator[condition.operator].nextType=='field'?(
 						<Cascader

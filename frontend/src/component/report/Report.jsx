@@ -3,7 +3,6 @@ import {Breadcrumb, Menu, Form, Select} from 'antd';
 import {FileTextOutlined, PushpinOutlined} from '@ant-design/icons';
 
 const FormItem=Form.Item;
-const Option = Select.Option;
 
 import {FetchUtil} from '../utils/fetchUtil';
 
@@ -110,13 +109,11 @@ export default class Report extends React.Component{
                 </div>
                 <div className="ant-layout-container">
                     <div style={{lineHeight:"46px",padding:"0 20px 0",margin:"0 24px",borderBottom:"1px solid #e9e9e9"}}>
-                        <Form inline="true">
+                        <Form layout="inline">
                             <FormItem label="模型：">
-                                <Select dropdownMatchSelectWidth={false} value={this.state.modelId} onChange={this.handleSelect.bind(this,'modelId')} style={{width:100}}>
-                                    {this.state.modelList.map((info)=>{
-                                        return <Option key={info.id} value={info.id+''}>{info.label}</Option>
-                                    })}
-                                </Select>
+                                <Select dropdownMatchSelectWidth={false} value={this.state.modelId} onChange={this.handleSelect.bind(this,'modelId')} style={{width:100}}
+                                    options={this.state.modelList.map((info)=>({label:info.label, value:info.id+''}))}
+                                />
                             </FormItem>
                         </Form>
                     </div>

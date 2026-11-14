@@ -4,7 +4,6 @@ import {Form, Input, InputNumber, Breadcrumb, Row, Col, Card, Select, Button, Ca
 import {PlusOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import ComplexCondition from '../abstraction/ComplexCondition';
 
@@ -109,19 +108,11 @@ export default class HistoryRecord extends React.Component{
                         </FormItem>
 
                         <FormItem {...formItemLayout} label="操作符：">
-                            <Select value={ruleHistory.operator} readOnly>
-                                <Option value="NONE">无</Option>
-                                <Option value="ADD">加</Option>
-                                <Option value="DEC">减</Option>
-                                <Option value="MUL">乘</Option>
-                                <Option value="DIV">除</Option>
-                            </Select>
+                            <Select value={ruleHistory.operator} readOnly options={[{label:'无', value:'NONE'}, {label:'加', value:'ADD'}, {label:'减', value:'DEC'}, {label:'乘', value:'MUL'}, {label:'除', value:'DIV'}]}/>
                         </FormItem>
 
                         <FormItem {...formItemLayout} label="指标字段：">
-                            <Select value={ruleHistory.abstractionName} readOnly>
-                                {abstractionList==undefined?null:abstractionList.map((x,index)=><Option key={x.value+index} value={x.value}>{x.label}</Option>)}
-                            </Select>
+                            <Select value={ruleHistory.abstractionName} readOnly options={[...abstractionList==undefined?null:abstractionList.map(x=>({label:x.label, value:x.value}))]}/>
                         </FormItem>
 
                         <FormItem required={true} {...formItemLayout} label="比率：">

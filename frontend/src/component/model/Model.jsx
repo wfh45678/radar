@@ -5,7 +5,6 @@ import {AppstoreOutlined, CopyOutlined, FileTextOutlined, PictureOutlined, Setti
 import { Link } from 'react-router';
 import moment from 'moment';
 const FormItem = Form.Item;
-const Option = Select.Option;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 const confirm = Modal.confirm;

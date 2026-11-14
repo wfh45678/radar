@@ -4,7 +4,6 @@ import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
-const Option = Select.Option;
 
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
@@ -160,16 +159,10 @@ export default class EditDataList extends React.Component{
                             <Input type="text" name="comment" value={this.state.comment} onChange={this.handleChange}/>
                         </FormItem>
                         <FormItem {...formItemLayout} label="名单类型：" help={validate.listType.help} validateStatus={validate.listType.status}>
-                            <Select value={this.state.listType} style={{ width: 120 }} onChange={this.handleSelect.bind(this,'listType')}>
-                                <Option value="">请选择</Option>
-                                <Option value="BLACK">黑名单</Option>
-                                <Option value="WHITE">白名单</Option>
-                            </Select>
+                            <Select value={this.state.listType} style={{ width: 120 }} onChange={this.handleSelect.bind(this,'listType')} options={[{label:'请选择', value:''}, {label:'黑名单', value:'BLACK'}, {label:'白名单', value:'WHITE'}]}/>
                         </FormItem>
                         <FormItem {...formItemLayout} label="状态：">
-                            <Select value={this.state.status} name="status" style={{ width: 120 }} onChange={this.handleSelect.bind(this,'status')}>
-                                <Option value="1">正常</Option>
-                            </Select>
+                            <Select value={this.state.status} name="status" style={{ width: 120 }} onChange={this.handleSelect.bind(this,'status')} options={[{label:'正常', value:'1'}]}/>
                         </FormItem>
                     </Form>
                 </Modal>

@@ -4,7 +4,6 @@ import {Breadcrumb, Form, Row, Col, Input, Button, Table, Tooltip, Pagination, S
 import CollapseGroup from '../common/CollapseGroup';
 import Collapse from '../common/Collapse';
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import Rule from './Rule';
 import {FetchUtil} from '../utils/fetchUtil';
@@ -263,7 +262,7 @@ class RuleList extends Component{
         return (
                 <div className="ant-layout-content">
                     <div id="header">
-                        <Form inline="true">
+                        <Form layout="inline">
                             <FormItem label="显示名称：">
                                 <Input value={this.state.label} name="label" id="blue" onChange={this.handleChange}/>
                             </FormItem>

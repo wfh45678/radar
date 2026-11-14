@@ -4,7 +4,6 @@ import {withParams} from '../utils/routerUtil';
 import {QuestionCircleOutlined, UploadOutlined} from '@ant-design/icons';
 
 const FormItem=Form.Item;
-const Option = Select.Option;
 
 import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
@@ -77,15 +76,11 @@ class ModelConfig extends React.Component{
 	   
 	    FetchUtil('/activation/abstraction/columns/' + this.props.params.id,'GET','',
 	    	(data) => {
-	    		let absColumns =[];
-	            let absDS= data.data.columns;
-	        	for (let i = 0; i < absDS.length; i++) {
-					  absColumns.push(<Option key={absDS[i].value}>{absDS[i].label}</Option>);
-				}
-				//console.log(absColumns);
-				this.setState({
-					absColumns: absColumns,
-				});
+	    		// antd5 Select 改用 options 数据数组（原为 Option 元素数组）
+	    	let absColumns = data.data.columns.map(x=>({label:x.label, value:x.value}));
+			this.setState({
+				absColumns: absColumns,
+			});
 	  	});
 	}
 
@@ -311,9 +306,7 @@ class ModelConfig extends React.Component{
 	                    	<FormItem required={true} {...formItemLayout} label="学习框架："  >
 								<Row>
 									<Col span={20} >
-										<Select value={this.state.type}>
-											<Option value="TENSOR_DNN">TENSOR_DNN</Option>
-										</Select>
+										<Select value={this.state.type} options={[{label:'TENSOR_DNN', value:'TENSOR_DNN'}]}/>
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'支持的机器学习框架类型'}>
@@ -431,9 +424,8 @@ class ModelConfig extends React.Component{
 															          placeholder="请选择"
 															          value={selected}
 															          style={{ width: '100%' }}
+															          options={this.state.absColumns}
 															        >
-															          {this.state.absColumns}
-								        						</Select>
 															</div>
 														</Col>
 														<Col span={1} offset={1}>
@@ -455,9 +447,8 @@ class ModelConfig extends React.Component{
 															          placeholder="请选择"
 															          onChange={this.handleChange}
 															          style={{ width: '100%' }}
+															          options={this.state.absColumns}
 															        >
-															          {this.state.absColumns}
-								        						</Select>
 															</div>
 														</Col> 
 													 </Row>

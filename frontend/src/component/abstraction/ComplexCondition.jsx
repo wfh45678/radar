@@ -3,7 +3,6 @@ import React from 'react';
 import {Form, Input, Row, Col, Card, Select, Button, Cascader, Tooltip} from 'antd';
 import {PlusOutlined} from '@ant-design/icons';
 
-const Option = Select.Option;
 
 import SimpleCondition from './SimpleCondition';
 
@@ -99,12 +98,7 @@ export default class ComplexCondition extends React.Component{
 			return (
 				<div style={{marginLeft:20}}>
 					<div className="condition-row">
-	            		<Select style={{width:100}} readOnly={this.props.readOnly} value={this.props.condition.linking} defaultValue={'All'} onChange={this.handleSelect.bind(this,'linking')}>
-	                        <Option value="All">All</Option>
-	                        <Option value="Any">Any</Option>
-	                        <Option value="NotAll">NotAll</Option>
-	                        <Option value="None">None</Option>	                        
-	                    </Select>条件成立 &nbsp;&nbsp;
+	            		<Select style={{width:100}} readOnly={this.props.readOnly} value={this.props.condition.linking} defaultValue={'All'} onChange={this.handleSelect.bind(this,'linking')} options={[{label:'All', value:'All'}, {label:'Any', value:'Any'}, {label:'NotAll', value:'NotAll'}, {label:'None', value:'None'}]}/>条件成立 &nbsp;&nbsp;
 						{this.props.readOnly!=true?<Tooltip title="添加简单条件" onClick={this.handleSimpleCondition}><span style={{cursor:"pointer",marginRight:"10px"}}><PlusOutlined />简单</span></Tooltip>:''}
 						{this.props.readOnly!=true?<Tooltip title="添加复杂条件" onClick={this.handleComplexCondition}><span style={{cursor:"pointer"}}><PlusOutlined />复杂</span></Tooltip>:''}
 	                </div>                    

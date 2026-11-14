@@ -4,7 +4,6 @@ import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
-const Option = Select.Option;
 
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
@@ -193,12 +192,7 @@ export default class AddField extends React.Component{
                         <FormItem required={true} {...formItemLayout} label="字段类型：" help={validate.fieldType.help} validateStatus={validate.fieldType.status}>
 							<Row>
 								<Col span={10}>
-									<Select value={this.state.fieldType} onChange={this.handleSelect.bind(this,'fieldType')}>
-										<Option value="">请选择</Option>
-											{
-												this.state.fieldTypes.map(x=><Option key={x.name} value={x.name}>{x.desc}</Option>)
-											}
-									</Select>
+									<Select value={this.state.fieldType} onChange={this.handleSelect.bind(this,'fieldType')} options={[{label:'请选择', value:''}, ...this.state.fieldTypes.map(x=>({label:x.desc, value:x.name}))]}/>
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'字段类型，目前有四种类型，分别为字符串（如"你好"，"abc"等），整数（其范围为 -2147483648 到 2147483647 之间），长整数（其范围为 -9223372036854775808 到 9223372036854775807 之间），浮点数（如 3.14）。'}>

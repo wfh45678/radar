@@ -7,7 +7,6 @@ import Collapse from '../common/Collapse';
 import { Link } from 'react-router';
 import moment from 'moment';
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import HistoryRecord from './HistoryRecord';
 import {FetchUtil} from '../utils/fetchUtil';

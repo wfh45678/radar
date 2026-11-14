@@ -3,7 +3,6 @@ import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Pop
 import {withParams} from '../utils/routerUtil';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import {FetchUtil} from '../utils/fetchUtil';
 
@@ -127,7 +126,7 @@ class DatalistRecord extends React.Component{
         return (
             <div className="ant-layout-content">
                 <div id="header">
-                    <Form inline="true">
+                    <Form layout="inline">
                         <AddDataListRecord metaList={this.state.metaList} dataListId={this.props.params.datalistId} reload={this.fetchTableData} />
                     </Form>                            
                 </div>

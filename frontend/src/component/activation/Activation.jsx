@@ -3,7 +3,6 @@ import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Pop
 import {withParams} from '../utils/routerUtil';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
@@ -161,7 +160,7 @@ class Activation extends React.Component{
         return (
             <div className="ant-layout-content">
                 <div id="header">
-                    <Form inline="true">
+                    <Form layout="inline">
                         <FormItem label="策略名：">
                             <Input value={this.state.name} name="name" id="blue" onChange={this.handleChange}/>
                         </FormItem>

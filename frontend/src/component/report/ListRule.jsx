@@ -4,7 +4,6 @@ import {withParams} from '../utils/routerUtil';
 import moment from 'moment';
 
 const FormItem=Form.Item;
-const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 
 import {FetchUtil} from '../utils/fetchUtil';
@@ -352,38 +351,30 @@ class Rule extends React.Component{
         return (
             <div className="ant-layout-content">
                 <div id="header">
-                    <Form inline>
+                    <Form layout="inline">
                         <FormItem label="选择策略：">
-                            <Select dropdownMatchSelectWidth={false} value={this.state.activationName} onChange={this.handleSelect.bind(this,'activationName')} style={{width:100}}>
-                                {this.props.activationList.map((info,i)=>{
-                                    return <Option key={info.label} value={info.value}>{info.label}</Option>
-                                })}
-                            </Select>
+                            <Select dropdownMatchSelectWidth={false} value={this.state.activationName} onChange={this.handleSelect.bind(this,'activationName')} style={{width:100}}
+                                options={this.props.activationList.map((info)=>({label:info.label, value:info.value}))}
+                            />
                         </FormItem>
                         <FormItem label="选择规则：">
-                            <Select dropdownMatchSelectWidth={false} value={this.state.ruleId} onChange={this.handleSelect.bind(this,'ruleId')} style={{width:100}}>
-                                {ruleList==undefined?'':ruleList.map((info,i)=>{
-                                    return <Option key={info.label} value={info.type}>{info.label}</Option>
-                                })}
-                            </Select>
+                            <Select dropdownMatchSelectWidth={false} value={this.state.ruleId} onChange={this.handleSelect.bind(this,'ruleId')} style={{width:100}}
+                                options={ruleList==undefined?[]:ruleList.map((info)=>({label:info.label, value:info.type}))}
+                            />
                         </FormItem>
                         &nbsp;&nbsp;&nbsp;&nbsp;
 
                         <FormItem label="处理结果：">
-                            <Select dropdownMatchSelectWidth={false} value={this.state.risk} onChange={this.handleSelect.bind(this,'risk')} style={{width:100}}>
-                                <Option value='pass'>通过</Option>
-                                <Option value='review'>人工审核</Option>
-                                <Option value='reject'>拒绝</Option>
-                            </Select>
+                            <Select dropdownMatchSelectWidth={false} value={this.state.risk} onChange={this.handleSelect.bind(this,'risk')} style={{width:100}}
+                                options={[{label:'通过', value:'pass'},{label:'人工审核', value:'review'},{label:'拒绝', value:'reject'}]}
+                            />
                         </FormItem>
                         &nbsp;&nbsp;&nbsp;&nbsp;
 
                         <FormItem label="起始时间">
-                            <Select dropdownMatchSelectWidth={false} showSearch defaultValue='-3' onChange={this.handleChangeDate} style={{width:100,marginRight:10}}>
-                                <Option value='-3'>三天内</Option>
-                                <Option value='-7'>七天内</Option>
-                                <Option value='-1'>一月内</Option>
-                            </Select>
+                            <Select dropdownMatchSelectWidth={false} showSearch defaultValue='-3' onChange={this.handleChangeDate} style={{width:100,marginRight:10}}
+                                options={[{label:'三天内', value:'-3'},{label:'七天内', value:'-7'},{label:'一月内', value:'-1'}]}
+                            />
                             <RangePicker value={[this.state.beginTime,this.state.endTime]} showTime format="YYYY/MM/DD HH:mm:ss" onChange={this.handleCalendar} />
                         </FormItem>
 

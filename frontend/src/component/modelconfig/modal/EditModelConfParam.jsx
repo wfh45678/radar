@@ -5,7 +5,6 @@ import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
-const Option = Select.Option;
 
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
@@ -193,8 +192,7 @@ class EditModelConfParam extends React.Component{
 								          value={this.state.selectList}
 								          onChange={this.handleSelect}
 								          style={{ width: '100%' }}
-								        >
-								          {this.props.abstractions}
+            options={this.props.abstractions}
 	        						</Select>
                             	</Col>
                             	<Col span={2} offset={1}>

@@ -3,7 +3,6 @@ import {Breadcrumb, Menu, Form, Upload, Input, Select, Card, Row, Col, Button, T
 import {QuestionCircleOutlined, UploadOutlined} from '@ant-design/icons';
 
 const FormItem=Form.Item;
-const Option = Select.Option;
 
 import {FetchUtil} from '../utils/fetchUtil';
 
@@ -154,11 +153,7 @@ export default class LearningConfig extends React.Component{
 	                    	<FormItem required={true} {...formItemLayout} label="学习框架：" help={validate.plugin.help} validateStatus={validate.plugin.status}>
 								<Row>
 									<Col span={20}>
-										<Select >
-											<Option value="Tensorflow">Tensorflow</Option>
-											<Option value="Caffe">Caffe</Option>
-											<Option value="Neuroph">Neuroph</Option>
-										</Select>
+										<Select  options={[{label:'Tensorflow', value:'Tensorflow'}, {label:'Caffe', value:'Caffe'}, {label:'Neuroph', value:'Neuroph'}]}/>
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'支持的机器学习框架类型'}>

@@ -2,7 +2,6 @@ import React from 'react';
 import {Breadcrumb, Menu, Form, Select, Card, Row, Col} from 'antd';
 import {Link} from 'react-router';
 const FormItem=Form.Item;
-const Option = Select.Option;
 
 import {FetchUtil} from '../utils/fetchUtil';
 

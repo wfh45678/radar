@@ -3,7 +3,6 @@ import {withParams} from '../utils/routerUtil';
 import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Spin} from 'antd';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import CollapseGroup from '../common/CollapseGroup';
 import Collapse from '../common/Collapse';
@@ -152,7 +151,7 @@ class AbstractionList extends Component{
         return (
             <div className="ant-layout-content">
                 <div id="header">
-                    <Form inline="true">
+                    <Form layout="inline">
                         <FormItem label="指标名：">
                             <Input value={this.state.name} name="name" id="blue" onChange={this.handleChange}/>
                         </FormItem>

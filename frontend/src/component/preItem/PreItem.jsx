@@ -2,7 +2,6 @@ import React from 'react';
 import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message} from 'antd';
 import {withParams} from '../utils/routerUtil';
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import AddPreItem from './modal/AddPreItem';
 import EditPreItem from './modal/EditPreItem';
@@ -156,7 +155,7 @@ class PreItem extends React.Component{
         return (
             <div className="ant-layout-content">
                 <div id="header">
-                    <Form inline = "true">
+                    <Form layout="inline">
                         <FormItem label="字段名：">
                             <Input value={this.state.destField} name="destField" id="blue" onChange={this.handleChange}/>
                         </FormItem>                                

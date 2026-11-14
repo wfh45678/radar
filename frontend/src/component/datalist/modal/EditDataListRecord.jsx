@@ -3,7 +3,6 @@ import {Button, Checkbox, Select, Radio, Switch, Form, Row, Col, Modal, Input, I
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
-const Option = Select.Option;
 
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';

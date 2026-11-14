@@ -2,7 +2,6 @@ import React from 'react';
 import {Breadcrumb, Form, Row, Col, Input, Button, Table, Tooltip, Pagination, Select, Popconfirm, message, Menu} from 'antd';
 import {withParams} from '../utils/routerUtil';
 const FormItem = Form.Item;
-const Option = Select.Option;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 

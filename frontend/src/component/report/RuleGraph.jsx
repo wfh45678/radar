@@ -7,7 +7,6 @@ import moment from 'moment';
 
 
 const FormItem=Form.Item;
-const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 
 import {FetchUtil} from '../utils/fetchUtil';
@@ -148,13 +147,11 @@ export default class RuleGraph extends React.Component{
 		return (
 			<div className="ant-layout-content">
 				<div id="serachCond">
-                        <Form inline="true">
+                        <Form layout="inline">
                             <FormItem label="起始时间">
-								<Select dropdownMatchSelectWidth={false} showSearch placeholder="选择时间段" value={this.state.rangeSelect} onChange={this.handleChangeDate} style={{width:100,marginRight:10}}>
-									<Option value='-3'>三天内</Option>
-									<Option value='-7'>七天内</Option>
-									<Option value='-1'>一月内</Option>
-								</Select>
+								<Select dropdownMatchSelectWidth={false} showSearch placeholder="选择时间段" value={this.state.rangeSelect} onChange={this.handleChangeDate} style={{width:100,marginRight:10}}
+						options={[{label:'三天内', value:'-3'},{label:'七天内', value:'-7'},{label:'一月内', value:'-1'}]}
+					/>
                             	<RangePicker value={[this.state.beginTime,this.state.endTime]} showTime format="YYYY/MM/DD HH:mm:ss" onChange={this.handleCalendar} />
                             </FormItem>               
                             <Button type="primary" onClick={this.handleSearch}>查询</Button>

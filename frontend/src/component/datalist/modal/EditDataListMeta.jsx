@@ -4,7 +4,6 @@ import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
-const Option = Select.Option;
 const OptGroup = Select.OptGroup;
 const InputGroup = Input.Group;
 

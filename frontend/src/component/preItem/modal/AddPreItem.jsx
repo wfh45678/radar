@@ -4,7 +4,6 @@ import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
-const Option = Select.Option;
 
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
@@ -207,12 +206,7 @@ export default class AddPreItem extends React.Component{
                     	<FormItem required={true} {...formItemLayout} label="插件种类：" help={validate.plugin.help} validateStatus={validate.plugin.status}>
 							<Row>
 								<Col span={20}>
-									<Select value={this.state.plugin} onChange={this.handleSelect.bind(this,'plugin')}>
-										<Option value="">请选择</Option>
-											{
-												this.props.plugins.map(x=><Option key={x.key} value={x.method}>{x.desc}</Option>)
-											}
-									</Select>
+									<Select value={this.state.plugin} onChange={this.handleSelect.bind(this,'plugin')} options={[{label:'请选择', value:''}, ...this.props.plugins.map(x=>({label:x.desc, value:x.method}))]}/>
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'插件种类，如 IP转换成地址（将IP地址转换成详细的实际地址），字段合并（将多个原始字段合并起来），字符串截短（例将手机号码截取部分进行筛选，如前七位0,7），等等'}>
@@ -236,12 +230,7 @@ export default class AddPreItem extends React.Component{
                         <FormItem required={true} {...formItemLayout} label="原始字段名：" style={plugin!='ALLINONE' && plugin!='HTTP_UTIL' ?{}:{display:"none"}} help={validate.sourceField.help} validateStatus={validate.sourceField.status}>
 							<Row>
 								<Col span={20}>
-									<Select value={this.state.sourceField} onChange={this.handleSelect.bind(this,'sourceField')}>
-										<Option value="">请选择</Option>
-											{
-												this.props.fieldList==null?'':this.props.fieldList.map(x=><Option key={x.id} value={x.fieldName}>{x.label}</Option>)
-											}
-									</Select>
+									<Select value={this.state.sourceField} onChange={this.handleSelect.bind(this,'sourceField')} options={[{label:'请选择', value:''}, ...this.props.fieldList==null?'':this.props.fieldList.map(x=>({label:x.label, value:x.fieldName}))]}/>
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'原始字段名，均为自己定义的字段名'}>
@@ -253,11 +242,7 @@ export default class AddPreItem extends React.Component{
                         <FormItem required={true} {...formItemLayout} label="原始字段名：" style={plugin=='ALLINONE'?{}:{display:"none"}} help={validate.sourceField.help} validateStatus={validate.sourceField.status}>
 							<Row>
 								<Col span={20}>
-									<Select mode="multiple" placeholder="请选择" value={fieldArr} onChange={this.handleMultiSelect.bind(this,'sourceField')}>
-										{
-											this.props.fieldList==null?'':this.props.fieldList.map(x=><Option key={x.id} value={x.fieldName}>{x.label}</Option>)
-										}
-									</Select>
+									<Select mode="multiple" placeholder="请选择" value={fieldArr} onChange={this.handleMultiSelect.bind(this,'sourceField')} options={[...this.props.fieldList==null?'':this.props.fieldList.map(x=>({label:x.label, value:x.fieldName}))]}/>
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'原始字段名，均为自己定义的字段名'}>
@@ -317,11 +302,7 @@ export default class AddPreItem extends React.Component{
                             </Row>
                             <Row>
 								<Col span={20}>
-									<Select mode="multiple" placeholder="请选择" value={fieldArr} onChange={this.handleMultiSelect.bind(this,'sourceField')}>
-										{
-											this.props.fieldList==null?'':this.props.fieldList.map(x=><Option key={x.id} value={x.fieldName}>{x.label}</Option>)
-										}
-									</Select>
+									<Select mode="multiple" placeholder="请选择" value={fieldArr} onChange={this.handleMultiSelect.bind(this,'sourceField')} options={[...this.props.fieldList==null?'':this.props.fieldList.map(x=>({label:x.label, value:x.fieldName}))]}/>
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'按顺序选择 Url 参数'}>

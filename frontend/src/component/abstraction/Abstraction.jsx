@@ -4,7 +4,6 @@ import {Form, Input, Breadcrumb, Row, Col, Card, Select, Button, Cascader, Toolt
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 const OptGroup = Select.OptGroup;
 
 import './Abstraction.less';
@@ -319,15 +318,7 @@ export default class Abstraction extends React.Component{
 					</FormItem>
                     
                     <FormItem required={true} {...formItemLayout} label="聚合条件：" help={validate.aggregateType.help} validateStatus={validate.aggregateType.status}>
-                        <Select value={this.state.aggregateType} onChange={this.handleSelect.bind(this,'aggregateType')}>
-                            <Option value="">请选择</Option>
-                            <Option value="1">求总数</Option>
-                            <Option value="2">求不同项总数</Option>
-                            <Option value="3">求和</Option>
-                            <Option value="4">求平均值</Option>
-                            <Option value="5">求最大值</Option>
-                            <Option value="6">求最小值</Option>
-                        </Select>
+                        <Select value={this.state.aggregateType} onChange={this.handleSelect.bind(this,'aggregateType')} options={[{label:'请选择', value:''}, {label:'求总数', value:'1'}, {label:'求不同项总数', value:'2'}, {label:'求和', value:'3'}, {label:'求平均值', value:'4'}, {label:'求最大值', value:'5'}, {label:'求最小值', value:'6'}]}/>
                     </FormItem>
 
                     <FormItem required={true} {...formItemLayout} label="搜索字段：" help={validate.searchField.help} validateStatus={validate.searchField.status}>
@@ -360,15 +351,7 @@ export default class Abstraction extends React.Component{
 					      	<Input type="text" name="searchIntervalValue" value={this.state.searchIntervalValue} onChange={this.handleChange}/>
 					      </Col>
 					      <Col span={4} offset={1}>
-					      	<Select value={this.state.searchIntervalType} onChange={this.handleSelect.bind(this,'searchIntervalType')}>
-	                            <Option value="">请选择</Option>
-	                            <Option value="1">年</Option>
-	                            <Option value="2">月</Option>
-	                            <Option value="5">日</Option>
-	                            <Option value="11">时</Option>
-	                            <Option value="12">分</Option>
-	                            <Option value="13">秒</Option>
-	                        </Select>
+					      	<Select value={this.state.searchIntervalType} onChange={this.handleSelect.bind(this,'searchIntervalType')} options={[{label:'请选择', value:''}, {label:'年', value:'1'}, {label:'月', value:'2'}, {label:'日', value:'5'}, {label:'时', value:'11'}, {label:'分', value:'12'}, {label:'秒', value:'13'}]}/>
 					      </Col>
 							<Col span={2} offset={1}>
 								<Tooltip placement="right" title={'搜索某段时间的数据，数值为正数，代表范围区间，如 3 ，再配合后面的时间单位，如 月，就表示3个月内的数据'}>

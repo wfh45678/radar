@@ -4,7 +4,6 @@ import {withParams} from '../utils/routerUtil';
 import moment from 'moment';
 
 const FormItem=Form.Item;
-const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 
 import {FetchUtil} from '../utils/fetchUtil';
@@ -404,13 +403,11 @@ class ListEvent extends React.Component{
 		return (
 			<div className="ant-layout-content">
                     <div id="header">
-                        <Form inline="true">
+                        <Form layout="inline">
                             <FormItem label="起始时间">
-								<Select dropdownMatchSelectWidth={false} showSearch placeholder="选择时间段" value={this.state.rangeSelect} onChange={this.handleChangeDate} style={{width:100,marginRight:10}}>
-									<Option value='-3'>三天内</Option>
-									<Option value='-7'>七天内</Option>
-									<Option value='-1'>一月内</Option>
-								</Select>
+								<Select dropdownMatchSelectWidth={false} showSearch placeholder="选择时间段" value={this.state.rangeSelect} onChange={this.handleChangeDate} style={{width:100,marginRight:10}}
+									options={[{label:'三天内', value:'-3'},{label:'七天内', value:'-7'},{label:'一月内', value:'-1'}]}
+								/>
                             	<RangePicker value={[this.state.beginTime,this.state.endTime]} showTime format="YYYY/MM/DD HH:mm:ss" onChange={this.handleCalendar} />
                             </FormItem>
                                                             
@@ -421,14 +418,11 @@ class ListEvent extends React.Component{
                             <a onClick={this.toggleAdvance}>高级搜索>></a>
                         </Form>
                         {this.state.showAdvance?
-                        <Form inline style={{marginTop:5}}>
+                        <Form layout="inline" style={{marginTop:5}}>
                             <FormItem label="搜索种类">
-                                <Select dropdownMatchSelectWidth={false} placeholder="选择时间段" value={this.state.searchType} onChange={this.handleSelect.bind(this,'searchType')} style={{marginRight:10}}>
-                                    <Option value=''>请选择搜索种类</Option>
-                                    <Option value='field'>按字段搜索</Option>
-                                    <Option value='rule'>按规则搜索</Option>
-                                    <Option value='risk'>按评估结果搜索</Option>
-                                </Select>
+                                <Select dropdownMatchSelectWidth={false} placeholder="选择时间段" value={this.state.searchType} onChange={this.handleSelect.bind(this,'searchType')} style={{marginRight:10}}
+                                    options={[{label:'请选择搜索种类', value:''},{label:'按字段搜索', value:'field'},{label:'按规则搜索', value:'rule'},{label:'按评估结果搜索', value:'risk'}]}
+                                />
                             </FormItem>
                             {this.state.searchType==''?''
                             :this.state.searchType=='field'?
@@ -449,35 +443,27 @@ class ListEvent extends React.Component{
                             :this.state.searchType=='rule'?
                             <span>
                                 <FormItem label="选择策略：">
-                                    <Select dropdownMatchSelectWidth={false} value={this.state.activationName} onChange={this.handleSelect.bind(this,'activationName')} style={{width:100}}>
-                                        {this.props.activationList.map((info,i)=>{
-                                            return <Option key={info.label} value={info.value}>{info.label}</Option>
-                                        })}
-                                    </Select>
+                                    <Select dropdownMatchSelectWidth={false} value={this.state.activationName} onChange={this.handleSelect.bind(this,'activationName')} style={{width:100}}
+                                        options={this.props.activationList.map((info)=>({label:info.label, value:info.value}))}
+                                    />
                                 </FormItem>
                                 <FormItem label="选择规则：">
-                                    <Select dropdownMatchSelectWidth={false} value={this.state.ruleId} onChange={this.handleSelect.bind(this,'ruleId')} style={{width:100}}>
-                                        {ruleList==undefined?'':ruleList.map((info,i)=>{
-                                            return <Option key={info.label} value={info.type}>{info.label}</Option>
-                                        })}
-                                    </Select>
+                                    <Select dropdownMatchSelectWidth={false} value={this.state.ruleId} onChange={this.handleSelect.bind(this,'ruleId')} style={{width:100}}
+                                        options={ruleList==undefined?[]:ruleList.map((info)=>({label:info.label, value:info.type}))}
+                                    />
                                 </FormItem>
                             </span>
                             :this.state.searchType=='risk'?
                             <span>
                                 <FormItem label="选择策略：">
-                                    <Select dropdownMatchSelectWidth={false} value={this.state.activationName} onChange={this.handleSelect.bind(this,'activationName')} style={{width:100}}>
-                                        {this.props.activationList.map((info,i)=>{
-                                            return <Option key={info.label} value={info.value}>{info.label}</Option>
-                                        })}
-                                    </Select>
+                                    <Select dropdownMatchSelectWidth={false} value={this.state.activationName} onChange={this.handleSelect.bind(this,'activationName')} style={{width:100}}
+                                        options={this.props.activationList.map((info)=>({label:info.label, value:info.value}))}
+                                    />
                                 </FormItem>
                                 <FormItem label="处理结果：">
-                                    <Select dropdownMatchSelectWidth={false} value={this.state.risk} onChange={this.handleSelect.bind(this,'risk')} style={{width:100}}>
-                                        <Option value='pass'>通过</Option>
-                                        <Option value='review'>人工审核</Option>
-                                        <Option value='reject'>拒绝</Option>
-                                    </Select>
+                                    <Select dropdownMatchSelectWidth={false} value={this.state.risk} onChange={this.handleSelect.bind(this,'risk')} style={{width:100}}
+                                        options={[{label:'通过', value:'pass'},{label:'人工审核', value:'review'},{label:'拒绝', value:'reject'}]}
+                                    />
                                 </FormItem>
                             </span>
                             :''}

@@ -5,7 +5,6 @@ import {Form, Input, InputNumber, Breadcrumb, Row, Col, Card, Select, Button, Ca
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import ComplexCondition from '../abstraction/ComplexCondition';
 
@@ -331,13 +330,7 @@ export default class Rule extends React.Component{
                     </FormItem>
 
                     <FormItem {...formItemLayout} label="操作符：">
-                        <Select value={this.state.operator} onChange={this.handleSelect.bind(this,'operator')}>
-                            <Option value="NONE">无</Option>
-                            <Option value="ADD">加</Option>
-                            <Option value="SUB">减</Option>
-                            <Option value="MUL">乘</Option>
-                            <Option value="DIV">除</Option>
-                        </Select>
+                        <Select value={this.state.operator} onChange={this.handleSelect.bind(this,'operator')} options={[{label:'无', value:'NONE'}, {label:'加', value:'ADD'}, {label:'减', value:'SUB'}, {label:'乘', value:'MUL'}, {label:'除', value:'DIV'}]}/>
                     </FormItem>
 
                     <FormItem {...formItemLayout} label="指标字段：" help={validate.abstractionName.help} validateStatus={validate.abstractionName.status}>
