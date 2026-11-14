@@ -68,7 +68,7 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 v2.1（工程基础）   P0-1 ~ P0-5        —— 测试、CI、Docker、发布规范化（[已发布](plan-v2.1.md)）
 v2.2（专业度）     P1-1、P1-2         —— JDK 21 + 虚拟线程、可观测性（[已发布](plan-v2.2.md)）
 v2.3（存储演进）   P1-3、P1-4         —— ES 8、报表存储调研（**暂缓**：2026-11-14 决定优先 v2.4，版本号保留）
-v2.4（前端现代化） P1-7               —— radar-web 复活：React 18 + antd 5 + Vite（[plan-v2.4.md](plan-v2.4.md)）
+v2.4（前端现代化） P1-7               —— radar-web 复活：React 18 + antd 5 + Vite（[已发布](plan-v2.4.md)）
 v3.0（生态）       P2-1、P2-2 →      —— 插件 SDK、Groovy 沙箱；视社区情况启动 P2-3
 ```
 

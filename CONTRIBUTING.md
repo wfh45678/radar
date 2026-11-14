@@ -7,6 +7,7 @@
 - JDK 21+（v2.2 起编译目标与运行时均为 21；本机默认 JDK 为 17 时可 zip 版并存：
   `JAVA_HOME=D:/Java/jdk-21 PATH="D:/Java/jdk-21/bin:$PATH" mvn package`）
 - Maven 3.8+（仓库自带镜像配置 `.mvn/settings.xml`，命令行示例已带 `-s` 参数）
+- Node.js 22+ 与 npm（仅前端开发 / 重新构建前端产物需要，见 `frontend/`）
 - Docker（仅运行集成测试 / 一键环境需要；没有 Docker 也能做日常开发与单测）
 
 ## 本地开发
@@ -29,6 +30,20 @@ java -jar target/radar.jar        # 管理端 http://localhost:6580
 ```
 
 配置说明见 `src/main/resources/application*.yml`（profile：local/dev/prod，测试 profile 为 test）。
+
+## 前端开发（frontend/）
+
+管理端 SPA：React 18 + antd 5 + Vite（v2.4 起源码入仓，构建产物提交于 `src/main/resources/static/`）。
+
+```bash
+cd frontend
+npm ci && npm run dev      # 开发模式：http://localhost:3000，/services 代理到 localhost:6580
+                           # 联调其它后端：RADAR_API_TARGET=http://主机:6580 npm run dev
+npm run build              # 产物出 dist/
+```
+
+改动前端源码后，**必须**重跑 `scripts/build-frontend.sh` 把产物同步进 `src/main/resources/static/` 并一并提交
+（CI 有产物同步校验，源码与产物漂移会挂）。部署形态不变：产物内嵌 jar，Dockerfile/compose 无 node 阶段。
 
 ## 测试分层约定
 

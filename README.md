@@ -45,7 +45,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 
 后端技术框架： SpringBoot 3 + MyBatis-Plus + Mysql +  MongoDB + Redis + Groovy + ES + springdoc-openapi
 
-前端技术框架： React(SPA) 
+前端技术框架： React 18 + antd 5 + Vite（SPA，源码在 [frontend/](frontend/README.md)，构建产物内嵌 jar）
 
 > 自 v2.0 起，工程由 8 个 Maven 模块合并为**单模块单体应用**（Java 17 + Spring Boot 3.5），
 > 一个 jar 同时提供管理端与引擎端 API（默认端口 6580），持久层由 tk.mybatis/PageHelper 迁移至 MyBatis-Plus，
@@ -64,6 +64,10 @@ java -jar target/radar.jar
 
 # 管理端 UI:   http://localhost:6580/
 # API 文档:    http://localhost:6580/swagger-ui/index.html （分组：admin / engine）
+
+# 前端开发模式（改前端时用，需 Node 22+；3000 端口，/services 代理到 localhost:6580）
+cd frontend && npm ci && npm run dev
+# 改完前端后同步产物进 jar：scripts/build-frontend.sh，再 mvn package
 ```
 
 > 测试分 L1/L2（纯单测，`mvn test` 秒级全绿）与 L3（Testcontainers 集成测试，需 Docker / CI 全量跑），
@@ -135,6 +139,6 @@ https://gitee.com/freshday/radar/wikis/manual
 
  
  ## 特别说明
- 前端源码仅对企业级用户开放，需付费购买。   
+ 管理端前端源码自 v2.4.0 起随本仓开放（frontend/ 目录）。   
  未经授权，禁止使用本项目源码申请软著和专利，保留追究法律责任的权力！   
- Copyright ©  2019-2022 WangFeiHu
+ Copyright ©  2019-2026 WangFeiHu
