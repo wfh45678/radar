@@ -25,7 +25,7 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 | 1 | 测试几乎为零 | 219 个源文件仅 3 个测试类（CryptUtil/MapStruct/Plugin），引擎核心零覆盖，v2.0 回归靠手工冒烟 |
 | 2 | 无 CI / 无 Docker | 仓库无 GitHub Actions、无 Dockerfile / docker-compose |
 | 3 | 环境搭建门槛高 | "开箱即用"实际需要自装 MySQL / MongoDB / Redis / ES / Kafka 五件套 |
-| 4 | 发布不规范 | 无版本 tag、无 changelog |
+| 4 | 发布不规范 | CHANGELOG 缺失；历史 tag 止于 v1.0.8，此后未再打 tag（v2.0.0 起已恢复规范，见 CHANGELOG.md） |
 | 5 | 英文门面失修 | README_en.md 仍描述 tk.mybatis / Swagger 旧栈 |
 | 6 | 可观测性缺失 | "100ms 响应"卖点无指标背书，无 Micrometer / Prometheus 接入 |
 

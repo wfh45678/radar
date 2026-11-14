@@ -1,1 +1,0 @@
-update engine_rule set ABSTRACTION_NAME = CONCAT('abstractions.', ABSTRACTION_NAME) where ABSTRACTION_NAME != '';

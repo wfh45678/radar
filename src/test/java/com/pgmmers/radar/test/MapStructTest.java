@@ -1,6 +1,5 @@
 package com.pgmmers.radar.test;
 
-import com.pgmmers.radar.RadarApplication;
 import com.pgmmers.radar.mapper.AbstractionMapper;
 import com.pgmmers.radar.mapper.ActivationMapper;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
@@ -49,6 +48,7 @@ import com.pgmmers.radar.model.vo.model.ModelVO;
 import com.pgmmers.radar.model.vo.model.PreItemVO;
 import com.pgmmers.radar.model.vo.model.RuleHistoryVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
+import com.pgmmers.radar.support.AbstractIntegrationTest;
 import java.util.Date;
 import java.util.List;
 import jakarta.annotation.Resource;
@@ -56,14 +56,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 
 /**
  * author: wangcheng Date: 2020/3/17 Time: 下午5:19 Description:
+ * L3 集成测试：MapStruct 转换 + mapper 读链路（依赖 AbstractIntegrationTest 四件套容器）。
  */
-@SpringBootTest(classes = RadarApplication.class)
-public class MapStructTest {
+public class MapStructTest extends AbstractIntegrationTest {
 
 
     @Autowired
