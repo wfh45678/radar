@@ -322,6 +322,30 @@
                     <excludedGroups>${surefire.excludedGroups}</excludedGroups>
                 </configuration>
             </plugin>
+            <!-- 覆盖率报告：mvn verify 产出 target/site/jacoco/。
+                 check 门禁规则待 CI 首跑基线数据后启用（见 docs/plan-v2.2.md §4.4）：
+                 <execution><id>check</id><goals><goal>check</goal></goals>
+                   <configuration><rules>...</rules></configuration></execution> -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

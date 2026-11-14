@@ -69,6 +69,15 @@ java -jar target/radar.jar
 > 测试分 L1/L2（纯单测，`mvn test` 秒级全绿）与 L3（Testcontainers 集成测试，需 Docker / CI 全量跑），
 > 详见 [CONTRIBUTING.md](CONTRIBUTING.md)、[docs/plan-v2.1.md](docs/plan-v2.1.md)。
 
+### 可观测性
+
+```bash
+# Prometheus 指标: http://localhost:6580/actuator/prometheus （需 JDK 21+，v2.2 起默认开启虚拟线程）
+# 监控看板:        docker compose --profile monitoring up -d → Grafana http://localhost:3000 (admin/radar123)
+```
+
+业务指标：事件吞吐、引擎六阶段耗时 P99、激活决策分布、规则命中、Groovy 编译。压测对照方法见 [docs/benchmark-v2.2.md](docs/benchmark-v2.2.md)。
+
 ### 架构图
 ![系统模块](https://www.riskengine.cn/radar/sys_model_arch.png) 
 

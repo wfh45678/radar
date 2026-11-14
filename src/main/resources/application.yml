@@ -1,6 +1,11 @@
 spring:
   profiles:
     active: @profileActive@
+  threads:
+    virtual:
+      # v2.2 默认开启虚拟线程（需 JDK 21+，见 docs/plan-v2.2.md §4.2 压测对照；
+      # 若 pinning 损益严重则回退为 virtual profile 可选开关）
+      enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
