@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import {Form,Button,Table,Pagination,Input,Select,Modal,DatePicker,Cascader} from 'antd';
-import {withParams} from '../utils/routerUtil';
+import {withParams, withOutletCtx} from '../utils/routerUtil';
 import dayjs from 'dayjs';
 
 const FormItem=Form.Item;
@@ -406,4 +406,4 @@ class Rule extends React.Component{
     }
 }
 
-export default withParams(Rule);
+export default withParams(withOutletCtx(Rule));

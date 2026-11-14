@@ -1,12 +1,10 @@
 import React from 'react';
 import {Breadcrumb, Form, Row, Col, Switch, Modal, Input, Button, Table, Tooltip, Pagination, Select, Popconfirm, message, Menu} from 'antd';
-import {withParams} from '../utils/routerUtil';
+import {withLocation} from '../utils/routerUtil';
 import {AppstoreOutlined, CopyOutlined, FileTextOutlined, PictureOutlined, SettingOutlined, SolutionOutlined} from '@ant-design/icons';
-import { Link } from 'react-router';
+import { Link, Outlet } from 'react-router';
 import dayjs from 'dayjs';
 const FormItem = Form.Item;
-const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
 const confirm = Modal.confirm;
 
 import {FetchUtil} from '../utils/fetchUtil';
@@ -30,7 +28,7 @@ class Model extends React.Component{
     // 获取表格数据
     fetchData=()=>{
 
-        FetchUtil('/model/'+this.props.params.id,'GET','',
+        FetchUtil('/model/'+this.props.location.pathname.split('/')[2],'GET','',
             (data)=>{
                 if(data.data.model.status === 1){
                     this.setState({
@@ -82,7 +80,7 @@ class Model extends React.Component{
     }
 
     handleClick=(e)=>{
-    	window.location.href='/#/'+e.key+'/'+this.props.params.id;
+    	window.location.href='/#/'+e.key+'/'+this.props.location.pathname.split('/')[2];
     	this.setState({
     		current:e.key
     	})
@@ -93,7 +91,7 @@ class Model extends React.Component{
             open: true
         });
         var _self = this;
-        let paramsId = this.props.params.id;
+        let paramsId = this.props.location.pathname.split('/')[2];
         //var success = false;
         confirm({
             title: '是否重新构建模型？',
@@ -137,7 +135,7 @@ class Model extends React.Component{
         });
 
         if(!this.state.checked){
-            FetchUtil('/model/enable/'+this.props.params.id,'POST','',
+            FetchUtil('/model/enable/'+this.props.location.pathname.split('/')[2],'POST','',
                 (data)=>{
                     console.log(data);
                     if(!data.success){
@@ -145,7 +143,7 @@ class Model extends React.Component{
                     }
                 });
         }else {
-            FetchUtil('/model/disable/'+this.props.params.id,'POST','',
+            FetchUtil('/model/disable/'+this.props.location.pathname.split('/')[2],'POST','',
                 (data)=>{
                     console.log(data);
                     if(!data.success){
@@ -173,34 +171,21 @@ class Model extends React.Component{
                     	<Menu onClick={this.handleClick}
 					        selectedKeys={[this.state.current]}
 					        mode="horizontal"
-					      >
-					        <Menu.Item key="field">
-					          <FileTextOutlined />字段管理
-					        </Menu.Item>
-					        <Menu.Item key="preItem">
-					          <CopyOutlined />预处理管理
-					        </Menu.Item>
-					        <Menu.Item key="datalist">
-					          <AppstoreOutlined />黑/白名单管理
-					        </Menu.Item>
-					        <Menu.Item key="abstractionList">
-					          <PictureOutlined />抽象处理
-					        </Menu.Item>
-					        
-						        <Menu.Item key="modelConfig">
-						           <SettingOutlined />机器学习配置
-						        </Menu.Item>
-					        
-					        <Menu.Item key="activation">
-					          <SolutionOutlined />策略管理
-					        </Menu.Item>
-					      </Menu>
+					        items={[
+					          { key:'field', label:<><FileTextOutlined />字段管理</> },
+					          { key:'preItem', label:<><CopyOutlined />预处理管理</> },
+					          { key:'datalist', label:<><AppstoreOutlined />黑/白名单管理</> },
+					          { key:'abstractionList', label:<><PictureOutlined />抽象处理</> },
+					          { key:'modelConfig', label:<><SettingOutlined />机器学习配置</> },
+					          { key:'activation', label:<><SolutionOutlined />策略管理</> },
+					        ]}
+					      />
                     </div>
-                    {this.props.children}
+                    <Outlet />
                 </div>
           </div>
         );
     }
 }
 
-export default withParams(Model);
+export default withLocation(Model);

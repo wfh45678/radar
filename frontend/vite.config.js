@@ -18,7 +18,8 @@ export default defineConfig({
     host: 'localhost',
     proxy: {
       '/services': {
-        target: 'http://localhost:6580',
+        // 可用环境变量覆盖联调目标，如 RADAR_API_TARGET=http://测试服务器:6580
+        target: process.env.RADAR_API_TARGET || 'http://localhost:6580',
         changeOrigin: true,
       },
     },

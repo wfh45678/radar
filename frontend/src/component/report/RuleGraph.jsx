@@ -9,9 +9,10 @@ const FormItem=Form.Item;
 const RangePicker = DatePicker.RangePicker;
 
 import {FetchUtil} from '../utils/fetchUtil';
+import {withOutletCtx} from '../utils/routerUtil';
 import {trim} from '../utils/validateUtil';
 
-export default class RuleGraph extends React.Component{
+class RuleGraph extends React.Component{
 
 	
 	constructor(props){
@@ -213,3 +214,5 @@ export default class RuleGraph extends React.Component{
 		});
 	}
 }
+
+export default withOutletCtx(RuleGraph);

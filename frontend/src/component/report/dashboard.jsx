@@ -9,8 +9,9 @@ import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
 
 import './ListEvent.less';
+import {withOutletCtx} from '../utils/routerUtil';
 
-export default class DashBoard extends React.Component{
+class DashBoard extends React.Component{
 
     constructor(props){
         super(props);
@@ -50,3 +51,5 @@ export default class DashBoard extends React.Component{
             </div>);
     }
 }
+
+export default withOutletCtx(DashBoard);

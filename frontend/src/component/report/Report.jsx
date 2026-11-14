@@ -5,8 +5,10 @@ import {FileTextOutlined, PushpinOutlined} from '@ant-design/icons';
 const FormItem=Form.Item;
 
 import {FetchUtil} from '../utils/fetchUtil';
+import {Outlet} from 'react-router';
+import {withLocation} from '../utils/routerUtil';
 
-export default class Report extends React.Component{
+class Report extends React.Component{
 	constructor(props){
 		super(props);
 
@@ -91,14 +93,15 @@ export default class Report extends React.Component{
         if(this.state.modelId==''){
             return '请选择模型！';
         }
-        const props={
+        // 原 rr3 cloneElement 注入子页 props，router 6/7 下走 Outlet context
+        const ctx={
             modelId:this.state.modelId,
             model:this.state.modelList.filter(x=>x.id==this.state.modelId)[0],
             fieldList:this.state.fieldList,
             eventFieldList:this.state.eventFieldList,
             activationList:this.state.activationList
         }
-        return React.cloneElement(this.props.children,props);
+        return <Outlet context={ctx}/>;
     }
 
 	render() {
@@ -118,17 +121,13 @@ export default class Report extends React.Component{
                         </Form>
                     </div>
                     <div className="ant-layout-header" style={{padding:"0 24px 24px"}}>
-                        <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal">
-                            <Menu.Item key="event">
-                                <FileTextOutlined />调用查询
-                            </Menu.Item>
-                            <Menu.Item key="graph">
-                                <PushpinOutlined />规则命中
-                            </Menu.Item>
-                            <Menu.Item key="dashboard">
-                                <FileTextOutlined />数据看板
-                            </Menu.Item>
-                        </Menu>
+                        <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal"
+                            items={[
+                              { key:'event', label:<><FileTextOutlined />调用查询</> },
+                              { key:'graph', label:<><PushpinOutlined />规则命中</> },
+                              { key:'dashboard', label:<><FileTextOutlined />数据看板</> },
+                            ]}
+                        />
                     </div>
                     {this.getItems()}
                 </div>
@@ -136,3 +135,5 @@ export default class Report extends React.Component{
         );
     }
 }
+
+export default withLocation(Report);
