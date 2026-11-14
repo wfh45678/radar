@@ -2,6 +2,14 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [2.4.1] - 2026-11-15
+
+### Removed
+- **机器学习配置页面**：模型工作区『机器学习配置』Tab 与 `/modelConfig/:id` 路由下线
+  （与 Estimator 接口保留零实现、ML 重接暂缓的既定决策保持一致，UI 先行下线；
+  后端 `/modelConfig` 端点未动，将来重接时恢复即可）。顺带清理无路由死代码
+  `frontend/src/component/config/LearningConfig.jsx`（2022 版起即未接线）
+
 ## [2.4.0] - 2026-11-14
 
 前端现代化版本（roadmap P1-7）：管理端前端源码入仓并完成 2022 → 2026 工具链迁移，后端零改动（v2.3 存储演进暂缓顺延，版本号保留）。
