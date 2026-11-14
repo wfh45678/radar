@@ -34,7 +34,7 @@ Admin UI: http://localhost:6580/  · API docs: http://localhost:6580/swagger-ui/
 
 ## Build from Source
 
-Requirements: JDK 17+, Maven.
+Requirements: JDK 21+, Maven.
 
 ```bash
 mvn package -s .mvn/settings.xml -DskipTests   # or: mvn verify to run all tests (Docker required)

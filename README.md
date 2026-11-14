@@ -57,7 +57,7 @@ The project code called Radar, like the code, monitor the transaction at the bac
 # 方式一：Docker 一键环境（MySQL/Mongo/Redis/ES 自动导入种子数据；--profile app 额外启动应用镜像）
 docker compose up -d
 
-# 方式二：源码构建（需 JDK 17+，Maven 配置见 .mvn/settings.xml）
+# 方式二：源码构建（需 JDK 21+，Maven 配置见 .mvn/settings.xml）
 mvn package -s .mvn/settings.xml -DskipTests
 # （可先 docker compose up -d 起中间件，再）运行：
 java -jar target/radar.jar

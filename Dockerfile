@@ -1,5 +1,5 @@
 # Radar 运行镜像：预构建前端已在 jar 内（static/），无需 node 构建阶段
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 
 ENV TZ=Asia/Shanghai \
     JAVA_OPTS=""

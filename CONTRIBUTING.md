@@ -4,7 +4,8 @@
 
 ## 环境要求
 
-- JDK 17+
+- JDK 21+（v2.2 起编译目标与运行时均为 21；本机默认 JDK 为 17 时可 zip 版并存：
+  `JAVA_HOME=D:/Java/jdk-21 PATH="D:/Java/jdk-21/bin:$PATH" mvn package`）
 - Maven 3.8+（仓库自带镜像配置 `.mvn/settings.xml`，命令行示例已带 `-s` 参数）
 - Docker（仅运行集成测试 / 一键环境需要；没有 Docker 也能做日常开发与单测）
 
