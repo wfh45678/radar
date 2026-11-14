@@ -1,0 +1,7 @@
+//项目前后端分离，此目录用于存放前端代码
+//安装
+yarn install
+//编译 
+npm run build
+//启动
+npm run start
