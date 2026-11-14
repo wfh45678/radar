@@ -18,6 +18,9 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 项目级默认值：防止 env.CI 等激活其他 profile 时 activeByDefault 的 local 失效，
+             导致资源过滤留下原始 @profileActive@ 占位符（服务器 L3 实测踩坑） -->
+        <profileActive>local</profileActive>
 
         <mybatis-plus.version>3.5.18.1</mybatis-plus.version>
         <springdoc.version>2.9.1</springdoc.version>
