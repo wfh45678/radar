@@ -61,8 +61,11 @@ services:
       retries: 30
 
   # 应用镜像（可选）：docker compose --profile app up -d --build
+  # 同时声明 build: 便于无 GHCR 访问的测试服务器本地构建（见 scripts/deploy-test.sh）
   app:
     image: ghcr.io/wfh45678/radar:latest
+    build:
+      context: .
     container_name: radar-app
     profiles: ["app"]
     depends_on:
