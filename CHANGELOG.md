@@ -2,6 +2,52 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [3.0.0] - 2026-11-15
+
+生态大版本（roadmap P2-1/P2-4）：preItem 插件 SDK 化——插件从"主 jar 内置数组"重构为可独立开发、
+外置分发、自动发现、失败隔离的生态接口。后端引擎语义兼容（存量模型/配置零改动），API 形态 major bump。
+规划详见 [docs/plan-v3.0.md](docs/plan-v3.0.md)，开发指南见 [docs/plugin-dev-guide.md](docs/plugin-dev-guide.md)。
+
+### Added
+- **radar-plugin-api 契约模块**（独立工程，零第三方依赖）：`Plugin` + `@PluginMeta`（key 与类名解耦）、
+  `ParamDescriptor` 参数 schema（管理端动态表单数据源）、`OutputColumn` 输出列声明、
+  类型化 `PluginRequest/PluginResult`、`KeyValueCache` 进程内 TTL 缓存、
+  `HttpTool`（强制超时 + 私网目标防护，缓解 url 配置类 SSRF）、`PluginException` 异常契约
+- **外置插件 jar**：`plugins/` 目录启动扫描（SPI + 子优先类加载器隔离，compose 挂载
+  `./plugins:/radar/plugins`），数据服务厂商自助接入；同 key 冲突先到先得并告警
+- **执行加固**：插件失败隔离（默认：错误标记 + 指标，事件链路继续；`plugin.isolation=strict` 回旧行为）、
+  `radar_plugin_executions_total{plugin,result}` / `radar_plugin_seconds{plugin}` 指标
+  （缺失插件归并 unknown 标签防基数爆炸）
+- `/services/v1/common/plugins` 返回完整元信息（paramSchema/outputMeta/source/remote），
+  管理端 preItem 表单按 schema **动态渲染**——新插件上架前端零改动；响应列由 outputMeta 自动生成
+- 示例插件工程 `samples/radar-plugin-demo`（敏感数据识别脱敏，4 单测绿，已在测试服务器实测 EXTERNAL 装载）
+- 插件开发指南 `docs/plugin-dev-guide.md`（契约/运行语义/存量兼容/v2→v3 迁移对照）
+- GitHub 镜像仓 Gitee→GitHub 每小时自动同步 workflow（.github/workflows/sync-gitee.yml），
+  CI/GHCR/Release 随主仓推进自动执行
+
+### Changed
+- 8 个内置插件全量迁移 v3 契约（**类名=存量 key 不变，DB 配置零改动兼容**）：
+  IP2LOCATION searcher 启动加载一次并复用（旧实现每请求重建读盘）+ 结果缓存 1h；
+  GPS2LOCATION 硬编码第三方地址移入 `plugin.gps.url` 配置并改走引擎 HTTP 工具；
+  MOBILE2LOCATION 删除永不执行的失效百度 API 回填死代码；HTTP_UTIL url/reqType 进 schema、
+  支持 `{字段名}` 占位符
+- 4 处管理端调用方（抽象列/激活列/事件检索/ES 映射）迁移至 PluginEntry 统一元信息视图
+
+### Removed
+- V1 `PluginService`/`PluginServiceImpl`（2019 版方法级 API，v2.0 起已停用）及其残留注入字段
+
+### Breaking Changes
+- 插件开发 API 变化：新增插件请实现 v3 `Plugin` 接口（v2 `PluginServiceV2` 仍被适配兼容，
+  计划随生态迁移逐步下线）
+- 存量 preItem DB 配置零改动兼容；`plugin.isolation` 默认 isolated（插件失败不再拖垮整笔事件，
+  需要旧行为设为 strict）
+
+### Verification
+- L1/L2 `mvn test` 17/17 绿（含新增 PluginIsolationTest 3 用例：隔离/strict/标签基数）
+- 测试服务器（v3.0 正式件）实测：`plugins/` 外置示例 jar 重启装载为 EXTERNAL、
+  `/common/plugins` 元信息完整、十步全链路验证通过（规则命中 reject/120）
+- 示例插件单测 4/4 绿；前端 vite build 通过
+
 ## [2.4.1] - 2026-11-15
 
 ### Removed

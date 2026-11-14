@@ -1,0 +1,26 @@
+name: Sync from Gitee
+
+# Gitee 为主仓（贡献入口），本 workflow 在 GitHub 镜像仓每小时拉取同步一次，
+# 使 CI（ci.yml）/ 镜像发布（release.yml）随主仓推进自动执行。
+# 首次启用：手动在 GitHub 仓跑一次 workflow_dispatch，或手动 push 一次使本文件进入 GitHub。
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror Gitee -> GitHub
+        shell: bash
+        run: |
+          git config --global init.defaultBranch master
+          git clone --mirror https://gitee.com/freshday/radar.git repo.git
+          cd repo.git
+          git push --mirror "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
