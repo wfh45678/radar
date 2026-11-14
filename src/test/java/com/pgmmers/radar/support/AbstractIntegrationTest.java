@@ -2,7 +2,6 @@ package com.pgmmers.radar.support;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -10,7 +9,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
@@ -44,6 +42,8 @@ public abstract class AbstractIntegrationTest {
             .withPassword("radar")
             .withCopyFileToContainer(MountableFile.forHostPath("sql/radar-init.sql"),
                     "/docker-entrypoint-initdb.d/1-radar-init.sql");
+    // 注意：MySQL 不能用 @ServiceConnection——Druid starter 不支持 Boot 的 ConnectionDetails
+    // 抽象（直读 spring.datasource.url 属性），改由下方 @DynamicPropertySource 显式注入。
 
     static MongoDBContainer mongo = new MongoDBContainer(DockerImageName.parse("mongo:4.4"));
 
@@ -69,6 +69,16 @@ public abstract class AbstractIntegrationTest {
 
     @DynamicPropertySource
     static void registerCustomProperties(DynamicPropertyRegistry registry) {
+        // MySQL：Druid 不支持 ConnectionDetails，显式注入连接属性
+        registry.add("spring.datasource.url", mysql::getJdbcUrl);
+        registry.add("spring.datasource.username", mysql::getUsername);
+        registry.add("spring.datasource.password", mysql::getPassword);
+        // MongoDB / Redis：字段未标注 @ServiceConnection（启动方式改造后统一显式注入，行为一致）
+        registry.add("spring.data.mongodb.uri",
+                () -> "mongodb://" + mongo.getHost() + ":" + mongo.getMappedPort(27017) + "/radar");
+        registry.add("spring.data.redis.host", redis::getHost);
+        registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+        // ES：应用自定义 EsConfig 读 elasticsearch.url
         registry.add("elasticsearch.url", () -> "http://" + es.getHttpHostAddress());
     }
 }
