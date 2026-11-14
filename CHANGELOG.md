@@ -2,6 +2,49 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [2.4.0] - 2026-11-14
+
+前端现代化版本（roadmap P1-7）：管理端前端源码入仓并完成 2022 → 2026 工具链迁移，后端零改动（v2.3 存储演进暂缓顺延，版本号保留）。
+规划详见 [docs/plan-v2.4.md](docs/plan-v2.4.md)。
+
+### Added
+- **前端源码入仓**：radar-web（gitee.com/freshday/radar-web，2022-08 封存）经 git subtree 合入 `frontend/`，
+  构建产物提交于 `src/main/resources/static/` 内嵌 jar，部署拓扑零变化（Dockerfile/compose 无 node 阶段）
+- `scripts/build-frontend.sh`：npm ci → vite build → 同步 static/（保留 images/ res/）
+- CI：Node 22 + 前端构建 + **产物同步校验**（`git diff --exit-code`，改前端不重建会挂）；
+  release workflow 打包前重建兜底
+- vite dev 代理目标支持 `RADAR_API_TARGET` 环境变量覆盖（联调非本机后端）
+- `frontend/README.md`：开发/构建/迁移约定说明
+
+### Changed
+- **构建链**：webpack 4 + babel 7 + node-sass → **Vite 6**（Node 22；node-sass/IE8 兼容件/yarn.lock 全删）
+- **技术栈**：React 16.8 → **18.3**、antd 3.16 → **5**、react-router 3 → **7**、echarts 3 → **5**、moment → **dayjs**
+- **URL 与行为兼容**（2022 版基线逐页比对）：
+  - hash 路由扁平 URL 原样保留（`#/field/:id`、`#/event`、`#/ruleid/...`）；
+    rr3 嵌套绝对 path 结构以 Index/Model/Report 三层 pathless layout route 等价重建
+  - 49 个 class 组件原样保留（React 18 兼容），不 hooks 化、不引 TypeScript、UI 不改版
+  - 旧生命周期迁移（React 17+ 移除 `componentWillReceiveProps/WillMount` → `componentDidUpdate`）
+  - antd 5 适配：`visible→open`、具名图标、Select `options`、Menu/Breadcrumb `items`、
+    `Form.create→Form.useForm`、`ConfigProvider locale=zhCN`（antd5 默认 en_US）
+
+### Fixed
+- **CRUD 尾斜杠 400（v2.2.0 及之前已存在的老 bug，冒烟实测发现）**：
+  老前端 CRUD URL 带尾斜杠（`/model/`、`/field/` 等），Spring 6 取消尾斜杠匹配后落到静态资源处理器报 400
+  ——即旧前端在 Boot 3 后端上"新建模型（非模板）/删除模型/各实体 PUT"本来就是坏的。
+  fetchUtil 统一剥离尾斜杠修复，真实后端实测新建/删除模型通过
+- Login 未 import `Modal` 即调用 `Modal.error` 的潜在空引用（原 2022 代码隐患）
+
+### Breaking Changes
+- 前端构建需要 Node 22+（仅开发者；使用者产物已内嵌 jar，无感知）
+- 对后端与部署零改动；浏览器基线升为现代常青浏览器（放弃 IE）
+
+### Verification
+- `npm run build` 产物 2.5M（对照旧 webpack 产物 3.4M）；CI 产物同步校验通过
+- dev 代理直连测试服务器 v2.2.0 真实后端实测：注册（绕验证码）→ 登录 → 新建模型 →
+  删除模型 → 创建必备字段（9 控件大表单）→ 字段/策略/抽象/名单/预处理/报表三页/配置中心/模型配置
+  **九页走查全过**，数据真实落库
+- 后端 L1/L2 `mvn test` 14/14 全绿（92 个种子脚本回归通过），零后端改动
+
 ## [2.2.0] - 2026-11-14
 
 专业度版本（roadmap P1-1/P1-2）：JDK 21 + 虚拟线程、可观测体系、测试服务器部署流水线。

@@ -1,0 +1,26 @@
+{
+  "name": "radar-admin",
+  "version": "2.4.0",
+  "private": true,
+  "type": "module",
+  "description": "Radar 风控引擎管理平台前端（React 18 + antd 5 + Vite）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.6.1",
+    "antd": "^5.27.0",
+    "dayjs": "^1.11.13",
+    "echarts": "^5.6.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router": "^7.9.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.6.0",
+    "less": "^4.2.2",
+    "vite": "^6.3.5"
+  }
+}
