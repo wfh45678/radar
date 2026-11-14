@@ -21,6 +21,17 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # 发布件保险：打包前重建前端（产物已提交于 static/，CI 已校验同步，此处冗余兜底）
+      - name: Build frontend
+        run: bash scripts/build-frontend.sh
+
       - name: Cache Maven repository
         uses: actions/cache@v4
         with:
