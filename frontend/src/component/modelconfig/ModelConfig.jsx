@@ -1,5 +1,7 @@
 import React from 'react';
-import {Breadcrumb, Menu, Icon, Form, Upload, Input, Select, Card, Row, Col,Button, Tooltip, Tag, Modal, message} from 'antd';
+import {Breadcrumb, Menu, Form, Upload, Input, Select, Card, Row, Col, Button, Tooltip, Tag, Modal, message} from 'antd';
+import {withParams} from '../utils/routerUtil';
+import {QuestionCircleOutlined, UploadOutlined} from '@ant-design/icons';
 
 const FormItem=Form.Item;
 const Option = Select.Option;
@@ -9,12 +11,12 @@ import {trim} from '../utils/validateUtil';
 
 import EditModelConfParam from './modal/EditModelConfParam';
 
-export default class ModelConfig extends React.Component{
+class ModelConfig extends React.Component{
 	constructor(props){
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 			id : -1,
 			status:1,
 			args:'',
@@ -179,7 +181,7 @@ export default class ModelConfig extends React.Component{
 	    			message.error(data.msg);
 	    		}
 	            this.setState({
-	            	visible:false
+	            	open:false
 	            });
 	            //this.props.reload();
 	        });
@@ -288,9 +290,7 @@ export default class ModelConfig extends React.Component{
 		return (
 				<div className="ant-layout-wrapper">
 	                <div className="ant-layout-breadcrumb">
-	                    <Breadcrumb>
-	                        <Breadcrumb.Item>机器学习配置</Breadcrumb.Item>
-	                    </Breadcrumb>
+	                    <Breadcrumb items={['机器学习配置']}/>
 	                </div>
 					<div className="ant-layout-container">
 
@@ -302,7 +302,7 @@ export default class ModelConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'机器学习模型名称'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -317,7 +317,7 @@ export default class ModelConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'支持的机器学习框架类型'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -353,7 +353,7 @@ export default class ModelConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'机器学习模型调用时需要的其它参数'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -366,7 +366,7 @@ export default class ModelConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'tag'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -378,7 +378,7 @@ export default class ModelConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'Operation'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -390,13 +390,13 @@ export default class ModelConfig extends React.Component{
 									<Col span={20}>
 												<Upload {...uploadProps} accept={'.zip'} fileList={this.state.fileList}>
 												    <Button>
-												      <Icon type="upload" /> 点击上传
+												      <UploadOutlined /> 点击上传
 												    </Button>
 											  	</Upload>
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'机器学习训练后的文件, 仅支持zip格式'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -410,7 +410,7 @@ export default class ModelConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'模型描叙信息。'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -484,3 +484,5 @@ export default class ModelConfig extends React.Component{
 		);
 	}
 }
+
+export default withParams(ModelConfig);

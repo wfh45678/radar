@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip } from 'antd';
+import {Button, Checkbox, Select, Radio, Switch, Form, Row, Col, Modal, Input, InputNumber, Cascader, Tooltip} from 'antd';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -14,7 +14,7 @@ export default class EditDataListRecord extends React.Component{
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 
 			dataRecord:this.props.row.dataRecord,
 			fieldNum:this.props.metaList.length
@@ -47,7 +47,7 @@ export default class EditDataListRecord extends React.Component{
 
 	showModal=()=>{
 		this.setState({
-			visible:true
+			open:true
 		})
 	}
 
@@ -60,7 +60,7 @@ export default class EditDataListRecord extends React.Component{
 	    FetchUtil('/datalistrecord/','PUT',JSON.stringify(param),
 	    	(data) => {
 	            this.setState({
-	            	visible:false
+	            	open:false
 	            });
 	            this.props.reload();
 	        });
@@ -68,7 +68,7 @@ export default class EditDataListRecord extends React.Component{
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -81,8 +81,8 @@ export default class EditDataListRecord extends React.Component{
 		return (
 			<span>
 				<Tooltip title="编辑" onClick={this.showModal}><a>编辑</a></Tooltip>
-				<Modal title="编辑记录" visible={this.state.visible} onOk={this.handleSubmit} onCancel={this.handleCancel}>
-                    <Form horizontal form={this.props.form}>
+				<Modal title="编辑记录" open={this.state.open} onOk={this.handleSubmit} onCancel={this.handleCancel}>
+                    <Form>
                     	{this.props.metaList.map(function(info,i){
                     		return (
                     			<FormItem {...formItemLayout} key={'meta'+info.id} label={info.label}>

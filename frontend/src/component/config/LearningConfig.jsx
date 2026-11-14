@@ -1,5 +1,6 @@
 import React from 'react';
-import {Breadcrumb, Menu, Icon, Form, Upload, Input, Select, Card, Row, Col,Button, Tooltip, Tag} from 'antd';
+import {Breadcrumb, Menu, Form, Upload, Input, Select, Card, Row, Col, Button, Tooltip, Tag} from 'antd';
+import {QuestionCircleOutlined, UploadOutlined} from '@ant-design/icons';
 
 const FormItem=Form.Item;
 const Option = Select.Option;
@@ -11,7 +12,7 @@ export default class LearningConfig extends React.Component{
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 
 			destField:'',
 			label:'',
@@ -132,14 +133,11 @@ export default class LearningConfig extends React.Component{
 		return (
 				<div className="ant-layout-wrapper">
 	                <div className="ant-layout-breadcrumb">
-	                    <Breadcrumb>
-	                        <Breadcrumb.Item>首页</Breadcrumb.Item>
-	                        <Breadcrumb.Item>机器学习配置</Breadcrumb.Item>
-	                    </Breadcrumb>
+	                    <Breadcrumb items={['首页', '机器学习配置']}/>
 	                </div>
 					<div className="ant-layout-container">
 
-	 					<Form horizontal form={this.props.form}>
+	 					<Form>
 							<FormItem required={true} {...formItemLayout} label="模型名称："  >
 								<Row>
 									<Col span={20}>
@@ -147,7 +145,7 @@ export default class LearningConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'机器学习模型名称'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -164,7 +162,7 @@ export default class LearningConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'支持的机器学习框架类型'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -200,7 +198,7 @@ export default class LearningConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'机器学习模型调用时需要的其它参数'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -236,7 +234,7 @@ export default class LearningConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'模型需要的特征指标描叙，模型计算依赖的数据'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -247,13 +245,13 @@ export default class LearningConfig extends React.Component{
 									<Col span={20}>
 												<Upload accept={'.zip'}>
 												    <Button>
-												      <Icon type="upload" /> 点击上传
+												      <UploadOutlined /> 点击上传
 												    </Button>
 											  	</Upload>
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'机器学习训练后的文件'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>
@@ -267,7 +265,7 @@ export default class LearningConfig extends React.Component{
 	                            	</Col>
 	                            	<Col span={2} offset={1}>
 			                            <Tooltip placement="right" title={'模型描叙信息。'}>
-			                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+			                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 			                            </Tooltip>
 	                            	</Col>
 	                            </Row>

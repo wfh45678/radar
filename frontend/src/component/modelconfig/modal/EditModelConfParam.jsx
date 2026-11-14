@@ -1,5 +1,7 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip,message } from 'antd';
+import {Button, Checkbox, Select, Radio, Switch, Form, Row, Col, Modal, Input, InputNumber, Cascader, Tooltip, message} from 'antd';
+import {withParams} from '../../utils/routerUtil';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -8,13 +10,13 @@ const Option = Select.Option;
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
 
-export default class EditModelConfParam extends React.Component{
+class EditModelConfParam extends React.Component{
 
 	constructor(props){
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 			id :-1,
 			feed:'',
 			selectList:[],
@@ -74,7 +76,7 @@ export default class EditModelConfParam extends React.Component{
 	showModal=()=>{
 		//this.fetchData();
 		this.setState({
-			visible:true
+			open:true
 		})
 	}
 
@@ -112,7 +114,7 @@ export default class EditModelConfParam extends React.Component{
 						message.error(data.msg);
 					}
 					this.setState({
-						visible: false
+						open: false
 					});
 					this.props.reload();
 				});
@@ -121,7 +123,7 @@ export default class EditModelConfParam extends React.Component{
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -165,7 +167,7 @@ export default class EditModelConfParam extends React.Component{
 		return (
 			<span>
 				<Tooltip title="编辑" onClick={this.showModal}><a>编辑</a></Tooltip>
-				<Modal title="编辑参数" visible={this.state.visible} onOk={this.handleSubmit.bind(this, isValidated)} onCancel={this.handleCancel}>
+				<Modal title="编辑参数" open={this.state.open} onOk={this.handleSubmit.bind(this, isValidated)} onCancel={this.handleCancel}>
                     <Form layout="horizontal" form={this.props.form}>
                         <FormItem required={true} {...formItemLayout} label="feed：" help={validate.feed.help} validateStatus={validate.feed.status}>
 							<Row>
@@ -174,7 +176,7 @@ export default class EditModelConfParam extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'2-30位英文字母、数字、下划线的组合，以英文字母开头：xyz001'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -197,7 +199,7 @@ export default class EditModelConfParam extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'选择模型需要的特征指标'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -210,3 +212,5 @@ export default class EditModelConfParam extends React.Component{
 	}
 
 }
+
+export default withParams(EditModelConfParam);

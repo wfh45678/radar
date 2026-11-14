@@ -1,5 +1,6 @@
 import React from 'react';
 import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message} from 'antd';
+import {withParams} from '../utils/routerUtil';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -11,7 +12,7 @@ import AddDataList from './modal/AddDataList';
 import EditDataList from './modal/EditDataList';
 import EditDataListMeta from './modal/EditDataListMeta';
 
-export default class Datalist extends React.Component{
+class Datalist extends React.Component{
     constructor(props){
         super(props);
 
@@ -165,3 +166,5 @@ export default class Datalist extends React.Component{
         );
     }
 }
+
+export default withParams(Datalist);

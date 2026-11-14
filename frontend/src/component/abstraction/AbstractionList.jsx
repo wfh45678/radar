@@ -1,4 +1,5 @@
 import React,{Component} from 'react';
+import {withParams} from '../utils/routerUtil';
 import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Spin} from 'antd';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
@@ -10,7 +11,7 @@ import Collapse from '../common/Collapse';
 import Abstraction from './Abstraction';
 import {FetchUtil} from '../utils/fetchUtil';
 
-export default class AbstractionList extends Component{
+class AbstractionList extends Component{
     constructor(props){
         super(props);
 
@@ -189,3 +190,5 @@ export default class AbstractionList extends Component{
         );
     }
 }
+
+export default withParams(AbstractionList);

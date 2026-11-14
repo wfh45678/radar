@@ -1,5 +1,6 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip,Upload, message } from 'antd';
+import {Button, Checkbox, Select, Radio, Switch, Form, Row, Col, Modal, Input, InputNumber, Cascader, Tooltip, Upload, message} from 'antd';
+import {UploadOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -14,7 +15,7 @@ export default class AddDataListRecord extends React.Component{
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 			importVisible: false,
 			dataRecord:'',
 			fieldNum:this.props.metaList.length
@@ -53,7 +54,7 @@ export default class AddDataListRecord extends React.Component{
 	showModal=()=>{
 		this.setState({
 			dataRecord: '',
-			visible: true
+			open: true
 		})
 	}
 
@@ -72,7 +73,7 @@ export default class AddDataListRecord extends React.Component{
 	    FetchUtil('/datalistrecord/','PUT', JSON.stringify(param),
 	    	(data) => {
 	            this.setState({
-	            	visible:false
+	            	open:false
 	            });
 	            this.props.reload();
 	        });
@@ -80,7 +81,7 @@ export default class AddDataListRecord extends React.Component{
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -118,8 +119,8 @@ export default class AddDataListRecord extends React.Component{
 				<Button onClick={this.showModal} type="primary">新增</Button> &nbsp;&nbsp;
 				<Button onClick={this.showModal2} type="primary">导入数据</Button>
 				<span>&nbsp;&nbsp;</span> <a href="/res/dataRecord_temp.xlsx">下载数据模板</a>
-				<Modal title="新增记录" visible={this.state.visible} onOk={this.handleSubmit} onCancel={this.handleCancel}>
-                    <Form horizontal form={this.props.form}>
+				<Modal title="新增记录" open={this.state.open} onOk={this.handleSubmit} onCancel={this.handleCancel}>
+                    <Form>
                     	{this.props.metaList.map(function(info,i){
                     		return (
                     			<FormItem {...formItemLayout} key={'meta'+info.id} label={info.label}>
@@ -129,10 +130,10 @@ export default class AddDataListRecord extends React.Component{
                     	}.bind(this))}                                                                
                     </Form>
                 </Modal>
-                <Modal title="导入数据" visible={this.state.importVisible} onCancel={this.handleCancel2} onOk={this.handleCancel2}>
+                <Modal title="导入数据" open={this.state.importVisible} onCancel={this.handleCancel2} onOk={this.handleCancel2}>
 					<Upload {...uploadProps}>
 					    <Button>
-					      <Icon type="upload" /> Click to Upload
+					      <UploadOutlined /> Click to Upload
 					    </Button>
 				  	</Upload>
                 </Modal>

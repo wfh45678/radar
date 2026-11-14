@@ -1,5 +1,6 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip,message } from 'antd';
+import {Button, Checkbox, Select, Radio, Switch, Form, Row, Col, Modal, Input, InputNumber, Cascader, Tooltip, message} from 'antd';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -14,7 +15,7 @@ export default class AddField extends React.Component{
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 
 			fieldName:'',
 			label:'',
@@ -61,7 +62,7 @@ export default class AddField extends React.Component{
 
 	showModal=()=>{
 		this.setState({
-			visible:true,
+			open:true,
 
 			fieldName:'',
 			label:'',
@@ -93,7 +94,7 @@ export default class AddField extends React.Component{
 						message.error(data.msg);
 					}
 					this.setState({
-						visible: false
+						open: false
 					});
 					this.props.reload();
 				});
@@ -102,7 +103,7 @@ export default class AddField extends React.Component{
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -163,8 +164,8 @@ export default class AddField extends React.Component{
 		return (
 			<span>
 				<Button onClick={this.showModal} type="primary">新增</Button>
-				<Modal title="新建字段" visible={this.state.visible} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form horizontal="true" form={this.props.form}>
+				<Modal title="新建字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
+                    <Form="true" form={this.props.form}>
                         <FormItem required={true} {...formItemLayout} label="字段名：" help={validate.fieldName.help} validateStatus={validate.fieldName.status}>
 							<Row>
                         		<Col span={20}>
@@ -172,7 +173,7 @@ export default class AddField extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'2-30位英文字母、数字、下划线的组合，以英文字母开头，如"deviceId"'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -184,7 +185,7 @@ export default class AddField extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'字段显示名称，一般为中文，如"设备ID"'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -201,7 +202,7 @@ export default class AddField extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'字段类型，目前有四种类型，分别为字符串（如"你好"，"abc"等），整数（其范围为 -2147483648 到 2147483647 之间），长整数（其范围为 -9223372036854775808 到 9223372036854775807 之间），浮点数（如 3.14）。'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -214,7 +215,7 @@ export default class AddField extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'如果勾选，则为该字段创建索引'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>

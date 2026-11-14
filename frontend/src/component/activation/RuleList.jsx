@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
-import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Icon,Spin} from 'antd';
+import {withParams} from '../utils/routerUtil';
+import {Breadcrumb, Form, Row, Col, Input, Button, Table, Tooltip, Pagination, Select, Popconfirm, message, Spin} from 'antd';
 import CollapseGroup from '../common/CollapseGroup';
 import Collapse from '../common/Collapse';
 const FormItem = Form.Item;
@@ -10,7 +11,7 @@ import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
 import {fetchVersion} from '../utils/fetchUtil';
 
-export default class RuleList extends Component{
+class RuleList extends Component{
     constructor(props){
         super(props);
 
@@ -303,3 +304,5 @@ export default class RuleList extends Component{
         );
     }
 }
+
+export default withParams(RuleList);

@@ -1,9 +1,8 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip,message } from 'antd';
+import {Button,Select,Form,Row,Col,Modal,Input,Tooltip,message } from 'antd';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
-const Option = Select.Option;
 
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
@@ -25,7 +24,7 @@ export default class StaticField extends React.Component{
 			referenceDateType:'LONG',
 			referenceDateLabel:'',
 
-			visible:false,
+			open:false,
 			fieldTypes:[]
 		}
 
@@ -39,7 +38,7 @@ export default class StaticField extends React.Component{
 
 	showModal=()=>{
 		this.setState({
-			visible:true,
+			open:true,
 
 			entityName:'',
 			entityType:'',
@@ -83,7 +82,7 @@ export default class StaticField extends React.Component{
 			FetchUtil('/model/','PUT',JSON.stringify(model),
 	    	(data) => {
                 this.setState({
-                    visible:false
+                    open:false
                 });
                 this.props.reload();
             });
@@ -116,7 +115,7 @@ export default class StaticField extends React.Component{
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -272,8 +271,8 @@ export default class StaticField extends React.Component{
 		return (
 			<span>
 				<Tooltip title="创建必备字段"><a onClick={this.showModal}>创建必备字段</a></Tooltip>
-				<Modal title="创建必备字段" visible={this.state.visible} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form horizontal form={this.props.form}>
+				<Modal title="创建必备字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
+                    <Form>
                         <FormItem required={true} {...formItemLayout} label="实体名：" help={validate.entityName.help} validateStatus={validate.entityName.status}>
                         	<Row>
                         		<Col span={20}>
@@ -281,7 +280,7 @@ export default class StaticField extends React.Component{
                             	</Col>                           
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'模型目标实体字段，如"deviceId"(2-30位英文字母、数字、下划线的组合，以英文字母开头)'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -293,7 +292,7 @@ export default class StaticField extends React.Component{
                             	</Col>                           
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'模型目标实体显示名称，可以输入中文'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -301,16 +300,13 @@ export default class StaticField extends React.Component{
                         <FormItem required={true} {...formItemLayout} label="实体类型：" help={validate.entityType.help} validateStatus={validate.entityType.status}>
                         	<Row>
                         		<Col span={20}>
-                            		<Select size="large" name="entityType" value={this.state.entityType} onChange={this.handleSelect.bind(this,'entityType')}>
-		                            	<Option value="">请选择</Option>
-		                                {
-		                                	this.state.fieldTypes.map(x=><Option key={x.name} value={x.name}>{x.desc}</Option>)
-		                                }
-		                            </Select>
+	                            		<Select size="large" name="entityType" value={this.state.entityType} onChange={this.handleSelect.bind(this,'entityType')}
+	                            			options={[{label:'请选择', value:''}, ...this.state.fieldTypes.map(x=>({label:x.desc, value:x.name}))]}
+	                            		/>
                             	</Col>                           
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'模型目标实体类型，请选择类型'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -322,7 +318,7 @@ export default class StaticField extends React.Component{
                             	</Col>                           
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'模型时间ID字段，一般为模型主键，如"id"(2-30位英文字母、数字、下划线的组合，以英文字母开头)'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -334,7 +330,7 @@ export default class StaticField extends React.Component{
                             	</Col>                           
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'模型目标实体显示名称，可以输入中文'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -342,16 +338,13 @@ export default class StaticField extends React.Component{
                         <FormItem required={true} {...formItemLayout} label="事件ID类型：" help={validate.entryType.help} validateStatus={validate.entryType.status}>
                         	<Row>
                         		<Col span={20}>
-                            		<Select size="large" name="entryType" value={this.state.entryType} onChange={this.handleSelect.bind(this,'entryType')}>
-		                            	<Option value="">请选择</Option>
-		                                {
-		                                	this.state.fieldTypes.map(x=><Option key={x.name} value={x.name}>{x.desc}</Option>)
-		                                }
-		                            </Select>
+	                            		<Select size="large" name="entryType" value={this.state.entryType} onChange={this.handleSelect.bind(this,'entryType')}
+	                            			options={[{label:'请选择', value:''}, ...this.state.fieldTypes.map(x=>({label:x.desc, value:x.name}))]}
+	                            		/>
                             	</Col>                           
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'模型目标实体类型，请选择类型'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -363,7 +356,7 @@ export default class StaticField extends React.Component{
                             	</Col>                           
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'模型事件时间字段，如"accessTime"(2-30位英文字母、数字、下划线的组合，以英文字母开头)'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -375,7 +368,7 @@ export default class StaticField extends React.Component{
                             	</Col>                           
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'模型事件时间显示名称，可以输入中文'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -383,13 +376,11 @@ export default class StaticField extends React.Component{
                         <FormItem required={true} {...formItemLayout} label="事件时间类型：">
                         	<Row>
                         		<Col span={20}>
-                            		<Select disabled size="large" value={this.state.referenceDateType}>
-                            			<Option value="LONG">长整数</Option>
-		                            </Select>
+                            		<Select disabled size="large" value={this.state.referenceDateType} options={[{label:'长整数', value:'LONG'}]} />
                             	</Col>                           
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'事件时间类型，固定为长整数'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>

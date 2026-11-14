@@ -1,5 +1,6 @@
 import React from 'react';
 import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Switch} from 'antd';
+import {withParams} from '../utils/routerUtil';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -10,7 +11,7 @@ import {trim} from '../utils/validateUtil';
 import AddActivation from './modal/AddActivation';
 import EditActivation from './modal/EditActivation';
 
-export default class Activation extends React.Component{
+class Activation extends React.Component{
     constructor(props){
         super(props);
 
@@ -195,3 +196,5 @@ export default class Activation extends React.Component{
         );
     }
 }
+
+export default withParams(Activation);

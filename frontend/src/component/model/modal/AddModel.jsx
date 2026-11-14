@@ -1,9 +1,8 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip,message } from 'antd';
+import {Button,Select,Form,Row,Col,Modal,Input,Tooltip,message } from 'antd';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
-const Option = Select.Option;
 
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
@@ -14,7 +13,7 @@ export default class AddModel extends React.Component{
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 
 			label:'',
 
@@ -50,7 +49,7 @@ export default class AddModel extends React.Component{
 
 	showModal=()=>{
 		this.setState({
-			visible:true,
+			open:true,
 			label:'',
 		});
 		FetchUtil('/model/list/template','GET','',
@@ -84,13 +83,13 @@ export default class AddModel extends React.Component{
 		    		}else{
 		    			message.error(data.msg);
 		    		}
-		            this.setState({
-		            	visible:false
-		            });
-		            this.props.reload();
-		        });
-		}
-		else{
+	            this.setState({
+	            	open:false
+	            });
+	            this.props.reload();
+	        });
+	}
+	else{
 			var param={};
 	        param.modelName='';
 	        param.label=this.state.label;
@@ -105,17 +104,17 @@ export default class AddModel extends React.Component{
 		    		}else{
 		    			message.error(data.msg);
 		    		}
-		            this.setState({
-		            	visible:false
-		            });
-		            this.props.reload();
-		        });
-		}
+	            this.setState({
+	            	open:false
+	            });
+	            this.props.reload();
+	        });
 	}
+}
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -150,8 +149,8 @@ export default class AddModel extends React.Component{
 		return (
 			<span>
 				<Button onClick={this.showModal} type="primary">新建模型</Button>
-				<Modal title="编辑模型" visible={this.state.visible} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form horizontal form={this.props.form}>
+				<Modal title="编辑模型" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
+                    <Form>
 						<FormItem required={true} {...formItemLayout} label="模型名：" help={validate.label.help} validateStatus={validate.label.status}>
 							<Row>
 								<Col span={20}>
@@ -159,7 +158,7 @@ export default class AddModel extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'模型显示名称，一般为中文，如"注册模型"'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -168,23 +167,20 @@ export default class AddModel extends React.Component{
                         <FormItem required={true} {...formItemLayout} label="模板：">
                         	<Row>
 								<Col span={20}>
-                            		<Select value={this.state.templateId} onChange={this.handleSelect.bind(this,'templateId')}>
-                            			
-                            			{
-                            				this.state.templateList.map((info,index)=>{
-                            					return <Option key={index} value={info.id+''}>{'[系统]'+info.label}</Option>
-                            				})
-                            			}
-                            			<Option value="-999">新建模型</Option>
-                            		</Select>
+                            		<Select value={this.state.templateId} onChange={this.handleSelect.bind(this,'templateId')}
+                            			options={[
+                            				...this.state.templateList.map((info)=>({label:'[系统]'+info.label, value:info.id+''})),
+                            				{label:'新建模型', value:'-999'}
+                            			]}
+                            		/>
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'建议使用模板一键创建模型，熟悉后可自行创建模型'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}} />
 		                            </Tooltip>
                             	</Col>
                             </Row>
-                        </FormItem>                     
+                        </FormItem>
                     </Form>
                 </Modal>
             </span>    

@@ -1,5 +1,6 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip,message } from 'antd';
+import {Button, Checkbox, Select, Radio, Switch, Form, Row, Col, Modal, Input, InputNumber, Cascader, Tooltip, message} from 'antd';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -14,7 +15,7 @@ export default class AddActivation extends React.Component{
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 
 			activationName:'',
 			label:'',
@@ -49,7 +50,7 @@ export default class AddActivation extends React.Component{
 			bottom:'',
 			median:'',
 			high:'',
-			visible:true
+			open:true
 		})
 	}
 
@@ -79,7 +80,7 @@ export default class AddActivation extends React.Component{
 		    			message.error(data.msg);
 		    		}
 		            this.setState({
-		            	visible:false
+		            	open:false
 		            });
 		            this.props.reload();
 		        });
@@ -88,7 +89,7 @@ export default class AddActivation extends React.Component{
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -150,8 +151,8 @@ export default class AddActivation extends React.Component{
 		return (
 			<span>
 				<Button onClick={this.showModal} type="primary">新增</Button>
-				<Modal title="新增字段" visible={this.state.visible} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form horizontal form={this.props.form}>
+				<Modal title="新增字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
+                    <Form>
 						<FormItem required={true} {...formItemLayout} label="策略名：" help={validate.label.help} validateStatus={validate.label.status}>
 							<Row>
 								<Col span={20}>
@@ -159,7 +160,7 @@ export default class AddActivation extends React.Component{
 								</Col>
 								<Col span={2} offset={1}>
 									<Tooltip placement="right" title={'显示名称，一般为中文，如"异常注册"'}>
-										<Icon style={{fontSize:16}} type="question-circle-o" />
+										<QuestionCircleOutlined style={{fontSize:16}}/>
 									</Tooltip>
 								</Col>
 							</Row>
@@ -174,7 +175,7 @@ export default class AddActivation extends React.Component{
 								</Col>
 								<Col span={2} offset={1}>
 									<Tooltip placement="right" title={'如果实际风险分数大于此数字，此交易则需要人工审核'}>
-										<Icon style={{fontSize:16}} type="question-circle-o" />
+										<QuestionCircleOutlined style={{fontSize:16}}/>
 									</Tooltip>
 								</Col>
 							</Row>
@@ -186,7 +187,7 @@ export default class AddActivation extends React.Component{
 								</Col>
 								<Col span={2} offset={1}>
 									<Tooltip placement="right" title={'如果实际风险分数大于此数字，此交易则直接拒绝'}>
-										<Icon style={{fontSize:16}} type="question-circle-o" />
+										<QuestionCircleOutlined style={{fontSize:16}}/>
 									</Tooltip>
 								</Col>
 							</Row>

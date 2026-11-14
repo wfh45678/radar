@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Form,Input,Row,Col,Card,Select,Button,Cascader,Tooltip,Icon} from 'antd';
+import {Form, Input, Row, Col, Card, Select, Button, Cascader, Tooltip} from 'antd';
+import {PlusOutlined} from '@ant-design/icons';
 
 const Option = Select.Option;
 
@@ -104,8 +105,8 @@ export default class ComplexCondition extends React.Component{
 	                        <Option value="NotAll">NotAll</Option>
 	                        <Option value="None">None</Option>	                        
 	                    </Select>条件成立 &nbsp;&nbsp;
-						{this.props.readOnly!=true?<Tooltip title="添加简单条件" onClick={this.handleSimpleCondition}><span style={{cursor:"pointer",marginRight:"10px"}}><Icon type="plus" />简单</span></Tooltip>:''}
-						{this.props.readOnly!=true?<Tooltip title="添加复杂条件" onClick={this.handleComplexCondition}><span style={{cursor:"pointer"}}><Icon type="plus" />复杂</span></Tooltip>:''}
+						{this.props.readOnly!=true?<Tooltip title="添加简单条件" onClick={this.handleSimpleCondition}><span style={{cursor:"pointer",marginRight:"10px"}}><PlusOutlined />简单</span></Tooltip>:''}
+						{this.props.readOnly!=true?<Tooltip title="添加复杂条件" onClick={this.handleComplexCondition}><span style={{cursor:"pointer"}}><PlusOutlined />复杂</span></Tooltip>:''}
 	                </div>                    
 		      		{this.props.condition.conditions.map((info,index)=>{
 		      			if(info.class=='SMPL'){

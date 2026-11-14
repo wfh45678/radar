@@ -12,7 +12,7 @@ export default class ExportField extends React.Component{
 
 		this.state={
 			loading:false,
-			visible:false,
+			open:false,
 
 			selectedKeys:[]
 		};
@@ -23,7 +23,7 @@ export default class ExportField extends React.Component{
 
 	showModal=()=>{
 		this.setState({
-			visible:true
+			open:true
 		});
 	}
 
@@ -60,7 +60,7 @@ export default class ExportField extends React.Component{
 	handleCancel=()=>{
 		this.setState({
 			selectedKeys:[],
-			visible:false
+			open:false
 		})
 	}
 
@@ -77,7 +77,7 @@ export default class ExportField extends React.Component{
 				</Tooltip>
 				:<Button type="primary" loading={this.state.loading} onClick={this.showModal}>导出</Button>
 				}*/}
-				<Modal title="选择需要导出的字段" visible={this.state.visible} maskClosable={false} closable={false} onOk={this.handleOk} okText={'导出报表'} onCancel={this.handleCancel}>
+				<Modal title="选择需要导出的字段" open={this.state.open} maskClosable={false} closable={false} onOk={this.handleOk} okText={'导出报表'} onCancel={this.handleCancel}>
 					{this.props.eventFieldList.length==0?'该模型无字段可选':
 					<Tree checkable onCheck={this.onCheck} onCheck={this.onSelect} selectedKeys={this.state.selectedKeys}>					
 						{this.props.eventFieldList.map((info,i)=>{

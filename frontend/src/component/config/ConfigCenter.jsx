@@ -1,5 +1,5 @@
 import React from 'react';
-import {Breadcrumb,Menu,Icon,Form,Select, Card, Row, Col} from 'antd';
+import {Breadcrumb, Menu, Form, Select, Card, Row, Col} from 'antd';
 import {Link} from 'react-router';
 const FormItem=Form.Item;
 const Option = Select.Option;
@@ -12,10 +12,7 @@ export default class ConfigCenter extends React.Component{
 		return (
 				<div className="ant-layout-wrapper">
 					<div className="ant-layout-breadcrumb">
-	                    <Breadcrumb>
-	                        <Breadcrumb.Item>首页</Breadcrumb.Item>
-	                        <Breadcrumb.Item>配置中心</Breadcrumb.Item>
-	                    </Breadcrumb>
+	                    <Breadcrumb items={['首页', '配置中心']}/>
 	                </div>
 				  <div className="ant-layout-container">
 				  	 <Row gutter={8}>

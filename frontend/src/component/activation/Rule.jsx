@@ -1,7 +1,8 @@
 
 import React from 'react';
 
-import {Form,Input,InputNumber,Breadcrumb,Row,Col,Icon,Card,Select,Button,Cascader,Tooltip,message,Modal} from 'antd';
+import {Form, Input, InputNumber, Breadcrumb, Row, Col, Card, Select, Button, Cascader, Tooltip, message, Modal} from 'antd';
+import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -289,7 +290,7 @@ export default class Rule extends React.Component{
 		return (
 			<div>
 				<div style={{width:750}}>	                
-				<Form horizontal="true" form={this.props.form}>
+				<Form="true" form={this.props.form}>
                     <FormItem required={true} {...formItemLayout} label="显示名称：" help={validate.label.help} validateStatus={validate.label.status}>
 						<Row>
 							<Col span={20}>
@@ -297,7 +298,7 @@ export default class Rule extends React.Component{
 							</Col>
 							<Col span={2} offset={1}>
 								<Tooltip placement="right" title={'规则名称，一般为中文，如"1天内设备注册次数过多或注册时间间隔过短"'}>
-									<Icon style={{fontSize:16}} type="question-circle-o" />
+									<QuestionCircleOutlined style={{fontSize:16}}/>
 								</Tooltip>
 							</Col>
 						</Row>
@@ -310,7 +311,7 @@ export default class Rule extends React.Component{
 							</Col>
 							<Col span={2} offset={1}>
 								<Tooltip placement="right" title={'初始得分，在此基础上进行累加计算'}>
-									<Icon style={{fontSize:16}} type="question-circle-o" />
+									<QuestionCircleOutlined style={{fontSize:16}}/>
 								</Tooltip>
 							</Col>
 						</Row>
@@ -323,7 +324,7 @@ export default class Rule extends React.Component{
 							</Col>
 							<Col span={2} offset={1}>
 								<Tooltip placement="right" title={'配合操作符，与指标字段进行运算'}>
-									<Icon style={{fontSize:16}} type="question-circle-o" />
+									<QuestionCircleOutlined style={{fontSize:16}}/>
 								</Tooltip>
 							</Col>
 						</Row>
@@ -366,7 +367,7 @@ export default class Rule extends React.Component{
 							</Col>
 							<Col span={2} offset={1}>
 								<Tooltip placement="right" title={'当指标字段值过大或者过小时，对指标字段进行放大或者缩小，使命中分数更加合理'}>
-									<Icon style={{fontSize:16}} type="question-circle-o" />
+									<QuestionCircleOutlined style={{fontSize:16}}/>
 								</Tooltip>
 							</Col>
 						</Row>
@@ -378,7 +379,7 @@ export default class Rule extends React.Component{
 							</Col>
 							<Col span={2} offset={1}>
 								<Tooltip placement="right" title={'设置该条规则最大得分值'}>
-									<Icon style={{fontSize:16}} type="question-circle-o" />
+									<QuestionCircleOutlined style={{fontSize:16}}/>
 								</Tooltip>
 							</Col>
 						</Row>
@@ -387,7 +388,7 @@ export default class Rule extends React.Component{
                 </div>
                 <div>
                 	<div>
-				    <Tooltip title="添加过滤条件" onClick={this.handleAddCondition}><span className="addRule"><Icon type="plus" />&nbsp;添加过滤条件</span></Tooltip>
+				    <Tooltip title="添加过滤条件" onClick={this.handleAddCondition}><span className="addRule"><PlusOutlined />&nbsp;添加过滤条件</span></Tooltip>
                     </div>
                     <ComplexCondition fieldList={this.props.fieldList} dataList={this.props.dataList} condition={this.state.ruleDefinition} changeParentCondition={this.handleChangeCondition} index={0}/>
 

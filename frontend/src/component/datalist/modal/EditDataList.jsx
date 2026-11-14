@@ -1,5 +1,6 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip,message } from 'antd';
+import {Button, Checkbox, Select, Radio, Switch, Form, Row, Col, Modal, Input, InputNumber, Cascader, Tooltip, message} from 'antd';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -14,7 +15,7 @@ export default class EditDataList extends React.Component{
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 
 			name:'',
 			label:'',
@@ -57,7 +58,7 @@ export default class EditDataList extends React.Component{
 	showModal=()=>{
 		this.fetchData();
 		this.setState({
-			visible:true
+			open:true
 		})
 	}
 
@@ -86,7 +87,7 @@ export default class EditDataList extends React.Component{
 		    			message.error(data.msg);
 		    		}
 		            this.setState({
-		            	visible:false
+		            	open:false
 		            });
 		            this.props.reload();
 		        });
@@ -95,7 +96,7 @@ export default class EditDataList extends React.Component{
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -140,8 +141,8 @@ export default class EditDataList extends React.Component{
 		return (
 			<span>
 				<Tooltip title="编辑" onClick={this.showModal}><a>编辑</a></Tooltip>
-				<Modal title="编辑字段" visible={this.state.visible} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form horizontal="true" form={this.props.form}>
+				<Modal title="编辑字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
+                    <Form="true" form={this.props.form}>
                         <FormItem {...formItemLayout} label="列表名：" help={validate.label.help} validateStatus={validate.label.status}>
 							<Row>
 								<Col span={20}>
@@ -149,7 +150,7 @@ export default class EditDataList extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'列表显示名称，一般为中文，如"注册手机黑名单"'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>

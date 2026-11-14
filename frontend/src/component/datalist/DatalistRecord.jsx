@@ -1,5 +1,6 @@
 import React from 'react';
 import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Modal} from 'antd';
+import {withParams} from '../utils/routerUtil';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -9,7 +10,7 @@ import {FetchUtil} from '../utils/fetchUtil';
 import AddDataListRecord from './modal/AddDataListRecord';
 import EditDataListRecord from './modal/EditDataListRecord';
 
-export default class DatalistRecord extends React.Component{
+class DatalistRecord extends React.Component{
     constructor(props){
         super(props);
 
@@ -150,3 +151,5 @@ export default class DatalistRecord extends React.Component{
         );
     }
 }
+
+export default withParams(DatalistRecord);

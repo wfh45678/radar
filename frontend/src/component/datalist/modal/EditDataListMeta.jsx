@@ -1,5 +1,6 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip } from 'antd';
+import {Button, Checkbox, Select, Radio, Switch, Form, Row, Col, Modal, Input, InputNumber, Cascader, Tooltip} from 'antd';
+import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -16,7 +17,7 @@ export default class EditDataListMeta extends React.Component{
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 
 			metaList:[],
 			initialList:[]
@@ -72,7 +73,7 @@ export default class EditDataListMeta extends React.Component{
 	showModal=()=>{
 		this.fetchData();
 		this.setState({
-			visible:true
+			open:true
 		})
 	}
 
@@ -117,19 +118,19 @@ export default class EditDataListMeta extends React.Component{
 			FetchUtil('/datalistmeta/','PUT',JSON.stringify(this.state.metaList),
 				(data) => {
 					this.setState({
-						visible:false
+						open:false
 					});
 				});
 		}else {
 			this.setState({
-				visible:false
+				open:false
 			});
 		}
 	}
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -137,19 +138,19 @@ export default class EditDataListMeta extends React.Component{
 		return (
 			<span>
 				<Tooltip title="管理黑/白名单字段" onClick={this.showModal}><a>管理字段</a></Tooltip>
-				<Modal title="编辑字段" visible={this.state.visible} onOk={this.handleSubmit} onCancel={this.handleCancel}>
+				<Modal title="编辑字段" open={this.state.open} onOk={this.handleSubmit} onCancel={this.handleCancel}>
 					<Row>
 						{this.state.initialList.length ?'':<Col span={6} offset={10}>
-							<span className="addRule" style={{display:"block",marginBottom:10}} onClick={this.addField}><Icon type="plus" />&nbsp;添加字段</span>
+							<span className="addRule" style={{display:"block",marginBottom:10}} onClick={this.addField}><PlusOutlined />&nbsp;添加字段</span>
 						</Col>
 						}
 						{this.state.initialList.length ?<Col span={25} offset={2} style={{fontSize:14,marginBottom:10,color:'#f00'}}><span >现有字段不能删除，若需要删除字段，则建议直接删除列表！</span></Col>:<Col span={1} offset={1}>
 							<Tooltip placement="right" title={'现有字段不能删除，若需要删除字段，则建议直接删除列表！'}>
-								<Icon style={{fontSize:16,marginBottom:10}} type="question-circle-o" />
+								<QuestionCircleOutlined style={{fontSize:16,marginBottom:10}}/>
 							</Tooltip>
 						</Col>}
 			      	</Row>
-                    <Form horizontal form={this.props.form}>
+                    <Form>
 	                    {this.state.metaList.map(function(info,i){
 	                    	return (
 	                    		<FormItem key={i+'meta'} label='字段名' labelCol={{span:10}}>
@@ -158,7 +159,7 @@ export default class EditDataListMeta extends React.Component{
 									</Col>
 									<Col span={2} offset={1}>
 										<Tooltip placement="right" title={'字段名，一般为中文，如"手机号码"，2-10位可由中文、英文字母、数字、下划线的组合'}>
-											<Icon style={{fontSize:16}} type="question-circle-o" />
+											<QuestionCircleOutlined style={{fontSize:16}}/>
 										</Tooltip>
 									</Col>
 									<Col span={1} offset={1}>

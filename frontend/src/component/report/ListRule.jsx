@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import {Form,Button,Table,Pagination,Input,Select,Modal,DatePicker,Cascader} from 'antd';
+import {withParams} from '../utils/routerUtil';
 import moment from 'moment';
 
 const FormItem=Form.Item;
@@ -11,7 +12,7 @@ import {trim} from '../utils/validateUtil';
 
 import './ListEvent.less';
 
-export default class Rule extends React.Component{
+class Rule extends React.Component{
 
     constructor(props){
         super(props);
@@ -412,3 +413,5 @@ export default class Rule extends React.Component{
             </div>);
     }
 }
+
+export default withParams(Rule);

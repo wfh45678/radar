@@ -1,8 +1,7 @@
 import React from 'react';
-import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Modal,Icon} from 'antd';
+import {Breadcrumb,Form,Input,Table,Tooltip,Pagination,Popconfirm,message,Modal} from 'antd';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 import AddModel from './modal/AddModel';
 import EditModel from './modal/EditModel';
@@ -179,10 +178,7 @@ export default class ModelList extends React.Component{
         return (
             <div className="ant-layout-wrapper"> 
                 <div className="ant-layout-breadcrumb">
-                    <Breadcrumb>
-                    <Breadcrumb.Item>首页</Breadcrumb.Item>
-                    <Breadcrumb.Item>模型列表</Breadcrumb.Item>
-                    </Breadcrumb>
+                    <Breadcrumb items={[{title:'首页'},{title:'模型列表'}]}/>
                 </div>
                 <div className="ant-layout-container">
                     <div className="ant-layout-content">

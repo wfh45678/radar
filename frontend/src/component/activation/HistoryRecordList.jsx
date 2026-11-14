@@ -1,5 +1,7 @@
 import React,{Component} from 'react';
-import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Timeline,Icon} from 'antd';
+import {withParams} from '../utils/routerUtil';
+import {Breadcrumb, Form, Row, Col, Input, Button, Table, Tooltip, Pagination, Select, Popconfirm, message, Timeline} from 'antd';
+import {LeftCircleOutlined} from '@ant-design/icons';
 import CollapseGroup from '../common/CollapseGroup';
 import Collapse from '../common/Collapse';
 import { Link } from 'react-router';
@@ -11,7 +13,7 @@ import HistoryRecord from './HistoryRecord';
 import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
 
-export default class HistoryRecordList extends Component{
+class HistoryRecordList extends Component{
     constructor(props){
         super(props);
 
@@ -100,7 +102,7 @@ export default class HistoryRecordList extends Component{
         return (
             <div className="ant-layout-content">
                 <div id="header" style={{fontSize:'16px',marginBottom:'20px'}}>
-                    <Link to={"/ruleList/"+this.props.params.id+"/"+this.props.params.activationId}><Icon type="left-circle" style={{marginRight:'10px'}} />{this.state.label}</Link><span style={{marginLeft:'20px'}}>历史记录</span>
+                    <Link to={"/ruleList/"+this.props.params.id+"/"+this.props.params.activationId}><LeftCircleOutlined style={{marginRight:'10px'}}/>{this.state.label}</Link><span style={{marginLeft:'20px'}}>历史记录</span>
                 </div>
 
                 <Timeline style={{marginLeft:'150px'}}>
@@ -119,3 +121,5 @@ export default class HistoryRecordList extends Component{
         );
     }
 }
+
+export default withParams(HistoryRecordList);

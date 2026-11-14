@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Form,Input,Row,Col,Card,Select,Button,Cascader,Tooltip,Icon} from 'antd';
+import {Form, Input, Row, Col, Card, Select, Button, Cascader, Tooltip} from 'antd';
+import {DeleteOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -159,7 +160,7 @@ export default class SimpleCondition extends React.Component{
 						  />
 					):''					
 				}
-				{this.props.readOnly!=true?<Tooltip title="删除" onClick={this.handleDelete}><Icon type="delete" style={{fontSize:16,lineHeight:"22px"}}/></Tooltip>:''}
+				{this.props.readOnly!=true?<Tooltip title="删除" onClick={this.handleDelete}><DeleteOutlined style={{fontSize:16,lineHeight:"22px"}}/></Tooltip>:''}
 			</div>
 		);
 	}

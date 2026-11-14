@@ -1,5 +1,6 @@
 import React from 'react';
 import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message} from 'antd';
+import {withParams} from '../utils/routerUtil';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -9,7 +10,7 @@ import EditPreItem from './modal/EditPreItem';
 import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
 
-export default class PreItem extends React.Component{
+class PreItem extends React.Component{
     constructor(props){
         super(props);
 
@@ -190,3 +191,5 @@ export default class PreItem extends React.Component{
         );
     }
 }
+
+export default withParams(PreItem);

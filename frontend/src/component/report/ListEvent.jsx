@@ -1,5 +1,6 @@
 import React from 'react';
 import {Form,Button,Table,Pagination,Input,Select,Modal,DatePicker,Cascader} from 'antd';
+import {withParams} from '../utils/routerUtil';
 import moment from 'moment';
 
 const FormItem=Form.Item;
@@ -13,7 +14,7 @@ import './ListEvent.less';
 
 import ExportField from './modal/ExportField';
 
-export default class ListEvent extends React.Component{
+class ListEvent extends React.Component{
 
 	constructor(props){
 		super(props);
@@ -506,3 +507,5 @@ export default class ListEvent extends React.Component{
                 </div>);
 	}
 }
+
+export default withParams(ListEvent);

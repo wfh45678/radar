@@ -1,5 +1,7 @@
 import React from 'react';
-import {Breadcrumb,Form,Row,Col,Switch,Modal,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Menu,Icon} from 'antd';
+import {Breadcrumb, Form, Row, Col, Switch, Modal, Input, Button, Table, Tooltip, Pagination, Select, Popconfirm, message, Menu} from 'antd';
+import {withParams} from '../utils/routerUtil';
+import {AppstoreOutlined, CopyOutlined, FileTextOutlined, PictureOutlined, SettingOutlined, SolutionOutlined} from '@ant-design/icons';
 import { Link } from 'react-router';
 import moment from 'moment';
 const FormItem = Form.Item;
@@ -10,7 +12,7 @@ const confirm = Modal.confirm;
 
 import {FetchUtil} from '../utils/fetchUtil';
 
-export default class Model extends React.Component{
+class Model extends React.Component{
     constructor(props){
         super(props);
 
@@ -19,7 +21,7 @@ export default class Model extends React.Component{
 
         	current:'',
             disable: false,
-            visible: false
+            open: false
 
 
         }
@@ -89,7 +91,7 @@ export default class Model extends React.Component{
 
     handleBuild=()=>{
         this.setState({
-            visible: true
+            open: true
         });
         var _self = this;
         let paramsId = this.props.params.id;
@@ -158,10 +160,7 @@ export default class Model extends React.Component{
         return (
             <div className="ant-layout-wrapper"> 
                 <div className="ant-layout-breadcrumb">
-                    <Breadcrumb>
-                    <Breadcrumb.Item>首页</Breadcrumb.Item>
-                    <Breadcrumb.Item>{this.state.model==null?'':<Link to={"/model/"+this.state.model.id}>模型"{this.state.model.label}"</Link>}</Breadcrumb.Item>
-                    </Breadcrumb>
+                    <Breadcrumb items={['首页', this.state.model==null?'':<Link to={"/model/"+this.state.model.id}>模型"{this.state.model.label}"</Link>]}/>
                 </div>
                 <div className="ant-layout-container">
                     <div style={{lineHeight:"46px",padding:"0 20px 0",margin:"0 24px",borderBottom:"1px solid #e9e9e9"}}>
@@ -177,24 +176,24 @@ export default class Model extends React.Component{
 					        mode="horizontal"
 					      >
 					        <Menu.Item key="field">
-					          <Icon type="file-text" />字段管理
+					          <FileTextOutlined />字段管理
 					        </Menu.Item>
 					        <Menu.Item key="preItem">
-					          <Icon type="copy" />预处理管理
+					          <CopyOutlined />预处理管理
 					        </Menu.Item>
 					        <Menu.Item key="datalist">
-					          <Icon type="appstore" />黑/白名单管理
+					          <AppstoreOutlined />黑/白名单管理
 					        </Menu.Item>
 					        <Menu.Item key="abstractionList">
-					          <Icon type="picture" />抽象处理
+					          <PictureOutlined />抽象处理
 					        </Menu.Item>
 					        
 						        <Menu.Item key="modelConfig">
-						           <Icon type="setting" />机器学习配置
+						           <SettingOutlined />机器学习配置
 						        </Menu.Item>
 					        
 					        <Menu.Item key="activation">
-					          <Icon type="solution" />策略管理
+					          <SolutionOutlined />策略管理
 					        </Menu.Item>
 					      </Menu>
                     </div>
@@ -204,3 +203,5 @@ export default class Model extends React.Component{
         );
     }
 }
+
+export default withParams(Model);

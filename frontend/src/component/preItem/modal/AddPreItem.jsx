@@ -1,5 +1,6 @@
 import React from 'react';
-import {Button,Checkbox,Select,Radio,Switch,Form,Row,Col,Icon,Modal,Input,InputNumber,Cascader,Tooltip,message } from 'antd';
+import {Button, Checkbox, Select, Radio, Switch, Form, Row, Col, Modal, Input, InputNumber, Cascader, Tooltip, message} from 'antd';
+import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -14,7 +15,7 @@ export default class AddPreItem extends React.Component{
 		super(props);
 
 		this.state={
-			visible:false,
+			open:false,
 
 			destField:'',
 			label:'',
@@ -83,7 +84,7 @@ export default class AddPreItem extends React.Component{
 			status:1,
 			args:'',
 			reqType:'GET',
-			visible:true,
+			open:true,
 			configJson:JSON.stringify({})
 		})
 	}
@@ -118,7 +119,7 @@ export default class AddPreItem extends React.Component{
 		    			message.error(data.msg);
 		    		}
 		            this.setState({
-		            	visible:false
+		            	open:false
 		            });
 		            this.props.reload();
 		        });
@@ -127,7 +128,7 @@ export default class AddPreItem extends React.Component{
 
 	handleCancel=()=>{
 		this.setState({
-			visible:false
+			open:false
 		})
 	}
 
@@ -201,8 +202,8 @@ export default class AddPreItem extends React.Component{
 		return (
 			<span>
 				<Button onClick={this.showModal} type="primary">新增</Button>
-				<Modal title="编辑字段" visible={this.state.visible} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form horizontal= "true" form={this.props.form}>
+				<Modal title="编辑字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
+                    <Form= "true" form={this.props.form}>
                     	<FormItem required={true} {...formItemLayout} label="插件种类：" help={validate.plugin.help} validateStatus={validate.plugin.status}>
 							<Row>
 								<Col span={20}>
@@ -215,7 +216,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'插件种类，如 IP转换成地址（将IP地址转换成详细的实际地址），字段合并（将多个原始字段合并起来），字符串截短（例将手机号码截取部分进行筛选，如前七位0,7），等等'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -227,7 +228,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'字段显示名称，一般为中文，如"IP归属地"'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -244,7 +245,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'原始字段名，均为自己定义的字段名'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -260,7 +261,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'原始字段名，均为自己定义的字段名'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -272,7 +273,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'截取位数，属于字符串截短插件的参数，如筛选手机号码前7位，填写 0,7'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -284,7 +285,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'日期格式化字符串，例如:yyyyMMdd HH:mm:ss'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -299,7 +300,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'请求方式： POST, GET'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -310,7 +311,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'Rest url, like http://host:port/getSth?id={1}'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -324,7 +325,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'按顺序选择 Url 参数'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>
@@ -334,7 +335,7 @@ export default class AddPreItem extends React.Component{
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'响应字段元信息, like:[{"column":"country","title":"国家","type":"STRING"},{"column":"province","title":"省份","type":"STRING"}]'}>
-		                            	<Icon style={{fontSize:16}} type="question-circle-o" />
+		                            	<QuestionCircleOutlined style={{fontSize:16}}/>
 		                            </Tooltip>
                             	</Col>
                             </Row>

@@ -1,5 +1,6 @@
 import React from 'react';
-import {Breadcrumb,Menu,Icon,Form,Select} from 'antd';
+import {Breadcrumb, Menu, Form, Select} from 'antd';
+import {FileTextOutlined, PushpinOutlined} from '@ant-design/icons';
 
 const FormItem=Form.Item;
 const Option = Select.Option;
@@ -105,10 +106,7 @@ export default class Report extends React.Component{
         return (
             <div className="ant-layout-wrapper">
                 <div className="ant-layout-breadcrumb">
-                    <Breadcrumb>
-                        <Breadcrumb.Item>首页</Breadcrumb.Item>
-                        <Breadcrumb.Item>报表查询</Breadcrumb.Item>
-                    </Breadcrumb>
+                    <Breadcrumb items={['首页', '报表查询']}/>
                 </div>
                 <div className="ant-layout-container">
                     <div style={{lineHeight:"46px",padding:"0 20px 0",margin:"0 24px",borderBottom:"1px solid #e9e9e9"}}>
@@ -125,13 +123,13 @@ export default class Report extends React.Component{
                     <div className="ant-layout-header" style={{padding:"0 24px 24px"}}>
                         <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal">
                             <Menu.Item key="event">
-                                <Icon type="file-text"/>调用查询
+                                <FileTextOutlined />调用查询
                             </Menu.Item>
                             <Menu.Item key="graph">
-                                <Icon type="pushpin-o"/>规则命中
+                                <PushpinOutlined />规则命中
                             </Menu.Item>
                             <Menu.Item key="dashboard">
-                                <Icon type="file-text"/>数据看板
+                                <FileTextOutlined />数据看板
                             </Menu.Item>
                         </Menu>
                     </div>

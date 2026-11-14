@@ -1,5 +1,6 @@
 import React from 'react';
-import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Menu,Icon} from 'antd';
+import {Breadcrumb, Form, Row, Col, Input, Button, Table, Tooltip, Pagination, Select, Popconfirm, message, Menu} from 'antd';
+import {withParams} from '../utils/routerUtil';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const SubMenu = Menu.SubMenu;
@@ -11,7 +12,7 @@ import EditField from './modal/EditField';
 import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
 
-export default class Field extends React.Component{
+class Field extends React.Component{
     constructor(props){
         super(props);
 
@@ -203,3 +204,5 @@ export default class Field extends React.Component{
         );
     }
 }
+
+export default withParams(Field);

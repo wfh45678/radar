@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Form,Input,Breadcrumb,Row,Col,Icon,Card,Select,Button,Cascader,Tooltip,message,Modal} from 'antd';
+import {Form, Input, Breadcrumb, Row, Col, Card, Select, Button, Cascader, Tooltip, message, Modal} from 'antd';
+import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -302,7 +303,7 @@ export default class Abstraction extends React.Component{
 		return (
 			<div>
 			<div style={{width:750}}>	                
-				<Form horizontal="true" form={this.props.form}>
+				<Form="true" form={this.props.form}>
 
 					<FormItem required={true} {...formItemLayout} label="指标名：" help={validate.label.help} validateStatus={validate.label.status}>
 						<Row>
@@ -311,7 +312,7 @@ export default class Abstraction extends React.Component{
 							</Col>
 							<Col span={2} offset={1}>
 								<Tooltip placement="right" title={'指标显示名称，一般为中文，如"100秒内设备注册数"'}>
-									<Icon style={{fontSize:16}} type="question-circle-o" />
+									<QuestionCircleOutlined style={{fontSize:16}}/>
 								</Tooltip>
 							</Col>
 						</Row>
@@ -371,7 +372,7 @@ export default class Abstraction extends React.Component{
 					      </Col>
 							<Col span={2} offset={1}>
 								<Tooltip placement="right" title={'搜索某段时间的数据，数值为正数，代表范围区间，如 3 ，再配合后面的时间单位，如 月，就表示3个月内的数据'}>
-									<Icon style={{fontSize:16}} type="question-circle-o" />
+									<QuestionCircleOutlined style={{fontSize:16}}/>
 								</Tooltip>
 							</Col>
 					    </Row>                                                
@@ -384,7 +385,7 @@ export default class Abstraction extends React.Component{
                 </div>
                     <Row>
 				      	<Col span={4} offset={4}>
-				      		<Tooltip title="添加过滤条件" onClick={this.handleAddCondition}><span className="addRule"><Icon type="plus" />&nbsp;添加过滤条件</span></Tooltip>
+				      		<Tooltip title="添加过滤条件" onClick={this.handleAddCondition}><span className="addRule"><PlusOutlined />&nbsp;添加过滤条件</span></Tooltip>
 				      		<br/>
 				      		&nbsp;
 				      	</Col>
