@@ -2,6 +2,44 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [2.2.0] - 2026-11-14
+
+专业度版本（roadmap P1-1/P1-2）：JDK 21 + 虚拟线程、可观测体系、测试服务器部署流水线。
+规划详见 [docs/plan-v2.2.md](docs/plan-v2.2.md)。
+
+### Added
+- **可观测体系**：Micrometer + Prometheus（`/actuator/prometheus`）+ Grafana 看板
+  （compose `--profile monitoring` 一键起）；业务指标五类：事件吞吐、引擎六阶段耗时
+  P50/P95/P99、激活决策分布、规则命中、Groovy 编译计数/耗时（标签纪律：不含 modelGuid 高基数维度）
+- **部署流水线脚本**：`scripts/deploy-test.sh`（本地构建→scp→compose 起）、
+  `scripts/server-bootstrap.sh`（Docker/JDK21/Maven/swap 初始化）、
+  `scripts/verify-chain.sh`（部署后十步全链路验证）
+- jacoco 覆盖率机制：`mvn verify` 出报告 + CI artifact；L3 全量行覆盖基线 **45.7%**（门禁阈值待定线）
+- 压测框架：三组对照方法（A:17+关 / B:21+关 / C:21+开）+ JMeter 场景 `docs/benchmark/uploadInfo.jmx`，
+  实跑数据待专用环境（见 [docs/benchmark-v2.2.md](docs/benchmark-v2.2.md)）
+
+### Changed
+- **JDK 17 → 21**（LTS）：pom / Dockerfile（temurin:21-jre）/ CI 三处一致；README/CONTRIBUTING 同步
+- **虚拟线程默认开启**（`spring.threads.virtual.enabled=true`，需 JDK 21+）；开关去留待压测对照后定
+- compose app 服务补 `build:` 声明，无 GHCR 访问环境可本地构建镜像
+
+### Fixed
+- `env.CI` 激活 ci profile 时 local(activeByDefault) 失效，资源过滤留下 `@profileActive@` 原始占位符
+  导致 YAML 解析失败——pom 补项目级默认值（测试服务器 L3 实测暴露）
+- 集成测试四件套改静态块显式启动：Spring 上下文先于 @Testcontainers 扩展回调加载时容器未就绪
+- **Druid starter 不支持 Boot `ConnectionDetails`**（`@ServiceConnection` 对 MySQL 无效）：
+  测试四件套连接统一改 `@DynamicPropertySource` 显式注入
+- 全链路验证脚本 guid 字段大小写、activations 响应层级、频次规则需双事件三处修正
+
+### Breaking Changes
+- **运行时要求 JDK 21+**（虚拟线程前置）
+- 其他对应用透明；开发环境说明见 CONTRIBUTING.md
+
+### Verification
+- 云服务器（Ubuntu 24.04 / 2C4G / Docker）实测：十步全链路绿（第二事件命中 score=120→reject）、
+  `/actuator/prometheus` 41 个业务指标序列、**L3 全量 `mvn verify` 41/41 绿**、
+  compose 常驻栈恢复 UP；JDK 21 下本地 L1/L2 全绿
+
 ## [2.1.0] - 2026-11-14
 
 工程基础版本（roadmap P0 全量落地）：测试体系、CI/CD、容器化一键环境、社区门面。
