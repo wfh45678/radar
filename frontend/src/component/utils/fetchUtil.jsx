@@ -1,7 +1,5 @@
 import {Modal,message} from 'antd';
-import 'whatwg-fetch';
-// import 'es6-promise/dist/es6-promise.min.js';
-import 'fetch-ie8/fetch.js';
+// fetch 为浏览器原生 API，IE polyfill（whatwg-fetch/fetch-ie8）已随现代化移除
 
 export var fetchVersion='/services/v1';
 

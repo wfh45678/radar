@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Router, Route, Link, hashHistory,browserHistory,IndexRoute,IndexRedirect } from 'react-router';
+import { createRoot } from 'react-dom/client';
+import { createHashRouter, RouterProvider, Navigate, Outlet, useParams } from 'react-router';
 
 import Abstraction from './component/abstraction/Abstraction';
 import AbstractionList from './component/abstraction/AbstractionList';
@@ -18,114 +18,93 @@ import Report from './component/report/Report';
 import ListEvent from './component/report/ListEvent';
 import RuleGraph from './component/report/RuleGraph';
 import ListRule from './component/report/ListRule';
-import Rule from './component/report/ListRule';
-import DashBoard from './component/report/DashBoard';
+import DashBoard from './component/report/dashboard';
 import ConfigCenter from './component/config/ConfigCenter';
 import ModelConfig from './component/modelconfig/ModelConfig';
 
-//import Test from './component/test/Test'; 
-
 import Index from './component/Index';
 import Login from './component/Login';
-//import DecisionTree from './component/dtree/DecisionTree';
-
-// 引入Ant-Design样式 & Animate.CSS样式
-import 'antd/dist/antd.min.css';
-import 'animate.css/animate.min.css';
 
 import './main.less';
 
-class NotFound extends React.Component{
-  render() {
-    return (
-      <div>
-        <div className="ibox">
-          <div className="ibox-content">
-              <div style={{
-                  width:450,margin:"200px auto",fontSize:26
-              }}>功能尚未完成或页面未找到，敬请期待</div>               
-          </div>
-        </div>
+function NotFound() {
+  return (
+    <div className="ibox">
+      <div className="ibox-content">
+        <div style={{ width: 450, margin: '200px auto', fontSize: 26 }}>功能尚未完成或页面未找到，敬请期待</div>
       </div>
-    );
-  }
-};
-
-class Welcome extends React.Component{
-  render() {
-    return (
-      <div>
-        <div className="ibox">
-          <div className="ibox-content">
-              <h2>欢迎登录风控引擎管理平台！</h2>               
-          </div>
-        </div>
-      </div>
-    );
-  }
-};
-
-class App extends React.Component{
-    render(){
-        return (
-            <div>
-                {this.props.children}
-            </div>
-        );
-    }
+    </div>
+  );
 }
 
-class AppRoutes extends React.Component{
+function Welcome() {
+  return (
+    <div className="ibox">
+      <div className="ibox-content">
+        <h2>欢迎登录风控引擎管理平台！</h2>
+      </div>
+    </div>
+  );
+}
 
-  render() {
-    return (
-      <Router history={hashHistory}>
-        <Route path="/" component={App} >
-          <IndexRedirect to="login"/>
-          <Route path="/welcome" component={Welcome}>
-          </Route>
-          <Route path="/login" component={Login}>
-          </Route>
-          {/* <Route path="/dtree" component={DecisionTree}> </Route>  */}
-          <Route path="/index" component={Index}>            
-            <Route path="/modelList" component={ModelList}/>
-            <Route path="/model/:id" component={Model}>
-                <IndexRedirect to="/field/:id"/>
-                <Route path="/field/:id" component={Field}/>
-                <Route path="/activation/:id" component={Activation}/>
-                <Route path="/datalist/:id" component={Datalist}/>
-                <Route path="/datalistRecord/:id/:datalistId" component={DatalistRecord}/>
-                <Route path="/preItem/:id" component={PreItem}/>
-                <Route path="/ruleList/:id/:activationId" component={RuleList}/>
-                <Route path="/historyRecordList/:id/:activationId/:ruleId" component={HistoryRecordList}/>
-                <Route path="/abstractionList/:id" component={AbstractionList}/>
-                <Route path="/modelConfig/:id" component={ModelConfig}/>
+function App() {
+  return <Outlet />;
+}
 
-                {/*<Route path="/test/:id" component={Test}/>*/}
-            </Route>
+// /model/:id 默认子路由：等价原 IndexRedirect to="/field/:id"（复用同一个 id）
+function ModelIndexRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/model/${id}/field/${id}`} replace />;
+}
 
-            <Route path="/report" component={Report}>
-                <IndexRedirect to="/event"/>
-                <Route path="/event" component={ListEvent}/>
-                <Route path="/graph" component={RuleGraph}/>
-                <Route path="/rule" component={ListRule}/>
-                <Route path="/ruleid/:modelId/:ruleId/:activationName" component={ListEvent}/>
-                <Route path="/dashboard" component={DashBoard}/>
+// URL 结构与 2022 版（react-router 3 绝对 path）保持一致：
+// #/modelList、#/model/:id/field/:id、#/report/event 等，Index 头部用 pathless layout route 承载
+const router = createHashRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      { index: true, element: <Navigate to="/login" replace /> },
+      { path: 'welcome', element: <Welcome /> },
+      { path: 'login', element: <Login /> },
+      {
+        element: <Index />,
+        children: [
+          { path: 'modelList', element: <ModelList /> },
+          {
+            path: 'model/:id',
+            element: <Model />,
+            children: [
+              { index: true, element: <ModelIndexRedirect /> },
+              { path: 'field/:id', element: <Field /> },
+              { path: 'activation/:id', element: <Activation /> },
+              { path: 'datalist/:id', element: <Datalist /> },
+              { path: 'datalistRecord/:id/:datalistId', element: <DatalistRecord /> },
+              { path: 'preItem/:id', element: <PreItem /> },
+              { path: 'ruleList/:id/:activationId', element: <RuleList /> },
+              { path: 'historyRecordList/:id/:activationId/:ruleId', element: <HistoryRecordList /> },
+              { path: 'abstractionList/:id', element: <AbstractionList /> },
+              { path: 'modelConfig/:id', element: <ModelConfig /> },
+            ],
+          },
+          {
+            path: 'report',
+            element: <Report />,
+            children: [
+              { index: true, element: <Navigate to="/report/event" replace /> },
+              { path: 'event', element: <ListEvent /> },
+              { path: 'graph', element: <RuleGraph /> },
+              { path: 'rule', element: <ListRule /> },
+              { path: 'ruleid/:modelId/:ruleId/:activationName', element: <ListEvent /> },
+              { path: 'dashboard', element: <DashBoard /> },
+            ],
+          },
+          { path: 'config', element: <ConfigCenter /> },
+        ],
+      },
+      { path: '*', element: <NotFound /> },
+    ],
+  },
+]);
 
-            </Route> 
-            <Route path="/config" component={ConfigCenter}>
-                
-            </Route> 
-          </Route>
-          <Route path="*" component={Index}>
-            <IndexRoute component={NotFound} />
-          </Route>
-        </Route>
-	    </Router>  
-    );
-  }
-};
-
-ReactDOM.render(
-  <AppRoutes />
-, document.getElementById("react-content"));
+createRoot(document.getElementById('react-content')).render(<RouterProvider router={router} />);

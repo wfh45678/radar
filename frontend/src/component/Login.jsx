@@ -1,5 +1,6 @@
 import React from 'react';
-import {Card,Form,Input,Button,Icon,Alert,Col,message} from 'antd';
+import {Card,Form,Input,Button,Alert,Col,message,Modal} from 'antd';
+import {LockOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 
@@ -8,6 +9,8 @@ import {fetchVersion} from './utils/fetchUtil';
 import {trim} from './utils/validateUtil';
 import Register from './register';
 export default class Login extends React.Component{
+
+    captchaRef = React.createRef();
 
     state={
         username:'',
@@ -50,7 +53,7 @@ export default class Login extends React.Component{
             return false;
         }
 
-        let formData = new FormData(); 
+        let formData = new FormData();
         formData.append("loginName",this.state.username);
         formData.append("passwd",this.state.password);
         formData.append("captcha",this.state.captcha);
@@ -59,15 +62,15 @@ export default class Login extends React.Component{
 	        body:formData})
 	        .then((res) => {
 	        	hide();
-	        	if(res.ok){ 
+	        	if(res.ok){
 		            return res.json();
 	            }
 	            else{
 	            	Modal.error({
 				    	title: '系统错误',
 				    	content: '请检查是否有参数配置错误',
-				  	});
-	            } 
+				 	});
+	            }
 	        })
 	        .then((data)=>{
                 if(data.success){
@@ -75,17 +78,17 @@ export default class Login extends React.Component{
                     window.location.href="#/modelList";
                 }
                 else{
-                    this.refs.captcha.click();
+                    this.captchaRef.current.click();
                     this.setState({
                         msg:data.msg,
                         showMsg:true
-                    }); 
+                    });
                 }
             })
-	        .catch((e) => { 
+	        .catch((e) => {
 	            console.log(e.message);
 	        });
-        
+
     }
 
     handleClick=(event)=>{
@@ -109,8 +112,8 @@ export default class Login extends React.Component{
         return (
             <div className="middleBox" onKeyDown={this.handleKeyDown}>
                 <Card>
-                    <h2 style={{textAlign:"center",paddingBottom:10,borderBottom:"1px dashed #ececec"}}><Icon type="lock" />&nbsp;&nbsp;风控引擎管理平台</h2>
-                    <Form layout={'horizontal'}  style={{marginTop:30}}>
+                    <h2 style={{textAlign:"center",paddingBottom:10,borderBottom:"1px dashed #ececec"}}><LockOutlined />&nbsp;&nbsp;风控引擎管理平台</h2>
+                    <Form layout="horizontal" style={{marginTop:30}}>
                         <FormItem {...formItemLayout} label="用户名">
                             <Input size="large" type="text" name="username" value={this.state.username} onChange={this.handleChange}/>
                         </FormItem>
@@ -123,17 +126,17 @@ export default class Login extends React.Component{
                             <Input style={{width:60}} size="large" type="text" name="captcha" value={this.state.captcha} onChange={this.handleChange}/>
                             </Col>
                             <Col span={12}>
-                            <span><img id="captcha" ref="captcha" src={fetchVersion+"/common/getCaptcha?"+this.state.rd} onClick={this.handleClick}/> </span>
-                            </Col>                           
+                            <span><img id="captcha" ref={this.captchaRef} src={fetchVersion+"/common/getCaptcha?"+this.state.rd} onClick={this.handleClick}/> </span>
+                            </Col>
                         </FormItem>
 
                         <FormItem wrapperCol={{ span: 13, offset: 7 }}>
                             <div style={this.state.showMsg?{display:"block"}:{display:"none"}}><Alert message={this.state.msg} type="error" /></div>
                             <Button type="primary" onClick={this.handleLogin}>登录</Button> &nbsp;&nbsp;&nbsp;&nbsp;<Register/>
-                        </FormItem> 
+                        </FormItem>
                         <FormItem  wrapperCol={{ span: 13, offset: 5 }}>
                             <span>Radar is open source licence</span>
-                        </FormItem>	                                      
+                        </FormItem>
                     </Form>
                 </Card>
             </div>

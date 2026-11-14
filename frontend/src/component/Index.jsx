@@ -1,8 +1,8 @@
 import React from 'react';
-import {Link} from 'react-router';
+import { Link, Outlet } from 'react-router';
 
-import {Menu,Breadcrumb,Icon,Tooltip} from 'antd';
-const SubMenu = Menu.SubMenu;
+import {Tooltip} from 'antd';
+import {HomeOutlined, LineChartOutlined, LogoutOutlined} from '@ant-design/icons';
 import './Index.less';
 import {FetchUtil} from './utils/fetchUtil';
 
@@ -28,17 +28,17 @@ export default class Index extends React.Component{
       <div className="ant-layout-header">
         <div className="ant-layout-wrapper">
           <div className="ant-layout-logo">
-            <Tooltip title="回到首页"><Link to="/modelList"><Icon type="home" /></Link></Tooltip>
+            <Tooltip title="回到首页"><Link to="/modelList"><HomeOutlined /></Link></Tooltip>
           </div>
           <div className="ant-layout-logo">
-            <Tooltip title="统计报表"><Link to="/report"><Icon type="line-chart" /></Link></Tooltip>
+            <Tooltip title="统计报表"><Link to="/report"><LineChartOutlined /></Link></Tooltip>
           </div>
           <div className="ant-layout-logo">
-            {/*<Tooltip title="配置中心"><Link to="/config"><Icon type="setting" /></Link></Tooltip>*/}
+            {/*<Tooltip title="配置中心"><Link to="/config"><SettingOutlined /></Link></Tooltip>*/}
           </div>
 
           <div className="ant-layout-logo" style={{float:"right",marginRight:0}}>
-            <Tooltip title="退出登录"><a onClick={this.handleLogout}><Icon type="logout" /></a></Tooltip>
+            <Tooltip title="退出登录"><a onClick={this.handleLogout}><LogoutOutlined /></a></Tooltip>
           </div>
           <div className="ant-layout-logo" style={{float:"right",marginRight:100}}>
                <a target="_blank" href='https://gitee.com/freshday/radar'><img src='https://gitee.com/freshday/radar/badge/star.svg?theme=gvp' alt='star'></img></a>
@@ -46,7 +46,7 @@ export default class Index extends React.Component{
         </div>
       </div>
       <div className="ant-layout-main">
-          {this.props.children}
+          <Outlet />
         </div>
     </div>
         );

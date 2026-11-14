@@ -1,5 +1,6 @@
 import React from 'react';
-import {Switch,Icon} from 'antd';
+import {Switch} from 'antd';
+import {CalendarOutlined} from '@ant-design/icons';
 import { Link } from 'react-router';
 
 import './Collapse.less';
@@ -58,12 +59,15 @@ export default class Collapse extends React.Component{
         this.props.handleClick();
     }
 
-    componentWillReceiveProps(nextProps){
-        if(nextProps.slide){
-            this.slideDown();
-        }
-        else{
-            this.slideUp();
+    // 原 componentWillReceiveProps 在 React 17+ 已移除，等价迁移为 componentDidUpdate
+    componentDidUpdate(prevProps){
+        if(prevProps.slide!==this.props.slide){
+            if(this.props.slide){
+                this.slideDown();
+            }
+            else{
+                this.slideUp();
+            }
         }
     }
 
@@ -105,7 +109,7 @@ export default class Collapse extends React.Component{
                         :''}
                     {
                         this.props.type!=undefined?
-                            <div className='p-block-title-right'><Link to={"/historyRecordList/"+this.props.modelId+"/" + this.props.activationId+"/"+this.props.ruleId}><Icon type="calendar" style={{fontSize:'24px',lineHeight:1.5}}/></Link></div>
+                            <div className='p-block-title-right'><Link to={"/historyRecordList/"+this.props.modelId+"/" + this.props.activationId+"/"+this.props.ruleId}><CalendarOutlined style={{fontSize:'24px',lineHeight:1.5}}/></Link></div>
                             :''
                     }
 
