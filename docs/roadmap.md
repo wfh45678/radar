@@ -1,6 +1,6 @@
 # Radar 开源项目技术演进 Roadmap
 
-> 版本：v1.0（2026-11-14）
+> 版本：v1.1（2026-11-14：新增 P1-7 前端现代化，v2.3 存储演进暂缓顺延为 v2.4；v1.0 初稿）
 > 范围：v2.0（Java 17 + Spring Boot 3.5 单体）完成后的技术方向规划
 > 状态：规划稿，优先级会随社区反馈调整
 > 前置文档：[upgrade-plan-java17-boot3.md](upgrade-plan-java17-boot3.md)
@@ -51,6 +51,7 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 | P1-4 | 事件存储演进（调研） | hitsSort 等聚合报表是 MongoDB/ES 弱项，评估 ClickHouse 作为报表侧可选存储 |
 | P1-5 | ML 评分重接（ONNX） | Estimator 接口已保留、零实现（TensorDnnEstimator 因 TF Java 不兼容 Java 17 移除，2026-11-14 拍板暂缓）。将来重接**选 ONNX Runtime 而非 TF Java**：abstractions 层即特征工程，接入即闭环；`sys.conf.machine-learning` 开关与 EstimatorContainer 注册机制均无需改动 |
 | P1-6 | 引擎/管理端分离部署 profile | 单体仍为默认形态；增加 profile 使 engine 可独立水平扩展、admin 留单实例。Redis pub/sub 已解耦配置推送，改造成本低 |
+| P1-7 | 前端现代化（radar-web 复活） | 管理端前端源码（2022-08 封存：React 16.8/antd 3/webpack 4，现代 Node 无法安装）合入主仓 `frontend/`（git subtree），迁移 React 18.3 + antd 5 + Vite + router 7；class 组件保留不 hooks 化、UI 不改版；产物继续内嵌 jar。见 [plan-v2.4.md](plan-v2.4.md)（v2.4.0，v2.3 存储演进暂缓顺延） |
 
 ## 4. P2：生态与护城河（长期）
 
@@ -65,8 +66,9 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 
 ```
 v2.1（工程基础）   P0-1 ~ P0-5        —— 测试、CI、Docker、发布规范化（[已发布](plan-v2.1.md)）
-v2.2（专业度）     P1-1、P1-2         —— JDK 21 + 虚拟线程、可观测性（[plan-v2.2.md](plan-v2.2.md)）
-v2.3（存储演进）   P1-3、P1-4         —— ES 8、报表存储调研
+v2.2（专业度）     P1-1、P1-2         —— JDK 21 + 虚拟线程、可观测性（[已发布](plan-v2.2.md)）
+v2.3（存储演进）   P1-3、P1-4         —— ES 8、报表存储调研（**暂缓**：2026-11-14 决定优先 v2.4，版本号保留）
+v2.4（前端现代化） P1-7               —— radar-web 复活：React 18 + antd 5 + Vite（[plan-v2.4.md](plan-v2.4.md)）
 v3.0（生态）       P2-1、P2-2 →      —— 插件 SDK、Groovy 沙箱；视社区情况启动 P2-3
 ```
 
