@@ -1,0 +1,5 @@
+# Created at 2026-11-15T01:01:35.816
+Boot Manifest-JAR contains absolute paths in classpath 'D:\git\radar-opensource\radar\samples\radar-plugin-demo\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+
