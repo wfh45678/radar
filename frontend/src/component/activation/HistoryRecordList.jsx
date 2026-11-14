@@ -5,7 +5,7 @@ import {LeftCircleOutlined} from '@ant-design/icons';
 import CollapseGroup from '../common/CollapseGroup';
 import Collapse from '../common/Collapse';
 import { Link } from 'react-router';
-import moment from 'moment';
+import dayjs from 'dayjs';
 const FormItem = Form.Item;
 
 import HistoryRecord from './HistoryRecord';
@@ -81,7 +81,7 @@ class HistoryRecordList extends Component{
             pageNo:1
         },()=>{this.fetchTableData()});
     }
-    componentWillMount() {
+    componentDidMount() {
         this.fetchTableData();
         FetchUtil('/activation/datacolumns/'+this.props.params.id,'GET','',
             (data) => {
@@ -108,7 +108,7 @@ class HistoryRecordList extends Component{
                     {this.state.tData.map((info,index)=>{
                         return (
                             <Timeline.Item key={index}>
-                                <span style={{position:'absolute',left:'-120px'}}>{moment(info.updateTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                                <span style={{position:'absolute',left:'-120px'}}>{dayjs(info.updateTime).format('YYYY-MM-DD HH:mm:ss')}</span>
                                 <HistoryRecord ruleHistory={info} modelId={this.props.params.id} activationId={this.props.params.activationId} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData}/>
                             </Timeline.Item>
                             );

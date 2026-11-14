@@ -1,6 +1,6 @@
 import React from 'react';
 import {Form,Button,Table,Pagination,Input,Select,Modal,DatePicker,Cascader} from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const FormItem=Form.Item;
 const RangePicker = DatePicker.RangePicker;
@@ -33,8 +33,9 @@ export default class DashBoard extends React.Component{
         }
     }
 
-    componentWillReceiveProps(nextProps){
-        if(this.props.modelId!=nextProps.modelId&&!nextProps.model.dashboardUrl){
+    // 原 componentWillReceiveProps 在 React 17+ 已移除，等价迁移为 componentDidUpdate
+    componentDidUpdate(prevProps){
+        if(prevProps.modelId!=this.props.modelId&&!this.props.model.dashboardUrl){
             Modal.warning({
                 title: '信息提醒',
                 content: '该模型统计报表未初始化！',

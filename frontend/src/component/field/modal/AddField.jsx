@@ -164,7 +164,7 @@ export default class AddField extends React.Component{
 			<span>
 				<Button onClick={this.showModal} type="primary">新增</Button>
 				<Modal title="新建字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form="true" form={this.props.form}>
+                    <Form>
                         <FormItem required={true} {...formItemLayout} label="字段名：" help={validate.fieldName.help} validateStatus={validate.fieldName.status}>
 							<Row>
                         		<Col span={20}>

@@ -3,7 +3,7 @@ import {Breadcrumb, Form, Row, Col, Switch, Modal, Input, Button, Table, Tooltip
 import {withParams} from '../utils/routerUtil';
 import {AppstoreOutlined, CopyOutlined, FileTextOutlined, PictureOutlined, SettingOutlined, SolutionOutlined} from '@ant-design/icons';
 import { Link } from 'react-router';
-import moment from 'moment';
+import dayjs from 'dayjs';
 const FormItem = Form.Item;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -164,7 +164,7 @@ class Model extends React.Component{
                 <div className="ant-layout-container">
                     <div style={{lineHeight:"46px",padding:"0 20px 0",margin:"0 24px",borderBottom:"1px solid #e9e9e9"}}>
                         {this.state.model==null?'':<span style={{marginRight:20}}>模型："{this.state.model.label}"</span>}
-                        {this.state.model==null?'':<span style={{marginRight:20}}>模型创建时间：{moment(this.state.model.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>}
+                        {this.state.model==null?'':<span style={{marginRight:20}}>模型创建时间：{dayjs(this.state.model.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>}
                         {this.state.disable===false?'':<Switch checkedChildren={'开'} unCheckedChildren={'关'} defaultChecked={this.state.checked} checked={this.state.checked} disabled={this.state.disabled} onChange={this.onChange} />}
                         <Button type="primary" onClick={this.handleBuild}  style={{float:"right",marginTop:9}}>构建模型</Button>
                     </div>

@@ -141,7 +141,7 @@ export default class EditDataList extends React.Component{
 			<span>
 				<Tooltip title="编辑" onClick={this.showModal}><a>编辑</a></Tooltip>
 				<Modal title="编辑字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form="true" form={this.props.form}>
+                    <Form>
                         <FormItem {...formItemLayout} label="列表名：" help={validate.label.help} validateStatus={validate.label.status}>
 							<Row>
 								<Col span={20}>

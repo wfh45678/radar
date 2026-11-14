@@ -206,7 +206,7 @@ export default class EditPreItem extends React.Component{
 			<span>
 				<Tooltip title="编辑" onClick={this.showModal}><a>编辑</a></Tooltip>
 				<Modal title="编辑字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form="true" form={this.props.form}>
+                    <Form>
                     	<FormItem required={true} {...formItemLayout} label="插件种类：" help={validate.plugin.help} validateStatus={validate.plugin.status}>
 							<Row>
 								<Col span={20}>

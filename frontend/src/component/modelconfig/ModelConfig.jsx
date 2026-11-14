@@ -425,7 +425,7 @@ class ModelConfig extends React.Component{
 															          value={selected}
 															          style={{ width: '100%' }}
 															          options={this.state.absColumns}
-															        >
+															        />
 															</div>
 														</Col>
 														<Col span={1} offset={1}>
@@ -448,7 +448,7 @@ class ModelConfig extends React.Component{
 															          onChange={this.handleChange}
 															          style={{ width: '100%' }}
 															          options={this.state.absColumns}
-															        >
+															        />
 															</div>
 														</Col> 
 													 </Row>

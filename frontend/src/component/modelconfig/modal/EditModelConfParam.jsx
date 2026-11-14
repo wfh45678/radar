@@ -192,8 +192,8 @@ class EditModelConfParam extends React.Component{
 								          value={this.state.selectList}
 								          onChange={this.handleSelect}
 								          style={{ width: '100%' }}
-            options={this.props.abstractions}
-	        						</Select>
+								          options={this.props.abstractions}
+								        />
                             	</Col>
                             	<Col span={2} offset={1}>
 		                            <Tooltip placement="right" title={'选择模型需要的特征指标'}>

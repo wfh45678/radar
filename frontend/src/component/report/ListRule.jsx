@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {Form,Button,Table,Pagination,Input,Select,Modal,DatePicker,Cascader} from 'antd';
 import {withParams} from '../utils/routerUtil';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const FormItem=Form.Item;
 const RangePicker = DatePicker.RangePicker;
@@ -17,8 +17,8 @@ class Rule extends React.Component{
         super(props);
         
         this.state={
-            beginTime:moment().add(-3,'days'),
-            endTime:moment(),
+            beginTime:dayjs().add(-3,'days'),
+            endTime:dayjs(),
             rangeSelect:'-3',
 
             endOpen:false,
@@ -94,11 +94,12 @@ class Rule extends React.Component{
         this.fetchTableData();
     }
 
-    componentWillReceiveProps(nextProps){
-        if(nextProps.modelId!=this.props.modelId){
+    // 原 componentWillReceiveProps 在 React 17+ 已移除，等价迁移为 componentDidUpdate
+    componentDidUpdate(prevProps){
+        if(prevProps.modelId!=this.props.modelId){
             this.setState({
-                beginTime:moment().add(-3,'days'),
-                endTime:moment(),
+                beginTime:dayjs().add(-3,'days'),
+                endTime:dayjs(),
                 rangeSelect:'-3',
                 activationName:'',
                 ruleId:'',
@@ -167,13 +168,13 @@ class Rule extends React.Component{
         //console.log(value);
         if(value === '-1'){
             this.setState({
-                beginTime:moment().add(value,'months'),
-                endTime:moment()
+                beginTime:dayjs().add(value,'months'),
+                endTime:dayjs()
             });
         }else {
             this.setState({
-                beginTime:moment().add(value,'days'),
-                endTime:moment()
+                beginTime:dayjs().add(value,'days'),
+                endTime:dayjs()
             });
         }
 
@@ -301,7 +302,7 @@ class Rule extends React.Component{
                     };
                     if(this.state.model!=null&&this.state.model.referenceDate==info.value){
                         column.render=(t)=>{
-                            return moment(t).format('YYYY-MM-DD HH:mm:ss');
+                            return dayjs(t).format('YYYY-MM-DD HH:mm:ss');
                         }
                     }
 

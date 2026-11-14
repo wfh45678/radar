@@ -289,7 +289,7 @@ export default class Rule extends React.Component{
 		return (
 			<div>
 				<div style={{width:750}}>	                
-				<Form="true" form={this.props.form}>
+				<Form>
                     <FormItem required={true} {...formItemLayout} label="显示名称：" help={validate.label.help} validateStatus={validate.label.status}>
 						<Row>
 							<Col span={20}>

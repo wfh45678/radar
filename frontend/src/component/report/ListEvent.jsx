@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form,Button,Table,Pagination,Input,Select,Modal,DatePicker,Cascader} from 'antd';
 import {withParams} from '../utils/routerUtil';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const FormItem=Form.Item;
 const RangePicker = DatePicker.RangePicker;
@@ -24,8 +24,8 @@ class ListEvent extends React.Component{
             activationName:'',
             ruleId:'',
             risk:'',
-			beginTime:moment().add(-3,'days'),
-			endTime:moment(),
+			beginTime:dayjs().add(-3,'days'),
+			endTime:dayjs(),
             rangeSelect:'-3',
 
 			tData:[],
@@ -133,8 +133,9 @@ class ListEvent extends React.Component{
     }
 
 
-    componentWillReceiveProps(nextProps){
-        if(nextProps.modelId!=this.props.modelId){
+    // 原 componentWillReceiveProps 在 React 17+ 已移除，等价迁移为 componentDidUpdate
+    componentDidUpdate(prevProps){
+        if(prevProps.modelId!=this.props.modelId){
             this.setState({
                 fieldName:'',
                 fieldValue:'',
@@ -144,8 +145,8 @@ class ListEvent extends React.Component{
                 pageNo:1,
                 fieldName:'',
                 fieldValue:'',
-                beginTime:moment().add(-3,'days'),
-                endTime:moment(),
+                beginTime:dayjs().add(-3,'days'),
+                endTime:dayjs(),
                 rangeSelect:'-3',
                 showAdvance:false,
                 searchType:''
@@ -194,13 +195,13 @@ class ListEvent extends React.Component{
 		//console.log(value);
 		if(value === '-1'){
 			this.setState({
-				beginTime:moment().add(value,'months'),
-				endTime:moment()
+				beginTime:dayjs().add(value,'months'),
+				endTime:dayjs()
 			});
 		}else {
 			this.setState({
-				beginTime:moment().add(value,'days'),
-				endTime:moment()
+				beginTime:dayjs().add(value,'days'),
+				endTime:dayjs()
 			});
 		}
 		this.setState({
@@ -353,7 +354,7 @@ class ListEvent extends React.Component{
         			};
                     if(this.state.model!=null&&this.state.model.referenceDate==info.value){
                         column.render=(t)=>{
-                            return moment(parseInt(t)).format('YYYY-MM-DD HH:mm:ss');
+                            return dayjs(parseInt(t)).format('YYYY-MM-DD HH:mm:ss');
                         }
                     }
 

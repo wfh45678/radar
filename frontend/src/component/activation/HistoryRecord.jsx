@@ -82,7 +82,7 @@ export default class HistoryRecord extends React.Component{
             <div ref="content" className="down" style={{border:'1px solid #d9d9d9',borderRadius:'5px',padding:'10px',height:this.state.height,overflow:'hidden'}}>
                 <div style={{padding:'0 0 20px 20px',cursor:'pointer'}} onClick={this.handleClick}>用户{ruleHistory.merchantCode}修改</div>
                 <div ref="content1" style={{width:750}}>
-                    <Form="true" form={this.props.form}>
+                    <Form>
                         <FormItem required={true} {...formItemLayout} label="显示名称：">
                             <Row>
                                 <Col span={20}>

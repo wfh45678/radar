@@ -130,7 +130,7 @@ export default class AddDataList extends React.Component{
 			<span>
 				<Button onClick={this.showModal} type="primary">新增</Button>
 				<Modal title="编辑字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form="true" form={this.props.form}>
+                    <Form>
                         <FormItem {...formItemLayout} label="列表名：" help={validate.label.help} validateStatus={validate.label.status}>
 							<Row>
 								<Col span={20}>

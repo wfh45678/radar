@@ -1,9 +1,8 @@
 import React from 'react';
 import {Form,Button,Table,Pagination,Input,Select,Modal,DatePicker,Cascader} from 'antd';
-//import moment from 'moment';
 import { Link } from 'react-router';
-import echarts from 'echarts';
-import moment from 'moment';
+import * as echarts from 'echarts';
+import dayjs from 'dayjs';
 
 
 const FormItem=Form.Item;
@@ -32,8 +31,8 @@ export default class RuleGraph extends React.Component{
 
 			modelList:[],
 			fieldList:[],
-			beginTime:moment().add(-1,'months'),
-			endTime:moment(),
+			beginTime:dayjs().add(-1,'months'),
+			endTime:dayjs(),
             rangeSelect:'-1'
 		}
 
@@ -62,12 +61,6 @@ export default class RuleGraph extends React.Component{
 
     componentDidMount=()=>{
     	this.fetchTableData(this.props.modelId);
-    }
-
-    componentWillReceiveProps(nextProps){
-        if(nextProps.modelId!=this.props.modelId){
-             this.fetchTableData(nextProps.modelId);
-        }
     }
 
     handleSelect=(name,value)=>{
@@ -107,13 +100,13 @@ export default class RuleGraph extends React.Component{
 		//console.log(value);
 		if(value === '-1'){
 			this.setState({
-				beginTime:moment().add(value,'months'),
-				endTime:moment()
+				beginTime:dayjs().add(value,'months'),
+				endTime:dayjs()
 			});
 		}else {
 			this.setState({
-				beginTime:moment().add(value,'days'),
-				endTime:moment()
+				beginTime:dayjs().add(value,'days'),
+				endTime:dayjs()
 			});
 		}
 		this.setState({
@@ -166,13 +159,19 @@ export default class RuleGraph extends React.Component{
 						bordered
 						pagination={false}
 						loading={this.state.loading}
+						rowKey={record => record.id}
 					/>
 				</div>
            </div>
 		);
 	}
 
-	componentDidUpdate=()=>{
+	// componentDidUpdate 合并实现：modelId 变更重取数据 + echarts 重绘（见上方方法声明，
+	// 此处箭头字段会覆盖原型方法，因此两段逻辑都放在这里）
+	componentDidUpdate=(prevProps)=>{
+		if(prevProps && prevProps.modelId!=this.props.modelId){
+			this.fetchTableData(this.props.modelId);
+		}
 		// 基于准备好的dom元素，初始化echarts实例
 		let myChart = echarts.init(document.getElementById('echartsMain'));
 		// 绘制图表
@@ -205,10 +204,8 @@ export default class RuleGraph extends React.Component{
 					type: 'bar',
 					stack: '总量',
 					label: {
-						normal: {
-							show: true,
-							position: 'right'
-						}
+						show: true,
+						position: 'right'
 					},
 					data: this.state.countList
 				}

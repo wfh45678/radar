@@ -202,7 +202,7 @@ export default class AddPreItem extends React.Component{
 			<span>
 				<Button onClick={this.showModal} type="primary">新增</Button>
 				<Modal title="编辑字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
-                    <Form= "true" form={this.props.form}>
+                    <Form>
                     	<FormItem required={true} {...formItemLayout} label="插件种类：" help={validate.plugin.help} validateStatus={validate.plugin.status}>
 							<Row>
 								<Col span={20}>
