@@ -89,6 +89,10 @@ services:
       MOBILE_INFO_PATH: /radar/resources/moble_info.csv
       IP2REGION_DB_PATH: /radar/resources/ip2region.db
       SYSCONF_WORKDIR: /radar/workdir
+      # v3.0 外置插件目录（放入 ./plugins/*.jar 重启生效）
+      RADAR_PLUGINS_DIR: /radar/plugins
+    volumes:
+      - ./plugins:/radar/plugins
     ports:
       - "6580:6580"
 
