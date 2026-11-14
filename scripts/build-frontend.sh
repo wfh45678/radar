@@ -13,9 +13,10 @@ npm run build
 
 echo "[3/3] 同步产物到 src/main/resources/static/（保留 images/ 与 res/）"
 STATIC=../src/main/resources/static
-# 仅清理旧构建产物（webpack 时代 index.*.* / main.*.* 模式与 index.html），不动 images/ 与 res/
+# 清理旧构建产物：webpack 时代的根级 index.*.* / main.*.*，以及 Vite 的 static/ 子目录整体替换
 find "$STATIC" -maxdepth 1 -type f \( -name 'index.*.*' -o -name 'main.*.*' \) -delete
 rm -f "$STATIC/index.html"
+rm -rf "$STATIC/static"
 cp -r dist/. "$STATIC/"
 echo "完成，static/ 现有内容："
 ls "$STATIC"
