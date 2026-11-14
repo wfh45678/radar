@@ -1,0 +1,10 @@
+# Prometheus 抓取配置（docker compose --profile monitoring 使用）
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: radar
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["app:6580"]   # compose 服务名；app 未启动时抓取失败不影响 prometheus 自身
