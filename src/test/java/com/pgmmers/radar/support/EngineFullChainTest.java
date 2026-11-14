@@ -155,7 +155,7 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("copy 后未找到模型: " + list));
         Long modelId = copied.getLong("id");
-        String modelGuid = copied.getString("GUID");
+        String modelGuid = copied.getString("guid");
         assertNotNull(modelId, "新模型 id 缺失");
         assertNotNull(modelGuid, "新模型 GUID 缺失");
 
@@ -182,18 +182,26 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("未找到 copy 的模型"));
         Long modelId = copied.getLong("id");
-        String modelGuid = copied.getString("GUID");
+        String modelGuid = copied.getString("guid");
 
-        // 事件上传（公开接口，表单参数）
+        // 事件上传（公开接口，表单参数；两条——频次类规则需第二笔才达阈值，同 v2.0 冒烟口径）
         MultiValueMap<String, String> uploadForm = new LinkedMultiValueMap<>();
         uploadForm.add("modelGuid", modelGuid);
         uploadForm.add("reqId", REQ_ID);
         uploadForm.add("jsonInfo", demoEventJson());
         JSONObject upload = parse(exchange(HttpMethod.POST, "/services/v1/uploadInfo",
-                new HttpEntity<>(uploadForm, formHeaders())), "事件上传");
-        assertTrue(upload.getJSONObject("data") != null
-                        && upload.getJSONObject("data").containsKey("activations"),
-                "上传结果应包含 activations 决策: " + upload);
+                new HttpEntity<>(uploadForm, formHeaders())), "事件上传1");
+
+        MultiValueMap<String, String> uploadForm2 = new LinkedMultiValueMap<>();
+        uploadForm2.add("modelGuid", modelGuid);
+        uploadForm2.add("reqId", REQ_ID + "_b");
+        uploadForm2.add("jsonInfo", demoEventJson().replace("\"eventId\":\"" + REQ_ID + "\"",
+                "\"eventId\":\"" + REQ_ID + "_b\""));
+        JSONObject upload2 = parse(exchange(HttpMethod.POST, "/services/v1/uploadInfo",
+                new HttpEntity<>(uploadForm2, formHeaders())), "事件上传2");
+        assertTrue(upload2.containsKey("activations")
+                        && !upload2.getJSONObject("activations").isEmpty(),
+                "上传结果应包含 activations 决策: " + upload2);
 
         // getScore（Redis 通道）
         JSONObject score = parse(exchange(HttpMethod.GET,

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Radar uploadInfo 压测" enabled="true">
+    <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
+      <collectionProp name="Arguments.arguments"/>
+    </elementProp>
+  </TestPlan>
+  <hashTree>
+    <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="uploadInfo" enabled="true">
+      <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+      <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController">
+        <boolProp name="LoopController.continue_forever">true</boolProp>
+        <intProp name="LoopController.loops">-1</intProp>
+      </elementProp>
+      <stringProp name="ThreadGroup.num_threads">${__P(concurrency,50)}</stringProp>
+      <stringProp name="ThreadGroup.ramp_time">30</stringProp>
+      <boolProp name="ThreadGroup.scheduler">true</boolProp>
+      <stringProp name="ThreadGroup.duration">${__P(duration,180)}</stringProp>
+    </ThreadGroup>
+    <hashTree>
+      <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="uploadInfo" enabled="true">
+        <stringProp name="HTTPSampler.domain">${__P(target,localhost)}</stringProp>
+        <stringProp name="HTTPSampler.port">${__P(port,6580)}</stringProp>
+        <stringProp name="HTTPSampler.protocol">http</stringProp>
+        <stringProp name="HTTPSampler.path">/services/v1/uploadInfo</stringProp>
+        <stringProp name="HTTPSampler.method">POST</stringProp>
+        <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+        <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="" elementType="HTTPArgument">
+              <boolProp name="HTTPArgument.always_encode">true</boolProp>
+              <stringProp name="Argument.value">modelGuid=${__P(modelGuid,)}&amp;reqId=bench_${__threadNum}_${__time(yyyyMMddHHmmss)}&amp;jsonInfo=%7B%22eventId%22%3A%22bench_${__threadNum}_${__counter(TRUE)}%22%2C%22mobile%22%3A%2218516249909%22%2C%22userId%22%3A%2218516249909%22%2C%22eventTime%22%3A${__time()}%2C%22userIP%22%3A%22180.175.166.148%22%2C%22deviceId%22%3A%22BENCH-DEVICE%22%2C%22os%22%3A%22ios%22%2C%22amount%22%3A500.0%2C%22channel%22%3A%22alipay%22%7D</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+      </HTTPSamplerProxy>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

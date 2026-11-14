@@ -61,8 +61,11 @@ services:
       retries: 30
 
   # 应用镜像（可选）：docker compose --profile app up -d --build
+  # 同时声明 build: 便于无 GHCR 访问的测试服务器本地构建（见 scripts/deploy-test.sh）
   app:
     image: ghcr.io/wfh45678/radar:latest
+    build:
+      context: .
     container_name: radar-app
     profiles: ["app"]
     depends_on:
@@ -88,6 +91,32 @@ services:
       SYSCONF_WORKDIR: /radar/workdir
     ports:
       - "6580:6580"
+
+  # 监控栈（可选）：docker compose --profile monitoring up -d
+  # dashboard 自动装载 Radar 引擎监控（事件 QPS / 阶段 P99 / 决策分布 / JVM）
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: radar-prometheus
+    profiles: ["monitoring"]
+    volumes:
+      - ./docs/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: radar-grafana
+    profiles: ["monitoring"]
+    depends_on:
+      - prometheus
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: radar123
+    volumes:
+      - ./docs/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docs/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
 
 volumes:
   mysql-data:

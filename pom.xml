@@ -10,14 +10,17 @@
     </parent>
     <groupId>com.pgmmers</groupId>
     <artifactId>radar</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
     <name>radar</name>
     <description>Real-time risk control engine (Java 17 + Spring Boot 3 single module)</description>
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 项目级默认值：防止 env.CI 等激活其他 profile 时 activeByDefault 的 local 失效，
+             导致资源过滤留下原始 @profileActive@ 占位符（服务器 L3 实测踩坑） -->
+        <profileActive>local</profileActive>
 
         <mybatis-plus.version>3.5.18.1</mybatis-plus.version>
         <springdoc.version>2.9.1</springdoc.version>
@@ -89,6 +92,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -317,6 +324,30 @@
                 <configuration>
                     <excludedGroups>${surefire.excludedGroups}</excludedGroups>
                 </configuration>
+            </plugin>
+            <!-- 覆盖率报告：mvn verify 产出 target/site/jacoco/。
+                 check 门禁规则待 CI 首跑基线数据后启用（见 docs/plan-v2.2.md §4.4）：
+                 <execution><id>check</id><goals><goal>check</goal></goals>
+                   <configuration><rules>...</rules></configuration></execution> -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
