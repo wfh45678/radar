@@ -11,7 +11,7 @@ services:
       MYSQL_ROOT_PASSWORD: radar123
       MYSQL_DATABASE: radar
     volumes:
-      # 首次启动自动建库：基线 + 1.0.6/1.0.7/1.0.8 增量（按文件名字母序执行）
+      # 首次启动自动建库：radar-init.sql 为 v2.0.0 全量基线（schema + 种子数据）
       - ./sql:/docker-entrypoint-initdb.d:ro
       - mysql-data:/var/lib/mysql
     healthcheck:

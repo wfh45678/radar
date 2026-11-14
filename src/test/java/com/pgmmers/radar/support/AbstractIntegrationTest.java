@@ -25,9 +25,9 @@ import org.testcontainers.utility.MountableFile;
  * 应用 ES 客户端走自定义 {@code EsConfig}（读 elasticsearch.url 属性），
  * {@code @ServiceConnection} 覆盖不到，需 {@code @DynamicPropertySource} 手动注册。</p>
  *
- * <p>MySQL 初始化：sql/radar-init.sql（2019 基线，无建库语句）叠加 1.0.6/1.0.7/1.0.8 增量，
- * 四个脚本以文件名字母序在 /docker-entrypoint-initdb.d/ 内依序执行；
- * 该脚本组合已在 v2.0 冒烟回归的 MySQL80 实例上实证可用。</p>
+ * <p>MySQL 初始化：sql/radar-init.sql 为 v2.0.0 全量基线（已合并原 2019 基线与
+ * 1.0.6/1.0.7/1.0.8 增量，经 MySQL 8.0 迁移导出并回灌验证），无建库语句，
+ * 容器由 MYSQL_DATABASE=radar 建库后自动执行。</p>
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -41,13 +41,7 @@ public abstract class AbstractIntegrationTest {
             .withUsername("radar")
             .withPassword("radar")
             .withCopyFileToContainer(MountableFile.forHostPath("sql/radar-init.sql"),
-                    "/docker-entrypoint-initdb.d/1-radar-init.sql")
-            .withCopyFileToContainer(MountableFile.forHostPath("sql/radar-1.0.6.sql"),
-                    "/docker-entrypoint-initdb.d/2-radar-1.0.6.sql")
-            .withCopyFileToContainer(MountableFile.forHostPath("sql/radar-1.0.7.sql"),
-                    "/docker-entrypoint-initdb.d/3-radar-1.0.7.sql")
-            .withCopyFileToContainer(MountableFile.forHostPath("sql/radar-1.0.8.sql"),
-                    "/docker-entrypoint-initdb.d/4-radar-1.0.8.sql");
+                    "/docker-entrypoint-initdb.d/1-radar-init.sql");
 
     @Container
     @ServiceConnection

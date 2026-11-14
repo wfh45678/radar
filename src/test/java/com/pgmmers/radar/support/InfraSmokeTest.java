@@ -12,8 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * S1 测试基建冒烟：验证四件套容器接线与 MySQL 种子脚本导入。
- * radar-init.sql 无建库语句且 1.0.8 增量插入 system 模型（ID=1），
- * 故 engine_model 计数 ≥ 1 即证明四个初始化脚本全部执行成功。
+ * radar-init.sql（v2.0.0 全量基线）含 system 模型等种子数据，
+ * 故 engine_model 计数 ≥ 1 即证明初始化脚本执行成功。
  */
 class InfraSmokeTest extends AbstractIntegrationTest {
 
