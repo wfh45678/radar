@@ -167,16 +167,18 @@ export default class Rule extends React.Component{
 		}
 	}
 
+	// selectedOptions 中可能存在 null（value 路径在 fieldList 中匹配不到：字段树未加载完成或字段已变更），需判空防止白屏
 	displayRender = (labels, selectedOptions) => labels.map((label, i) => {
-	  const option = selectedOptions[i];
+	  const option = selectedOptions && selectedOptions[i];
+	  const key = (option ? option.value : label) + i;
 	  if (i === labels.length - 1) {
 	    return (
-	      <span key={option.value+i}>
+	      <span key={key}>
 	        {label}
 	      </span>
 	    );
 	  }
-	  return <span key={option.value+i}>{label} / </span>;
+	  return <span key={key}>{label} / </span>;
 	})
 
 	handleConditionColumn=(name,value,selectedOptions)=>{
