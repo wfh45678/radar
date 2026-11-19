@@ -1,55 +1,20 @@
 # 风控引擎（Radar）
-## 项目介绍
- 一款基于java语言，使用Springboot + Mongodb + Groovy + Es等框架搭建的轻量级实时风控引擎，适用于反欺诈应用场景，极简的配置，真正做到了开箱即用。     
- 通过学习本项目能快速了解**风险的定义**，进而**量化风险** ，最后达到**集中管理风险**的目的。   
-A real-time risk analysis engine,which can update risk rule in real-time and make it effective immediately.  
-It applies to the anti-fraud application perfectly. 
-The project code called Radar, like the code, monitor the transaction at the back.
 
-## 项目特点
+一款基于 Java 的轻量级实时风控决策引擎（Spring Boot 3.5 + MySQL + MongoDB + Redis + Groovy + ES），
+适用于反欺诈与消费金融场景：可视化配置规则、实时生效、开箱即用。
+Radar 的初衷是把散落在各业务代码中的风控逻辑解耦出来，通过统一平台集中化管理：
+理解**风险的定义**，进而**量化风险**，最终**集中管理风险**。
 
- * 实时风控，特殊场景可以做到100ms内响应
- * 可视化规则编辑器，丰富的运算符、计算规则灵活
- * 支持中文，易用性更强
- * 自定义规则引擎，更加灵活，支持复杂多变的场景
- * 插件化的设计，快速接入其它数据能力平台
- * NoSQL，易扩展，高性能
- * 配置简单，开箱即用！
+[English](README_en.md) · [在线 Demo](https://www.riskengine.cn) · [使用手册](https://gitee.com/freshday/radar/wikis/manual)
 
-## 相关站点
-    Gitee:  https://gitee.com/freshday/radar     
-    Github: https://github.com/wfh45678/radar // github 为镜像网站，贡献代码请提交到 gitee  
-    官网：  https://www.riskengine.cn  
-    Wiki:   https://gitee.com/freshday/radar/wikis/home
+## 核心特性
 
-
-## 背景
-  伴随着移动互联网的高速发展，羊毛党快速崛起，从一平台到另一个平台，所过之处一地鸡毛，这还不是最可怕的，
-  随之而来的黑产令大部分互联网应用为之胆寒，通常新上线的APP的福利比较大，风控系统不完善，BUG 被发现的频率也比较高，
-  黑产利用BUG短时间给平台带来了巨大的损失，某多多的（100元测试优惠券，一夜损失上百万W）就是一例。 
-  针对这一现象， 拥有一款实时的风控引擎是所有带有金融性质的APP 的当务之急，Radar应景而生。  
-  Radar前身是笔者前公司的一个内部研究项目，由于众多原因项目商业化失败，考虑到项目本身的价值，弃之可惜，
-  现使用Springboot进行重构，删除了很多本地化功能，只保留风控引擎核心，更加通用，更加轻量，二次开发成本低，
-  开源出来，希望能给有风控需求的你们带来一些帮助。
-
-## 项目初衷
-我们知道企业做大后，会有很多产品线，而几乎每一个产品都需要做风险控制，通常我们都是把风险控制的逻辑写在相应的业务功能代码里，
-大量重复的风控逻辑代码耦合在我们的业务逻辑里面，随着时间的累积，代码会变得异常复杂，会给后期的维护造成巨大的人力成本和风险。
-
-所以风险的集中化管理势在必行，只有通过一个统一的管理平台，使用规则引擎，采用可视化配置的形式，
-平台化管理不同产品的风控策略才是一种更好的方式, 而这正是Radar的初衷。
-
-## 项目架构
-
-前后端分离架构
-
-后端技术框架： SpringBoot 3 + MyBatis-Plus + Mysql +  MongoDB + Redis + Groovy + ES + springdoc-openapi
-
-前端技术框架： React 18 + antd 5 + Vite（SPA，源码在 [frontend/](frontend/README.md)，构建产物内嵌 jar）
-
-> 自 v2.0 起，工程由 8 个 Maven 模块合并为**单模块单体应用**（Java 17 + Spring Boot 3.5），
-> 一个 jar 同时提供管理端与引擎端 API（默认端口 6580），持久层由 tk.mybatis/PageHelper 迁移至 MyBatis-Plus，
-> 原雷达 `radar-dal` 转发层已删除，service 直连 mapper。详见 `docs/upgrade-plan-java17-boot3.md`。
+* 实时风控，常规场景 100ms 内响应
+* 可视化规则编辑器，支持中文，易用性强
+* 六大策略类型：规则引擎 / 决策树 / 评分卡 / 决策表 / 名单匹配 / 规则集
+* Groovy 动态规则引擎，复杂场景灵活应对，规则编辑即时生效
+* 插件化设计（v3.0 支持外置 jar 插件与动态表单），快速接入外部数据能力
+* 单模块单体架构（Java 17 + Spring Boot 3.5），一个 jar 同时提供管理端与引擎端 API
 
 ## 快速开始
 
@@ -70,81 +35,50 @@ cd frontend && npm ci && npm run dev
 # 改完前端后同步产物进 jar：scripts/build-frontend.sh，再 mvn package
 ```
 
-> 测试分 L1/L2（纯单测，`mvn test` 秒级全绿）与 L3（Testcontainers 集成测试，需 Docker / CI 全量跑），
-> 详见 [CONTRIBUTING.md](CONTRIBUTING.md)、[docs/plan-v2.1.md](docs/plan-v2.1.md)。
+* 插件开发：[开发指南](docs/plugin-dev-guide.md) · [示例工程](samples/radar-plugin-demo/README.md)
+* 可观测性：`/actuator/prometheus` 指标，`docker compose --profile monitoring` 一键起 Grafana 看板，见 [压测与监控](docs/benchmark-v2.2.md)
+* 测试分层：L1/L2 纯单测 `mvn test` 秒级全绿，L3 Testcontainers 集成测试，见 [CONTRIBUTING.md](CONTRIBUTING.md)、[docs/plan-v2.1.md](docs/plan-v2.1.md)
 
-### 插件生态（v3.0）
+## 架构
 
-preItem 插件支持外置 jar 接入：实现 `radar-plugin-api` 的 `Plugin` 接口，打包放入 `plugins/` 目录重启即可，
-管理端表单按插件声明的参数 schema 自动生成。开发指南见 [docs/plugin-dev-guide.md](docs/plugin-dev-guide.md)，
-示例工程见 [samples/radar-plugin-demo](samples/radar-plugin-demo/README.md)。
+前后端分离。后端：Spring Boot 3.5 + MyBatis-Plus + MySQL + MongoDB + Redis + Groovy + ES + springdoc-openapi；
+前端：React 18 + antd 5 + Vite（源码在 [frontend/](frontend/README.md)，构建产物内嵌 jar）。
 
-### 可观测性
+> v2.0 起由 8 个 Maven 模块合并为单模块单体，持久层迁移至 MyBatis-Plus，
+> [技术路线图](docs/roadmap.md)。
 
-```bash
-# Prometheus 指标: http://localhost:6580/actuator/prometheus （需 JDK 21+，v2.2 起默认开启虚拟线程）
-# 监控看板:        docker compose --profile monitoring up -d → Grafana http://localhost:3000 (admin/radar123)
-```
+## 开源版 vs 企业版
 
-业务指标：事件吞吐、引擎六阶段耗时 P99、激活决策分布、规则命中、Groovy 编译。压测对照方法见 [docs/benchmark-v2.2.md](docs/benchmark-v2.2.md)。
+Radar 同时提供开源版与企业版：开源版聚焦核心决策能力，免费开源（Mulan PSL v2）；
+企业版面向互金/消费金融生产级场景，**包含开源版全部能力**，并额外提供：
 
-### 架构图
-![系统模块](https://www.riskengine.cn/radar/sys_model_arch.png) 
+* 决策流可视化编排（DAG）、特征库与实时特征计算
+* 多租户隔离 + RBAC + API Key，满足 SaaS 化部署
+* 业务监控大盘、SLA 告警与企业微信/邮件通知
+* 模型版本管理与 A/B 测试
+* 专业技术支持与 SLA 保障
 
-## 技术选型
-* Springboot：笔者是java 出生， 选择 Springboot 理所当然，方便自己， 也方便其他Java使用者进行扩展。
+完整能力矩阵与商务咨询请访问官网：<https://www.riskengine.cn>
 
-* MyBatis-Plus： 持久层框架， 提供通用 CRUD 与分页能力，减少重复代码的生成。
+## 文档与资源
 
-* Mysql ： 本项目中关系数据库，主要用于存放 风险模型的元信息。
+| 资源 | 链接 |
+| --- | --- |
+| 官网 / 在线 Demo | <https://www.riskengine.cn> |
+| 使用手册（推荐从这里入门） | <https://gitee.com/freshday/radar/wikis/manual> |
+| Wiki 首页 | <https://gitee.com/freshday/radar/wikis/home> |
+| Gitee（主仓，贡献代码请提交到这里） | <https://gitee.com/freshday/radar> |
+| GitHub（镜像） | <https://github.com/wfh45678/radar> |
 
-* MongoDB： 用于存放事件JSON， 提供基本统计学计算（例如：max, min, sum, avg,），
-复杂的统计学概念（sd,variance, etc...）在内存中计算。
+## 致谢与赞助
 
-* ES： 提供数据查询和规则命中报表服务。
+感恩 XWF 团队的每一位小伙伴：
+千面怪, 烈日下的从容, DerekDingLu, king, sanying2012, 紫泉夜, 玄梦, 成书平, 徐帅, 郭锐, 王成, 马兆永…
 
-* Redis： 提供缓存支持，Engine 利用发布订阅特性监听管理端相关配置的更新
+感谢赞助商对本项目的认可和支持：中和农信项目管理有限公司 · 二十六度数字科技(广州)有限公司
 
-* Groovy： 规则引擎，风控规则最后都生成 groovy 脚本， 实时编辑，动态生成，即时生效。
+## 特别说明
 
-* Swagger:  Rest API 管理
-
-
----
-
-## [使用手册](https://gitee.com/freshday/radar/wikis/manual)
-使用手册里面有大量的图片，为了方便国内用户使用，故推荐码云的wiki 链接,  
-https://gitee.com/freshday/radar/wikis/manual
-
-
-## 演示入口
-通过管理端能够快速了解系统是怎么从风险的定义到风险的量化再到风险的集中管理的整个工作流程。  
-为了更好的体验，请花一分钟观看 [使用手册](https://gitee.com/freshday/radar/wikis/manual?sort_id=1637446)  
-[Demo URL：](https://www.riskengine.cn) https://www.riskengine.cn   
-建议大家自行注册用户，避免使用同样的测试账号受干扰.   
-
-## 相关文档
-[WIKI:](https://gitee.com/freshday/radar/wikis/home?sort_id=1637444) https://gitee.com/freshday/radar/wikis/home?sort_id=1637444
-
-
-
-## 致谢
-感恩 XWF 团队，感谢参入的每一位小伙伴，后续征得同意后会一一列出名字。  
-千面怪, 烈日下的从容, DerekDingLu, king, sanying2012, 紫泉夜, 玄梦     
-成书平, 徐帅，郭锐， 王成，马兆永...
-
-## 赞助商
-* 中和农信项目管理有限公司   
-* 二十六度数字科技(广州)有限公司  
-感谢赞助商大大们对本项目的认可和支持。
-
-## Contact to
-
- 如果喜欢本项目，Star支持一下, 让更多人了解本项目，谢谢！   
-
-
- 
- ## 特别说明
- 管理端前端源码自 v2.4.0 起随本仓开放（frontend/ 目录）。   
- 未经授权，禁止使用本项目源码申请软著和专利，保留追究法律责任的权力！   
- Copyright ©  2019-2026 WangFeiHu
+* 未经授权，禁止使用本项目源码申请软著和专利，保留追究法律责任的权力！
+* 如果喜欢本项目，欢迎 Star 支持，让更多人了解，谢谢！
+* Copyright © 2019-2026 WangFeiHu
