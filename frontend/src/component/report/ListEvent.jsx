@@ -143,8 +143,6 @@ class ListEvent extends React.Component{
                 ruleId:'',
                 risk:'',
                 pageNo:1,
-                fieldName:'',
-                fieldValue:'',
                 beginTime:dayjs().add(-3,'days'),
                 endTime:dayjs(),
                 rangeSelect:'-3',
@@ -418,7 +416,7 @@ class ListEvent extends React.Component{
                             {' '}
                             <ExportField eventFieldList={this.props.eventFieldList} disabled={this.state.exportDisabled}/>
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <a onClick={this.toggleAdvance}>高级搜索>></a>
+                            <a onClick={this.toggleAdvance}>高级搜索&gt;&gt;</a>
                         </Form>
                         {this.state.showAdvance?
                         <Form layout="inline" style={{marginTop:5}}>

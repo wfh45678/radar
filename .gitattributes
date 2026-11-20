@@ -1,0 +1,6 @@
+.gitattributes text eol=lf
+# 前端源码与构建产物统一 LF：保证 Windows(autocrlf=true) 与 Linux CI 检出字节一致，
+# 否则 build-frontend.sh 的产物漂移检查（git diff --exit-code -- src/main/resources/static）
+# 会因行尾差异在 CI 误报。text=auto 自动跳过二进制文件（images/、res/）。
+frontend/** text=auto eol=lf
+src/main/resources/static/** text=auto eol=lf
