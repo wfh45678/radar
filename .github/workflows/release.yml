@@ -51,6 +51,10 @@ jobs:
           key: maven-${{ hashFiles('pom.xml') }}
           restore-keys: maven-
 
+      # SDK 先 install（两段构建约定，同 ci.yml），主工程 package 才能解析 radar-plugin-api
+      - name: Install radar-plugin-api SDK
+        run: mvn -B -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -DskipTests
+
       # 质量门禁在 CI workflow（PR/push 已跑全量测试）；此处仅产出发布件
       - name: Package
         run: mvn -B -s .mvn/settings.xml package -DskipTests

@@ -42,6 +42,11 @@ jobs:
 
       # env.CI=true 由 GitHub Actions 内置，pom 的 ci profile 自动激活：
       # surefire 不再排除 @Tag("integration")，L1/L2/L3 全量执行（Testcontainers 四件套）
+      # radar-plugin-api 是独立 SDK 工程（不在 reactor），主工程编译前先 install 到本地仓
+      # （两段构建约定见 docs/plugin-dev-guide.md；install 会覆盖缓存恢复的旧版本，无时效问题）
+      - name: Install radar-plugin-api SDK
+        run: mvn -B -s .mvn/settings.xml -f radar-plugin-api/pom.xml install
+
       - name: Build and verify
         run: mvn -B -s .mvn/settings.xml verify
 
