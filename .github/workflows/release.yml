@@ -1,9 +1,19 @@
 name: Release
 
-# 打 tag（v*）时构建 Docker 镜像推 GHCR，并创建 GitHub Release（说明取自 CHANGELOG.md）
+# 打 tag（v*）时构建 Docker 镜像推 GHCR，并创建 GitHub Release（说明取自 CHANGELOG.md）。
+# 手动触发用于补发：workflow_dispatch 传入已存在的 tag（如 v3.0.0），
+# 避免 ref_name 落在分支上导致镜像误打分支标签。
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要发布的 tag（如 v3.0.0，须已存在于仓库）'
+        required: true
+
+env:
+  RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
 
 permissions:
   contents: write
@@ -14,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -56,16 +68,16 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+            ghcr.io/${{ github.repository }}:${{ env.RELEASE_TAG }}
             ghcr.io/${{ github.repository }}:latest
 
       - name: Extract release notes from CHANGELOG
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${RELEASE_TAG#v}"
           sed -n "/^## \[$VERSION\]/,/^## \[/p" CHANGELOG.md | sed '$d' > release-notes.md
           [ -s release-notes.md ] || echo "See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)." > release-notes.md
 
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file release-notes.md
+        run: gh release create "$RELEASE_TAG" --title "$RELEASE_TAG" --notes-file release-notes.md
