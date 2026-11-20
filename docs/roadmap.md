@@ -61,7 +61,7 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 | P2-2 | Groovy 沙箱 | **挂起**（2026-11-20 拍板：开源版暂不考虑 SaaS 化能力——多租户为企业版差异化卖点，沙箱价值几乎全部锚定 SaaS，单租户自部署可接受现状，管理员本就持有主机/数据库权限）。方案预案：Groovy SecureASTCustomizer 白名单 或自研受限 DSL；重启时先做存量 115 脚本兼容评估 |
 | P2-3 | 多租户 / SaaS 化（调研） | **挂起**（2026-11-20，同 P2-2：商业定位归企业版，开源版不做）。依赖 P2-2 |
 | P2-4 | GitHub 镜像自动同步 | **已完成**：Gitee 自带镜像功能自动推送 GitHub（比原定 Actions 方案更省维护），CI/Release 随 push 自动触发 |
-| P2-5 | radar-plugin-api 发布 Maven Central | v3.0 挂起项（[plan-v3.0.md](plan-v3.0.md) §SDK 发布）：镜像仓 CI 已就绪（2026-11-20 GitHub 镜像 CI/CD 全通），差 Central 凭证 + deploy 插件配置；完成后插件开发者免 clone 主仓即可编译插件，生态采用路径闭环 |
+| P2-5 | radar-plugin-api 发布 Maven Central | **已完成**（2026-11-20）：坐标迁移 `cn.riskengine`（riskengine.cn 反向域名，Central 命名空间硬要求，Java 包名不变），`cn.riskengine:radar-plugin-api:3.0.0` 上架（jar/sources/javadoc/GPG 签名全齐）；插件开发者一句依赖即可编译插件，生态采用路径闭环；tag 驱动自动发布接入 release.yml（幂等：版本已存在自动跳过） |
 
 ## 5. 里程碑建议
 
@@ -70,7 +70,7 @@ v2.1（工程基础）   P0-1 ~ P0-5        —— 测试、CI、Docker、发布
 v2.2（专业度）     P1-1、P1-2         —— JDK 21 + 虚拟线程、可观测性（[已发布](plan-v2.2.md)）
 v2.3（存储演进）   P1-3、P1-4         —— ES 8、报表存储调研（**暂缓**：2026-11-14 决定优先 v2.4，版本号保留）
 v2.4（前端现代化） P1-7               —— radar-web 复活：React 18 + antd 5 + Vite（[已发布](plan-v2.4.md)）
-v3.0（生态）       P2-1、P2-4 →      —— 插件重构：radar-plugin-api SDK / 外置 jar 加载 / 执行加固 / 动态表单（[已发布](plan-v3.0.md)），附带镜像自动同步。收尾：P2-5 SDK 发布 Maven Central（待 Central 凭证）；P2-2/P2-3（沙箱、多租户）2026-11-20 挂起——开源版暂不考虑 SaaS 化能力
+v3.0（生态）       P2-1、P2-4 →      —— 插件重构：radar-plugin-api SDK / 外置 jar 加载 / 执行加固 / 动态表单（[已发布](plan-v3.0.md)），附带镜像自动同步；收尾 P2-5 SDK 上架 Maven Central（2026-11-20 完成）。P2-2/P2-3（沙箱、多租户）2026-11-20 挂起——开源版暂不考虑 SaaS 化能力
 ```
 
 ## 6. 如果只做三件事
