@@ -4,7 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.pgmmers</groupId>
+    <!-- groupId=cn.riskengine（riskengine.cn 反向域名）：Maven Central 要求 groupId 为已验证命名空间，
+         com.pgmmers 无法验证域名故不用于发布；主工程坐标 com.pgmmers:radar 不上 Central，保持不变 -->
+    <groupId>cn.riskengine</groupId>
     <artifactId>radar-plugin-api</artifactId>
     <version>3.0.0</version>
     <packaging>jar</packaging>
@@ -16,6 +18,29 @@
         放入引擎 plugins/ 目录即可被发现。详见 docs/plugin-dev-guide.md。
         注意：独立工程，构建主工程前需先 `mvn install` 本模块（CI/脚本已编排）。
     </description>
+    <url>https://gitee.com/freshday/radar</url>
+
+    <licenses>
+        <license>
+            <name>Mulan Permissive Software License, Version 2 (PSL-2.0)</name>
+            <url>https://license.coscl.org.cn/MulanPSL2</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>wangfeihu</id>
+            <name>wangfeihu</name>
+            <email>wangfeihu@chongho.net</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://gitee.com/freshday/radar</url>
+        <connection>scm:git:https://gitee.com/freshday/radar.git</connection>
+        <developerConnection>scm:git:https://gitee.com/freshday/radar.git</developerConnection>
+    </scm>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -32,4 +57,72 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- 以下四件为 Maven Central 发布硬要求（sources + javadoc + 全工件 GPG 签名 + Portal 上传），
+                 仅 deploy 阶段生效，日常 install/编译不受影响 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <configuration>
+                    <charset>UTF-8</charset>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
+                    <doclint>none</doclint>
+                    <failOnError>false</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.12.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <!-- 对应 settings.xml 里 <server><id>central-portal</id>（Central Portal 用户令牌，
+                         本地配于 ~/.m2/settings.xml，CI 配于 GitHub Secrets） -->
+                    <publishingServerId>central-portal</publishingServerId>
+                    <!-- 首发模式：上传后需在 Portal 网页点 Publish 才真正发布，可反悔；稳定后可改 true -->
+                    <autoPublish>false</autoPublish>
+                    <excludeBuildDirectory>true</excludeBuildDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

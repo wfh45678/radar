@@ -83,7 +83,7 @@
     <dependencies>
         <!-- v3.0 插件契约模块（独立工程，先 mvn install 本模块再构建主工程；CI/脚本已编排） -->
         <dependency>
-            <groupId>com.pgmmers</groupId>
+            <groupId>cn.riskengine</groupId>
             <artifactId>radar-plugin-api</artifactId>
             <version>${radar-plugin-api.version}</version>
         </dependency>
