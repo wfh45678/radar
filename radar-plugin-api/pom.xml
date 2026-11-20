@@ -118,8 +118,9 @@
                     <!-- 对应 settings.xml 里 <server><id>central-portal</id>（Central Portal 用户令牌，
                          本地配于 ~/.m2/settings.xml，CI 配于 GitHub Secrets） -->
                     <publishingServerId>central-portal</publishingServerId>
-                    <!-- 首发模式：上传后需在 Portal 网页点 Publish 才真正发布，可反悔；稳定后可改 true -->
-                    <autoPublish>false</autoPublish>
+                    <!-- 自动发布：tag 驱动的 release（本地/CI）上传即发布；
+                        Central 版本不可变，发布失败需升版本号重试 -->
+                    <autoPublish>true</autoPublish>
                     <excludeBuildDirectory>true</excludeBuildDirectory>
                 </configuration>
             </plugin>

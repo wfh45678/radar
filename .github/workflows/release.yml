@@ -51,9 +51,38 @@ jobs:
           key: maven-${{ hashFiles('pom.xml') }}
           restore-keys: maven-
 
-      # SDK 先 install（两段构建约定，同 ci.yml），主工程 package 才能解析 radar-plugin-api
-      - name: Install radar-plugin-api SDK
-        run: mvn -B -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -DskipTests
+      # SDK 先发布/安装（两段构建约定），主工程 package 才能解析 radar-plugin-api。
+      # Maven Central 发布（幂等）：版本已在 Central 则跳过（主工程发版而 SDK 未升版时不冲突）；
+      # 未配置 CENTRAL_PORTAL_USERNAME secret 时优雅跳过，不影响镜像与 Release 产出。
+      - name: Publish SDK to Maven Central (if new version)
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          if [ -z "$CENTRAL_USERNAME" ]; then
+            echo "未配置 CENTRAL_PORTAL_USERNAME secret，跳过 SDK Central 发布"
+            exit 0
+          fi
+          VERSION=$(grep -oPm1 '(?<=<version>)[^<]+' radar-plugin-api/pom.xml)
+          if curl -fsSL "https://repo1.maven.org/maven2/cn/riskengine/radar-plugin-api/maven-metadata.xml" | grep -q "<version>$VERSION</version>"; then
+            echo "radar-plugin-api $VERSION 已存在于 Central，跳过发布"
+            exit 0
+          fi
+          mkdir -p /tmp/ci
+          cat > /tmp/ci/settings.xml <<EOF
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>central-portal</id>
+                <username>${CENTRAL_USERNAME}</username>
+                <password>${CENTRAL_PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          mvn -B -f radar-plugin-api/pom.xml deploy -s /tmp/ci/settings.xml -gs /tmp/ci/settings.xml
 
       # 质量门禁在 CI workflow（PR/push 已跑全量测试）；此处仅产出发布件
       - name: Package
