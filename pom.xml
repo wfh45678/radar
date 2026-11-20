@@ -38,6 +38,9 @@
         <commons-lang.version>2.6</commons-lang.version>
         <!-- 集成测试（@Tag("integration")）默认从 mvn test 排除，CI 环境通过 ci profile 全量执行 -->
         <surefire.excludedGroups>integration</surefire.excludedGroups>
+        <!-- 行覆盖门禁（jacoco check，BUNDLE/LINE）：本地 L1/L2 仅 ~0.7% 不设限，ci profile 下 0.40。
+             基线：2026-11-20 CI 首跑 46%（L1/L2/L3 全量），测试服务器 L3 45.7% -->
+        <jacoco.line.minimum>0</jacoco.line.minimum>
     </properties>
 
     <profiles>
@@ -72,6 +75,7 @@
             </activation>
             <properties>
                 <surefire.excludedGroups></surefire.excludedGroups>
+                <jacoco.line.minimum>0.40</jacoco.line.minimum>
             </properties>
         </profile>
     </profiles>
@@ -332,10 +336,8 @@
                     <excludedGroups>${surefire.excludedGroups}</excludedGroups>
                 </configuration>
             </plugin>
-            <!-- 覆盖率报告：mvn verify 产出 target/site/jacoco/。
-                 check 门禁规则待 CI 首跑基线数据后启用（见 docs/plan-v2.2.md §4.4）：
-                 <execution><id>check</id><goals><goal>check</goal></goals>
-                   <configuration><rules>...</rules></configuration></execution> -->
+            <!-- 覆盖率：mvn verify 产出 target/site/jacoco/；行覆盖门禁由 jacoco.line.minimum
+                 控制（本地 0 不设限 / ci profile 0.40，基线 46%，见 docs/plan-v2.2.md §4.4） -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -353,6 +355,27 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>check-coverage</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.line.minimum}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
