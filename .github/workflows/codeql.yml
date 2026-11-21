@@ -1,0 +1,47 @@
+# CodeQL 静态安全扫描（v3.3 开源基建，GitHub OSS 免费）。
+# 主仓 Gitee 不跑 Actions：随每小时镜像同步到 GitHub 后在 push master / PR 时触发。
+# 首轮 report-only（不设门禁），误报清档后再评估接入 branch protection。
+name: CodeQL
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: '0 3 * * 1'  # 每周一 03:00 UTC 复扫
+
+jobs:
+  analyze:
+    name: Analyze (java)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: '17'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+          # Java 需要构建才能分析；复用 ci.yml 的两段构建约定（SDK 先 install）
+          build-mode: manual
+
+      - name: Install radar-plugin-api SDK
+        run: mvn -B -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -Dgpg.skip=true
+
+      - name: Build (skip tests)
+        run: mvn -B -s .mvn/settings.xml package -DskipTests
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:java"
