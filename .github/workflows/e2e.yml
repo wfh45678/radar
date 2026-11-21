@@ -1,0 +1,66 @@
+# E2E 冒烟（v3.3 开源基建 T3）：compose 起全套环境（应用本地构建、验证码免检）→ Playwright 五步冒烟。
+# 触发：push master + 手动。PR 阶段不跑（体量大），回归由 L1/L2 + 覆盖门禁把关。
+name: E2E Smoke
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: '17'
+          cache: maven
+
+      # 两段构建约定：SDK 先 install
+      - name: Build app jar
+        run: |
+          mvn -B -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -Dgpg.skip=true
+          mvn -B -s .mvn/settings.xml package -DskipTests
+
+      - name: Start compose stack (captcha off)
+        env:
+          SYSCONF_CAPTCHAENABLED: "false"
+        run: docker compose up -d --build --profile app
+
+      - name: Wait for app health
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:6580/actuator/health 2>/dev/null | grep -q '"status":"UP"'; then
+              echo "app healthy after $((i*5))s"; exit 0
+            fi
+            sleep 5
+          done
+          echo "app not healthy in 300s"; docker compose logs app | tail -200; exit 1
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run Playwright smoke
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npx playwright test
+
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7
