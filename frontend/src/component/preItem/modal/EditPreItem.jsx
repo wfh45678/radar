@@ -255,7 +255,12 @@ export default class EditPreItem extends React.Component{
 			style:{width:'100%'}
 		};
 		let control;
-		if(d.type==='BOOLEAN'){
+		if(d.options && d.options.length>0){
+			// v3.1 枚举选项：label 展示、value 入库（恒为字符串）
+			control = <Select {...commonProps} value={value||''}
+				onChange={(v)=>this.handleParam(d.name,'STRING',v)}
+				options={[{label:'请选择', value:''}, ...d.options.map(o=>({label:o.label, value:o.value}))]} />;
+		}else if(d.type==='BOOLEAN'){
 			control = <Switch checked={!!value} onChange={(v)=>this.handleParam(d.name,'BOOLEAN',v)} />;
 		}else if(d.type==='INTEGER' || d.type==='DOUBLE'){
 			control = <InputNumber {...commonProps} value={value===undefined||value===''?null:value}

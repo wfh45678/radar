@@ -26,6 +26,7 @@ import RuleGraph from './component/report/RuleGraph';
 import ListRule from './component/report/ListRule';
 import DashBoard from './component/report/dashboard';
 import ConfigCenter from './component/config/ConfigCenter';
+import PluginManagement from './component/plugin/PluginManagement';
 
 import Index from './component/Index';
 import Login from './component/Login';
@@ -105,6 +106,7 @@ const router = createHashRouter([
             ],
           },
           { path: 'config', element: <ConfigCenter /> },
+          { path: 'plugins', element: <PluginManagement /> },
         ],
       },
       { path: '*', element: <Index />, children: [{ index: true, element: <NotFound /> }] },

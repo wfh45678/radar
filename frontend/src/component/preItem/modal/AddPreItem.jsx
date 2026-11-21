@@ -216,7 +216,7 @@ export default class AddPreItem extends React.Component{
 	}
 
 	renderParamField=(d)=>{
-		// 按 ParamDescriptor 动态渲染：STRING->Input / INTEGER,DOUBLE->InputNumber / BOOLEAN->Switch
+		// 按 ParamDescriptor 动态渲染：options 非空->Select（v3.1）/ BOOLEAN->Switch / INTEGER,DOUBLE->InputNumber / STRING->Input
 		const value = this.state.paramValues[d.name] !== undefined
 			? this.state.paramValues[d.name]
 			: (d.defaultValue !== undefined ? d.defaultValue : (d.type==='BOOLEAN' ? false : ''));
@@ -225,7 +225,12 @@ export default class AddPreItem extends React.Component{
 			style:{width:'100%'}
 		};
 		let control;
-		if(d.type==='BOOLEAN'){
+		if(d.options && d.options.length>0){
+			// v3.1 枚举选项：label 展示、value 入库（恒为字符串）
+			control = <Select {...commonProps} value={value||''}
+				onChange={(v)=>this.handleParam(d.name,'STRING',v)}
+				options={[{label:'请选择', value:''}, ...d.options.map(o=>({label:o.label, value:o.value}))]} />;
+		}else if(d.type==='BOOLEAN'){
 			control = <Switch checked={!!value} onChange={(v)=>this.handleParam(d.name,'BOOLEAN',v)} />;
 		}else if(d.type==='INTEGER' || d.type==='DOUBLE'){
 			control = <InputNumber {...commonProps} value={value===undefined||value===''?null:value}
