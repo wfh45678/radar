@@ -16,14 +16,24 @@ import com.pgmmers.radar.enums.StatusType;
 import com.pgmmers.radar.interceptor.ContextHolder;
 import com.pgmmers.radar.service.admin.UserService;
 import com.pgmmers.radar.service.common.CommonResult;
+import com.pgmmers.radar.service.impl.model.transfer.ModelPackage;
+import com.pgmmers.radar.service.impl.model.transfer.ModelPackageService;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.model.vo.admin.UserVO;
 import com.pgmmers.radar.model.vo.model.ModelVO;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -42,6 +52,9 @@ public class ModelApiController  {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ModelPackageService modelPackageService;
 
     @GetMapping("/{id}")
     public CommonResult get(@PathVariable Long id) {
@@ -128,6 +141,61 @@ public class ModelApiController  {
 	public CommonResult copy(@RequestBody ModelVO model, HttpServletRequest request) {
         return modelService.copy(model.getId(), contextHolder.getContext().getCode(), model.getModelName(), model.getLabel());
 	}
+
+    /**
+     * 导出模型策略包（v3.2）：模型配置全图 JSON 附件下载。
+     */
+    @GetMapping("/export/{id}")
+    public ResponseEntity<byte[]> export(@PathVariable Long id) {
+        ModelPackage pkg = modelPackageService.export(id);
+        if (pkg == null) {
+            return ResponseEntity.notFound().build();
+        }
+        byte[] body = modelPackageService.serialize(pkg);
+        String asciiName = "radar-model-" + id + ".json";
+        String encodedName = URLEncoder.encode(modelPackageService.exportFilename(pkg), StandardCharsets.UTF_8)
+                .replace("+", "%20");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + asciiName + "\"; filename*=UTF-8''" + encodedName)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(body);
+    }
+
+    /**
+     * 导入模型策略包（v3.2）：上传 JSON → 校验报告 → 导入为新模型（INIT，构建后生效）。
+     */
+    @PostMapping("/import")
+    public CommonResult importModel(@Parameter(description = "策略包 json 文件") @RequestPart("file") MultipartFile file,
+                                    @RequestParam("label") String label,
+                                    @RequestParam(value = "merchantCode", required = false) String merchantCode,
+                                    @RequestParam(value = "modelName", required = false) String modelName) {
+        CommonResult result = new CommonResult();
+        try {
+            String code = merchantCode == null || merchantCode.isBlank()
+                    ? contextHolder.getContext().getCode() : merchantCode;
+            if (label == null || label.isBlank()) {
+                result.setMsg("请填写模型显示名称");
+                return result;
+            }
+            ModelPackage pkg = modelPackageService.parse(file.getBytes());
+            List<String> warnings = modelPackageService.validate(pkg);
+            Long newId = modelPackageService.importPackage(pkg, code, modelName, label.trim());
+            result.setSuccess(true);
+            result.setMsg(warnings.isEmpty()
+                    ? "导入成功，请构建模型后生效"
+                    : "导入成功（含 " + warnings.size() + " 条告警），请构建模型后生效");
+            result.getData().put("id", newId);
+            result.getData().put("warnings", warnings);
+        } catch (ModelPackageService.ModelPackageException e) {
+            logger.warn("model package import rejected: {}", e.getMessage());
+            result.setMsg(e.getMessage());
+        } catch (Exception e) {
+            logger.error("model package import failed", e);
+            result.setMsg("导入失败: " + e.getMessage());
+        }
+        return result;
+    }
 
     @GetMapping("/list/template")
     public CommonResult template() {
