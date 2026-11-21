@@ -64,7 +64,7 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 | P2-5 | radar-plugin-api 发布 Maven Central | **已完成**（2026-11-20）：坐标迁移 `cn.riskengine`（riskengine.cn 反向域名，Central 命名空间硬要求，Java 包名不变），`cn.riskengine:radar-plugin-api:3.0.0` 上架（jar/sources/javadoc/GPG 签名全齐）；插件开发者一句依赖即可编译插件，生态采用路径闭环；tag 驱动自动发布接入 release.yml（幂等：版本已存在自动跳过） |
 | P2-6 | 插件生态深化 | **进行中**（2026-11-21 立项 v3.1）：管理端插件生命周期（上传/启停/删除，loader 代际热重载可回退）、HTTP 出访 allowlist 模式（v3.0 列后续项）、radar-plugin-api 3.1.0 向后兼容演进（paramSchema options、version/provider 元信息、testkit 工件）、远程插件官方示例、PLUGIN_REGISTRY 社区索引。见 [plan-v3.1.md](plan-v3.1.md) |
 | P2-7 | 模型导入导出（策略包） | **已完成**（2026-11-21 实施完成，随 v3.2.0 发布）：模型配置全图文件化（JSON 策略包：字段/preItem/名单/抽象/激活/规则；engine_model_conf 为 ML 休眠配置不入包，随 P1-5 ML 重做再议）、导入校验报告（缺插件/Groovy 预编译/名单行数）；（拉伸）官方模板库一键导入。模型文件化 = 环境迁移/求助支持/模板分发的分发单元，与插件生态构成双护城河（插件共享数据接入，模型包共享风控策略）。见 [plan-v3.2.md](plan-v3.2.md) |
-| P2-8 | 开源基建三件事 | **进行中**（2026-11-21 立项 v3.3，源自同日开源健康度盘点）：Dependabot + CodeQL 自动依赖与安全扫描、VitePress 文档站 + mermaid 架构图 + 运维手册、Playwright 五步 E2E 冒烟（防白屏类回归）。零业务代码改动，约 5 人日。见 [plan-v3.3.md](plan-v3.3.md) |
+| P2-8 | 开源基建三件事 | **已完成**（2026-11-21 实施完成，随 v3.3.0 发布）：Dependabot + CodeQL 自动依赖与安全扫描、VitePress 文档站 + mermaid 架构图 + 运维手册、Playwright 五步 E2E 冒烟（防白屏类回归）。零业务代码改动，约 5 人日。见 [plan-v3.3.md](plan-v3.3.md) |
 
 ## 5. 里程碑建议
 
@@ -76,7 +76,7 @@ v2.4（前端现代化） P1-7               —— radar-web 复活：React 18 
 v3.0（生态）       P2-1、P2-4 →      —— 插件重构：radar-plugin-api SDK / 外置 jar 加载 / 执行加固 / 动态表单（[已发布](plan-v3.0.md)），附带镜像自动同步；收尾 P2-5 SDK 上架 Maven Central（2026-11-20 完成）。P2-2/P2-3（沙箱、多租户）2026-11-20 挂起——开源版暂不考虑 SaaS 化能力
 v3.1（插件运营）   P2-6              —— 插件生态深化：管理端生命周期（上传/启停/热重载）、出访 allowlist、SDK 3.1.0、远程示例与社区索引（[方案评审稿](plan-v3.1.md)）
 v3.2（策略包）     P2-7              —— 模型导入导出：JSON 策略包 / 导入校验报告 / 整图事务（[方案](plan-v3.2.md)/[格式说明](model-package.md)，官方模板库列后续）
-v3.3（开源基建）   P2-8              —— 三件事：Dependabot+CodeQL、文档站+架构图、Playwright E2E 冒烟（[方案评审稿](plan-v3.3.md)）
+v3.3（开源基建）   P2-8              —— 三件事：Dependabot+CodeQL、VitePress 文档站+架构图（GitHub Pages）、Playwright 五步 E2E 冒烟（[方案](plan-v3.3.md)）
 ```
 
 ## 6. 如果只做三件事
