@@ -80,4 +80,16 @@ public interface Plugin {
         PluginMeta meta = this.getClass().getAnnotation(PluginMeta.class);
         return meta != null && meta.remote();
     }
+
+    /** 插件版本（@PluginMeta.version，3.1.0 起提供，缺省空串）。 */
+    default String version() {
+        PluginMeta meta = this.getClass().getAnnotation(PluginMeta.class);
+        return meta != null ? meta.version() : "";
+    }
+
+    /** 提供方（@PluginMeta.provider，3.1.0 起提供，缺省空串）。 */
+    default String provider() {
+        PluginMeta meta = this.getClass().getAnnotation(PluginMeta.class);
+        return meta != null ? meta.provider() : "";
+    }
 }

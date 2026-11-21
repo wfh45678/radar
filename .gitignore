@@ -9,3 +9,6 @@ webapp/node_modules/
 .factorypath
 /samples/radar-kafka-demo/target/
 radar-plugin-api/target/
+/samples/radar-plugin-demo/target/
+/samples/radar-plugin-remote-demo/target/
+/radar-plugin-testkit/target/

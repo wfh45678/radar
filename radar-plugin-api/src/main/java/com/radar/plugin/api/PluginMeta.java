@@ -34,4 +34,18 @@ public @interface PluginMeta {
      * 远程型插件受引擎 HTTP 工具的强制超时与私网访问防护约束。
      */
     boolean remote() default false;
+
+    /**
+     * 插件版本（管理端展示用，语义随插件作者自定，建议 semver）。
+     *
+     * @since 3.1.0
+     */
+    String version() default "";
+
+    /**
+     * 提供方（作者/厂商名，管理端展示用）。
+     *
+     * @since 3.1.0
+     */
+    String provider() default "";
 }

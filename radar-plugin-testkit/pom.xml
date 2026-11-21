@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 插件单元测试工件（v3.1）：PluginRequestBuilder / MockHttpTool / RecordingCache。
+         与 radar-plugin-api 一样为独立工程（不在主工程 reactor），构建示例工程前先 `mvn install`。
+         当前仅本地/CI install 供示例工程引用，暂不走 Central 发布（需要时补 sources/javadoc/GPG 三件套）。 -->
+    <groupId>cn.riskengine</groupId>
+    <artifactId>radar-plugin-testkit</artifactId>
+    <version>3.1.0</version>
+    <packaging>jar</packaging>
+
+    <name>Radar Plugin Testkit</name>
+    <description>
+        Radar preItem 插件单元测试工件：PluginRequestBuilder（链式构造入参）、
+        MockHttpTool（录制 + 桩响应）、RecordingCache（录制 + 内存缓存）。
+        零第三方依赖，插件工程 test scope 引用。详见 docs/plugin-dev-guide.md。
+    </description>
+    <url>https://gitee.com/freshday/radar</url>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- 契约类型来自 api（插件工程本就有该依赖，provided 避免版本漂移） -->
+        <dependency>
+            <groupId>cn.riskengine</groupId>
+            <artifactId>radar-plugin-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.16</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
