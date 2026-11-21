@@ -8,7 +8,7 @@
          com.pgmmers 无法验证域名故不用于发布；主工程坐标 com.pgmmers:radar 不上 Central，保持不变 -->
     <groupId>cn.riskengine</groupId>
     <artifactId>radar-plugin-api</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
     <packaging>jar</packaging>
 
     <name>Radar Plugin API</name>

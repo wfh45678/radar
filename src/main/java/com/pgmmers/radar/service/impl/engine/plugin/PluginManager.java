@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -56,6 +59,19 @@ public class PluginManager implements ApplicationContextAware {
     @Value("${radar.plugins-dir:./plugins}")
     private String pluginsDir;
 
+    /** 管理端禁用的插件 key（PluginAdminService 从 engine_plugin_registry 装载并推送）。 */
+    private volatile Set<String> disabledKeys = Set.of();
+
+    /** 当前外置插件类加载器（v3.1 起可被 rebuildExternal 代际替换）。 */
+    private volatile PluginJarClassLoader externalLoader;
+
+    /** 旧 loader 宽限期关闭调度（让 in-flight 执行跑完再释放 jar 文件句柄）。 */
+    private final ScheduledExecutorService loaderCloser = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "plugin-loader-closer");
+        t.setDaemon(true);
+        return t;
+    });
+
     @Autowired
     private PluginContextFactory contextFactory;
 
@@ -64,14 +80,25 @@ public class PluginManager implements ApplicationContextAware {
 
     private final Map<String, PluginEntry> entries = new ConcurrentHashMap<>();
 
-    /** 按 key 取插件条目；不存在返回 null（引擎侧按隔离策略处理）。 */
+    /** 按 key 取插件条目；不存在或已被管理端禁用返回 null（引擎侧按隔离策略处理）。 */
     public PluginEntry entry(String key) {
+        if (key != null && disabledKeys.contains(key)) {
+            return null;
+        }
         return entries.get(key);
     }
 
     /** 全量条目（按 key 排序）。 */
     public List<PluginEntry> entries() {
         return entries.values().stream()
+                .sorted(java.util.Comparator.comparing(PluginEntry::getKey))
+                .toList();
+    }
+
+    /** 非禁用条目（管理端表单渲染侧视图，按 key 排序）。@since 3.1.0 */
+    public List<PluginEntry> activeEntries() {
+        return entries.values().stream()
+                .filter(e -> !disabledKeys.contains(e.getKey()))
                 .sorted(java.util.Comparator.comparing(PluginEntry::getKey))
                 .toList();
     }
@@ -115,6 +142,7 @@ public class PluginManager implements ApplicationContextAware {
         return new PluginEntry(
                 plugin.key(), plugin.name(), plugin.desc(),
                 plugin.type(), plugin.remote(), source,
+                plugin.version(), plugin.provider(),
                 plugin.outputMeta(), schema,
                 (item, jsonInfo, sourceField) -> executeV3(plugin, schema, item, jsonInfo, sourceField));
     }
@@ -196,16 +224,33 @@ public class PluginManager implements ApplicationContextAware {
 
     /** 扫描 plugins/ 目录下的 jar，以子优先类加载器 + SPI 发现 v3 插件。 */
     private void loadExternalPlugins() {
+        rebuildExternal(0);
+    }
+
+    /**
+     * 外置插件整代重载（v3.1）：新 URLClassLoader 覆盖 plugins/ 全部 jar →
+     * 清除旧 EXTERNAL 条目 → 注册新条目 → 旧 loader 宽限后 close（释放 jar 文件句柄，
+     * 让 Windows 下换/删文件成为可能）。in-flight 的旧插件执行由引擎失败隔离兜底。
+     *
+     * @param graceMillis 旧 loader 延迟关闭毫秒数
+     * @return 本次注册成功的外置插件 key（按注册顺序）
+     */
+    public synchronized List<String> rebuildExternal(long graceMillis) {
+        PluginJarClassLoader oldLoader = externalLoader;
         File dir = new File(pluginsDir);
         if (!dir.isDirectory()) {
             logger.info("plugins dir not found, skip external plugins: {}", dir.getAbsolutePath());
-            return;
+            closeLater(oldLoader, graceMillis);
+            return List.of();
         }
         File[] jars = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".jar"));
         if (jars == null || jars.length == 0) {
             logger.info("no external plugin jars in {}", dir.getAbsolutePath());
-            return;
+            closeLater(oldLoader, graceMillis);
+            return List.of();
         }
+        // 同 key 冲突在 register 内按先注册者为准处理（jar 文件名序即注册序）
+        Arrays.sort(jars);
         URL[] urls = Arrays.stream(jars)
                 .map(f -> {
                     try {
@@ -215,17 +260,72 @@ public class PluginManager implements ApplicationContextAware {
                     }
                 })
                 .toArray(URL[]::new);
-        ClassLoader pluginLoader = new PluginJarClassLoader(urls, PluginManager.class.getClassLoader());
-        int count = 0;
-        for (Plugin plugin : ServiceLoader.load(Plugin.class, pluginLoader)) {
-            try {
-                register(v3Entry(plugin, PluginEntry.Source.EXTERNAL));
-                count++;
-            } catch (Exception e) {
-                logger.warn("external plugin init failed: {}", plugin.getClass().getName(), e);
+        PluginJarClassLoader newLoader = new PluginJarClassLoader(urls, PluginManager.class.getClassLoader());
+        // 先收集再换装：同 key 以迭代序（jar 文件名序）先到者为准，跨 jar 冲突告警
+        Map<String, PluginEntry> fresh = new LinkedHashMap<>();
+        int failed = 0;
+        try {
+            for (Plugin plugin : ServiceLoader.load(Plugin.class, newLoader)) {
+                try {
+                    PluginEntry entry = v3Entry(plugin, PluginEntry.Source.EXTERNAL);
+                    // 与内置 key 冲突：告警并跳过（内置优先，DB 存量配置不受外置 jar 影响）
+                    PluginEntry builtin = entries.get(entry.getKey());
+                    if (builtin != null && builtin.getSource() != PluginEntry.Source.EXTERNAL) {
+                        logger.warn("external plugin key conflicts with builtin, skip: {} ({})",
+                                entry.getKey(), plugin.getClass().getName());
+                        failed++;
+                        continue;
+                    }
+                    PluginEntry previous = fresh.putIfAbsent(entry.getKey(), entry);
+                    if (previous != null) {
+                        logger.warn("duplicate external plugin key across jars, keep first: {} ({} vs {})",
+                                entry.getKey(), previous, plugin.getClass().getName());
+                        failed++;
+                    }
+                } catch (Exception e) {
+                    logger.warn("external plugin init failed: {}", plugin.getClass().getName(), e);
+                    failed++;
+                }
             }
+        } catch (Throwable t) {
+            // ServiceLoader 迭代中断（坏 jar 等）：注册表不动，关闭新 loader
+            logger.error("external plugin scan aborted, keep previous registry", t);
+            try {
+                newLoader.close();
+            } catch (Exception ignore) {
+                // 关闭失败仅影响文件句柄释放，不阻断流程
+            }
+            return List.of();
         }
-        logger.info("loaded {} external plugin jar(s) from {}", count, dir.getAbsolutePath());
+        // 代际替换：先清旧 EXTERNAL 条目再注册新条目（窗口期内 entry() 返回 null，由隔离策略兜底）
+        entries.values().removeIf(e -> e.getSource() == PluginEntry.Source.EXTERNAL);
+        fresh.values().forEach(this::register);
+        externalLoader = newLoader;
+        closeLater(oldLoader, graceMillis);
+        logger.info("external plugins reloaded: {} registered, {} failed/skipped, {} jar(s) from {}",
+                fresh.size(), failed, jars.length, dir.getAbsolutePath());
+        return List.copyOf(fresh.keySet());
+    }
+
+    /** 宽限后关闭旧 loader（jar 文件句柄释放）。 */
+    private void closeLater(PluginJarClassLoader loader, long graceMillis) {
+        if (loader == null) {
+            return;
+        }
+        loaderCloser.schedule(() -> {
+            try {
+                loader.close();
+                logger.info("old plugin classloader closed");
+            } catch (Exception e) {
+                logger.warn("old plugin classloader close failed (jar handle may stay until restart)", e);
+            }
+        }, Math.max(0, graceMillis), TimeUnit.MILLISECONDS);
+    }
+
+    /** 管理端禁用集推送（PluginAdminService 启动/启停时调用）。 */
+    public void setDisabledKeys(Set<String> keys) {
+        this.disabledKeys = keys == null ? Set.of() : Set.copyOf(keys);
+        logger.info("plugin disabled keys updated: {}", this.disabledKeys);
     }
 
     /**

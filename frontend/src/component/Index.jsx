@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Outlet } from 'react-router';
 
 import {Tooltip} from 'antd';
-import {HomeOutlined, LineChartOutlined, LogoutOutlined} from '@ant-design/icons';
+import {HomeOutlined, LineChartOutlined, ApiOutlined, LogoutOutlined} from '@ant-design/icons';
 import './Index.less';
 import {FetchUtil} from './utils/fetchUtil';
 
@@ -32,6 +32,9 @@ export default class Index extends React.Component{
           </div>
           <div className="ant-layout-logo">
             <Tooltip title="统计报表"><Link to="/report"><LineChartOutlined /></Link></Tooltip>
+          </div>
+          <div className="ant-layout-logo">
+            <Tooltip title="插件管理"><Link to="/plugins"><ApiOutlined /></Link></Tooltip>
           </div>
           <div className="ant-layout-logo">
             {/*<Tooltip title="配置中心"><Link to="/config"><SettingOutlined /></Link></Tooltip>*/}

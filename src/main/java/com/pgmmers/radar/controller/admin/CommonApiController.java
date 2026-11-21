@@ -56,11 +56,11 @@ public class CommonApiController {
     private PluginManager pluginManager;
 
 
-    /** 插件清单（v3.0）：含参数 schema 与输出列元信息，管理端据此动态渲染配置表单。 */
+    /** 插件清单（v3.1）：仅启用条目，含参数 schema 与输出列元信息，管理端据此动态渲染配置表单。 */
     @GetMapping("/plugins")
     public CommonResult plugins() {
         CommonResult result = new CommonResult();
-        List<Map<String, Object>> plugins = pluginManager.entries()
+        List<Map<String, Object>> plugins = pluginManager.activeEntries()
                 .stream()
                 .map(e -> {
                     Map<String, Object> item = new LinkedHashMap<>();
@@ -71,6 +71,8 @@ public class CommonApiController {
                     item.put("type", e.getType());
                     item.put("remote", e.isRemote());
                     item.put("source", e.getSource().name());
+                    item.put("version", e.getVersion());
+                    item.put("provider", e.getProvider());
                     item.put("paramSchema", e.getParamSchema());
                     item.put("outputMeta", e.getOutputMeta());
                     return item;

@@ -2,6 +2,46 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [3.1.0] - 2026-11-21
+
+插件运营版本（roadmap P2-6）：v3.0 解决插件"接得进来"，本版解决"管不起来"——
+管理端插件生命周期（上传/启停/删除，热重载）、HTTP 出访管控三模式、
+radar-plugin-api 3.1.0 向后兼容演进（options/version/provider/testkit）、远程插件官方示例。
+规划详见 [docs/plan-v3.1.md](docs/plan-v3.1.md)。无 Breaking Changes，3.0.0 编译的插件 jar 零改动兼容。
+
+### Added
+- **管理端插件生命周期**：「插件管理」页（#/plugins，顶栏入口）——上传 jar（校验链：zip 结构/SPI 声明/
+  key 冲突/50MB 上限）、列表（版本/提供方/来源/jar 文件/执行统计快照）、启用禁用（持久化
+  `engine_plugin_registry`，重启保持）、删除、手动重载；后端 `/services/v1/plugins` 系列端点（JWT 鉴权）
+- **热重载**：外置插件上传/删除后默认整代热重载即时生效（loader 代际替换，旧加载器宽限 30s 关闭，
+  in-flight 执行由失败隔离兜底）；`plugin.admin.hot-reload=false` 回退重启生效模式；
+  `plugin.admin.reload-grace-ms` / `plugin.admin.max-jar-size` 可配
+- **出访管控三模式**：`plugin.http.mode=deny-private`（默认，v3.0 行为）/ `allowlist`
+  （`plugin.http.allowed-hosts` 精确/通配 `*.host`，内网服务须显式列入）/ `off`；
+  拦截指标 `radar_plugin_http_blocked_total{plugin}` + warn 日志；
+  v3.0 `plugin.http.deny-private-network=false` 兼容映射为 off
+- **radar-plugin-api 3.1.0**（向后兼容追加）：`ParamDescriptor.options()` + `ParamOption`
+  （管理端渲染下拉框，value 恒为字符串）；`@PluginMeta.version()/provider()` 插件元信息展示
+- **radar-plugin-testkit** 测试工件（零依赖）：`PluginRequestBuilder` / `MockHttpTool`（桩响应+调用录制）/
+  `RecordingCache` / `TestContexts`——插件单测无需引擎与真实网络
+- **远程插件官方示例** `samples/radar-plugin-remote-demo`（EXCHANGE_RATE 汇率换算：remote 外呼、
+  options 下拉、10 分钟缓存、多列输出、4 个 testkit 单测），与本地形态 demo 合称官方两件套
+- `PLUGIN_REGISTRY.md` 社区插件索引（内置/官方示例/社区插件三类）
+- sql 增量脚本 `sql/upgrade-3.1.0.sql`（engine_plugin_registry 建表；radar-init.sql 基线同步）
+
+### Changed
+- `/services/v1/common/plugins` 仅返回启用条目，新增 version/provider 字段
+- preItem 新增/编辑弹窗：paramSchema 含 options 时渲染下拉框（label 展示、value 入库）
+- 插件开发指南增补：testkit 单测模板、插件管理运营、出访管控章节（§7-§10）
+- radar-plugin-demo 示例工程迁移 testkit 写法并升级 api 3.1.0
+
+### Verification
+- `radar-plugin-api`/`radar-plugin-testkit` install 通过；两示例工程 test 全绿（4+4）
+- 主工程 L1/L2 单测 26/26 全绿（新增 9 个：出访管控三模式与拦截计数 6、注册表禁用/重载语义 3、
+  插件执行隔离回归 3），BUILD SUCCESS
+- 前端 vite build 通过并同步产物内嵌 jar（scripts/build-frontend.sh）
+- 覆盖率门禁（BUNDLE/LINE ≥40%，ci profile 全量 L1/L2/L3，基线 46%）随 CI 执行
+
 ## [3.0.0] - 2026-11-15
 
 生态大版本（roadmap P2-1/P2-4）：preItem 插件 SDK 化——插件从"主 jar 内置数组"重构为可独立开发、

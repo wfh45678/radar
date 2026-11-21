@@ -1,46 +1,35 @@
 package com.radar.plugin.demo;
 
-import com.radar.plugin.api.HttpResult;
-import com.radar.plugin.api.HttpTool;
-import com.radar.plugin.api.KeyValueCache;
-import com.radar.plugin.api.PluginContext;
-import com.radar.plugin.api.PluginRequest;
 import com.radar.plugin.api.PluginResult;
-import java.util.List;
+import com.radar.plugin.testkit.MockHttpTool;
+import com.radar.plugin.testkit.PluginRequestBuilder;
+import com.radar.plugin.testkit.RecordingCache;
+import com.radar.plugin.testkit.TestContexts;
 import java.util.Map;
-import java.util.function.Function;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.LoggerFactory;
 
 public class SensitiveDataPluginTest {
 
     private final SensitiveDataPlugin plugin = new SensitiveDataPlugin();
 
-    /** 测试用上下文：缓存直接透传 loader（等价无缓存），HTTP 不触达。 */
-    private PluginContext context() {
-        return new PluginContext(LoggerFactory.getLogger("test"),
-                (name, ttl) -> new KeyValueCache() {
-                    @Override
-                    public <K, V> V get(K key, Function<? super K, ? extends V> loader) {
-                        return loader.apply(key);
-                    }
-                },
-                new HttpTool() {
-                    @Override
-                    public HttpResult get(String url) { return new HttpResult(0, "unused"); }
-
-                    @Override
-                    public HttpResult postJson(String url, String jsonBody) { return new HttpResult(0, "unused"); }
-                });
-    }
+    /**
+     * v3.1 起 context/request 构造统一走 testkit（本测试 v3.0 时手搓 lambda 上下文，
+     * 现迁移为 PluginRequestBuilder + MockHttpTool + RecordingCache 组合）。
+     */
+    private final RecordingCache cache = new RecordingCache();
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> execute(Map<String, Object> args, String value) {
         PluginResult result = plugin.execute(
-                new PluginRequest(1L, "sd", Map.of("f1", value), List.of(value),
-                        args, null, Map.of("f1", value), null),
-                context());
+                PluginRequestBuilder.create()
+                        .modelId(1L)
+                        .destField("sd")
+                        .sourceField("f1", value)
+                        .event("f1", value)
+                        .args(args)
+                        .build(),
+                TestContexts.context(new MockHttpTool(), cache));
         return (Map<String, Object>) result.getPayload();
     }
 

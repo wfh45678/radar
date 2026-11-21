@@ -35,6 +35,8 @@ public final class PluginEntry {
     private final String type;
     private final boolean remote;
     private final Source source;
+    private final String version;
+    private final String provider;
     private final List<OutputColumn> outputMeta;
     private final List<ParamDescriptor> paramSchema;
     private final Executor executor;
@@ -42,12 +44,22 @@ public final class PluginEntry {
     public PluginEntry(String key, String name, String desc, String type, boolean remote,
                        Source source, List<OutputColumn> outputMeta,
                        List<ParamDescriptor> paramSchema, Executor executor) {
+        this(key, name, desc, type, remote, source, "", "", outputMeta, paramSchema, executor);
+    }
+
+    /** @since 3.1.0 增 version/provider 元信息。 */
+    public PluginEntry(String key, String name, String desc, String type, boolean remote,
+                       Source source, String version, String provider,
+                       List<OutputColumn> outputMeta,
+                       List<ParamDescriptor> paramSchema, Executor executor) {
         this.key = key;
         this.name = name;
         this.desc = desc;
         this.type = type;
         this.remote = remote;
         this.source = source;
+        this.version = version == null ? "" : version;
+        this.provider = provider == null ? "" : provider;
         this.outputMeta = outputMeta == null ? List.of() : List.copyOf(outputMeta);
         this.paramSchema = paramSchema == null ? List.of() : List.copyOf(paramSchema);
         this.executor = executor;
@@ -96,6 +108,16 @@ public final class PluginEntry {
 
     public Source getSource() {
         return source;
+    }
+
+    /** @return 插件版本声明（@PluginMeta.version，可为空串）。@since 3.1.0 */
+    public String getVersion() {
+        return version;
+    }
+
+    /** @return 提供方声明（@PluginMeta.provider，可为空串）。@since 3.1.0 */
+    public String getProvider() {
+        return provider;
     }
 
     public List<OutputColumn> getOutputMeta() {

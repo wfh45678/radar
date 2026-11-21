@@ -471,6 +471,29 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+--
+-- Table structure for table `engine_plugin_registry` (v3.1 插件生命周期)
+--
+
+DROP TABLE IF EXISTS `engine_plugin_registry`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `engine_plugin_registry` (
+  `ID` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `PLUGIN_KEY` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '插件 key',
+  `SOURCE` varchar(16) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '来源：BUILTIN_V2/BUILTIN_V3/EXTERNAL',
+  `JAR_FILE` varchar(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '外置插件 jar 文件名（内置为空）',
+  `VERSION` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '插件版本声明',
+  `PROVIDER` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '提供方声明',
+  `ENABLED` int NOT NULL DEFAULT 1 COMMENT '1=启用 0=禁用',
+  `CREATE_TIME` datetime NOT NULL,
+  `UPDATE_TIME` datetime NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `UK_PLUGIN_KEY` (`PLUGIN_KEY`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='插件注册表（v3.1 插件生命周期）';
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-11-14  8:56:37
