@@ -13,7 +13,7 @@ Radar 的初衷是把散落在各业务代码中的风控逻辑解耦出来，�
 * 可视化规则编辑器，支持中文，易用性强
 * 六大策略类型：规则引擎 / 决策树 / 评分卡 / 决策表 / 名单匹配 / 规则集
 * Groovy 动态规则引擎，复杂场景灵活应对，规则编辑即时生效
-* 插件化设计（v3.0 支持外置 jar 插件与动态表单），快速接入外部数据能力
+* 插件化设计（v3.0 外置 jar 插件 + 动态表单；v3.1 管理端上传/启停/热重载），快速接入外部数据能力
 * 单模块单体架构（Java 17 + Spring Boot 3.5），一个 jar 同时提供管理端与引擎端 API
 
 ## 快速开始
@@ -35,7 +35,8 @@ cd frontend && npm ci && npm run dev
 # 改完前端后同步产物进 jar：scripts/build-frontend.sh，再 mvn package
 ```
 
-* 插件开发：[开发指南](docs/plugin-dev-guide.md) · [示例工程](samples/radar-plugin-demo/README.md)
+* 插件开发：[开发指南](docs/plugin-dev-guide.md) · 示例工程 [radar-plugin-demo](samples/radar-plugin-demo)（本地形态）/[radar-plugin-remote-demo](samples/radar-plugin-remote-demo)（远程形态，v3.1）· [插件注册表](PLUGIN_REGISTRY.md)
+* 插件管理：管理端顶栏「插件管理」（#/plugins）——上传 jar 热重载即时生效、启停持久化、执行统计；出访管控 `plugin.http.mode`（deny-private / allowlist / off）
 * 可观测性：`/actuator/prometheus` 指标，`docker compose --profile monitoring` 一键起 Grafana 看板，见 [压测与监控](docs/benchmark-v2.2.md)
 * 测试分层：L1/L2 纯单测 `mvn test` 秒级全绿，L3 Testcontainers 集成测试，见 [CONTRIBUTING.md](CONTRIBUTING.md)、[docs/plan-v2.1.md](docs/plan-v2.1.md)
 

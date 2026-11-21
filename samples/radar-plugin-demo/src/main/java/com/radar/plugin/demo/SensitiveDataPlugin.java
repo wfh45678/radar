@@ -25,7 +25,8 @@ import java.util.regex.Pattern;
  * </ul>
  */
 @PluginMeta(key = "SENSITIVE_DATA", name = "SENSITIVE_DATA",
-        desc = "敏感数据识别与脱敏（手机号/身份证）", type = "JSON")
+        desc = "敏感数据识别与脱敏（手机号/身份证）", type = "JSON",
+        version = "1.1.0", provider = "radar-official")
 public class SensitiveDataPlugin implements Plugin {
 
     private static final Pattern MOBILE = Pattern.compile("(?<!\\d)1[3-9]\\d{9}(?!\\d)");
