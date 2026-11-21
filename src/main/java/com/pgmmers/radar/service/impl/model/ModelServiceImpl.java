@@ -40,6 +40,7 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.data.MongoService;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginEntry;
+import com.pgmmers.radar.service.impl.model.transfer.ModelGraphAssembler;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.common.util.JsonUtils;
@@ -93,6 +94,8 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     private RuleMapper ruleMapper;
     @Autowired
     private PreItemMapper preItemMapper;
+    @Autowired
+    private ModelGraphAssembler graphAssembler;
     @Resource
     private ModelMapping modelMapping;
     @Resource
@@ -459,6 +462,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
 
     /**
      * 原 ModelDalImpl.copy 逻辑下沉：复制模型及全部子对象。
+     * v3.2 起装配段抽至 {@link ModelGraphAssembler}（与策略包导入共用同一份重映射逻辑）。
      */
     private int copyModel(ModelVO model) {
         Long oldId = model.getId();
@@ -469,108 +473,46 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         int count = this.saveModel(model);
 
         Long newId = model.getId();
-        Date sysDate = new Date();
 
-        //复制field
-        List<FieldPO> fieldList = fieldMapper.selectList(
-                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, oldId));
-        for (FieldPO po : fieldList) {
-            po.setModelId(newId);
-            po.setId(null);
-            po.setCreateTime(sysDate);
-            po.setUpdateTime(sysDate);
-            fieldMapper.insert(po);
-        }
-
-        //复制preItem
-        List<PreItemPO> preItemList = preItemMapper.selectList(
-                new LambdaQueryWrapper<PreItemPO>().eq(PreItemPO::getModelId, oldId));
-        for (PreItemPO po : preItemList) {
-            po.setModelId(newId);
-            po.setId(null);
-            po.setCreateTime(sysDate);
-            po.setUpdateTime(sysDate);
-            preItemMapper.insert(po);
-        }
-
-        //复制dataList
-        List<DataListsPO> dataListsList = dataListMapper.selectList(
-                new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, oldId));
-        for (DataListsPO po : dataListsList) {
-            Long oldDataListId = po.getId();
-
-            po.setModelId(newId);
-            po.setId(null);
-            po.setCreateTime(sysDate);
-            po.setUpdateTime(sysDate);
-            dataListMapper.insert(po);
-
-            Long newDataListId = po.getId();
-
-            //复制dataListMeta
-            List<DataListMetaPO> dataListMetaList = dataListMetaMapper.selectList(
-                    new LambdaQueryWrapper<DataListMetaPO>()
-                            .eq(DataListMetaPO::getDataListId, oldDataListId));
-            for (DataListMetaPO metaPO : dataListMetaList) {
-                metaPO.setDataListId(newDataListId);
-                metaPO.setId(null);
-                metaPO.setCreateTime(sysDate);
-                metaPO.setUpdateTime(sysDate);
-                dataListMetaMapper.insert(metaPO);
-            }
-
-            //复制dataListRecord
-            List<DataListRecordPO> dataListRecordList = dataListRecordMapper.selectList(
-                    new LambdaQueryWrapper<DataListRecordPO>()
-                            .eq(DataListRecordPO::getDataListId, oldDataListId));
-            for (DataListRecordPO recordPO : dataListRecordList) {
-                recordPO.setDataListId(newDataListId);
-                recordPO.setId(null);
-                recordPO.setCreateTime(sysDate);
-                recordPO.setUpdateTime(sysDate);
-                dataListRecordMapper.insert(recordPO);
-            }
-        }
-
-        //复制abstraction
-        List<AbstractionPO> abstractionList = abstractionMapper.selectList(
-                new LambdaQueryWrapper<AbstractionPO>().eq(AbstractionPO::getModelId, oldId));
-        for (AbstractionPO po : abstractionList) {
-            po.setModelId(newId);
-            po.setId(null);
-            po.setCreateTime(sysDate);
-            po.setUpdateTime(sysDate);
-            abstractionMapper.insert(po);
-        }
-
-        //复制activation
-        List<ActivationPO> activationList = activationMapper.selectList(
-                new LambdaQueryWrapper<ActivationPO>().eq(ActivationPO::getModelId, oldId));
-        for (ActivationPO po : activationList) {
-            Long oldActivationID = po.getId();
-
-            po.setModelId(newId);
-            po.setId(null);
-            po.setCreateTime(sysDate);
-            po.setUpdateTime(sysDate);
-            activationMapper.insert(po);
-
-            Long newActivationID = po.getId();
-
-            //复制rule
-            List<RulePO> ruleList = ruleMapper.selectList(
-                    new LambdaQueryWrapper<RulePO>().eq(RulePO::getActivationId, oldActivationID));
-            for (RulePO rulePO : ruleList) {
-                rulePO.setModelId(newId);
-                rulePO.setActivationId(newActivationID);
-                rulePO.setId(null);
-                rulePO.setCreateTime(sysDate);
-                rulePO.setUpdateTime(sysDate);
-                ruleMapper.insert(rulePO);
-            }
-        }
-
+        // 子对象装配（单事务，重映射逻辑与导入一致）
+        count += graphAssembler.assemble(newId,
+                fieldMapper.selectList(new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, oldId)),
+                preItemMapper.selectList(new LambdaQueryWrapper<PreItemPO>().eq(PreItemPO::getModelId, oldId)),
+                dataListMapper.selectList(new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, oldId)),
+                dataListMetaOf(oldId),
+                dataListRecordOf(oldId),
+                abstractionMapper.selectList(new LambdaQueryWrapper<AbstractionPO>().eq(AbstractionPO::getModelId, oldId)),
+                activationMapper.selectList(new LambdaQueryWrapper<ActivationPO>().eq(ActivationPO::getModelId, oldId)),
+                rulesOf(oldId));
         return count;
+    }
+
+    /** 源模型的名单 meta/record（装配入参收集）。 */
+    private List<DataListMetaPO> dataListMetaOf(Long modelId) {
+        List<Long> ids = dataListMapper.selectList(
+                        new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, modelId))
+                .stream().map(DataListsPO::getId).collect(Collectors.toList());
+        return ids.isEmpty() ? List.of()
+                : dataListMetaMapper.selectList(
+                        new LambdaQueryWrapper<DataListMetaPO>().in(DataListMetaPO::getDataListId, ids));
+    }
+
+    private List<DataListRecordPO> dataListRecordOf(Long modelId) {
+        List<Long> ids = dataListMapper.selectList(
+                        new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, modelId))
+                .stream().map(DataListsPO::getId).collect(Collectors.toList());
+        return ids.isEmpty() ? List.of()
+                : dataListRecordMapper.selectList(
+                        new LambdaQueryWrapper<DataListRecordPO>().in(DataListRecordPO::getDataListId, ids));
+    }
+
+    /** 源模型的规则（激活下挂，装配入参收集）。 */
+    private List<RulePO> rulesOf(Long modelId) {
+        List<Long> ids = activationMapper.selectList(
+                        new LambdaQueryWrapper<ActivationPO>().eq(ActivationPO::getModelId, modelId))
+                .stream().map(ActivationPO::getId).collect(Collectors.toList());
+        return ids.isEmpty() ? List.of()
+                : ruleMapper.selectList(new LambdaQueryWrapper<RulePO>().in(RulePO::getActivationId, ids));
     }
 
     @Override
