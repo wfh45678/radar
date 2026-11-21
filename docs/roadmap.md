@@ -1,6 +1,6 @@
 # Radar 开源项目技术演进 Roadmap
 
-> 版本：v1.2（2026-11-20：P2-2/P2-3 挂起——开源版暂不考虑 SaaS 化能力；新增 P2-5 SDK 发布 Maven Central。v1.1 2026-11-14：新增 P1-7 前端现代化，v2.3 存储演进暂缓顺延为 v2.4；v1.0 初稿）
+> 版本：v1.3（2026-11-21：新增 P2-6 插件生态深化并立项 v3.1。v1.2 2026-11-20：P2-2/P2-3 挂起——开源版暂不考虑 SaaS 化能力；新增 P2-5 SDK 发布 Maven Central。v1.1 2026-11-14：新增 P1-7 前端现代化，v2.3 存储演进暂缓顺延为 v2.4；v1.0 初稿）
 > 范围：v2.0（Java 17 + Spring Boot 3.5 单体）完成后的技术方向规划
 > 状态：规划稿，优先级会随社区反馈调整
 > 前置文档：[upgrade-plan-java17-boot3.md](upgrade-plan-java17-boot3.md)
@@ -62,6 +62,7 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 | P2-3 | 多租户 / SaaS 化（调研） | **挂起**（2026-11-20，同 P2-2：商业定位归企业版，开源版不做）。依赖 P2-2 |
 | P2-4 | GitHub 镜像自动同步 | **已完成**：Gitee 自带镜像功能自动推送 GitHub（比原定 Actions 方案更省维护），CI/Release 随 push 自动触发 |
 | P2-5 | radar-plugin-api 发布 Maven Central | **已完成**（2026-11-20）：坐标迁移 `cn.riskengine`（riskengine.cn 反向域名，Central 命名空间硬要求，Java 包名不变），`cn.riskengine:radar-plugin-api:3.0.0` 上架（jar/sources/javadoc/GPG 签名全齐）；插件开发者一句依赖即可编译插件，生态采用路径闭环；tag 驱动自动发布接入 release.yml（幂等：版本已存在自动跳过） |
+| P2-6 | 插件生态深化 | **进行中**（2026-11-21 立项 v3.1）：管理端插件生命周期（上传/启停/删除，loader 代际热重载可回退）、HTTP 出访 allowlist 模式（v3.0 列后续项）、radar-plugin-api 3.1.0 向后兼容演进（paramSchema options、version/provider 元信息、testkit 工件）、远程插件官方示例、PLUGIN_REGISTRY 社区索引。见 [plan-v3.1.md](plan-v3.1.md) |
 
 ## 5. 里程碑建议
 
@@ -71,6 +72,7 @@ v2.2（专业度）     P1-1、P1-2         —— JDK 21 + 虚拟线程、可�
 v2.3（存储演进）   P1-3、P1-4         —— ES 8、报表存储调研（**暂缓**：2026-11-14 决定优先 v2.4，版本号保留）
 v2.4（前端现代化） P1-7               —— radar-web 复活：React 18 + antd 5 + Vite（[已发布](plan-v2.4.md)）
 v3.0（生态）       P2-1、P2-4 →      —— 插件重构：radar-plugin-api SDK / 外置 jar 加载 / 执行加固 / 动态表单（[已发布](plan-v3.0.md)），附带镜像自动同步；收尾 P2-5 SDK 上架 Maven Central（2026-11-20 完成）。P2-2/P2-3（沙箱、多租户）2026-11-20 挂起——开源版暂不考虑 SaaS 化能力
+v3.1（插件运营）   P2-6              —— 插件生态深化：管理端生命周期（上传/启停/热重载）、出访 allowlist、SDK 3.1.0、远程示例与社区索引（[方案评审稿](plan-v3.1.md)）
 ```
 
 ## 6. 如果只做三件事
