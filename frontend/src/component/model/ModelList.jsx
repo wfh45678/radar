@@ -7,6 +7,7 @@ import AddModel from './modal/AddModel';
 import EditModel from './modal/EditModel';
 import StaticField from './modal/StaticField';
 import CopyModel from './modal/CopyModel';
+import ImportModel from './modal/ImportModel';
 
 import './Model.less';
 
@@ -109,7 +110,41 @@ export default class ModelList extends React.Component{
                 }
                 this.fetchTableData();
             })
-    }   
+    }
+
+    // 导出策略包（v3.2）：blob 下载（带鉴权头，Content-Disposition 同源可读）
+    exportModel=(r)=>{
+        fetch('/services/v1/model/export/' + r.id, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {'x-auth-token': localStorage.getItem('x-auth-token')}
+        }).then((res) => {
+            if(!res.ok){
+                message.error('导出失败：模型不存在或服务异常');
+                return null;
+            }
+            const disposition = res.headers.get('content-disposition') || '';
+            let filename = 'radar-model-' + r.id + '.json';
+            const utf8Match = disposition.match(/filename\*=UTF-8''([^;]+)/);
+            if(utf8Match){
+                filename = decodeURIComponent(utf8Match[1]);
+            }
+            return res.blob().then((blob)=>({blob, filename}));
+        }).then((payload) => {
+            if(!payload){ return; }
+            const url = URL.createObjectURL(payload.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = payload.filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            message.success('导出成功');
+        }).catch((e) => {
+            message.error('导出失败：' + e.message);
+        });
+    }
 
     render(){
         let showGuid=function(guid){
@@ -160,11 +195,13 @@ export default class ModelList extends React.Component{
                         }
                         <span className="ant-divider"></span>
                         {r.entityName?
-                            <CopyModel tData={this.state.tData} row={r} reload={this.fetchTableData}/>                       
+                            <CopyModel tData={this.state.tData} row={r} reload={this.fetchTableData}/>
                         :
                         ''
                         }
                         {r.entityName?<span className="ant-divider"></span>:''}
+                        <Tooltip title="导出策略包 json（v3.2）"><a onClick={this.exportModel.bind(this,r)}>导出</a></Tooltip>
+                        <span className="ant-divider"></span>
 
                         <EditModel tData={this.state.tData} row={r} reload={this.fetchTableData}/><span className="ant-divider"></span>
                         <Popconfirm placement="bottomRight" title={'确认删除该模型吗？'} onConfirm={this.deleteModel.bind(this,r.id)}>
@@ -189,6 +226,8 @@ export default class ModelList extends React.Component{
                                         </FormItem>
                                         {' '}
                                         <AddModel tData={this.state.tData} reload={this.fetchTableData} />
+                                        {' '}
+                                        <ImportModel reload={this.fetchTableData}/>
                             </Form>
                         </div>
 

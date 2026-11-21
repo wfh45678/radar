@@ -2,6 +2,35 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [3.2.0] - 2026-11-21
+
+策略包版本（roadmap P2-7）：模型配置全图文件化——一个 JSON 策略包带走字段/preItems/数据名单/抽象/激活/规则，
+跨实例导入为新模型。环境迁移、备份归档、求助支持与策略分享的分发单元，与插件生态构成双护城河。
+规划详见 [docs/plan-v3.2.md](docs/plan-v3.2.md)，格式与操作见 [docs/model-package.md](docs/model-package.md)。
+
+### Added
+- **策略包信封**（formatVersion 1.0）：model + fields/preItems/dataLists(+meta/records)/abstractions/activations/rules
+  八个子集合；文件内保留原 ID 作图内引用键，导入手动整图重映射分配新 ID；
+  `engine_model_conf(+param)` 为 ML 休眠特征配置（Estimator 零实现）不入包，随 P1-5 ML 重做再议
+- **导出**：`GET /services/v1/model/export/{id}` JSON 附件下载（RFC 5987 中文文件名）；
+  **导入**：`POST /services/v1/model/import`（multipart + 显示名称/商户码/模型名）→ 新模型（INIT，构建后生效）
+- **导入校验报告**（告警不阻断）：未安装插件 key（事件执行时隔离跳过）、Groovy 预编译告警、
+  名单记录超阈值提示（默认 10 万行可配）；结构错误（格式版本/反序列化）才拒绝
+- **整图事务**：导入任一插入失败全回滚，无"半个模型"；冲突（商户码+显示名称）拒绝
+- 管理端：模型列表行内「导出」、页头「导入模型」弹窗（文件+命名+告警列表回显）
+- 配置项 `model.package.max-upload-size`（10MB）/ `model.package.record-warn-threshold`
+- `docs/model-package.md`（格式说明/导入语义/典型场景/故障排查）
+
+### Changed
+- **copyModel 装配段抽至 ModelGraphAssembler**（与策略包导入共用同一份 ID 重映射逻辑，
+  copy 语义不变并新增单事务保护）；映射关系 activationId/dataListId 维持插入后重映射模式
+
+### Verification
+- L1/L2 单测 32/32 全绿（新增策略包 6 个：round-trip/格式版本拒绝/缺插件告警/Groovy 告警/名单阈值）
+- L3 集成测试 `ModelPackageIntegrationTest`（Testcontainers）：种子模型导出→往返→导入→图完整性/ID 重映射/冲突回滚断言，随 CI 全量执行
+- copy 重构回归：既有全链路 L3（模板复制→构建→事件命中）随 CI 执行
+- 前端 vite build 通过，产物内嵌 jar
+
 ## [3.1.0] - 2026-11-21
 
 插件运营版本（roadmap P2-6）：v3.0 解决插件"接得进来"，本版解决"管不起来"——
