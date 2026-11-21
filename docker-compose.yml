@@ -91,6 +91,8 @@ services:
       SYSCONF_WORKDIR: /radar/workdir
       # v3.0 外置插件目录（放入 ./plugins/*.jar 重启生效）
       RADAR_PLUGINS_DIR: /radar/plugins
+      # v3.3 登录验证码开关（默认开；E2E/演示环境 shell 里 SYSCONF_CAPTCHAENABLED=false 覆盖）
+      SYSCONF_CAPTCHAENABLED: ${SYSCONF_CAPTCHAENABLED:-true}
     volumes:
       - ./plugins:/radar/plugins
     ports:
