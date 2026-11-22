@@ -36,7 +36,7 @@ jobs:
           build-mode: manual
 
       - name: Install radar-plugin-api SDK
-        run: mvn -B -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -Dgpg.skip=true
+        run: mvn -B -ntp -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -Dgpg.skip=true ||           { echo "sdk install retry"; sleep 30; mvn -B -ntp -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -Dgpg.skip=true; }
 
       - name: Build (skip tests)
         run: mvn -B -s .mvn/settings.xml package -DskipTests

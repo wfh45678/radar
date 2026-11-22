@@ -81,7 +81,16 @@ jobs:
         run: |
           npm ci
           npx playwright install --with-deps chromium
-          npx playwright test
+          set +e
+          npx playwright test 2>&1 | tee /tmp/pw.log
+          code=$?
+          if [ $code -ne 0 ]; then
+            # 失败用例摘要转注解（匿名可读）
+            grep -E "^  [✘✔]|Error:|expect\(|Timed out|Test timeout|✓" /tmp/pw.log | tail -20 | while IFS= read -r line; do
+              [ -n "$line" ] && echo "::error::${line:0:200}"
+            done
+            exit $code
+          fi
 
       - name: Upload failure artifacts
         if: failure()
