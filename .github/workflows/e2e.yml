@@ -43,7 +43,17 @@ jobs:
       - name: Start compose stack (captcha off)
         env:
           SYSCONF_CAPTCHAENABLED: "false"
-        run: docker compose up -d --build --profile app
+        run: |
+          set -o pipefail
+          docker compose up -d --build --profile app 2>&1 | tee /tmp/compose-up.log
+          code=$?
+          if [ $code -ne 0 ]; then
+            # 错误文本转 ::error:: 注解（注解可经 API 匿名读取，绕过日志权限）
+            tail -30 /tmp/compose-up.log | while IFS= read -r line; do
+              [ -n "$line" ] && echo "::error::${line:0:200}"
+            done
+            exit $code
+          fi
 
       - name: Wait for app health
         run: |
@@ -53,7 +63,10 @@ jobs:
             fi
             sleep 5
           done
-          echo "app not healthy in 300s"; docker compose logs app | tail -200; exit 1
+          docker compose logs app 2>&1 | tail -40 | while IFS= read -r line; do
+            [ -n "$line" ] && echo "::error::${line:0:200}"
+          done
+          echo "app not healthy in 300s"; exit 1
 
       - name: Set up Node 22
         uses: actions/setup-node@v4
