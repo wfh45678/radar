@@ -31,7 +31,10 @@ jobs:
       - name: Start compose stack (captcha off)
         env:
           SYSCONF_CAPTCHAENABLED: "false"
-        run: docker compose up -d --build --profile app
+        run: |
+          docker compose version
+          docker compose config -q && echo "compose config valid"
+          docker compose up -d --build --profile app
 
       - name: Wait for app health
         run: |
