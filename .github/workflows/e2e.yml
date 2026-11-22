@@ -22,11 +22,12 @@ jobs:
           java-version: '17'
           cache: maven
 
-      # 两段构建约定：SDK 先 install
+      # 两段构建约定：SDK 先 install；依赖解析偶发外呼抖动，失败重试一次
       - name: Build app jar
         run: |
-          mvn -B -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -Dgpg.skip=true
-          mvn -B -s .mvn/settings.xml package -DskipTests
+          mvn -B -ntp -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -Dgpg.skip=true
+          mvn -B -ntp -s .mvn/settings.xml package -DskipTests || \
+            { echo "::notice::build retry after transient failure"; sleep 30; mvn -B -ntp -s .mvn/settings.xml package -DskipTests; }
 
       - name: Start compose stack (captcha off)
         env:
