@@ -33,11 +33,17 @@ jobs:
         env:
           SYSCONF_CAPTCHAENABLED: "false"
         run: |
-          # 四轮 0s 失败 + exit 1（CLI 在、daemon 不可达）：先确保 docker daemon 运行
+          # 四轮 0s 失败 + exit 1（CLI 在、daemon 不可达）：确保 daemon 运行并等待就绪（dockerd 就绪需数秒）
           if ! docker info > /dev/null 2>&1; then
             echo "::notice::docker daemon unreachable, starting"
             sudo systemctl start docker || sudo service docker start
-            sleep 3
+            for i in $(seq 1 30); do
+              if docker info > /dev/null 2>&1; then
+                echo "daemon ready after $((i*2))s"
+                break
+              fi
+              sleep 2
+            done
           fi
           docker info --format 'daemon ok: {{.ServerVersion}}'
           # compose 插件缺失自装（用户级目录免 sudo）
