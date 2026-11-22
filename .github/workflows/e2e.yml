@@ -43,16 +43,20 @@ jobs:
       - name: Start compose stack (captcha off)
         env:
           SYSCONF_CAPTCHAENABLED: "false"
+          # compose 的 --profile 旗标在 runner 版本上不受支持（unknown flag），
+          # 改用全版本通用的 COMPOSE_PROFILES 环境变量
+          COMPOSE_PROFILES: "app"
         run: |
           set +e
           set -o pipefail
-          docker compose up -d --build --profile app 2>&1 | tee /tmp/compose-up.log
+          docker compose up -d --build 2>&1 | tee /tmp/compose-up.log
           code=$?
-          echo "::notice::compose exit=$code logbytes=$(wc -c < /tmp/compose-up.log 2>/dev/null || echo -1)"
-          # 失败时把日志首尾转注解（匿名 API 可读），无条件下轮必出真相
-          tail -c 500 /tmp/compose-up.log 2>/dev/null | tr '\n\r' '  ' | sed 's/"/\\"/g' | cut -c1-190 | { read -r line; [ -n "$line" ] && echo "::error::tail: $line"; true; }
-          head -c 500 /tmp/compose-up.log 2>/dev/null | tr '\n\r' '  ' | sed 's/"/\\"/g' | cut -c1-190 | { read -r line; [ -n "$line" ] && echo "::notice::head: $line"; true; }
-          exit $code
+          if [ $code -ne 0 ]; then
+            tail -30 /tmp/compose-up.log | while IFS= read -r line; do
+              [ -n "$line" ] && echo "::error::${line:0:200}"
+            done
+            exit $code
+          fi
 
       - name: Wait for app health
         run: |
