@@ -33,7 +33,16 @@ jobs:
         env:
           SYSCONF_CAPTCHAENABLED: "false"
         run: |
-          docker compose version
+          docker version --format 'docker server: {{.Server.Version}}'
+          # 新 runner 镜像可能不带 compose 插件（0s 失败即命令秒退）：缺失自装（用户级目录免 sudo）
+          docker compose version || {
+            echo "::notice::compose plugin missing, installing"
+            mkdir -p "$HOME/.docker/cli-plugins"
+            curl -fL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
+              -o "$HOME/.docker/cli-plugins/docker-compose"
+            chmod +x "$HOME/.docker/cli-plugins/docker-compose"
+            docker compose version
+          }
           docker compose config -q && echo "compose config valid"
           docker compose up -d --build --profile app
 
