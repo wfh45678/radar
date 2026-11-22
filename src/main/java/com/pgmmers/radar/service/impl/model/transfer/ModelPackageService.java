@@ -242,7 +242,11 @@ public class ModelPackageService {
         }
         ModelPO model = new ModelPO();
         model.setGuid(UUID.randomUUID().toString().toUpperCase());
-        model.setModelName(modelName);
+        // MODEL_NAME 列 NOT NULL 无默认值：留空时先以临时名插入，拿到 id 后归一为 model_<id>
+        // （与 copy/save 的最终命名语义一致）
+        model.setModelName(modelName == null || modelName.isBlank()
+                ? "model_tmp_" + Long.toHexString(System.currentTimeMillis())
+                : modelName);
         model.setLabel(label);
         model.setCode(merchantCode);
         model.setEntityName(source.getEntityName());
@@ -257,7 +261,7 @@ public class ModelPackageService {
         model.setUpdateTime(now);
         modelMapper.insert(model);
         Long newId = model.getId();
-        if (modelName == null || modelName.isBlank()) {
+        if (model.getModelName().startsWith("model_tmp_")) {
             model.setModelName("model_" + newId);
             modelMapper.updateById(model);
         }
