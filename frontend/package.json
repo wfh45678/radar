@@ -19,7 +19,7 @@
     "react-router": "^7.9.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.6.0",
+    "@vitejs/plugin-react": "^6.3.0",
     "less": "^4.2.2",
     "vite": "^6.3.5"
   }
