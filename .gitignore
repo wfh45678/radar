@@ -12,3 +12,7 @@ radar-plugin-api/target/
 /samples/radar-plugin-demo/target/
 /samples/radar-plugin-remote-demo/target/
 /radar-plugin-testkit/target/
+/docs/node_modules/
+/docs/.vitepress/cache/
+/docs/.vitepress/dist/
+/docs/build.log

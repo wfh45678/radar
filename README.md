@@ -35,6 +35,7 @@ cd frontend && npm ci && npm run dev
 # 改完前端后同步产物进 jar：scripts/build-frontend.sh，再 mvn package
 ```
 
+* 文档站：[docs/architecture.md](docs/architecture.md)（架构图）· [docs/operations.md](docs/operations.md)（运维手册）· GitHub Pages 自动部署（docs/ 内 VitePress）
 * 模型策略包：导出/导入跨实例迁移与策略分享，[格式与操作](docs/model-package.md)
 * 插件开发：[开发指南](docs/plugin-dev-guide.md) · 示例工程 [radar-plugin-demo](samples/radar-plugin-demo)（本地形态）/[radar-plugin-remote-demo](samples/radar-plugin-remote-demo)（远程形态，v3.1）· [插件注册表](PLUGIN_REGISTRY.md)
 * 插件管理：管理端顶栏「插件管理」（#/plugins）——上传 jar 热重载即时生效、启停持久化、执行统计；出访管控 `plugin.http.mode`（deny-private / allowlist / off）

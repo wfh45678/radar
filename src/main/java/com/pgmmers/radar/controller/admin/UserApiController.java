@@ -55,6 +55,13 @@ public class UserApiController {
     @Autowired
     private CacheService cacheService;
 
+    /**
+     * 验证码开关（v3.3 E2E/演示环境支持）：false 时登录/注册跳过验证码校验（传任意非空值即可）。
+     * 生产环境保持默认 true；E2E 与本地演示可通过 SYSCONF_CAPTCHAENABLED=false 关闭。
+     */
+    @org.springframework.beans.factory.annotation.Value("${sys.conf.captcha-enabled:true}")
+    private boolean captchaEnabled;
+
     @PostMapping("/user/login")
     public CommonResult login(String loginName, String passwd, String captcha) {
         CommonResult ret = new CommonResult();
@@ -154,12 +161,14 @@ public class UserApiController {
         if(StringUtils.isEmpty(passwd)){
             return "密码不能为空";
         }
-        if(StringUtils.isEmpty(captcha)){
-            return "验证码不能为空";
-        }
-        boolean validateCaptcha = cacheService.validateCaptcha(captcha);
-        if (!validateCaptcha ) {
-            return "验证码无效";
+        if (captchaEnabled) {
+            if(StringUtils.isEmpty(captcha)){
+                return "验证码不能为空";
+            }
+            boolean validateCaptcha = cacheService.validateCaptcha(captcha);
+            if (!validateCaptcha ) {
+                return "验证码无效";
+            }
         }
         if(!passwd.equals(verifyPasswd)){
             return "新密码和确认密码输入不一致,请重新输入!";

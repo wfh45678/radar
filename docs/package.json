@@ -1,0 +1,17 @@
+{
+  "name": "radar-docs-site",
+  "private": true,
+  "description": "Radar 文档站（v3.3 开源基建 T2）：VitePress 渲染 docs/ 为唯一源，发布 GitHub Pages",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "mermaid": "^10.9.0",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17",
+    "vue": "^3.5.46"
+  }
+}

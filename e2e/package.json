@@ -1,0 +1,12 @@
+{
+  "name": "radar-e2e",
+  "private": true,
+  "description": "Radar 管理端 E2E 冒烟（v3.3 开源基建 T3）：五步链路守护 UI 回归",
+  "scripts": {
+    "test": "playwright test",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

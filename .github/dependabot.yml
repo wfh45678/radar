@@ -1,0 +1,24 @@
+# 依赖自动升级（v3.3 开源基建）：周检三个生态，升级以 PR 形式提交，CI 门禁把关。
+# 主仓为 Gitee（GitHub 侧为每小时镜像），Actions 生态仅在镜像仓生效——与 ci/release 同理。
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["dependencies"]
+
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "frontend"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "ci"]

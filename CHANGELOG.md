@@ -2,6 +2,30 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [3.3.0] - 2026-11-21
+
+开源基建版本（roadmap P2-8，源自 2026-11-21 开源健康度盘点"三件事"）：依赖与安全自动扫描、文档站与
+架构图、前端 E2E 冒烟。零业务代码改动（唯一后端触碰为登录验证码开关，默认行为不变）。
+规划详见 [docs/plan-v3.3.md](docs/plan-v3.3.md)。
+
+### Added
+- **Dependabot**：maven / npm / github-actions 三生态周检，升级以 PR 提交
+- **CodeQL**：Java 静态安全扫描（push master / PR / 每周复扫；首轮 report-only）
+- **文档站**（VitePress，工程根即 docs/，仓库文档零拷贝上站）：GitHub Pages 自动部署（.github/workflows/docs.yml，
+  首次启用需仓库 Settings→Pages 选 GitHub Actions）；新增 [docs/architecture.md](docs/architecture.md)
+  （事件处理流/部署形态两张 mermaid 架构图）、[docs/operations.md](docs/operations.md)（运维手册首版：
+  部署形态/升级/备份/监控/FAQ）、docs/index.md 文档导航
+- **E2E 冒烟**（e2e/，Playwright）：五步链路（登录→新建模型→进入工作区→事件发布→报表可见），
+  .github/workflows/e2e.yml（push master：构建 jar → compose 全套环境 → Playwright），
+  失败自动上传 trace/截图——防 Cascader 白屏类回归
+- 登录验证码开关 `sys.conf.captcha-enabled`（默认 true 不变；E2E/演示环境经
+  `SYSCONF_CAPTCHAENABLED=false` 关闭，compose 已透传）
+
+### Verification
+- 文档站本地构建通过（VitePress + mermaid 渲染）
+- 主工程 compile 通过；L1/L2 全量回归绿
+- E2E 五步链路随 CI（GitHub 镜像仓）在真实 compose 环境执行
+
 ## [3.2.0] - 2026-11-21
 
 策略包版本（roadmap P2-7）：模型配置全图文件化——一个 JSON 策略包带走字段/preItems/数据名单/抽象/激活/规则，
