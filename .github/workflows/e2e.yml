@@ -31,7 +31,8 @@ jobs:
 
       # 诊断轮：单命令单步骤，失败步骤名即失败命令（可经 API 步骤明细定位，无需日志）
       - name: Docker daemon
-        run: docker info --format 'daemon ok: {{.ServerVersion}}'
+        run: |
+          docker info --format 'daemon ok: {{.ServerVersion}}'
 
       - name: Compose plugin
         run: docker compose version
