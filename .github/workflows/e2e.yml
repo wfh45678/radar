@@ -33,8 +33,14 @@ jobs:
         env:
           SYSCONF_CAPTCHAENABLED: "false"
         run: |
-          docker version --format 'docker server: {{.Server.Version}}'
-          # 新 runner 镜像可能不带 compose 插件（0s 失败即命令秒退）：缺失自装（用户级目录免 sudo）
+          # 四轮 0s 失败 + exit 1（CLI 在、daemon 不可达）：先确保 docker daemon 运行
+          if ! docker info > /dev/null 2>&1; then
+            echo "::notice::docker daemon unreachable, starting"
+            sudo systemctl start docker || sudo service docker start
+            sleep 3
+          fi
+          docker info --format 'daemon ok: {{.ServerVersion}}'
+          # compose 插件缺失自装（用户级目录免 sudo）
           docker compose version || {
             echo "::notice::compose plugin missing, installing"
             mkdir -p "$HOME/.docker/cli-plugins"
