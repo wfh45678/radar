@@ -44,6 +44,7 @@ jobs:
         env:
           SYSCONF_CAPTCHAENABLED: "false"
         run: |
+          set +e
           set -o pipefail
           docker compose up -d --build --profile app 2>&1 | tee /tmp/compose-up.log
           code=$?
