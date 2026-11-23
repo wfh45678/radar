@@ -54,9 +54,17 @@ jobs:
           mvn -B -ntp -s .mvn/settings.xml verify 2>&1 | tee /tmp/mvn-verify.log
           code=$?
           if [ $code -ne 0 ]; then
-            # 测试失败摘要转注解（匿名 API 可读，无需日志权限）
-            grep -E "<<< (FAILURE|ERROR)!|AssertionFailedError|Data truncation|SQL: INSERT INTO" /tmp/mvn-verify.log | tail -30 | while IFS= read -r line; do
+            # 测试失败详情转注解（匿名 API 可读，无需日志权限）
+            grep -E "<<< (FAILURE|ERROR)!|AssertionFailedError|Data truncation|SQL: INSERT INTO" /tmp/mvn-verify.log | tail -15 | while IFS= read -r line; do
               [ -n "$line" ] && echo "::error::${line:0:1000}"
+            done
+            # 失败测试类的 surefire 报告全文（含完整异常栈）
+            for report in target/surefire-reports/*.txt; do
+              if grep -qE "<<< (FAILURE|ERROR)!" /tmp/mvn-verify.log && grep -q "Tests run.*Failures: [1-9]\|Errors: [1-9]" "$report" 2>/dev/null; then
+                cat "$report" | while IFS= read -r line; do
+                  [ -n "$line" ] && echo "::error::${line:0:1000}"
+                done
+              fi
             done
             exit $code
           fi
