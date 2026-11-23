@@ -1,0 +1,65 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< cn.riskengine:radar-plugin-demo >-------------------
+[INFO] Building Radar Plugin Demo 3.1.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ radar-plugin-demo ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ radar-plugin-demo ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ radar-plugin-demo ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory D:\code\gitee\radar\samples\radar-plugin-demo\src\test\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ radar-plugin-demo ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 2 source files to D:\code\gitee\radar\samples\radar-plugin-demo\target\test-classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[40,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[49,41] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[52,41] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[58,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[71,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[96,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[109,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[121,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[131,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[141,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[149,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[158,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[164,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[INFO] 13 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.141 s
+[INFO] Finished at: 2026-11-23T22:36:47+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:testCompile (default-testCompile) on project radar-plugin-demo: Compilation failure: Compilation failure: 
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[40,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[49,41] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[52,41] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[58,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[71,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[96,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[109,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[121,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[131,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[141,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[149,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[158,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] /D:/code/gitee/radar/samples/radar-plugin-demo/src/test/java/com/radar/plugin/demo/SeedPluginsTest.java:[164,42] 未报告的异常错误com.radar.plugin.api.PluginException; 必须对其进行捕获或声明以便抛出
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

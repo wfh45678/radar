@@ -65,7 +65,7 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 | P2-6 | 插件生态深化 | **已完成**（2026-11-21 实施完成，随 v3.1.0 发布）：管理端插件生命周期（上传/启停/删除，loader 代际热重载可回退）、HTTP 出访 allowlist 模式（v3.0 列后续项）、radar-plugin-api 3.1.0 向后兼容演进（paramSchema options、version/provider 元信息、testkit 工件）、远程插件官方示例、PLUGIN_REGISTRY 社区索引。见 [plan-v3.1.md](plan-v3.1.md) |
 | P2-7 | 模型导入导出（策略包） | **已完成**（2026-11-21 实施完成，随 v3.2.0 发布）：模型配置全图文件化（JSON 策略包：字段/preItem/名单/抽象/激活/规则；engine_model_conf 为 ML 休眠配置不入包，随 P1-5 ML 重做再议）、导入校验报告（缺插件/Groovy 预编译/名单行数）；（拉伸）官方模板库一键导入 → **已实施完成（2026-11-23，随 v3.4.0 发布，见下）**。模型文件化 = 环境迁移/求助支持/模板分发的分发单元，与插件生态构成双护城河（插件共享数据接入，模型包共享风控策略）。见 [plan-v3.2.md](plan-v3.2.md) |
 | P2-8 | 开源基建三件事 | **已完成**（2026-11-21 实施完成，随 v3.3.0 发布）：Dependabot + CodeQL 自动依赖与安全扫描、VitePress 文档站 + mermaid 架构图 + 运维手册、Playwright 五步 E2E 冒烟（防白屏类回归）。零业务代码改动，约 5 人日。见 [plan-v3.3.md](plan-v3.3.md) |
-| P2-9 | 生态内容补强 | **立项 v3.5**（2026-11-23 方案入库，排 v3.4 之后实施）：官方种子插件三件套（ID_CARD_VALIDATE 身份证校验 / USER_AGENT_PARSE UA 解析 / BANK_CARD_CHECK 银行卡校验，扩展 radar-plugin-demo，零外呼零依赖，官方示例定位不进内置）+ Playwright E2E 扩面（插件管理页/策略包/模板库三个独立 spec，覆盖追平 v3.1~v3.4 功能面）。零引擎改动、SDK 不发版。见 [plan-v3.5.md](plan-v3.5.md) |
+| P2-9 | 生态内容补强 | **已实施完成**（2026-11-23，随 v3.5.0 发布）：官方种子插件三件套（ID_CARD_VALIDATE 身份证校验 / USER_AGENT_PARSE UA 解析 / BANK_CARD_CHECK 银行卡校验，扩展 radar-plugin-demo，零外呼零依赖，官方示例定位不进内置）+ Playwright E2E 扩面（插件管理页/策略包/模板库三个独立 spec，覆盖追平 v3.1~v3.4 功能面）。零引擎改动、SDK 不发版。见 [plan-v3.5.md](plan-v3.5.md) |
 
 ## 5. 里程碑建议
 
