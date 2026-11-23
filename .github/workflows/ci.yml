@@ -48,7 +48,18 @@ jobs:
         run: mvn -B -s .mvn/settings.xml -f radar-plugin-api/pom.xml install -Dgpg.skip=true
 
       - name: Build and verify
-        run: mvn -B -s .mvn/settings.xml verify
+        run: |
+          set +e
+          set -o pipefail
+          mvn -B -ntp -s .mvn/settings.xml verify 2>&1 | tee /tmp/mvn-verify.log
+          code=$?
+          if [ $code -ne 0 ]; then
+            # 测试失败摘要转注解（匿名 API 可读，无需日志权限）
+            grep -E "<<< (FAILURE|ERROR)!|AssertionFailedError|SQLException|Cannot deserialize" /tmp/mvn-verify.log | tail -25 | while IFS= read -r line; do
+              [ -n "$line" ] && echo "::error::${line:0:200}"
+            done
+            exit $code
+          fi
 
       - name: Upload test reports
         if: always()
