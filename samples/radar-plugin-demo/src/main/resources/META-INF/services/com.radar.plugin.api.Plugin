@@ -1,1 +1,4 @@
 com.radar.plugin.demo.SensitiveDataPlugin
+com.radar.plugin.demo.IdCardValidatePlugin
+com.radar.plugin.demo.UserAgentParsePlugin
+com.radar.plugin.demo.BankCardCheckPlugin
