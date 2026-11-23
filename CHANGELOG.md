@@ -2,6 +2,31 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [3.4.0] - 2026-11-23
+
+官方模板库版本（roadmap P2-7 拉伸项转正，[plan-v3.4](docs/plan-v3.4.md)）：官方场景策略包模板
+随 jar 内置分发 + 在线模板源（riskengine.cn，可覆盖/禁用），管理端一键浏览、一键创建——
+新用户装好即有完整可跑的场景策略，"十分钟可体验"断层闭环。
+
+### Added
+- **官方模板三件套**（resources/models/，账户盗用防护 / 营销反作弊 / 交易风控，
+  规则 5/6/9 条、全部内置插件、零真实数据，名单仅结构种子）
+- **模板库 API**：`GET /services/v1/model/templates`（内置+在线合并卡片列表，含来源徽标与
+  在线源状态）、`POST /services/v1/model/templates/{key}/import`（按 key 加载 → validate →
+  importPackage，复用普通导入校验链与整图事务）
+- **在线模板源**：默认官方地址 riskengine.cn，`sys.conf.template-source-url` 可覆盖、置空禁用；
+  3s 超时 + 60s 负缓存 + 失败降级仅内置，永不阻塞启动与事件链路；远程同名 key 覆盖内置（官方可在线修订）
+- **管理端模板库**：模型列表页「模板库」弹窗——卡片（名称/场景/描述/规则·抽象·字段统计/来源徽标）、
+  在线源状态、一键创建（label 预填）+ 告警回显（结果展示抽公共组件 ImportResultContent）
+- L3 模板质量红线用例（TemplateRedLineTest）：逐模板 HTTP 黑盒——导入零告警 → 构建通过 →
+  启用 → 造事件引擎出分，随 CI 常驻
+
+### Verification
+- L1 TemplateLibraryTest 5/5（内置 catalog 解析统计 / 在线源 mock 合并+远程覆盖 / 失败降级+负缓存 /
+  置空禁用 / 坏包 parse 拒绝）；全量 L1/L2 回归绿
+- L3 TemplateRedLineTest（Testcontainers 真库 HTTP 黑盒）随 CI 执行
+- 前端 vite build 通过，产物内嵌 jar
+
 ## [3.3.0] - 2026-11-21
 
 开源基建版本（roadmap P2-8，源自 2026-11-21 开源健康度盘点"三件事"）：依赖与安全自动扫描、文档站与

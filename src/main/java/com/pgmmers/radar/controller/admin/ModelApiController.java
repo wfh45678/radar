@@ -18,6 +18,7 @@ import com.pgmmers.radar.service.admin.UserService;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.impl.model.transfer.ModelPackage;
 import com.pgmmers.radar.service.impl.model.transfer.ModelPackageService;
+import com.pgmmers.radar.service.impl.model.transfer.TemplateCatalogService;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.model.vo.admin.UserVO;
 import com.pgmmers.radar.model.vo.model.ModelVO;
@@ -55,6 +56,59 @@ public class ModelApiController  {
 
     @Autowired
     private ModelPackageService modelPackageService;
+
+    @Autowired
+    private TemplateCatalogService templateCatalogService;
+
+    /**
+     * 官方模板库（v3.4）：内置 + 在线源合并的模板卡片列表（含来源徽标与在线源状态）。
+     */
+    @GetMapping("/templates")
+    public CommonResult templates() {
+        CommonResult result = new CommonResult();
+        try {
+            java.util.Map<String, Object> library = templateCatalogService.library();
+            result.setSuccess(true);
+            result.getData().putAll(library);
+        } catch (Exception e) {
+            logger.error("template library load failed", e);
+            result.setMsg("模板库加载失败: " + e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 从模板一键创建（v3.4）：按 key 加载（classpath/在线源）→ validate → 导入为新模型。
+     * 参数与 /import 一致；label/modelName 缺省取模板默认值。
+     */
+    @PostMapping("/templates/{key}/import")
+    public CommonResult importTemplate(@PathVariable("key") String key,
+                                       @RequestParam(value = "label", required = false) String label,
+                                       @RequestParam(value = "merchantCode", required = false) String merchantCode,
+                                       @RequestParam(value = "modelName", required = false) String modelName) {
+        CommonResult result = new CommonResult();
+        try {
+            String code = merchantCode == null || merchantCode.isBlank()
+                    ? contextHolder.getContext().getCode() : merchantCode;
+            byte[] body = templateCatalogService.bodyByKey(key);
+            ModelPackage pkg = modelPackageService.parse(body);
+            java.util.List<String> warnings = modelPackageService.validate(pkg);
+            Long newId = templateCatalogService.importTemplate(key, code, modelName, label);
+            result.setSuccess(true);
+            result.setMsg(warnings.isEmpty()
+                    ? "模板创建成功，请构建模型后生效"
+                    : "模板创建成功（含 " + warnings.size() + " 条告警），请构建模型后生效");
+            result.getData().put("id", newId);
+            result.getData().put("warnings", warnings);
+        } catch (ModelPackageService.ModelPackageException e) {
+            logger.warn("template import rejected: {}", e.getMessage());
+            result.setMsg(e.getMessage());
+        } catch (Exception e) {
+            logger.error("template import failed: {}", key, e);
+            result.setMsg("模板创建失败: " + e.getMessage());
+        }
+        return result;
+    }
 
     @GetMapping("/{id}")
     public CommonResult get(@PathVariable Long id) {

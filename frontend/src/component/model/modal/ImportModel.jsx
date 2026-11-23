@@ -2,6 +2,8 @@ import React from 'react';
 import {Button, Form, Modal, Input, Upload, message} from 'antd';
 import {UploadOutlined} from '@ant-design/icons';
 
+import ImportResultContent from './ImportResultContent';
+
 const FormItem = Form.Item;
 
 /**
@@ -86,14 +88,7 @@ export default class ImportModel extends React.Component {
 				if(warnings.length > 0){
 					Modal.warning({
 						title: '导入成功，存在 ' + warnings.length + ' 条告警',
-						content: (
-							<div>
-								<p>新模型 id：{data.data.id}，请构建模型后生效。</p>
-								<ul style={{textAlign:'left', paddingLeft:20}}>
-									{warnings.map((w,i)=><li key={i}>{w}</li>)}
-								</ul>
-							</div>
-						),
+						content: <ImportResultContent id={data.data.id} warnings={warnings}/>,
 						width: 560
 					});
 				}else{
