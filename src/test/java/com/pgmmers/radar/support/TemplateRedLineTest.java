@@ -164,9 +164,10 @@ class TemplateRedLineTest extends AbstractIntegrationTest {
             uploadForm.add("jsonInfo", eventJson);
             JSONObject upload = parse(exchange(HttpMethod.POST, "/services/v1/uploadInfo",
                     new HttpEntity<>(uploadForm, formHeaders())), "事件上传 " + key);
-            // 引擎真实打分（红线：模板场景可被事件驱动并产出评估）
-            assertTrue(upload.getJSONObject("data") != null, "引擎应返回评估数据");
-            assertFalse(upload.getJSONObject("data").isEmpty(), "引擎评估数据不应为空");
+            // 引擎真实决策（红线：模板场景可被事件驱动并产出激活决策，断言口径同 EngineFullChainTest）
+            assertTrue(upload.containsKey("activations")
+                    && !upload.getJSONObject("activations").isEmpty(),
+                    "上传结果应包含 activations 决策: " + upload);
         }
     }
 
