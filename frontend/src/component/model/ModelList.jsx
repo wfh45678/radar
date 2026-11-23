@@ -8,6 +8,7 @@ import EditModel from './modal/EditModel';
 import StaticField from './modal/StaticField';
 import CopyModel from './modal/CopyModel';
 import ImportModel from './modal/ImportModel';
+import TemplateLibrary from './modal/TemplateLibrary';
 
 import './Model.less';
 
@@ -228,6 +229,8 @@ export default class ModelList extends React.Component{
                                         <AddModel tData={this.state.tData} reload={this.fetchTableData} />
                                         {' '}
                                         <ImportModel reload={this.fetchTableData}/>
+                                        {' '}
+                                        <TemplateLibrary reload={this.fetchTableData}/>
                             </Form>
                         </div>
 
