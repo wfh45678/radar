@@ -210,7 +210,7 @@
    "name": "log_ip_1_hour_qty",
    "label": "1小时内IP登录次数",
    "modelId": "99",
-   "aggregateType": "2",
+   "aggregateType": 1,
    "searchField": "fields.userIP",
    "searchIntervalType": "11",
    "searchIntervalValue": "1",
