@@ -6,7 +6,8 @@ preItem 插件在事件进入规则运算前执行：把外部数据（归属地
 
 - 契约模块：`radar-plugin-api`（零第三方依赖，仅 slf4j-api provided）
 - 测试工件：`radar-plugin-testkit`（PluginRequestBuilder / MockHttpTool / RecordingCache，test scope 引用）
-- 示例工程：`samples/radar-plugin-demo`（本地形态：敏感数据识别与脱敏，含单测）、
+- 示例工程：`samples/radar-plugin-demo`（本地形态：SENSITIVE_DATA 基础版 + v3.5 三件套——
+  ID_CARD_VALIDATE 纯算法 / USER_AGENT_PARSE 正则规则表 / BANK_CARD_CHECK 前缀映射表，含单测）、
   `samples/radar-plugin-remote-demo`（远程形态：汇率换算——remote/options/缓存/多列输出，v3.1）
 - 插件管理：管理端「插件管理」页（#/plugins）可上传/启停/删除，上传默认热重载即时生效
 - 内置官方插件：`src/main/java/com/pgmmers/radar/service/impl/engine/plugin/`（同一契约的参考实现）

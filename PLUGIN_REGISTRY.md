@@ -17,8 +17,19 @@
 
 | 工程 | key | 演示内容 |
 |------|-----|----------|
-| [radar-plugin-demo](samples/radar-plugin-demo) | SENSITIVE_DATA | 本地形态：paramSchema 布尔参数、多列输出、单测 |
+| [radar-plugin-demo](samples/radar-plugin-demo) | SENSITIVE_DATA | 本地形态基础版：paramSchema 布尔参数、多列输出、单测 |
+| [radar-plugin-demo](samples/radar-plugin-demo) | ID_CARD_VALIDATE | 纯算法范本：18 位校验位 + 生日/性别/省份多列，15 位老号宽松/严格模式 options 下拉（v3.5） |
+| [radar-plugin-demo](samples/radar-plugin-demo) | USER_AGENT_PARSE | 正则规则表范本：设备类型/OS/浏览器大类/微信·支付宝内嵌，零依赖自实现（v3.5） |
+| [radar-plugin-demo](samples/radar-plugin-demo) | BANK_CARD_CHECK | 前缀映射表范本：Luhn 校验 + 卡种粗判 + 主流银行前缀表（v3.5） |
 | [radar-plugin-remote-demo](samples/radar-plugin-remote-demo) | EXCHANGE_RATE | 远程形态：remote 外呼、options 下拉、10 分钟缓存、多列输出、testkit 单测（v3.1） |
+
+## 插件开发到上架五分钟
+
+1. 按 [开发指南](docs/plugin-dev-guide.md) 建工程（参照 samples/ 五个官方插件抄结构）；
+2. `mvn test` 本地验证 → `mvn package` 出 jar；
+3. 管理端「插件管理」页上传 jar → 热重载即时生效（EXTERNAL 装载）；
+4. preItem 配置里选你的插件 → 事件流验证输出列；
+5. 到本文件提交 PR 收录你的插件（社区插件表格虚位以待）。
 
 ## 社区插件
 
