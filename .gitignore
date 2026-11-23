@@ -16,3 +16,4 @@ radar-plugin-api/target/
 /docs/.vitepress/cache/
 /docs/.vitepress/dist/
 /docs/build.log
+/samples/radar-plugin-demo/test-out.log
