@@ -37,7 +37,10 @@ import org.springframework.util.MultiValueMap;
 class TemplateRedLineTest extends AbstractIntegrationTest {
 
     private static final String CAPTCHA = "TPLCAP";
-    private static final String UNIQUE = String.valueOf(System.currentTimeMillis());
+    private static final String UNIQUE = String.valueOf(System.currentTimeMillis()).substring(7);
+    // label 须 <= 32 字符（engine_model.LABEL varchar(32)）：key 缩写 + 6 位时间戳
+    private static final java.util.Map<String, String> KEY_ABBR = java.util.Map.of(
+            "account-takeover", "ATO", "promo-abuse", "PRM", "transaction-risk", "TXN");
     private static final String LOGIN_NAME = "tpl_user_" + UNIQUE;
     private static final String PASSWORD = "tpl_pass_" + UNIQUE;
 
@@ -110,7 +113,7 @@ class TemplateRedLineTest extends AbstractIntegrationTest {
 
         for (String key : TEMPLATE_KEYS) {
             // 一键创建（label 唯一：场景 + 时间戳）
-            String label = "TPL红线_" + key + "_" + UNIQUE;
+            String label = "TPL红线_" + KEY_ABBR.get(key) + "_" + UNIQUE;
             ResponseEntity<String> resp = exchange(HttpMethod.POST,
                     "/services/v1/model/templates/" + key + "/import?label=" + label,
                     withAuth(null));
@@ -144,7 +147,7 @@ class TemplateRedLineTest extends AbstractIntegrationTest {
         assertNotNull(rows, "模型列表数据缺失");
 
         for (String key : TEMPLATE_KEYS) {
-            String label = "TPL红线_" + key + "_" + UNIQUE;
+            String label = "TPL红线_" + KEY_ABBR.get(key) + "_" + UNIQUE;
             JSONObject model = rows.stream()
                     .map(r -> (JSONObject) r)
                     .filter(r -> label.equals(r.getString("label")))

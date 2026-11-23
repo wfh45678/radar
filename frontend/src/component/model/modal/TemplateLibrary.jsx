@@ -123,7 +123,7 @@ export default class TemplateLibrary extends React.Component {
 										</span>
 										<span style={{width:260, display:'inline-flex', alignItems:'center'}}>
 											<span style={{color:'#999', marginRight:4}}>显示名:</span>
-											<input id={'tpl-label-' + tpl.key} className="ant-input" style={{height:24, flex:1}}
+											<input id={'tpl-label-' + tpl.key} className="ant-input" style={{height:24, flex:1}} maxLength={32}
 												placeholder={tpl.name}/>
 											<Button size="small" type="primary" style={{marginLeft:6}}
 												loading={this.state.creating===tpl.key}

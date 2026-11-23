@@ -240,6 +240,14 @@ public class ModelPackageService {
         if (conflict != null && conflict > 0) {
             throw new ModelPackageException("模型已存在（商户码+名称冲突）: " + merchantCode + " / " + label);
         }
+        // 列宽前置校验（engine_model.LABEL varchar(32) / MODEL_NAME varchar(30)）：
+        // 明确拒绝优于 SQL Data truncation 报错
+        if (label != null && label.length() > 32) {
+            throw new ModelPackageException("模型显示名称过长（<=32 字符）: " + label);
+        }
+        if (modelName != null && modelName.length() > 30) {
+            throw new ModelPackageException("模型名过长（<=30 字符）: " + modelName);
+        }
         ModelPO model = new ModelPO();
         model.setGuid(UUID.randomUUID().toString().toUpperCase());
         // MODEL_NAME 列 NOT NULL 无默认值：留空时先以临时名插入，拿到 id 后归一为 model_<id>

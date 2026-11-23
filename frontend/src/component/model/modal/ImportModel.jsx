@@ -121,8 +121,8 @@ export default class ImportModel extends React.Component {
 							<span style={{marginLeft:8, color:'#888'}}>{fileRow}</span>
 						</FormItem>
 						<FormItem required {...{labelCol:{span:6},wrapperCol:{span:16}}} label="显示名称：">
-							<Input name="label" value={this.state.label} onChange={this.handleChange}
-								placeholder="导入后的模型显示名（同商户码下唯一）"/>
+							<Input name="label" value={this.state.label} onChange={this.handleChange} maxLength={32}
+								placeholder="导入后的模型显示名（同商户码下唯一，<=32 字符）"/>
 						</FormItem>
 						<FormItem {...{labelCol:{span:6},wrapperCol:{span:16}}} label="商户码：">
 							<Input name="merchantCode" value={this.state.merchantCode} onChange={this.handleChange}
