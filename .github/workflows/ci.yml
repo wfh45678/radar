@@ -55,8 +55,8 @@ jobs:
           code=$?
           if [ $code -ne 0 ]; then
             # 测试失败摘要转注解（匿名 API 可读，无需日志权限）
-            grep -E "<<< (FAILURE|ERROR)!|AssertionFailedError|SQLException|Cannot deserialize" /tmp/mvn-verify.log | tail -25 | while IFS= read -r line; do
-              [ -n "$line" ] && echo "::error::${line:0:200}"
+            grep -E "<<< (FAILURE|ERROR)!|AssertionFailedError|Data truncation|SQL: INSERT INTO" /tmp/mvn-verify.log | tail -30 | while IFS= read -r line; do
+              [ -n "$line" ] && echo "::error::${line:0:1000}"
             done
             exit $code
           fi
