@@ -2,6 +2,32 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [3.5.0] - 2026-11-23
+
+生态内容补强版本（roadmap P2-9，[plan-v3.5](docs/plan-v3.5.md)）：官方种子插件三件套（纯内容，
+零引擎改动、SDK 不发版）+ Playwright E2E 覆盖追平 v3.1~v3.4 功能面。
+
+### Added
+- **官方种子插件三件套**（samples/radar-plugin-demo 扩展，示例定位不进内置，零外呼零依赖）：
+  `ID_CARD_VALIDATE` 身份证校验（GB 11643-1999 校验位 + 生日/性别/省份多列，15 位老号宽松/严格
+  模式 options 下拉）、`USER_AGENT_PARSE` UA 解析（设备/OS/浏览器大类 + 微信·支付宝内嵌，
+  零依赖自实现）、`BANK_CARD_CHECK` 银行卡校验（Luhn + 卡种粗判 + 主流银行前缀表）——
+  三种实现姿势范本（纯算法/正则规则表/前缀映射表）
+- 每插件 testkit 单测（正常/边界/严格模式抛异常/多列输出断言），测试数据全部为 GB 标准样例号
+- **E2E 扩面**（e2e/tests/）：公共登录 helper（helpers.ts）+ 三个独立 spec——
+  `plugin-admin`（插件管理页渲染/启停切换/复位持久化）、`model-package`（导出下载断言/导入弹窗）、
+  `template-library`（模板库浏览/一键创建/列表 +1）——CI e2e.yml 零改动自动纳入
+
+### Changed
+- PLUGIN_REGISTRY 官方示例表按插件拆行 + 新增「插件开发到上架五分钟」指引；
+  plugin-dev-guide 示例工程提及三件套
+
+### Verification
+- radar-plugin-demo 20/20 单测绿（新增 16：身份证校验位/严格模式/15 位老号、UA 三形态、
+  Luhn/卡种/银行前缀/空格剥离）
+- E2E spec 编译解析 9/9（4 文件）；全量 L1/L2 回归绿
+- L3 红线/E2E 真环境随 CI 执行
+
 ## [3.4.0] - 2026-11-23
 
 官方模板库版本（roadmap P2-7 拉伸项转正，[plan-v3.4](docs/plan-v3.4.md)）：官方场景策略包模板
