@@ -14,7 +14,7 @@ export default withMermaid(
       outline: { level: [2, 3], label: '本页导航' },
       docFooter: { prev: '上一篇', next: '下一篇' },
       socialLinks: [
-        { icon: 'github', link: 'https://github.com/freshday/radar' },
+        { icon: 'github', link: 'https://github.com/wfh45678/radar' },
         { icon: 'gitee', link: 'https://gitee.com/freshday/radar' },
       ],
       nav: [
@@ -44,6 +44,14 @@ export default withMermaid(
         {
           text: '模型策略包',
           items: [{ text: '格式与操作', link: '/model-package' }],
+        },
+        {
+          text: '官方模板',
+          items: [
+            { text: '账户盗用防护', link: '/templates/account-takeover' },
+            { text: '营销反作弊', link: '/templates/promo-abuse' },
+            { text: '交易风控', link: '/templates/transaction-risk' },
+          ],
         },
         {
           text: '演进档案',
