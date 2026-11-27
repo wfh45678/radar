@@ -19,6 +19,7 @@ import Model from './component/model/Model';
 import PreItem from './component/preItem/PreItem';
 import RuleList from './component/strategy/RuleList';
 import HistoryRecordList from './component/strategy/HistoryRecordList';
+import StrategyDetail from './component/strategy/StrategyDetail';
 
 import Report from './component/report/Report';
 import ListEvent from './component/report/ListEvent';
@@ -89,6 +90,7 @@ const router = createHashRouter([
               { path: 'datalistRecord/:id/:datalistId', element: <DatalistRecord /> },
               { path: 'preItem/:id', element: <PreItem /> },
               { path: 'ruleList/:id/:strategyId', element: <RuleList /> },
+              { path: 'strategyDetail/:id/:strategyId', element: <StrategyDetail /> },
               { path: 'historyRecordList/:id/:strategyId/:ruleId', element: <HistoryRecordList /> },
               { path: 'abstractionList/:id', element: <AbstractionList /> },
             ],

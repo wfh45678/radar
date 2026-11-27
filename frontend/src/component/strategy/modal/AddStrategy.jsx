@@ -7,6 +7,7 @@ const RadioGroup = Radio.Group;
 
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
+import {STRATEGY_TYPES} from '../strategyTypes';
 
 export default class AddStrategy extends React.Component{
 
@@ -22,6 +23,7 @@ export default class AddStrategy extends React.Component{
 			bottom:'',
 			median:'',
 			high:'',
+			type:'RULE_SET',
 
 		}
 	}
@@ -49,6 +51,7 @@ export default class AddStrategy extends React.Component{
 			bottom:'',
 			median:'',
 			high:'',
+			type:'RULE_SET',
 			open:true
 		})
 	}
@@ -69,6 +72,7 @@ export default class AddStrategy extends React.Component{
 			param.bottom=this.state.bottom;
 			param.median=this.state.median;
 			param.high=this.state.high;
+			param.type=this.state.type;
 			param.status=1;
 
 			FetchUtil('/strategy/','PUT',JSON.stringify(param),
@@ -150,9 +154,9 @@ export default class AddStrategy extends React.Component{
 		return (
 			<span>
 				<Button onClick={this.showModal} type="primary">新增</Button>
-				<Modal title="新增字段" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
+				<Modal title="新增策略" open={this.state.open} onOk={this.handleSubmit.bind(this,isValidated)} onCancel={this.handleCancel}>
                     <Form>
-						<FormItem required={true} {...formItemLayout} label="策略名：" help={validate.label.help} validateStatus={validate.label.status}>
+							<FormItem required={true} {...formItemLayout} label="策略名：" help={validate.label.help} validateStatus={validate.label.status}>
 							<Row>
 								<Col span={20}>
 									<Input type="text" name="label" value={this.state.label} onChange={this.handleChange}/>
@@ -166,7 +170,12 @@ export default class AddStrategy extends React.Component{
                         </FormItem>
                         <FormItem {...formItemLayout} label="备注：">
                             <Input type="text" name="comment" value={this.state.comment} onChange={this.handleChange}/>
-                        </FormItem> 
+                        </FormItem>
+                        <FormItem {...formItemLayout} label="策略类型：">
+                            <RadioGroup value={this.state.type} onChange={this.handleSelect.bind(this,'type')}>
+                                {STRATEGY_TYPES.map(t => <Radio key={t.value} value={t.value}>{t.label}</Radio>)}
+                            </RadioGroup>
+                        </FormItem>
                         <FormItem required={true} {...formItemLayout} label="警戒值：" help={validate.median.help} validateStatus={validate.median.status}>
 							<Row>
 								<Col span={6}>

@@ -1,11 +1,12 @@
 import React from 'react';
-import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Switch} from 'antd';
+import {Breadcrumb,Form,Row,Col,Input,Button,Table,Tooltip,Pagination,Select,Popconfirm,message,Switch,Tag} from 'antd';
 import {withParams} from '../utils/routerUtil';
 import { Link } from 'react-router';
 const FormItem = Form.Item;
 
 import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
+import {strategyTypeOf} from './strategyTypes';
 
 import AddStrategy from './modal/AddStrategy';
 import EditStrategy from './modal/EditStrategy';
@@ -126,18 +127,25 @@ class Strategy extends React.Component{
             title: '策略名',
             dataIndex: 'label'
         },{
+            title: '类型',
+            dataIndex: 'type',
+            render: (t) => {
+                const x = strategyTypeOf(t);
+                return <Tag color={x.color}>{x.label}</Tag>;
+            }
+        },{
             title: '备注',
-            dataIndex: 'comment'  
+            dataIndex: 'comment'
         },{
             title: '警戒值',
-            dataIndex: 'median'  
+            dataIndex: 'median'
         },{
             title: '拒绝值',
-            dataIndex: 'high'  
+            dataIndex: 'high'
         },{
             title: '操作',
             dataIndex: 'handle',
-            render: 
+            render:
                 (t,r,i) => {
                     return(
                     <span>
@@ -145,9 +153,11 @@ class Strategy extends React.Component{
                         <span className="ant-divider"></span>
                     	<EditStrategy modelId={this.props.params.id} row={r} reload={this.fetchTableData}/>
                         <span className="ant-divider"></span>
-                    	<Tooltip title="管理规则"><Link to={"/ruleList/"+r.modelId+"/"+r.id}>管理规则</Link></Tooltip>
+                    	<Tooltip title={strategyTypeOf(r.type).label + '配置'}>
+                            <Link to={"/strategyDetail/"+r.modelId+"/"+r.id}>配置</Link>
+                        </Tooltip>
                         <span className="ant-divider"></span>
-                        <Popconfirm placement="bottomRight" title={'确认删除该字段吗？'} onConfirm={this.deleteStrategy.bind(this,r.id)}>
+                        <Popconfirm placement="bottomRight" title={'确认删除该策略吗？'} onConfirm={this.deleteStrategy.bind(this,r.id)}>
                             <Tooltip title="删除"><a style={{color:'#FD5B5B'}}>删除</a></Tooltip>
                         </Popconfirm>
                         <span className="ant-divider"></span>
