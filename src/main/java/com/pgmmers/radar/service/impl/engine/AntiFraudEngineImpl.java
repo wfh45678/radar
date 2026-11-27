@@ -4,17 +4,20 @@ package com.pgmmers.radar.service.impl.engine;
 import com.pgmmers.radar.enums.AggregateType;
 import com.pgmmers.radar.config.EngineMetrics;
 import com.pgmmers.radar.enums.FieldType;
-import com.pgmmers.radar.enums.Operator;
 import com.pgmmers.radar.enums.StatusType;
+import com.pgmmers.radar.enums.StrategyType;
 import com.pgmmers.radar.service.dnn.Estimator;
 import com.pgmmers.radar.service.engine.AggregateCommand;
 import com.pgmmers.radar.service.engine.AntiFraudEngine;
+import com.pgmmers.radar.service.engine.strategy.StrategyExecutor;
+import com.pgmmers.radar.service.engine.strategy.StrategyOutcome;
 import com.pgmmers.radar.service.engine.vo.AbstractionResult;
 import com.pgmmers.radar.service.engine.vo.StrategyResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.HitObject;
 import com.pgmmers.radar.service.engine.vo.RiskObject;
 import com.pgmmers.radar.service.impl.dnn.EstimatorContainer;
+import com.pgmmers.radar.service.impl.engine.strategy.StrategyExecutorRegistry;
 import com.pgmmers.radar.service.impl.util.JsonParserUtil;
 import com.pgmmers.radar.service.model.AbstractionService;
 import com.pgmmers.radar.service.model.StrategyService;
@@ -22,7 +25,6 @@ import com.pgmmers.radar.service.model.DataListsService;
 import com.pgmmers.radar.service.model.EntityService;
 import com.pgmmers.radar.service.model.FieldService;
 import com.pgmmers.radar.service.model.ModelService;
-import com.pgmmers.radar.service.model.RuleService;
 import com.pgmmers.radar.common.util.DateUtils;
 import com.pgmmers.radar.common.util.GroovyScriptUtil;
 import com.pgmmers.radar.model.vo.model.AbstractionVO;
@@ -31,7 +33,6 @@ import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
 import com.pgmmers.radar.model.vo.model.ModelVO;
-import com.pgmmers.radar.model.vo.model.RuleVO;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -75,7 +76,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     private AggregateCommand aggregateCommand;
 
     @Autowired
-    private RuleService ruleService;
+    private StrategyExecutorRegistry executorRegistry;
 
     @Autowired
     private EstimatorContainer estimatorContainer;
@@ -302,118 +303,42 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
         // 获取预加载的黑/白名单集合
         Map<String, Object> dataCollectionMap = dataListsService.getDataListMap(modelId);
 
-        for (StrategyVO act : strategies) {
-            if (!act.getStatus().equals(StatusType.ACTIVE.getKey())) {
+        for (StrategyVO strategy : strategies) {
+            if (!strategy.getStatus().equals(StatusType.ACTIVE.getKey())) {
                 continue;
             }
-            result.getHitRulesMap().put(act.getStrategyName(), new ArrayList<>());
-            result.getHitRulesMap2().put(act.getStrategyName(), new HashMap<>());
-            // get rule scripts
-            List<RuleVO> rules = ruleService.listRule(act.getId());
-            BigDecimal sum = BigDecimal.ZERO;
-            for (RuleVO rule : rules) {
-                if (!rule.getStatus().equals(StatusType.ACTIVE.getKey())) {
+            String name = strategy.getStrategyName();
+            result.getHitRulesMap().put(name, new ArrayList<>());
+            result.getHitRulesMap2().put(name, new HashMap<>());
+            // 按 type 分发到策略执行器；单策略异常隔离（跳过该策略，不影响其他策略与事件成功）
+            StrategyOutcome outcome;
+            try {
+                StrategyType type = StrategyType.of(strategy.getType());
+                StrategyExecutor executor = executorRegistry.get(type);
+                if (executor == null) {
+                    logger.warn("strategy type {} has no executor, skip strategy {} (id={})", type, name, strategy.getId());
+                    engineMetrics.recordStrategyExecution(type.name(), "no_executor");
                     continue;
                 }
-                String scripts = rule.getScripts();
-                boolean matched = checkStrategyScript(scripts, data, dataCollectionMap);
-                //规则匹配计算score
-                if (matched) {
-                    String opt = rule.getOperator();
-                    Operator operator = Enum.valueOf(Operator.class, opt);
-                    BigDecimal initScore = new BigDecimal(rule.getInitScore());
-                    // 后续应该需要增加比例值
-                    BigDecimal rate = new BigDecimal(rule.getRate() * 0.01);
-                    BigDecimal base = new BigDecimal(rule.getBaseNum());
-                    BigDecimal extra = BigDecimal.ZERO;
-                    String by = rule.getAbstractionName();
-                    BigDecimal maxScore = new BigDecimal(rule.getMax());
-                    if (!StringUtils.isEmpty(by)) {
-                        if (by.indexOf(".") != -1) {
-                            //目前 被操作数 支持 基础字段和抽象字段。
-                            String[] varNames = by.split("\\.");
-                            Object val = null;
-                            if (varNames[0].equals("fields")) {
-                                val = data.get("fields").get(varNames[1]);
-                            } else if (varNames[0].equals("abstractions")) {
-                                val = data.get("abstractions").get(varNames[1]);
-                            }
-                            if (val instanceof Number) {
-                                extra = new BigDecimal(val.toString());
-                            }
-                        } else {
-                            //兼容以前的处理。
-                            Object abs = data.get("abstractions").get(rule.getAbstractionName());
-                            if (abs != null) {
-                                extra = new BigDecimal(abs.toString());
-                            }
-                        }
-                    }
-                    extra = extra.multiply(rate);
-                    switch (operator) {
-                    case ADD:
-                        extra = base.add(extra);
-                        break;
-                    case SUB:
-                        extra = base.subtract(extra);
-                        break;
-                    case MUL:
-                        extra = base.multiply(extra);
-                        break;
-                    case DIV:
-                        extra = base.divide(extra, 2, 4);
-                        break;
-                    default:
-                    }
-                    BigDecimal amount = initScore.add(extra);
-                    // 规则得分设置最大值.
-                    if (maxScore.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(maxScore) > 0) {
-                        amount = maxScore;
-                    }
-                    sum = sum.add(amount);
-
-                    // hit detail
-                    HitObject hit = new HitObject();
-                    hit.setKey(rule.getId().toString());
-                    hit.setDesc(rule.getLabel());
-                    hit.setValue(amount.setScale(2, 4).doubleValue());
-                    result.getHitRulesMap().get(act.getStrategyName()).add(hit);
-                    result.getHitRulesMap2().get(act.getStrategyName()).put("rule_"+ hit.getKey(), hit);
-                    engineMetrics.recordRuleHit();
-                }
-
+                outcome = executor.execute(strategy, data, dataCollectionMap);
+            } catch (Exception e) {
+                logger.error("strategy execute error, skip strategy {} (id={})", name, strategy.getId(), e);
+                engineMetrics.recordStrategyExecution("unknown", "error");
+                continue;
             }
-            sum = sum.setScale(0, 4);
-            // 计算风险级别
-            String risk = riskLevel(sum, act.getHigh(), act.getMedian());
-            engineMetrics.recordDecision(risk);
+            result.getHitRulesMap().put(name, outcome.getHits());
+            result.getHitRulesMap2().put(name, outcome.getHits2());
+            engineMetrics.recordStrategyExecution(StrategyType.of(strategy.getType()).name(), "success");
+            engineMetrics.recordDecision(outcome.getRisk());
             RiskObject riskObj = new RiskObject();
-            riskObj.setRisk(risk);
-            riskObj.setScore(sum.intValue());
-            result.getStrategyMap().put(act.getStrategyName(), riskObj);
+            riskObj.setRisk(outcome.getRisk());
+            riskObj.setScore(outcome.getScore().intValue());
+            result.getStrategyMap().put(name, riskObj);
         }
-        data.put("strategies", result.getStrategyMap());
+        // context 键保持 activations（ES 文档与报表检索依赖该键，v4.0 策略更名不改变对外数据形态）
+        data.put("activations", result.getStrategyMap());
         result.setSuccess(true);
         return result;
-    }
-
-    /**
-     * 风险级别决策：sum ≥ high → reject（拒绝），sum ≥ median → review（人工审核），否则 pass（通过）。
-     * 激活器 bottom（底部阈值）为历史遗留字段，不参与决策，见 docs/roadmap.md。
-     *
-     * @param sum    命中规则风险分数总和
-     * @param high   顶部阈值
-     * @param median 中间阈值
-     * @return pass / review / reject
-     */
-    static String riskLevel(BigDecimal sum, Integer high, Integer median) {
-        if (sum.compareTo(new BigDecimal(high)) >= 0) {
-            return "reject";
-        }
-        if (sum.compareTo(new BigDecimal(median)) >= 0) {
-            return "review";
-        }
-        return "pass";
     }
 
     /**
@@ -429,18 +354,6 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
      */
     private Boolean checkAbstractionScript(String ruleScript, Map entity, Map<String, Object> dataCollectionMap) {
         Object[] args = { entity, dataCollectionMap };
-        Boolean ret = false;
-        try {
-            ret = (Boolean) GroovyScriptUtil.invokeMethod(ruleScript, "check", args);
-        } catch (Exception e) {
-            logger.info("rule:{}", ruleScript);
-            logger.error("", e);
-        }
-        return ret;
-    }
-
-    private Boolean checkStrategyScript(String ruleScript, Map data, Map<String, Object> dataCollectionMap) {
-        Object[] args = { data, dataCollectionMap };
         Boolean ret = false;
         try {
             ret = (Boolean) GroovyScriptUtil.invokeMethod(ruleScript, "check", args);

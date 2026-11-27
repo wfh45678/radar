@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * <p>标签纪律：不引入 modelGuid 等高基数标签（防指标爆炸），模型维度分析由 hitsSort 报表承担。
  * 埋点位置：事件入口 {@code RiskAnalysisEngineServiceImpl.uploadInfo}、
  * 各阶段 {@code AntiFraudServiceImpl.process} / preItems / entity 落库、
- * 决策分布 {@code AntiFraudEngineImpl.executeActivation}、Groovy 编译 {@code GroovyScriptUtil}。</p>
+ * 决策分布 {@code AntiFraudEngineImpl.executeStrategy}、Groovy 编译 {@code GroovyScriptUtil}。</p>
  *
  * <p>暴露端点：/actuator/prometheus（见 application.yml management 配置）。</p>
  *
@@ -25,7 +25,8 @@ public class EngineMetrics {
 
     private static final String EVENTS = "radar_events_total";
     private static final String STAGE = "radar_engine_stage_seconds";
-    private static final String DECISION = "radar_activation_decision_total";
+    private static final String DECISION = "radar_strategy_decision_total";
+    private static final String STRATEGY_EXEC = "radar_strategy_executions_total";
     private static final String RULE_HITS = "radar_rule_hits_total";
     private static final String GROOVY_COMPILES = "radar_groovy_compiles_total";
     private static final String PLUGIN_EXEC = "radar_plugin_executions_total";
@@ -58,7 +59,7 @@ public class EngineMetrics {
         (success ? eventsSuccess : eventsFail).increment();
     }
 
-    /** 记录引擎阶段耗时（毫秒）。stage: entity / preItems / abstractions / adaptations / activations */
+    /** 记录引擎阶段耗时（毫秒）。stage: entity / preItems / abstractions / adaptations / strategies */
     public void recordStage(String stage, long elapsedMillis) {
         Timer.builder(STAGE).tag("stage", stage)
                 .description("引擎各阶段耗时")
@@ -71,6 +72,18 @@ public class EngineMetrics {
     public void recordDecision(String risk) {
         Counter.builder(DECISION).tag("risk", risk)
                 .description("激活器决策分布").register(registry)
+                .increment();
+    }
+
+    /**
+     * 策略执行计数（v4.0 策略 SPI）。
+     *
+     * <p>type: RULE_SET/SCORECARD/DECISION_TREE/unknown（解析失败兜底）；
+     * result: success / no_executor / error（单策略异常隔离时记录）。</p>
+     */
+    public void recordStrategyExecution(String type, String result) {
+        Counter.builder(STRATEGY_EXEC).tag("type", type).tag("result", result)
+                .description("策略执行计数").register(registry)
                 .increment();
     }
 
