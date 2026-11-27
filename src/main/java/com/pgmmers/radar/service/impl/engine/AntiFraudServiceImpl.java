@@ -7,7 +7,7 @@ import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.engine.AntiFraudEngine;
 import com.pgmmers.radar.service.engine.AntiFraudService;
 import com.pgmmers.radar.service.engine.vo.AbstractionResult;
-import com.pgmmers.radar.service.engine.vo.ActivationResult;
+import com.pgmmers.radar.service.engine.vo.StrategyResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.AntiFraudProcessResult;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginEntry;
@@ -92,19 +92,20 @@ public class AntiFraudServiceImpl implements AntiFraudService {
             analysisResult.setAdaptations(context.get("adaptations"));
         }
 
-        // do activation
-        logger.info("start activation...");
+        // do strategy
+        logger.info("start strategy...");
         start = System.currentTimeMillis();
-        ActivationResult actResult = antiFraudEngine.executeActivation(modelId, context);
+        StrategyResult actResult = antiFraudEngine.executeStrategy(modelId, context);
         end = System.currentTimeMillis();
         analysisResult.getRespTimes().put("activations", end - start);
         engineMetrics.recordStage("activations", end - start);
         logger.info("takes:{}ms", end - start);
         if (!actResult.isSuccess()) {
-            analysisResult.setMsg("Activation 异常");
+            analysisResult.setMsg("Strategy 异常");
             return analysisResult;
         } else {
-            analysisResult.setActivations(context.get("activations"));
+            // respTimes/context 键保持 activations（响应 JSON 与 ES 文档依赖该键）
+            analysisResult.setStrategies(context.get("activations"));
             analysisResult.setHitsDetail(actResult.getHitRulesMap());
         }
         // result 与 context 里面的hitDetail 不一样，主要是为了方便 elastic 处理

@@ -10,14 +10,14 @@ import com.pgmmers.radar.service.dnn.Estimator;
 import com.pgmmers.radar.service.engine.AggregateCommand;
 import com.pgmmers.radar.service.engine.AntiFraudEngine;
 import com.pgmmers.radar.service.engine.vo.AbstractionResult;
-import com.pgmmers.radar.service.engine.vo.ActivationResult;
+import com.pgmmers.radar.service.engine.vo.StrategyResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.HitObject;
 import com.pgmmers.radar.service.engine.vo.RiskObject;
 import com.pgmmers.radar.service.impl.dnn.EstimatorContainer;
 import com.pgmmers.radar.service.impl.util.JsonParserUtil;
 import com.pgmmers.radar.service.model.AbstractionService;
-import com.pgmmers.radar.service.model.ActivationService;
+import com.pgmmers.radar.service.model.StrategyService;
 import com.pgmmers.radar.service.model.DataListsService;
 import com.pgmmers.radar.service.model.EntityService;
 import com.pgmmers.radar.service.model.FieldService;
@@ -26,7 +26,7 @@ import com.pgmmers.radar.service.model.RuleService;
 import com.pgmmers.radar.common.util.DateUtils;
 import com.pgmmers.radar.common.util.GroovyScriptUtil;
 import com.pgmmers.radar.model.vo.model.AbstractionVO;
-import com.pgmmers.radar.model.vo.model.ActivationVO;
+import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
@@ -60,7 +60,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     private AbstractionService abstractionService;
 
     @Autowired
-    private ActivationService activationService;
+    private StrategyService strategyService;
 
     @Autowired
     private FieldService fieldService;
@@ -296,18 +296,18 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     }
 
     @Override
-    public ActivationResult executeActivation(Long modelId, Map<String, Map<String, ?>> data) {
-        ActivationResult result = new ActivationResult();
-        List<ActivationVO> activations = activationService.listActivation(modelId);
+    public StrategyResult executeStrategy(Long modelId, Map<String, Map<String, ?>> data) {
+        StrategyResult result = new StrategyResult();
+        List<StrategyVO> strategies = strategyService.listStrategy(modelId);
         // 获取预加载的黑/白名单集合
         Map<String, Object> dataCollectionMap = dataListsService.getDataListMap(modelId);
 
-        for (ActivationVO act : activations) {
+        for (StrategyVO act : strategies) {
             if (!act.getStatus().equals(StatusType.ACTIVE.getKey())) {
                 continue;
             }
-            result.getHitRulesMap().put(act.getActivationName(), new ArrayList<>());
-            result.getHitRulesMap2().put(act.getActivationName(), new HashMap<>());
+            result.getHitRulesMap().put(act.getStrategyName(), new ArrayList<>());
+            result.getHitRulesMap2().put(act.getStrategyName(), new HashMap<>());
             // get rule scripts
             List<RuleVO> rules = ruleService.listRule(act.getId());
             BigDecimal sum = BigDecimal.ZERO;
@@ -316,7 +316,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     continue;
                 }
                 String scripts = rule.getScripts();
-                boolean matched = checkActivationScript(scripts, data, dataCollectionMap);
+                boolean matched = checkStrategyScript(scripts, data, dataCollectionMap);
                 //规则匹配计算score
                 if (matched) {
                     String opt = rule.getOperator();
@@ -377,8 +377,8 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
                     hit.setKey(rule.getId().toString());
                     hit.setDesc(rule.getLabel());
                     hit.setValue(amount.setScale(2, 4).doubleValue());
-                    result.getHitRulesMap().get(act.getActivationName()).add(hit);
-                    result.getHitRulesMap2().get(act.getActivationName()).put("rule_"+ hit.getKey(), hit);
+                    result.getHitRulesMap().get(act.getStrategyName()).add(hit);
+                    result.getHitRulesMap2().get(act.getStrategyName()).put("rule_"+ hit.getKey(), hit);
                     engineMetrics.recordRuleHit();
                 }
 
@@ -390,9 +390,9 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
             RiskObject riskObj = new RiskObject();
             riskObj.setRisk(risk);
             riskObj.setScore(sum.intValue());
-            result.getActivationMap().put(act.getActivationName(), riskObj);
+            result.getStrategyMap().put(act.getStrategyName(), riskObj);
         }
-        data.put("activations", result.getActivationMap());
+        data.put("strategies", result.getStrategyMap());
         result.setSuccess(true);
         return result;
     }
@@ -439,7 +439,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
         return ret;
     }
 
-    private Boolean checkActivationScript(String ruleScript, Map data, Map<String, Object> dataCollectionMap) {
+    private Boolean checkStrategyScript(String ruleScript, Map data, Map<String, Object> dataCollectionMap) {
         Object[] args = { data, dataCollectionMap };
         Boolean ret = false;
         try {

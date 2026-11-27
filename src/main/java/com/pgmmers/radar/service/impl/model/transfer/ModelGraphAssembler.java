@@ -1,7 +1,7 @@
 package com.pgmmers.radar.service.impl.model.transfer;
 
 import com.pgmmers.radar.mapper.AbstractionMapper;
-import com.pgmmers.radar.mapper.ActivationMapper;
+import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
 import com.pgmmers.radar.mapper.DataListRecordMapper;
 import com.pgmmers.radar.mapper.DataListsMapper;
@@ -9,7 +9,7 @@ import com.pgmmers.radar.mapper.FieldMapper;
 import com.pgmmers.radar.mapper.PreItemMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
 import com.pgmmers.radar.model.entity.AbstractionPO;
-import com.pgmmers.radar.model.entity.ActivationPO;
+import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListMetaPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.DataListsPO;
@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 模型对象图装配器（v3.2）：单实例 copy 与策略包导入共用的装配段——
  * 源数据（DB 行 | 信封反序列化结果）在**新模型 id 下整图落库**，并完成
- * activationId / dataListId 的插入后重映射。
+ * strategyId / dataListId 的插入后重映射。
  *
  * <p>单事务包裹：任一插入失败整图回滚，不允许"半个模型"。
  * 范围与 copyModel 原逻辑一致（不含 engine_model_conf——ML 休眠配置）。</p>
@@ -50,7 +50,7 @@ public class ModelGraphAssembler {
     @Autowired
     private AbstractionMapper abstractionMapper;
     @Autowired
-    private ActivationMapper activationMapper;
+    private StrategyMapper strategyMapper;
     @Autowired
     private RuleMapper ruleMapper;
 
@@ -67,7 +67,7 @@ public class ModelGraphAssembler {
                         List<DataListMetaPO> dataListMeta,
                         List<DataListRecordPO> dataListRecords,
                         List<AbstractionPO> abstractions,
-                        List<ActivationPO> activations,
+                        List<StrategyPO> strategies,
                         List<RulePO> rules) {
         Date sysDate = new Date();
         int count = 0;
@@ -131,21 +131,21 @@ public class ModelGraphAssembler {
             count++;
         }
 
-        // 激活（+规则，activationId 重映射）
-        Map<Long, Long> activationIdMap = new HashMap<>();
-        for (ActivationPO po : activations) {
-            Long oldActivationId = po.getId();
+        // 激活（+规则，strategyId 重映射）
+        Map<Long, Long> strategyIdMap = new HashMap<>();
+        for (StrategyPO po : strategies) {
+            Long oldStrategyId = po.getId();
             po.setModelId(newModelId);
             po.setId(null);
             po.setCreateTime(sysDate);
             po.setUpdateTime(sysDate);
-            activationMapper.insert(po);
-            activationIdMap.put(oldActivationId, po.getId());
+            strategyMapper.insert(po);
+            strategyIdMap.put(oldStrategyId, po.getId());
             count++;
         }
         for (RulePO po : rules) {
             po.setModelId(newModelId);
-            po.setActivationId(activationIdMap.get(po.getActivationId()));
+            po.setStrategyId(strategyIdMap.get(po.getStrategyId()));
             po.setId(null);
             po.setCreateTime(sysDate);
             po.setUpdateTime(sysDate);

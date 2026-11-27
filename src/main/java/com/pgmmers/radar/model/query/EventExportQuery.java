@@ -8,7 +8,7 @@ public class EventExportQuery extends PageQuery {
 	  
 	  private String[] rules;
 	  
-	  private String[] activations;
+	  private String[] strategies;
 
 	public String[] getFields() {
 		return fields;
@@ -34,12 +34,12 @@ public class EventExportQuery extends PageQuery {
 		this.rules = rules;
 	}
 
-	public String[] getActivations() {
-		return activations;
+	public String[] getStrategies() {
+		return strategies;
 	}
 
-	public void setActivations(String[] activations) {
-		this.activations = activations;
+	public void setStrategies(String[] strategies) {
+		this.strategies = strategies;
 	}    
     
 }

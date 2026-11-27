@@ -256,7 +256,7 @@ public class EventServiceImpl implements EventService {
             }
 
             for (int j = 0; j < keyList4Act.size(); j++) {
-                JSONObject actJson = record.getJSONObject("activations");
+                JSONObject actJson = record.getJSONObject("strategies");
                 FieldValueVO fvalue = (FieldValueVO) keyList4Act.get(j);
                 JSONObject json = actJson.getJSONObject(fvalue.getKey());
                 Cell cell = row1.createCell(cellCount);

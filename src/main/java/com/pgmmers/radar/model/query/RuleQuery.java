@@ -4,16 +4,16 @@ import com.pgmmers.radar.model.query.PageQuery;
 
 public class RuleQuery extends PageQuery {
 
-    private Long activationId;
+    private Long strategyId;
     private String name;
     private Integer status;
 
-    public Long getActivationId() {
-        return activationId;
+    public Long getStrategyId() {
+        return strategyId;
     }
 
-    public void setActivationId(Long activationId) {
-        this.activationId = activationId;
+    public void setStrategyId(Long strategyId) {
+        this.strategyId = strategyId;
     }
 
     public String getName() {

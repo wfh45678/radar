@@ -5,9 +5,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@TableName("engine_activation")
-public class ActivationPO {
+@TableName("engine_strategy")
+public class StrategyPO {
     /**
      * 主键
      */
@@ -15,10 +16,23 @@ public class ActivationPO {
     private Long id;
 
     /**
-     * 名称
+     * 名称（策略包 JSON 键保持 activationName，兼容 v3.x 包格式，见 docs/model-package.md）
      */
-    @TableField("ACTIVATION_NAME")
-    private String activationName;
+    @JsonProperty("activationName")
+    @TableField("STRATEGY_NAME")
+    private String strategyName;
+
+    /**
+     * 策略类型（v4.0）：RULE_SET/SCORECARD/DECISION_TREE，见 {@link com.pgmmers.radar.enums.StrategyType}
+     */
+    @TableField("TYPE")
+    private String type;
+
+    /**
+     * 策略类型化定义：评分卡/决策树的 JSON 文本；规则集类型为空（规则明细存 engine_rule）
+     */
+    @TableField("DEFINITION")
+    private String definition;
 
     @TableField("LABEL")
     private String label;
@@ -89,19 +103,47 @@ public class ActivationPO {
     /**
      * 获取名称
      *
-     * @return ACTIVATION_NAME - 名称
+     * @return STRATEGY_NAME - 名称
      */
-    public String getActivationName() {
-        return activationName;
+    public String getStrategyName() {
+        return strategyName;
     }
 
     /**
      * 设置名称
      *
-     * @param activationName 名称
+     * @param strategyName 名称
      */
-    public void setActivationName(String activationName) {
-        this.activationName = activationName;
+    public void setStrategyName(String strategyName) {
+        this.strategyName = strategyName;
+    }
+
+    /**
+     * @return TYPE - 策略类型
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * @return DEFINITION - 策略类型化定义 JSON 文本
+     */
+    public String getDefinition() {
+        return definition;
+    }
+
+    /**
+     * @param definition
+     */
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
 
     /**

@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 策略包 L3 集成测试（Testcontainers 真库）：种子模型 导出 → 文件化往返 → 导入为新模型，
- * 验证图完整性（子对象数量一致）、ID 重映射（规则的 activationId 落在新模型的激活上）、
+ * 验证图完整性（子对象数量一致）、ID 重映射（规则的 strategyId 落在新模型的激活上）、
  * 商户码+名称冲突拒绝与事务兜底。
  */
 class ModelPackageIntegrationTest extends AbstractIntegrationTest {
@@ -68,14 +68,14 @@ class ModelPackageIntegrationTest extends AbstractIntegrationTest {
                 new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, newId));
         assertEquals(sourceFieldCount, newFields.size());
 
-        // 5) ID 重映射：导入规则的 activationId 均属于新模型的激活
+        // 5) ID 重映射：导入规则的 strategyId 均属于新模型的激活
         List<RulePO> newRules = ruleMapper.selectList(
                 new LambdaQueryWrapper<RulePO>().eq(RulePO::getModelId, newId));
         assertEquals(sourceRuleCount, newRules.size());
         for (RulePO rule : newRules) {
-            assertNotEquals(pkg.getRules().get(0).getActivationId(), rule.getActivationId(),
-                    "activationId 应已重映射");
-            assertNotNull(rule.getActivationId());
+            assertNotEquals(pkg.getRules().get(0).getStrategyId(), rule.getStrategyId(),
+                    "strategyId 应已重映射");
+            assertNotNull(rule.getStrategyId());
         }
 
         // 6) 新模型行：INIT 状态、新 GUID、名称兜底

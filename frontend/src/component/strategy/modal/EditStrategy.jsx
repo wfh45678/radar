@@ -8,7 +8,7 @@ const RadioGroup = Radio.Group;
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
 
-export default class EditActivation extends React.Component{
+export default class EditStrategy extends React.Component{
 
 	constructor(props){
 		super(props);
@@ -16,7 +16,7 @@ export default class EditActivation extends React.Component{
 		this.state={
 			open:false,
 
-			activationName:'',
+			strategyName:'',
 			label:'',
 			comment:'',
 			bottom:'0',
@@ -28,16 +28,16 @@ export default class EditActivation extends React.Component{
 
 	// 获取表格数据
     fetchData=()=>{
-	    FetchUtil('/activation/'+this.props.row.id,'GET','',
+	    FetchUtil('/strategy/'+this.props.row.id,'GET','',
 	    	(data) => {
-	            const activation=data.data.activation;
+	            const strategy=data.data.strategy;
 	        	this.setState({
-	        		activationName:activation.activationName,
-	        		label:activation.label,
-					comment:activation.comment,
-					bottom:activation.bottom,
-					median:activation.median,
-					high:activation.high,
+	        		strategyName:strategy.strategyName,
+	        		label:strategy.label,
+					comment:strategy.comment,
+					bottom:strategy.bottom,
+					median:strategy.median,
+					high:strategy.high,
 	        	});
 	        });
     }
@@ -74,7 +74,7 @@ export default class EditActivation extends React.Component{
 			var param={};
 			param.id=this.props.row.id;
 			param.modelId=this.props.modelId;
-			param.activationName=this.state.activationName;
+			param.strategyName=this.state.strategyName;
 			param.label=this.state.label;
 			param.comment=this.state.comment;
 			param.bottom='0';
@@ -82,7 +82,7 @@ export default class EditActivation extends React.Component{
 			param.high=this.state.high;
 			param.status=1;
 
-		    FetchUtil('/activation/','PUT',JSON.stringify(param),
+		    FetchUtil('/strategy/','PUT',JSON.stringify(param),
 		    	(data) => {
 		    		if(data.success){
 		    			message.success('修改成功');
@@ -110,7 +110,7 @@ export default class EditActivation extends React.Component{
         };
 
         let validate={
-        	activationName:{
+        	strategyName:{
         		help:'',
         		status:'success'
         	},
@@ -129,16 +129,16 @@ export default class EditActivation extends React.Component{
         };
         let isValidated=true;
 
-		if(!this.state.activationName){
-			validate.activationName.help='请输入策略名';
-			validate.activationName.status='warning';
+		if(!this.state.strategyName){
+			validate.strategyName.help='请输入策略名';
+			validate.strategyName.status='warning';
 			isValidated=false;
 		}else {
 			let reg = /^[a-zA-z]\w{1,29}$/;
-			let activationName = this.state.activationName;
-			if(!reg.test(activationName)){
-				validate.activationName.help='按照提示输入正确的策略名';
-				validate.activationName.status='error';
+			let strategyName = this.state.strategyName;
+			if(!reg.test(strategyName)){
+				validate.strategyName.help='按照提示输入正确的策略名';
+				validate.strategyName.status='error';
 				isValidated=false;
 			}
 		}

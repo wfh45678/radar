@@ -30,14 +30,14 @@ class Rule extends React.Component{
             rowCount:0,
             pageSize:30,
 
-            activationName:'',
+            strategyName:'',
             ruleId:'',
             risk:[],
-            activationNameOne:'' //存储策略中的第一个value值，便于按处理结果查询
+            strategyNameOne:'' //存储策略中的第一个value值，便于按处理结果查询
         }
 
         if(this.props.params.modelId){
-            this.state.activationName=this.props.params.activationName;
+            this.state.strategyName=this.props.params.strategyName;
             this.state.ruleId=this.props.params.ruleId+'';
         }
     }
@@ -52,16 +52,16 @@ class Rule extends React.Component{
         param.pageSize=pageSize;
         param.modelId=this.props.modelId;
         if(this.state.risk.length != 0){
-            if(this.state.activationName!=''){
-                param.fieldName='activations.'+this.state.activationName+'.risk';
+            if(this.state.strategyName!=''){
+                param.fieldName='strategies.'+this.state.strategyName+'.risk';
                 param.fieldValue=this.state.risk;
             }else {
-                param.fieldName='activations.'+this.state.activationNameOne+'.risk';
+                param.fieldName='strategies.'+this.state.strategyNameOne+'.risk';
                 param.fieldValue=this.state.risk;
             }
         }else{
-            if(this.state.activationName!=''){
-                param.fieldName='hitsDetail.'+this.state.activationName+'.rule_'+this.state.ruleId+'.key';
+            if(this.state.strategyName!=''){
+                param.fieldName='hitsDetail.'+this.state.strategyName+'.rule_'+this.state.ruleId+'.key';
                 param.fieldValue=this.state.ruleId;
             }
         }
@@ -101,7 +101,7 @@ class Rule extends React.Component{
                 beginTime:dayjs().add(-3,'days'),
                 endTime:dayjs(),
                 rangeSelect:'-3',
-                activationName:'',
+                strategyName:'',
                 ruleId:'',
             },this.fetchTableData());
         }
@@ -129,10 +129,10 @@ class Rule extends React.Component{
         //                 fieldList:data.data.list
         //             });
         //         });
-        //     FetchUtil('/activation/rulecolumns/'+value,'GET','',
+        //     FetchUtil('/strategy/rulecolumns/'+value,'GET','',
         //         (data) => {
         //             this.setState({
-        //                 activationList:data.data.list
+        //                 strategyList:data.data.list
         //             });
         //         });
         //     FetchUtil('/model/'+value,'GET','',
@@ -143,15 +143,15 @@ class Rule extends React.Component{
         //         }
         //     )
         //     this.setState({
-        //         activationName:'',
+        //         strategyName:'',
         //         ruleId:''
         //     })
         // }
-        if(name=='activationName'){
-            const activation=this.props.activationList.filter(x=>x.value==value)[0];
-            if(activation.children&&activation.children.length>0){
+        if(name=='strategyName'){
+            const strategy=this.props.strategyList.filter(x=>x.value==value)[0];
+            if(strategy.children&&strategy.children.length>0){
                 this.setState({
-                    ruleId:activation.children[0].type
+                    ruleId:strategy.children[0].type
                 });
             }
         }
@@ -192,7 +192,7 @@ class Rule extends React.Component{
 
     showModal=(record)=>{
         const hitsDetail=record.hitsDetail;
-        const activations=record.activations;
+        const strategies=record.strategies;
         const columns=[{
             title: '序号',
             dataIndex: 'id',
@@ -216,7 +216,7 @@ class Rule extends React.Component{
             }
         }
 
-        const columnsActivation=[{
+        const columnsStrategy=[{
             title: '序号',
             dataIndex: 'id',
             key:'id',
@@ -234,17 +234,17 @@ class Rule extends React.Component{
             title: '处理结果',
             dataIndex:'risk'
         }];
-        let dataActivation=[];
-        for(var Keys in activations){
-            activations[Keys].name = Keys;
-            if(activations[Keys].risk === 'pass'){
-                activations[Keys].risk = '通过';
-            }else if(activations[Keys].risk === 'review'){
-                activations[Keys].risk = '人工审核';
-            }else if(activations[Keys].risk === 'reject'){
-                activations[Keys].risk = '拒绝';
+        let dataStrategy=[];
+        for(var Keys in strategies){
+            strategies[Keys].name = Keys;
+            if(strategies[Keys].risk === 'pass'){
+                strategies[Keys].risk = '通过';
+            }else if(strategies[Keys].risk === 'review'){
+                strategies[Keys].risk = '人工审核';
+            }else if(strategies[Keys].risk === 'reject'){
+                strategies[Keys].risk = '拒绝';
             }
-            dataActivation.push(activations[Keys]);
+            dataStrategy.push(strategies[Keys]);
         }
 
         Modal.info({
@@ -263,8 +263,8 @@ class Rule extends React.Component{
                     />
                     <h3 style={{paddingTop:20}}>策略明细</h3>
                     <Table
-                        dataSource={dataActivation}
-                        columns={columnsActivation}
+                        dataSource={dataStrategy}
+                        columns={columnsStrategy}
                         size="middle"
                         bordered
                         pagination={false}
@@ -338,12 +338,12 @@ class Rule extends React.Component{
             }
 
             data['hitsDetail']=info.hitsDetail;
-            data['activations']=info.activations;
+            data['strategies']=info.strategies;
 
             dataList.push(data);
         });
 
-        const actList=this.props.activationList.filter(x=>x.value==this.state.activationName);
+        const actList=this.props.strategyList.filter(x=>x.value==this.state.strategyName);
         let ruleList=[];
         if(actList.length!=0){
             ruleList=actList[0].children;
@@ -354,8 +354,8 @@ class Rule extends React.Component{
                 <div id="header">
                     <Form layout="inline">
                         <FormItem label="选择策略：">
-                            <Select dropdownMatchSelectWidth={false} value={this.state.activationName} onChange={this.handleSelect.bind(this,'activationName')} style={{width:100}}
-                                options={this.props.activationList.map((info)=>({label:info.label, value:info.value}))}
+                            <Select dropdownMatchSelectWidth={false} value={this.state.strategyName} onChange={this.handleSelect.bind(this,'strategyName')} style={{width:100}}
+                                options={this.props.strategyList.map((info)=>({label:info.label, value:info.value}))}
                             />
                         </FormItem>
                         <FormItem label="选择规则：">

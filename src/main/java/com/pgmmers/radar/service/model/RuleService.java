@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface RuleService {
 
-    List<RuleVO> listRule(Long activationId);
+    List<RuleVO> listRule(Long strategyId);
 
     RuleVO get(Long id);
 

@@ -4,19 +4,19 @@ import com.alibaba.fastjson2.JSON;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pgmmers.radar.model.query.ActivationQuery;
+import com.pgmmers.radar.model.query.StrategyQuery;
 import com.pgmmers.radar.model.query.PageResult;
 import com.pgmmers.radar.model.query.RuleHistoryQuery;
 import com.pgmmers.radar.model.query.RuleQuery;
-import com.pgmmers.radar.converter.ActivationMapping;
+import com.pgmmers.radar.converter.StrategyMapping;
 import com.pgmmers.radar.converter.ModelMapping;
 import com.pgmmers.radar.converter.RuleHistoryMapping;
 import com.pgmmers.radar.converter.RuleMapping;
-import com.pgmmers.radar.mapper.ActivationMapper;
+import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.ModelMapper;
 import com.pgmmers.radar.mapper.RuleHistoryMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
-import com.pgmmers.radar.model.entity.ActivationPO;
+import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.ModelPO;
 import com.pgmmers.radar.model.entity.RuleHistoryPO;
 import com.pgmmers.radar.model.entity.RulePO;
@@ -49,9 +49,9 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
             .getLogger(RuleServiceImpl.class);
 
     @Override
-    public Object query(Long activationId) {
-        // 原 ModelDal.listRules(null, activationId, null) 逻辑下沉
-        return listRules(null, activationId, null);
+    public Object query(Long strategyId) {
+        // 原 ModelDal.listRules(null, strategyId, null) 逻辑下沉
+        return listRules(null, strategyId, null);
     }
 
     @Autowired
@@ -59,7 +59,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     @Autowired
     private RuleHistoryMapper ruleHistoryMapper;
     @Autowired
-    private ActivationMapper activationMapper;
+    private StrategyMapper strategyMapper;
     @Autowired
     private ModelMapper modelMapper;
     @Resource
@@ -67,7 +67,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     @Resource
     private RuleHistoryMapping ruleHistoryMapping;
     @Resource
-    private ActivationMapping activationMapping;
+    private StrategyMapping strategyMapping;
     @Resource
     private ModelMapping modelMapping;
 
@@ -82,11 +82,11 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     /**
      * 原 ModelDalImpl.listRules 逻辑下沉。
      */
-    private List<RuleVO> listRules(Long modelId, Long activationId, Integer status) {
+    private List<RuleVO> listRules(Long modelId, Long strategyId, Integer status) {
         List<RulePO> rulePoList = ruleMapper.selectList(
                 new LambdaQueryWrapper<RulePO>()
                         .eq(modelId != null, RulePO::getModelId, modelId)
-                        .eq(activationId != null, RulePO::getActivationId, activationId)
+                        .eq(strategyId != null, RulePO::getStrategyId, strategyId)
                         .eq(status != null, RulePO::getStatus, status));
         if (CollectionUtils.isEmpty(rulePoList)) {
             return new ArrayList<>();
@@ -94,14 +94,14 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
         return ruleMapping.sourceToTarget(rulePoList);
     }
 
-    public List<RuleVO> listRule(Long modelId, Long activationId, Integer status) {
-        return listRules(modelId, activationId, status);
+    public List<RuleVO> listRule(Long modelId, Long strategyId, Integer status) {
+        return listRules(modelId, strategyId, status);
     }
 
     @Override
-    public List<RuleVO> listRule(Long activationId) {
+    public List<RuleVO> listRule(Long strategyId) {
         //noinspection unchecked
-        return (List<RuleVO>) getByCache(activationId);
+        return (List<RuleVO>) getByCache(strategyId);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
         logger.info("rule sub:{}", message);
         RuleVO rule = JSON.parseObject(message, RuleVO.class);
         if (rule != null) {
-            invalidateCache(rule.getActivationId());
+            invalidateCache(rule.getStrategyId());
         }
     }
 
@@ -123,12 +123,12 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     }
 
     /**
-     * 原 ActivationDalImpl.get 逻辑下沉。
+     * 原 StrategyDalImpl.get 逻辑下沉。
      */
-    private ActivationVO getActivation(Long id) {
-        ActivationPO activation = activationMapper.selectById(id);
-        if (activation != null) {
-            return activationMapping.sourceToTarget(activation);
+    private StrategyVO getStrategy(Long id) {
+        StrategyPO strategy = strategyMapper.selectById(id);
+        if (strategy != null) {
+            return strategyMapping.sourceToTarget(strategy);
         }
         return null;
     }
@@ -136,10 +136,10 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     @Override
     public CommonResult query(RuleQuery query) {
         CommonResult result = new CommonResult();
-        ActivationVO activation = getActivation(query.getActivationId());
+        StrategyVO strategy = getStrategy(query.getStrategyId());
 
         result.setSuccess(true);
-        result.getData().put("ruleOrder", activation.getRuleOrder());
+        result.getData().put("ruleOrder", strategy.getRuleOrder());
         result.getData().put("page", queryRulePage(query));
         return result;
     }
@@ -151,8 +151,8 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
         Page<RulePO> p = ruleMapper.selectPage(
                 new Page<>(query.getPageNo(), query.getPageSize()),
                 new LambdaQueryWrapper<RulePO>()
-                        .eq(query.getActivationId() != null,
-                                RulePO::getActivationId, query.getActivationId())
+                        .eq(query.getStrategyId() != null,
+                                RulePO::getStrategyId, query.getStrategyId())
                         .like(!StringUtils.isEmpty(query.getName()),
                                 RulePO::getName, query.getName())
                         .eq(query.getStatus() != null,
@@ -266,29 +266,29 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
         // 原 ModelDal.getModelById 逻辑下沉
         ModelPO modelPO = modelMapper.selectById(modelId);
         ModelVO model = modelPO == null ? null : modelMapping.sourceToTarget(modelPO);
-        String keyTempl = "hitsDetail.${activationName}.rule_${ruleId}.key";
-        ActivationQuery actQuery = new ActivationQuery();
+        String keyTempl = "hitsDetail.${strategyName}.rule_${ruleId}.key";
+        StrategyQuery actQuery = new StrategyQuery();
         actQuery.setModelId(modelId);
         // page size default is 10.
         actQuery.setPageSize(100);
-        // 原 ActivationDalImpl.query 逻辑下沉
-        Page<ActivationPO> actPage = activationMapper.selectPage(
+        // 原 StrategyDalImpl.query 逻辑下沉
+        Page<StrategyPO> actPage = strategyMapper.selectPage(
                 new Page<>(actQuery.getPageNo(), actQuery.getPageSize()),
-                new LambdaQueryWrapper<ActivationPO>()
-                        .eq(ActivationPO::getModelId, actQuery.getModelId())
+                new LambdaQueryWrapper<StrategyPO>()
+                        .eq(StrategyPO::getModelId, actQuery.getModelId())
                         .like(!StringUtils.isEmpty(actQuery.getName()),
-                                ActivationPO::getActivationName, actQuery.getName())
+                                StrategyPO::getStrategyName, actQuery.getName())
                         .eq(actQuery.getStatus() != null,
-                                ActivationPO::getStatus, actQuery.getStatus()));
-        List<ActivationVO> actList = activationMapping.sourceToTarget(actPage.getRecords());
-        for (ActivationVO act : actList) {
+                                StrategyPO::getStatus, actQuery.getStatus()));
+        List<StrategyVO> actList = strategyMapping.sourceToTarget(actPage.getRecords());
+        for (StrategyVO act : actList) {
             RuleQuery query = new RuleQuery();
-            query.setActivationId(act.getId());
+            query.setStrategyId(act.getId());
             query.setPageSize(100);
             PageResult<RuleVO> page = queryRulePage(query);
             List<RuleVO> list = page.getList();
             for (RuleVO rule : list) {
-                String keyStr = keyTempl.replace("${activationName}", act.getActivationName());
+                String keyStr = keyTempl.replace("${strategyName}", act.getStrategyName());
 
                 keyStr = keyStr.replace("${ruleId}", rule.getId() + "");
                 long qty = 0;
@@ -304,9 +304,9 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
                 if (qty > 0){
                     RuleHitsVO hit = new RuleHitsVO();
                     hit.setId(rule.getId());
-                    hit.setActivationName(act.getActivationName());
+                    hit.setStrategyName(act.getStrategyName());
                     hit.setRuleLable(rule.getLabel());
-                    hit.setActivationLable(act.getLabel());
+                    hit.setStrategyLable(act.getLabel());
                     hit.setCount(qty);
                     treeSet.add(hit);
                 }

@@ -21,7 +21,7 @@ class ListEvent extends React.Component{
 		this.state={
 			fieldName:'',
 			fieldValue:'',
-            activationName:'',
+            strategyName:'',
             ruleId:'',
             risk:'',
 			beginTime:dayjs().add(-3,'days'),
@@ -43,7 +43,7 @@ class ListEvent extends React.Component{
         if(this.props.params.modelId){
             this.state.showAdvance=true;
             this.state.searchType='rule';
-            this.state.activationName=this.props.params.activationName;
+            this.state.strategyName=this.props.params.strategyName;
             this.state.ruleId=this.props.params.ruleId+'';
         }
 	}
@@ -68,7 +68,7 @@ class ListEvent extends React.Component{
                 param.fieldValue=this.state.fieldValue;
                 break;
             case 'rule':
-                if(!this.state.activationName){
+                if(!this.state.strategyName){
                     errMsg='请选择策略！';
                     break;
                 }
@@ -76,11 +76,11 @@ class ListEvent extends React.Component{
                     errMsg='请选择规则！';
                     break;
                 }
-                param.fieldName='hitsDetail.'+this.state.activationName+'.rule_'+this.state.ruleId+'.key';
+                param.fieldName='hitsDetail.'+this.state.strategyName+'.rule_'+this.state.ruleId+'.key';
                 param.fieldValue=this.state.ruleId;
                 break;
             case 'risk':
-                if(!this.state.activationName){
+                if(!this.state.strategyName){
                     errMsg='请选择策略！';
                     break;
                 }
@@ -88,7 +88,7 @@ class ListEvent extends React.Component{
                     errMsg='请选择评估结果！';
                     break;
                 }
-                param.fieldName='activations.'+this.state.activationName+'.risk';
+                param.fieldName='strategies.'+this.state.strategyName+'.risk';
                 param.fieldValue=this.state.risk;
                 break;
         }
@@ -139,7 +139,7 @@ class ListEvent extends React.Component{
             this.setState({
                 fieldName:'',
                 fieldValue:'',
-                activationName:'',
+                strategyName:'',
                 ruleId:'',
                 risk:'',
                 pageNo:1,
@@ -158,7 +158,7 @@ class ListEvent extends React.Component{
             searchType:'',
             fieldName:'',
             fieldValue:'',
-            activationName:'',
+            strategyName:'',
             ruleId:'',
             risk:'',
         });
@@ -245,7 +245,7 @@ class ListEvent extends React.Component{
 
 	showModal=(record)=>{
 		const hitsDetail=record.hitsDetail;
-		const activations=record.activations;
+		const strategies=record.strategies;
 		const columns=[{
             title: '序号',
             dataIndex: 'id',
@@ -268,7 +268,7 @@ class ListEvent extends React.Component{
 				data.push(hitsDetail[Key][subKey]);
 			}
 		}
-		const columnsActivation=[{
+		const columnsStrategy=[{
 			title: '序号',
 			dataIndex: 'id',
 			key:'id',
@@ -286,17 +286,17 @@ class ListEvent extends React.Component{
 			title: '处理结果',
 			dataIndex:'risk'
 		}];
-		let dataActivation=[];
-		for(var Keys in activations){
-			activations[Keys].name = Keys;
-			if(activations[Keys].risk === 'pass'){
-				activations[Keys].risk = '通过';
-			}else if(activations[Keys].risk === 'review'){
-				activations[Keys].risk = '人工审核';
-			}else if(activations[Keys].risk === 'reject'){
-				activations[Keys].risk = '拒绝';
+		let dataStrategy=[];
+		for(var Keys in strategies){
+			strategies[Keys].name = Keys;
+			if(strategies[Keys].risk === 'pass'){
+				strategies[Keys].risk = '通过';
+			}else if(strategies[Keys].risk === 'review'){
+				strategies[Keys].risk = '人工审核';
+			}else if(strategies[Keys].risk === 'reject'){
+				strategies[Keys].risk = '拒绝';
 			}
-			dataActivation.push(activations[Keys]);
+			dataStrategy.push(strategies[Keys]);
 		}
 
 		Modal.info({
@@ -315,8 +315,8 @@ class ListEvent extends React.Component{
 					/>
 					<h3 style={{paddingTop:20}}>策略明细</h3>
 					<Table
-						dataSource={dataActivation}
-						columns={columnsActivation}
+						dataSource={dataStrategy}
+						columns={columnsStrategy}
 						size="middle"
 						bordered
 						pagination={false}
@@ -390,12 +390,12 @@ class ListEvent extends React.Component{
         	}
 
         	data['hitsDetail']=info.hitsDetail;
-        	data['activations']=info.activations;
+        	data['strategies']=info.strategies;
 
         	dataList.push(data);
         });
 
-        const actList=this.props.activationList.filter(x=>x.value==this.state.activationName);
+        const actList=this.props.strategyList.filter(x=>x.value==this.state.strategyName);
         let ruleList=[];
         if(actList.length!=0){
             ruleList=actList[0].children;
@@ -444,8 +444,8 @@ class ListEvent extends React.Component{
                             :this.state.searchType=='rule'?
                             <span>
                                 <FormItem label="选择策略：">
-                                    <Select dropdownMatchSelectWidth={false} value={this.state.activationName} onChange={this.handleSelect.bind(this,'activationName')} style={{width:100}}
-                                        options={this.props.activationList.map((info)=>({label:info.label, value:info.value}))}
+                                    <Select dropdownMatchSelectWidth={false} value={this.state.strategyName} onChange={this.handleSelect.bind(this,'strategyName')} style={{width:100}}
+                                        options={this.props.strategyList.map((info)=>({label:info.label, value:info.value}))}
                                     />
                                 </FormItem>
                                 <FormItem label="选择规则：">
@@ -457,8 +457,8 @@ class ListEvent extends React.Component{
                             :this.state.searchType=='risk'?
                             <span>
                                 <FormItem label="选择策略：">
-                                    <Select dropdownMatchSelectWidth={false} value={this.state.activationName} onChange={this.handleSelect.bind(this,'activationName')} style={{width:100}}
-                                        options={this.props.activationList.map((info)=>({label:info.label, value:info.value}))}
+                                    <Select dropdownMatchSelectWidth={false} value={this.state.strategyName} onChange={this.handleSelect.bind(this,'strategyName')} style={{width:100}}
+                                        options={this.props.strategyList.map((info)=>({label:info.label, value:info.value}))}
                                     />
                                 </FormItem>
                                 <FormItem label="处理结果：">

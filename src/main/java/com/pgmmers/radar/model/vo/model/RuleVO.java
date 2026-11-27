@@ -14,7 +14,7 @@ public class RuleVO implements Serializable{
     private Long modelId;
 
 
-    private Long activationId;
+    private Long strategyId;
 
 
     private String name;
@@ -74,13 +74,13 @@ public class RuleVO implements Serializable{
     }
 
 
-    public Long getActivationId() {
-        return activationId;
+    public Long getStrategyId() {
+        return strategyId;
     }
 
 
-    public void setActivationId(Long activationId) {
-        this.activationId = activationId;
+    public void setStrategyId(Long strategyId) {
+        this.strategyId = strategyId;
     }
 
 

@@ -10,15 +10,15 @@ dayjs.locale('zh-cn');
 
 import Abstraction from './component/abstraction/Abstraction';
 import AbstractionList from './component/abstraction/AbstractionList';
-import Activation from './component/activation/Activation';
+import StrategyList from './component/strategy/StrategyList';
 import Datalist from './component/datalist/Datalist';
 import DatalistRecord from './component/datalist/DatalistRecord';
 import Field from './component/field/Field';
 import ModelList from './component/model/ModelList';
 import Model from './component/model/Model';
 import PreItem from './component/preItem/PreItem';
-import RuleList from './component/activation/RuleList';
-import HistoryRecordList from './component/activation/HistoryRecordList';
+import RuleList from './component/strategy/RuleList';
+import HistoryRecordList from './component/strategy/HistoryRecordList';
 
 import Report from './component/report/Report';
 import ListEvent from './component/report/ListEvent';
@@ -64,7 +64,7 @@ function ModelIndexRedirect() {
 }
 
 // URL 结构与 2022 版（react-router 3 绝对 path，扁平 URL）保持一致：
-// #/modelList、#/field/:id、#/event、#/ruleid/:modelId/:ruleId/:activationName 等。
+// #/modelList、#/field/:id、#/event、#/ruleid/:modelId/:ruleId/:strategyName 等。
 // Index / Model / Report 是嵌套的 pathless layout route，仅承担组件层级，不往 URL 加前缀。
 const router = createHashRouter([
   {
@@ -84,12 +84,12 @@ const router = createHashRouter([
             element: <Model />,
             children: [
               { path: 'field/:id', element: <Field /> },
-              { path: 'activation/:id', element: <Activation /> },
+              { path: 'strategy/:id', element: <StrategyList /> },
               { path: 'datalist/:id', element: <Datalist /> },
               { path: 'datalistRecord/:id/:datalistId', element: <DatalistRecord /> },
               { path: 'preItem/:id', element: <PreItem /> },
-              { path: 'ruleList/:id/:activationId', element: <RuleList /> },
-              { path: 'historyRecordList/:id/:activationId/:ruleId', element: <HistoryRecordList /> },
+              { path: 'ruleList/:id/:strategyId', element: <RuleList /> },
+              { path: 'historyRecordList/:id/:strategyId/:ruleId', element: <HistoryRecordList /> },
               { path: 'abstractionList/:id', element: <AbstractionList /> },
             ],
           },
@@ -101,7 +101,7 @@ const router = createHashRouter([
               { path: 'event', element: <ListEvent /> },
               { path: 'graph', element: <RuleGraph /> },
               { path: 'rule', element: <ListRule /> },
-              { path: 'ruleid/:modelId/:ruleId/:activationName', element: <ListEvent /> },
+              { path: 'ruleid/:modelId/:ruleId/:strategyName', element: <ListEvent /> },
               { path: 'dashboard', element: <DashBoard /> },
             ],
           },

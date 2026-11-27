@@ -1,7 +1,7 @@
 package com.pgmmers.radar.model.query;
 
 
-public class ActivationQuery extends PageQuery {
+public class StrategyQuery extends PageQuery {
 
     private Long modelId;
     private String name;

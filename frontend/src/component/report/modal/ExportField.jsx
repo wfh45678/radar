@@ -37,7 +37,7 @@ export default class ExportField extends React.Component{
 		let param={
 			fields:[],
 			preItems:[],
-			activations:[],
+			strategies:[],
 			rules:[]
 		};
 		this.state.selectedKeys.forEach((info)=>{

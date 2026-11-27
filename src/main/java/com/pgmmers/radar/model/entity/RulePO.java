@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @TableName("engine_rule")
 public class RulePO {
@@ -21,10 +22,11 @@ public class RulePO {
     private Long modelId;
 
     /**
-     * 激活ID
+     * 所属策略ID（策略包 JSON 键保持 activationId，兼容 v3.x 包格式）
      */
-    @TableField("ACTIVATION_ID")
-    private Long activationId;
+    @JsonProperty("activationId")
+    @TableField("STRATEGY_ID")
+    private Long strategyId;
 
     @TableField("NAME")
     private String name;
@@ -131,19 +133,19 @@ public class RulePO {
     /**
      * 获取激活ID
      *
-     * @return ACTIVATION_ID - 激活ID
+     * @return STRATEGY_ID - 激活ID
      */
-    public Long getActivationId() {
-        return activationId;
+    public Long getStrategyId() {
+        return strategyId;
     }
 
     /**
      * 设置激活ID
      *
-     * @param activationId 激活ID
+     * @param strategyId 激活ID
      */
-    public void setActivationId(Long activationId) {
-        this.activationId = activationId;
+    public void setStrategyId(Long strategyId) {
+        this.strategyId = strategyId;
     }
 
     /**

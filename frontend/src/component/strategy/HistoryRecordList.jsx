@@ -83,7 +83,7 @@ class HistoryRecordList extends Component{
     }
     componentDidMount() {
         this.fetchTableData();
-        FetchUtil('/activation/datacolumns/'+this.props.params.id,'GET','',
+        FetchUtil('/strategy/datacolumns/'+this.props.params.id,'GET','',
             (data) => {
                 this.setState({
                     fieldList:data.data.list
@@ -101,7 +101,7 @@ class HistoryRecordList extends Component{
         return (
             <div className="ant-layout-content">
                 <div id="header" style={{fontSize:'16px',marginBottom:'20px'}}>
-                    <Link to={"/ruleList/"+this.props.params.id+"/"+this.props.params.activationId}><LeftCircleOutlined style={{marginRight:'10px'}}/>{this.state.label}</Link><span style={{marginLeft:'20px'}}>历史记录</span>
+                    <Link to={"/ruleList/"+this.props.params.id+"/"+this.props.params.strategyId}><LeftCircleOutlined style={{marginRight:'10px'}}/>{this.state.label}</Link><span style={{marginLeft:'20px'}}>历史记录</span>
                 </div>
 
                 <Timeline style={{marginLeft:'150px'}}>
@@ -109,7 +109,7 @@ class HistoryRecordList extends Component{
                         return (
                             <Timeline.Item key={index}>
                                 <span style={{position:'absolute',left:'-120px'}}>{dayjs(info.updateTime).format('YYYY-MM-DD HH:mm:ss')}</span>
-                                <HistoryRecord ruleHistory={info} modelId={this.props.params.id} activationId={this.props.params.activationId} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData}/>
+                                <HistoryRecord ruleHistory={info} modelId={this.props.params.id} strategyId={this.props.params.strategyId} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData}/>
                             </Timeline.Item>
                             );
                         })

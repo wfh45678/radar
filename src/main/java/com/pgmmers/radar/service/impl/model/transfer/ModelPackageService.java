@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pgmmers.radar.enums.StatusType;
 import com.pgmmers.radar.mapper.AbstractionMapper;
-import com.pgmmers.radar.mapper.ActivationMapper;
+import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
 import com.pgmmers.radar.mapper.DataListRecordMapper;
 import com.pgmmers.radar.mapper.DataListsMapper;
@@ -15,7 +15,7 @@ import com.pgmmers.radar.mapper.ModelMapper;
 import com.pgmmers.radar.mapper.PreItemMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
 import com.pgmmers.radar.model.entity.AbstractionPO;
-import com.pgmmers.radar.model.entity.ActivationPO;
+import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListMetaPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.DataListsPO;
@@ -83,7 +83,7 @@ public class ModelPackageService {
     @Autowired
     private AbstractionMapper abstractionMapper;
     @Autowired
-    private ActivationMapper activationMapper;
+    private StrategyMapper strategyMapper;
     @Autowired
     private RuleMapper ruleMapper;
     @Autowired
@@ -136,13 +136,13 @@ public class ModelPackageService {
         }
         pkg.setAbstractions(abstractionMapper.selectList(
                 new LambdaQueryWrapper<AbstractionPO>().eq(AbstractionPO::getModelId, modelId)));
-        List<ActivationPO> activations = activationMapper.selectList(
-                new LambdaQueryWrapper<ActivationPO>().eq(ActivationPO::getModelId, modelId));
-        pkg.setActivations(activations);
-        if (!activations.isEmpty()) {
-            List<Long> activationIds = activations.stream().map(ActivationPO::getId).collect(Collectors.toList());
+        List<StrategyPO> strategies = strategyMapper.selectList(
+                new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, modelId));
+        pkg.setStrategies(strategies);
+        if (!strategies.isEmpty()) {
+            List<Long> strategyIds = strategies.stream().map(StrategyPO::getId).collect(Collectors.toList());
             pkg.setRules(ruleMapper.selectList(
-                    new LambdaQueryWrapper<RulePO>().in(RulePO::getActivationId, activationIds)));
+                    new LambdaQueryWrapper<RulePO>().in(RulePO::getStrategyId, strategyIds)));
         }
         return pkg;
     }
@@ -276,7 +276,7 @@ public class ModelPackageService {
         int count = assembler.assemble(newId,
                 pkg.getFields(), pkg.getPreItems(),
                 pkg.getDataLists(), pkg.getDataListMeta(), pkg.getDataListRecords(),
-                pkg.getAbstractions(), pkg.getActivations(), pkg.getRules());
+                pkg.getAbstractions(), pkg.getStrategies(), pkg.getRules());
         logger.info("model package imported: source label={}, new modelId={}, {} objects",
                 source.getLabel(), newId, count);
         return newId;

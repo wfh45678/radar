@@ -13,7 +13,7 @@ package com.pgmmers.radar.controller.admin;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.pgmmers.radar.model.query.ActivationQuery;
+import com.pgmmers.radar.model.query.StrategyQuery;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.engine.vo.DataColumnInfo;
@@ -30,15 +30,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 @RestController
-@RequestMapping("/services/v1/activation")
+@RequestMapping("/services/v1/strategy")
 @Tag(name = "策略集API", description = "策略集管理相关操作")
-public class ActivationApiController {
+public class StrategyApiController {
 
     /**
      * service.
      */
     @Autowired
-    private ActivationService activationService;
+    private StrategyService strategyService;
 
     @Autowired
     private FieldService fieldService;
@@ -54,17 +54,17 @@ public class ActivationApiController {
     @GetMapping("/{id}")
     public CommonResult get(@PathVariable Long id) {
         CommonResult result = new CommonResult();
-        ActivationVO activationVO = activationService.get(id);
-        if (activationVO != null) {
+        StrategyVO strategyVO = strategyService.get(id);
+        if (strategyVO != null) {
             result.setSuccess(true);
-            result.getData().put("activation", activationVO);
+            result.getData().put("strategy", strategyVO);
         }
         return result;
     }
 
     @PostMapping
-    public CommonResult query(@RequestBody ActivationQuery query) {
-        return activationService.query(query);
+    public CommonResult query(@RequestBody StrategyQuery query) {
+        return strategyService.query(query);
     }
 
     @GetMapping("/feature/columns/{modelId}")
@@ -133,11 +133,11 @@ public class ActivationApiController {
     @GetMapping("/rule/columns/{modelId}")
 	public CommonResult getRuleColumns(@PathVariable Long modelId) {
 		List<DataColumnInfo> list = new ArrayList<>();
-		List<ActivationVO> listActivation=activationService.listActivation(modelId);
-		if(listActivation!=null){
-			for(ActivationVO activation:listActivation){
-				DataColumnInfo ds=new DataColumnInfo(activation.getLabel(),activation.getActivationName());
-				List<RuleVO> listRule=ruleService.listRule(activation.getId());
+		List<StrategyVO> listStrategy=strategyService.listStrategy(modelId);
+		if(listStrategy!=null){
+			for(StrategyVO strategy:listStrategy){
+				DataColumnInfo ds=new DataColumnInfo(strategy.getLabel(),strategy.getStrategyName());
+				List<RuleVO> listRule=ruleService.listRule(strategy.getId());
 				for(RuleVO rule:listRule){
 					ds.addChildren(rule.getLabel(), rule.getName(),rule.getId()+"");
 				}
@@ -152,18 +152,18 @@ public class ActivationApiController {
 	}
 
 	@PutMapping
-    public CommonResult save(@RequestBody ActivationVO activation) {
-        return activationService.save(activation);
+    public CommonResult save(@RequestBody StrategyVO strategy) {
+        return strategyService.save(strategy);
     }
 
     @DeleteMapping
     public CommonResult delete(@RequestBody Long[] id) {
-        return activationService.delete(id);
+        return strategyService.delete(id);
     }
 
 	@PostMapping("/updateOrder")
-	public CommonResult updateOrder(@RequestParam Long activationId, @RequestParam String ruleOrder) {
-		return activationService.updateOrder(activationId,ruleOrder);
+	public CommonResult updateOrder(@RequestParam Long strategyId, @RequestParam String ruleOrder) {
+		return strategyService.updateOrder(strategyId,ruleOrder);
 	}
 
     private void extractMetaColumn(DataColumnInfo ds, PreItemVO preItem, String jsonStr, List<DataColumnInfo> children) {
@@ -176,19 +176,19 @@ public class ActivationApiController {
         ds.addChildren(preItem.getLabel(), preItem.getDestField(), children);
     }
 
-    @PostMapping("/disable/{activationId}")
-    public CommonResult disable(@PathVariable Long activationId) {
-        return activationService.updateStatus(activationId, 0);
+    @PostMapping("/disable/{strategyId}")
+    public CommonResult disable(@PathVariable Long strategyId) {
+        return strategyService.updateStatus(strategyId, 0);
     }
 
-    @PostMapping("/enable/{activationId}")
-    public CommonResult enable(@PathVariable Long activationId) {
-        return activationService.updateStatus(activationId, 1);
+    @PostMapping("/enable/{strategyId}")
+    public CommonResult enable(@PathVariable Long strategyId) {
+        return strategyService.updateStatus(strategyId, 1);
     }
 
     @PostMapping("/copy")
     public CommonResult copy(@RequestBody Long id) {
-        CommonResult result = activationService.copy(id);
+        CommonResult result = strategyService.copy(id);
         return result;
     }
 }

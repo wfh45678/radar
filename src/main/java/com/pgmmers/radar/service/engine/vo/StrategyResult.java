@@ -7,16 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ActivationResult extends CommonResult {
+public class StrategyResult extends CommonResult {
 
-    private Map<String, Object> activationMap = new HashMap<String, Object>();
+    private Map<String, Object> strategyMap = new HashMap<String, Object>();
 
-    public Map<String, Object> getActivationMap() {
-        return activationMap;
+    public Map<String, Object> getStrategyMap() {
+        return strategyMap;
     }
 
-    public void setActivationMap(Map<String, Object> activationMap) {
-        this.activationMap = activationMap;
+    public void setStrategyMap(Map<String, Object> strategyMap) {
+        this.strategyMap = strategyMap;
     }
 
 

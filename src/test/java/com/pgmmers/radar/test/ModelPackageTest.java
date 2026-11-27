@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.pgmmers.radar.model.entity.ActivationPO;
+import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.FieldPO;
 import com.pgmmers.radar.model.entity.ModelPO;
@@ -79,16 +79,16 @@ class ModelPackageTest {
         preItem.setPlugin("IP2LOCATION");
         pkg.setPreItems(List.of(preItem));
 
-        ActivationPO activation = new ActivationPO();
-        activation.setId(3L);
-        activation.setModelId(99L);
-        activation.setActivationName("activation_1");
-        pkg.setActivations(List.of(activation));
+        StrategyPO strategy = new StrategyPO();
+        strategy.setId(3L);
+        strategy.setModelId(99L);
+        strategy.setStrategyName("strategy_1");
+        pkg.setStrategies(List.of(strategy));
 
         RulePO rule = new RulePO();
         rule.setId(4L);
         rule.setModelId(99L);
-        rule.setActivationId(3L);
+        rule.setStrategyId(3L);
         rule.setName("rule_ip");
         rule.setScripts("def x = 1\nreturn x");
         pkg.setRules(List.of(rule));
@@ -108,7 +108,7 @@ class ModelPackageTest {
         assertEquals("IP2LOCATION", parsed.getPreItems().get(0).getPlugin());
         // 图内引用键保留（导入时才重映射）
         assertEquals(Long.valueOf(99L), parsed.getFields().get(0).getModelId());
-        assertEquals(Long.valueOf(3L), parsed.getRules().get(0).getActivationId());
+        assertEquals(Long.valueOf(3L), parsed.getRules().get(0).getStrategyId());
         assertTrue(parsed.getRules().get(0).getScripts().contains("def x = 1"));
     }
 
@@ -153,7 +153,7 @@ class ModelPackageTest {
         ModelPackage pkg = fullPackage();
         RulePO broken = new RulePO();
         broken.setId(5L);
-        broken.setActivationId(3L);
+        broken.setStrategyId(3L);
         broken.setName("rule_broken");
         broken.setScripts("def x = === definitely broken");
         pkg.setRules(List.of(pkg.getRules().get(0), broken));

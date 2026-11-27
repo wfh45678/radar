@@ -1,14 +1,18 @@
 package com.pgmmers.radar.model.vo.model;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.Serializable;
 import java.util.Date;
 
-public class ActivationVO implements Serializable{
+public class StrategyVO implements Serializable{
     static final long serialVersionUID = 65434232L;
 
     private Long id;
 
 
-    private String activationName;
+    private String strategyName;
+
+    /** 策略类型：RULE_SET/SCORECARD/DECISION_TREE（v4.0） */
+    private String type;
 
 
     private Long modelId;
@@ -34,10 +38,13 @@ public class ActivationVO implements Serializable{
 
 
     private Integer high;
-    
+
     private String ruleOrder;
-    
-    
+
+    /** 策略类型化定义（评分卡/决策树 JSON；规则集为空） */
+    private JsonNode definition;
+
+
     public Long getId() {
         return id;
     }
@@ -48,13 +55,23 @@ public class ActivationVO implements Serializable{
     }
 
 
-    public String getActivationName() {
-        return activationName;
+    public String getStrategyName() {
+        return strategyName;
     }
 
 
-    public void setActivationName(String activationName) {
-        this.activationName = activationName;
+    public void setStrategyName(String strategyName) {
+        this.strategyName = strategyName;
+    }
+
+
+    public String getType() {
+        return type;
+    }
+
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 
@@ -156,6 +173,14 @@ public class ActivationVO implements Serializable{
 	public void setRuleOrder(String ruleOrder) {
 		this.ruleOrder = ruleOrder;
 	}
-  
+
+
+	public JsonNode getDefinition() {
+		return definition;
+	}
+
+	public void setDefinition(JsonNode definition) {
+		this.definition = definition;
+	}
 
 }

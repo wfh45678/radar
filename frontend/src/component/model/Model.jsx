@@ -66,10 +66,10 @@ class Model extends React.Component{
                 key='datalist';break;
             case 'abstractionList':
                 key='abstractionList';break;
-            case 'activation':
+            case 'strategy':
             case 'ruleList':
             case 'historyRecordList':
-                key='activation';break;
+                key='strategy';break;
         }
         this.setState({
             current:key
@@ -174,7 +174,7 @@ class Model extends React.Component{
 					          { key:'preItem', label:<><CopyOutlined />预处理管理</> },
 					          { key:'datalist', label:<><AppstoreOutlined />黑/白名单管理</> },
 					          { key:'abstractionList', label:<><PictureOutlined />抽象处理</> },
-					          { key:'activation', label:<><SolutionOutlined />策略管理</> },
+					          { key:'strategy', label:<><SolutionOutlined />策略管理</> },
 					        ]}
 					      />
                     </div>

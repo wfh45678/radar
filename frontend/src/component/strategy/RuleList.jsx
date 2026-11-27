@@ -28,7 +28,7 @@ class RuleList extends Component{
             fieldList:[],
             dataList:[],
 
-            activation:null,
+            strategy:null,
             ruleOrder:[]
         }
 
@@ -49,7 +49,7 @@ class RuleList extends Component{
         var param={};
         param.pageNo=this.state.pageNo;
         param.pageSize=pageSize;
-        param.activationId=this.props.params.activationId;
+        param.strategyId=this.props.params.strategyId;
         param.label=this.state.label;
 
         FetchUtil('/rule','POST',JSON.stringify(param),
@@ -156,9 +156,9 @@ class RuleList extends Component{
 
     handleReOrder=(ruleOrder=this.state.ruleOrder,showMessage=false)=>{
         let formData = new FormData(); 
-        formData.append("activationId",this.props.params.activationId);
+        formData.append("strategyId",this.props.params.strategyId);
         formData.append("ruleOrder",ruleOrder.join(','));
-        fetch(fetchVersion+'/activation/updateOrder',{credentials: 'include',method: 'POST',
+        fetch(fetchVersion+'/strategy/updateOrder',{credentials: 'include',method: 'POST',
             body:formData})
             .then((res) => {
                 if(res.ok){ 
@@ -244,7 +244,7 @@ class RuleList extends Component{
 
     componentDidMount() {
         this.fetchTableData();
-        FetchUtil('/activation/feature/columns/'+this.props.params.id,'GET','',
+        FetchUtil('/strategy/feature/columns/'+this.props.params.id,'GET','',
         	(data) => {
                 this.setState({
                     fieldList:data.data.list
@@ -281,8 +281,8 @@ class RuleList extends Component{
                             return  true; 
                         }
                     }).map((info,index)=>{
-                        return (<Collapse ruleId={info.id} ruleOrder={this.state.ruleOrder} switcher={info.status=='1'} modelId={this.props.params.id} activationId={this.props.params.activationId} type="calendar" onSwitch={this.handleSwitch.bind(this,info)} key={info.id?info.id:index} title={info.label?info.label:'新增（请保存）'}>
-                            <Rule rule={info} modelId={this.props.params.id} activationId={this.props.params.activationId} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData} delete={this.handleDelete.bind(this,index)}/>
+                        return (<Collapse ruleId={info.id} ruleOrder={this.state.ruleOrder} switcher={info.status=='1'} modelId={this.props.params.id} strategyId={this.props.params.strategyId} type="calendar" onSwitch={this.handleSwitch.bind(this,info)} key={info.id?info.id:index} title={info.label?info.label:'新增（请保存）'}>
+                            <Rule rule={info} modelId={this.props.params.id} strategyId={this.props.params.strategyId} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData} delete={this.handleDelete.bind(this,index)}/>
                         </Collapse>);
                     })
                     }

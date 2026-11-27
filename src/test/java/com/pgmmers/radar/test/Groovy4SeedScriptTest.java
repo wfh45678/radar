@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
  * L2 种子脚本回归：radar-init.sql（2019 基线）中的全部 Groovy 脚本在 Groovy 4 下编译与执行。
  * 这是 Groovy 2.4 → 4.0 升级的兼容性闸门（v2.0 冒烟结论的自动化固化）。
  *
- * <p>脚本格式统一：{@code class ActivationCheckScript / AbstractionCheckScript { boolean check(def data, def lists) }}。</p>
+ * <p>脚本格式统一：{@code class StrategyCheckScript / AbstractionCheckScript { boolean check(def data, def lists) }}。</p>
  *
  * <p>断言策略：
  * 编译必须 100% 通过（硬断言）；
@@ -38,7 +38,7 @@ class Groovy4SeedScriptTest {
     private static final Pattern QUOTED = Pattern.compile("'((?:\\\\.|[^'\\\\])*)'");
 
     private static final Pattern SCRIPT_FIELD = Pattern.compile(
-            "class (ActivationCheckScript|AbstractionCheckScript)");
+            "class (StrategyCheckScript|AbstractionCheckScript)");
 
     /** 脚本内 data.xxx.yyy（含更深属性链）引用，用于合成数据预填 */
     private static final Pattern DATA_REF = Pattern.compile("data\\.(\\w+)\\.(\\w+)((?:\\.\\w+)*)");

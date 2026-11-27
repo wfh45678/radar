@@ -1,7 +1,7 @@
 package com.pgmmers.radar.test;
 
 import com.pgmmers.radar.mapper.AbstractionMapper;
-import com.pgmmers.radar.mapper.ActivationMapper;
+import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
 import com.pgmmers.radar.mapper.DataListRecordMapper;
 import com.pgmmers.radar.mapper.DataListsMapper;
@@ -13,7 +13,7 @@ import com.pgmmers.radar.mapper.RuleHistoryMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
 import com.pgmmers.radar.mapper.UserMapper;
 import com.pgmmers.radar.converter.AbstractionMapping;
-import com.pgmmers.radar.converter.ActivationMapping;
+import com.pgmmers.radar.converter.StrategyMapping;
 import com.pgmmers.radar.converter.DataListMetaMapping;
 import com.pgmmers.radar.converter.DataListRecordMapping;
 import com.pgmmers.radar.converter.DataListsMapping;
@@ -25,7 +25,7 @@ import com.pgmmers.radar.converter.RuleHistoryMapping;
 import com.pgmmers.radar.converter.RuleMapping;
 import com.pgmmers.radar.converter.UserMapping;
 import com.pgmmers.radar.model.entity.AbstractionPO;
-import com.pgmmers.radar.model.entity.ActivationPO;
+import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListMetaPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.DataListsPO;
@@ -39,7 +39,7 @@ import com.pgmmers.radar.model.entity.UserPO;
 import com.pgmmers.radar.model.vo.admin.UserVO;
 import com.pgmmers.radar.model.vo.data.MobileInfoVO;
 import com.pgmmers.radar.model.vo.model.AbstractionVO;
-import com.pgmmers.radar.model.vo.model.ActivationVO;
+import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListMetaVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
@@ -75,9 +75,9 @@ public class MapStructTest extends AbstractIntegrationTest {
     @Autowired
     private AbstractionMapper abstractionMapper;
     @Resource
-    private ActivationMapping activationMapping;
+    private StrategyMapping strategyMapping;
     @Autowired
-    private ActivationMapper activationMapper;
+    private StrategyMapper strategyMapper;
     @Resource
     private FieldMapping fieldMapping;
     @Autowired
@@ -108,12 +108,12 @@ public class MapStructTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void activationTest() {
-        List<ActivationPO> pos = activationMapper.selectList(null);
+    public void strategyTest() {
+        List<StrategyPO> pos = strategyMapper.selectList(null);
         Assertions.assertNotNull(pos);
-        List<ActivationVO> vos = activationMapping.sourceToTarget(pos);
+        List<StrategyVO> vos = strategyMapping.sourceToTarget(pos);
         Assertions.assertNotNull(vos);
-        List<ActivationPO> pos1 = activationMapping.targetToSource(vos);
+        List<StrategyPO> pos1 = strategyMapping.targetToSource(vos);
         Assertions.assertNotNull(pos1);
 
     }

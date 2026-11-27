@@ -9,7 +9,7 @@ import com.mongodb.client.model.IndexOptions;
 import com.pgmmers.radar.model.query.ModelQuery;
 import com.pgmmers.radar.model.query.PageResult;
 import com.pgmmers.radar.converter.AbstractionMapping;
-import com.pgmmers.radar.converter.ActivationMapping;
+import com.pgmmers.radar.converter.StrategyMapping;
 import com.pgmmers.radar.converter.FieldMapping;
 import com.pgmmers.radar.converter.ModelMapping;
 import com.pgmmers.radar.converter.PreItemMapping;
@@ -17,7 +17,7 @@ import com.pgmmers.radar.converter.RuleMapping;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.enums.StatusType;
 import com.pgmmers.radar.mapper.AbstractionMapper;
-import com.pgmmers.radar.mapper.ActivationMapper;
+import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
 import com.pgmmers.radar.mapper.DataListRecordMapper;
 import com.pgmmers.radar.mapper.DataListsMapper;
@@ -26,7 +26,7 @@ import com.pgmmers.radar.mapper.ModelMapper;
 import com.pgmmers.radar.mapper.PreItemMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
 import com.pgmmers.radar.model.entity.AbstractionPO;
-import com.pgmmers.radar.model.entity.ActivationPO;
+import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListMetaPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.DataListsPO;
@@ -45,7 +45,7 @@ import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.common.util.JsonUtils;
 import com.pgmmers.radar.model.vo.model.AbstractionVO;
-import com.pgmmers.radar.model.vo.model.ActivationVO;
+import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
 import com.pgmmers.radar.model.vo.model.ModelVO;
 import com.pgmmers.radar.model.vo.model.PreItemVO;
@@ -83,7 +83,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     @Autowired
     private AbstractionMapper abstractionMapper;
     @Autowired
-    private ActivationMapper activationMapper;
+    private StrategyMapper strategyMapper;
     @Autowired
     private DataListsMapper dataListMapper;
     @Autowired
@@ -105,7 +105,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     @Resource
     private AbstractionMapping abstractionMapping;
     @Resource
-    private ActivationMapping activationMapping;
+    private StrategyMapping strategyMapping;
     @Resource
     private PreItemMapping preItemMapping;
 
@@ -318,7 +318,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         preItemMapper.delete(new LambdaQueryWrapper<PreItemPO>().in(PreItemPO::getModelId, Arrays.asList(ids)));
         dataListMapper.delete(new LambdaQueryWrapper<DataListsPO>().in(DataListsPO::getModelId, Arrays.asList(ids)));
         abstractionMapper.delete(new LambdaQueryWrapper<AbstractionPO>().in(AbstractionPO::getModelId, Arrays.asList(ids)));
-        activationMapper.delete(new LambdaQueryWrapper<ActivationPO>().in(ActivationPO::getModelId, Arrays.asList(ids)));
+        strategyMapper.delete(new LambdaQueryWrapper<StrategyPO>().in(StrategyPO::getModelId, Arrays.asList(ids)));
         ruleMapper.delete(new LambdaQueryWrapper<RulePO>().in(RulePO::getModelId, Arrays.asList(ids)));
 
         if (count > 0) {
@@ -482,7 +482,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
                 dataListMetaOf(oldId),
                 dataListRecordOf(oldId),
                 abstractionMapper.selectList(new LambdaQueryWrapper<AbstractionPO>().eq(AbstractionPO::getModelId, oldId)),
-                activationMapper.selectList(new LambdaQueryWrapper<ActivationPO>().eq(ActivationPO::getModelId, oldId)),
+                strategyMapper.selectList(new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, oldId)),
                 rulesOf(oldId));
         return count;
     }
@@ -508,11 +508,11 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
 
     /** 源模型的规则（激活下挂，装配入参收集）。 */
     private List<RulePO> rulesOf(Long modelId) {
-        List<Long> ids = activationMapper.selectList(
-                        new LambdaQueryWrapper<ActivationPO>().eq(ActivationPO::getModelId, modelId))
-                .stream().map(ActivationPO::getId).collect(Collectors.toList());
+        List<Long> ids = strategyMapper.selectList(
+                        new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, modelId))
+                .stream().map(StrategyPO::getId).collect(Collectors.toList());
         return ids.isEmpty() ? List.of()
-                : ruleMapper.selectList(new LambdaQueryWrapper<RulePO>().in(RulePO::getActivationId, ids));
+                : ruleMapper.selectList(new LambdaQueryWrapper<RulePO>().in(RulePO::getStrategyId, ids));
     }
 
     @Override

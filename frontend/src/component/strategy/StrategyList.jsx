@@ -7,10 +7,10 @@ const FormItem = Form.Item;
 import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
 
-import AddActivation from './modal/AddActivation';
-import EditActivation from './modal/EditActivation';
+import AddStrategy from './modal/AddStrategy';
+import EditStrategy from './modal/EditStrategy';
 
-class Activation extends React.Component{
+class Strategy extends React.Component{
     constructor(props){
         super(props);
 
@@ -48,7 +48,7 @@ class Activation extends React.Component{
         param.name=this.state.name;
         param.label=this.state.label;
 
-        FetchUtil('/activation','POST',JSON.stringify(param),
+        FetchUtil('/strategy','POST',JSON.stringify(param),
         	(data) => {
                 this.setState({loading:false});
                 this.setState({
@@ -83,8 +83,8 @@ class Activation extends React.Component{
         this.fetchTableData();
     }
 
-    deleteActivation=(id)=>{
-        FetchUtil('/activation/','DELETE','['+id+']',
+    deleteStrategy=(id)=>{
+        FetchUtil('/strategy/','DELETE','['+id+']',
         	(data) => {
                 message.info('删除成功!');
                 this.fetchTableData();
@@ -92,7 +92,7 @@ class Activation extends React.Component{
     }   
 
     handleCopy=(id)=>{
-        FetchUtil('/activation/copy','POST',id,
+        FetchUtil('/strategy/copy','POST',id,
             (data) => {
                 message.info('Copy成功!');
                 this.fetchTableData();
@@ -101,12 +101,12 @@ class Activation extends React.Component{
     changeStatus=(id, checked)=>{
         console.log(`switch to ${id}, ${checked}`);
         if (checked) {
-            FetchUtil('/activation/enable/' + id, 'POST','',
+            FetchUtil('/strategy/enable/' + id, 'POST','',
                 (data) => {
                     message.info('已启用!');
                 });
         } else {
-            FetchUtil('/activation/disable/' + id, 'POST','',
+            FetchUtil('/strategy/disable/' + id, 'POST','',
                 (data) => {
                     message.info('已停用!');
                 });   
@@ -143,11 +143,11 @@ class Activation extends React.Component{
                     <span>
                         <Tooltip title="复制"><a onClick={this.handleCopy.bind(this,r.id)}>复制</a></Tooltip>
                         <span className="ant-divider"></span>
-                    	<EditActivation modelId={this.props.params.id} row={r} reload={this.fetchTableData}/>
+                    	<EditStrategy modelId={this.props.params.id} row={r} reload={this.fetchTableData}/>
                         <span className="ant-divider"></span>
                     	<Tooltip title="管理规则"><Link to={"/ruleList/"+r.modelId+"/"+r.id}>管理规则</Link></Tooltip>
                         <span className="ant-divider"></span>
-                        <Popconfirm placement="bottomRight" title={'确认删除该字段吗？'} onConfirm={this.deleteActivation.bind(this,r.id)}>
+                        <Popconfirm placement="bottomRight" title={'确认删除该字段吗？'} onConfirm={this.deleteStrategy.bind(this,r.id)}>
                             <Tooltip title="删除"><a style={{color:'#FD5B5B'}}>删除</a></Tooltip>
                         </Popconfirm>
                         <span className="ant-divider"></span>
@@ -165,7 +165,7 @@ class Activation extends React.Component{
                             <Input value={this.state.name} name="name" id="blue" onChange={this.handleChange}/>
                         </FormItem>
                         {' '}
-                        <AddActivation modelId={this.props.params.id} reload={this.fetchTableData} />
+                        <AddStrategy modelId={this.props.params.id} reload={this.fetchTableData} />
                     </Form>
                 </div>
 
@@ -196,4 +196,4 @@ class Activation extends React.Component{
     }
 }
 
-export default withParams(Activation);
+export default withParams(Strategy);

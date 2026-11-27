@@ -137,7 +137,7 @@ export default class Rule extends React.Component{
 				param.id=this.props.rule.id;
 			}
 			param.modelId=this.props.modelId;
-			param.activationId=this.props.activationId;
+			param.strategyId=this.props.strategyId;
 			param.label=this.state.label;
 			param.initScore=this.state.initScore,
 			param.baseNum=this.state.baseNum,
@@ -146,7 +146,7 @@ export default class Rule extends React.Component{
 			param.rate=this.state.rate,
 			param.max=this.state.max,
 			param.ruleDefinition=this.state.ruleDefinition;
-			param.scripts=generateScript(this.state.ruleDefinition,"Activation");
+			param.scripts=generateScript(this.state.ruleDefinition,"Strategy");
 			param.status=1;
 
 		    FetchUtil('/rule/','PUT',JSON.stringify(param),

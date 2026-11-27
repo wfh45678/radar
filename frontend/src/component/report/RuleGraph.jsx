@@ -132,7 +132,7 @@ class RuleGraph extends React.Component{
 				title: '操作',
 				dataIndex: 'handle',
 				render:(t,r)=>{
-					return <Link to={"/ruleid/"+this.props.modelId+"/"+r.id+"/"+r.activationName} target="_blank">查看明细</Link>;
+					return <Link to={"/ruleid/"+this.props.modelId+"/"+r.id+"/"+r.strategyName} target="_blank">查看明细</Link>;
 				}
 
 			}

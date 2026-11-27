@@ -3,7 +3,7 @@ package com.pgmmers.radar.service.cache;
 
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.model.vo.model.AbstractionVO;
-import com.pgmmers.radar.model.vo.model.ActivationVO;
+import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
@@ -40,9 +40,9 @@ public interface CacheService {
 
      void subscribeRule(SubscribeHandle handler);
 
-     void publishActivation(ActivationVO activation);
+     void publishStrategy(StrategyVO strategy);
 
-     void subscribeActivation(SubscribeHandle handler);
+     void subscribeStrategy(SubscribeHandle handler);
 
      void publishDataListRecord(DataListRecordVO record);
      void subscribeDataListRecord(SubscribeHandle handler);

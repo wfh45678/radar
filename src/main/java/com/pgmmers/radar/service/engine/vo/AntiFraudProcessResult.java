@@ -1,6 +1,8 @@
 package com.pgmmers.radar.service.engine.vo;
 
 
+import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pgmmers.radar.service.common.CommonResult;
 
 import java.util.HashMap;
@@ -12,8 +14,13 @@ public class AntiFraudProcessResult extends CommonResult {
     private Map<String, ?> abstractions;
 
     private Map<String, ?> adaptations;
-    
-    private Map<String, ?> activations;
+
+    /**
+     * 策略执行结果（v4.0 起"激活器"更名"策略"；字段名保持 activations 以兼容引擎接口调用方与 ES 报表）。
+     */
+    @JsonProperty("activations")
+    @JSONField(name = "activations")
+    private Map<String, ?> strategies;
     
     private Map<String, List<HitObject>> hitsDetail = new HashMap<>();
     
@@ -35,12 +42,12 @@ public class AntiFraudProcessResult extends CommonResult {
         this.adaptations = adaptations;
     }
 
-    public Map<String, ?> getActivations() {
-        return activations;
+    public Map<String, ?> getStrategies() {
+        return strategies;
     }
 
-    public void setActivations(Map<String, ?> activations) {
-        this.activations = activations;
+    public void setStrategies(Map<String, ?> strategies) {
+        this.strategies = strategies;
     }
 
     public Map<String, Object> getRespTimes() {

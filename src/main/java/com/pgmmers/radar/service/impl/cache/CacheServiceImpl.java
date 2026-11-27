@@ -6,7 +6,7 @@ import com.pgmmers.radar.service.cache.RedisService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.model.vo.model.AbstractionVO;
-import com.pgmmers.radar.model.vo.model.ActivationVO;
+import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
@@ -30,7 +30,7 @@ public class CacheServiceImpl implements CacheService {
     public static final String PUB_SUB_PREITEM_CHANNEL = "radar_channel_preitem";
     public static final String PUB_SUB_ABSTRACTION_CHANNEL = "radar_channel_abstraction";
     public static final String PUB_SUB_RULE_CHANNEL = "radar_channel_rule";
-    public static final String PUB_SUB_ACTIVATION_CHANNEL = "radar_channel_activation";
+    public static final String PUB_SUB_STRATEGY_CHANNEL = "radar_channel_strategy";
     public static final String PUB_SUB_LISTRECORD_CHANNEL = "radar_channel_listrecord";
     public static final String PUB_SUB_DATALIST_CHANNEL = "radar_channel_datalist";
     public static final String LOGIN_CAPTCHA_PREFIX = "log_captcha_";
@@ -112,14 +112,14 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public void publishActivation(ActivationVO activation) {
-        redisService.publish(PUB_SUB_ACTIVATION_CHANNEL, JSON.toJSONString(activation));
+    public void publishStrategy(StrategyVO strategy) {
+        redisService.publish(PUB_SUB_STRATEGY_CHANNEL, JSON.toJSONString(strategy));
 
     }
 
     @Override
-    public void subscribeActivation(SubscribeHandle handler) {
-        redisService.subscribe(PUB_SUB_ACTIVATION_CHANNEL, handler);
+    public void subscribeStrategy(SubscribeHandle handler) {
+        redisService.subscribe(PUB_SUB_STRATEGY_CHANNEL, handler);
 
     }
 

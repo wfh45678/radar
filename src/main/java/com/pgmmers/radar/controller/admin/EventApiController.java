@@ -23,12 +23,12 @@ import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginEntry;
 import org.apache.commons.lang3.StringUtils;
 import com.pgmmers.radar.service.logs.EventService;
-import com.pgmmers.radar.service.model.ActivationService;
+import com.pgmmers.radar.service.model.StrategyService;
 import com.pgmmers.radar.service.model.FieldService;
 import com.pgmmers.radar.service.model.PreItemService;
 import com.pgmmers.radar.service.model.RuleService;
 import com.pgmmers.radar.model.vo.common.FieldValueVO;
-import com.pgmmers.radar.model.vo.model.ActivationVO;
+import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
 import com.pgmmers.radar.model.vo.model.PreItemVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
@@ -65,7 +65,7 @@ public class EventApiController {
     private PreItemService preItemService;
 
     @Autowired
-    private ActivationService activationService;
+    private StrategyService strategyService;
 
     @Autowired
     private RuleService ruleService;
@@ -123,7 +123,7 @@ public class EventApiController {
         }
         String[] fieldIds = query.getFields();
         String[] preItems = query.getPreItems();
-        String[] activations = query.getActivations();
+        String[] strategies = query.getStrategies();
         String[] rules = query.getRules();
 
         Map<String, String> fieldIdMap = new HashMap<>();
@@ -139,8 +139,8 @@ public class EventApiController {
             itemsIdMap.put(preItems[i], "");
         }
 
-        for (int i = 0; i < activations.length; i++) {
-            actIdMap.put(activations[i], "");
+        for (int i = 0; i < strategies.length; i++) {
+            actIdMap.put(strategies[i], "");
         }
 
         for (int i = 0; i < rules.length; i++) {
@@ -157,17 +157,17 @@ public class EventApiController {
         List<FieldVO> fieldList = fieldService.listField(term.getModelId());
         List<PreItemVO> preitemList = preItemService.listPreItem(term
                 .getModelId());
-        List<ActivationVO> activationList = activationService
-                .listActivation(term.getModelId());
+        List<StrategyVO> strategyList = strategyService
+                .listStrategy(term.getModelId());
         List<RuleVO> ruleList = ruleService
                 .listRuleByModelId(term.getModelId());
 
-        // 关联 rule id　与　activation
-        for (ActivationVO act : activationList) {
+        // 关联 rule id　与　strategy
+        for (StrategyVO act : strategyList) {
             List<RuleVO> ruleVOList = ruleService.listRule(act.getId());
             for (RuleVO rule : ruleVOList) {
                 if (ruleIdMap.containsKey(rule.getName())) {
-                    ruleIdMap.put(rule.getName(), act.getActivationName());
+                    ruleIdMap.put(rule.getName(), act.getStrategyName());
                 }
             }
         }
@@ -211,15 +211,15 @@ public class EventApiController {
             }
         }
 
-        // activation field
+        // strategy field
         List<Object> keyList4Act = new ArrayList<>();
         List<String> titleList4Act = new ArrayList<>();
-        for (ActivationVO act : activationList) {
-            if (!actIdMap.containsKey(act.getActivationName())) {
+        for (StrategyVO act : strategyList) {
+            if (!actIdMap.containsKey(act.getStrategyName())) {
                 continue;
             }
-            keyList4Act.add(new FieldValueVO(act.getActivationName(), "risk"));
-            keyList4Act.add(new FieldValueVO(act.getActivationName(), "score"));
+            keyList4Act.add(new FieldValueVO(act.getStrategyName(), "risk"));
+            keyList4Act.add(new FieldValueVO(act.getStrategyName(), "score"));
             titleList4Act.add(act.getLabel() + "." + "风险级别");
             titleList4Act.add(act.getLabel() + "." + "分数");
         }
@@ -304,15 +304,15 @@ public class EventApiController {
             list.add(ds);
         }
 
-        // 3、ACTIVATION
-        ds = new DataColumnInfo(DataType.ACTIVATIONS.getDesc(),
-                DataType.ACTIVATIONS.getName());
-        List<ActivationVO> listActivation = activationService
-                .listActivation(modelId);
-        if (listActivation != null && listActivation.size() != 0) {
-            for (ActivationVO activation : listActivation) {
-                ds.addChildren(activation.getLabel(),
-                        activation.getActivationName(), "");
+        // 3、STRATEGY
+        ds = new DataColumnInfo(DataType.STRATEGIES.getDesc(),
+                DataType.STRATEGIES.getName());
+        List<StrategyVO> listStrategy = strategyService
+                .listStrategy(modelId);
+        if (listStrategy != null && listStrategy.size() != 0) {
+            for (StrategyVO strategy : listStrategy) {
+                ds.addChildren(strategy.getLabel(),
+                        strategy.getStrategyName(), "");
             }
             list.add(ds);
         }

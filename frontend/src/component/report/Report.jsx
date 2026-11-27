@@ -19,7 +19,7 @@ class Report extends React.Component{
             modelId:'',
             fieldList:[],
             eventFieldList:[],
-            activationList:[]
+            strategyList:[]
 		}
 	}
 
@@ -47,10 +47,10 @@ class Report extends React.Component{
                 eventFieldList:data.data.list
             });
         });
-        FetchUtil('/activation/rule/columns/'+value,'GET','',
+        FetchUtil('/strategy/rule/columns/'+value,'GET','',
         (data) => {
             this.setState({
-                activationList:data.data.list,
+                strategyList:data.data.list,
             });
         });
     }
@@ -99,7 +99,7 @@ class Report extends React.Component{
             model:this.state.modelList.filter(x=>x.id==this.state.modelId)[0],
             fieldList:this.state.fieldList,
             eventFieldList:this.state.eventFieldList,
-            activationList:this.state.activationList
+            strategyList:this.state.strategyList
         }
         return <Outlet context={ctx}/>;
     }

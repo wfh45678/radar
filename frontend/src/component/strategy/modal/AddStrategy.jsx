@@ -8,7 +8,7 @@ const RadioGroup = Radio.Group;
 import {FetchUtil} from '../../utils/fetchUtil';
 import {trim} from '../../utils/validateUtil';
 
-export default class AddActivation extends React.Component{
+export default class AddStrategy extends React.Component{
 
 	constructor(props){
 		super(props);
@@ -16,7 +16,7 @@ export default class AddActivation extends React.Component{
 		this.state={
 			open:false,
 
-			activationName:'',
+			strategyName:'',
 			label:'',
 			comment:'',
 			bottom:'',
@@ -43,7 +43,7 @@ export default class AddActivation extends React.Component{
 
 	showModal=()=>{
 		this.setState({
-			activationName:'',
+			strategyName:'',
 			label:'',
 			comment:'',
 			bottom:'',
@@ -63,7 +63,7 @@ export default class AddActivation extends React.Component{
 		else{
 			var param={};
 			param.modelId=this.props.modelId;
-			param.activationName=this.state.activationName;
+			param.strategyName=this.state.strategyName;
 			param.label=this.state.label;
 			param.comment=this.state.comment;
 			param.bottom=this.state.bottom;
@@ -71,7 +71,7 @@ export default class AddActivation extends React.Component{
 			param.high=this.state.high;
 			param.status=1;
 
-			FetchUtil('/activation/','PUT',JSON.stringify(param),
+			FetchUtil('/strategy/','PUT',JSON.stringify(param),
 		    	(data) => {
 		    		if(data.success){
 		    			message.success('添加成功');

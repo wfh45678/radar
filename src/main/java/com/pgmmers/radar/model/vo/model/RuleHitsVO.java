@@ -7,9 +7,9 @@ public class RuleHitsVO implements Comparable<RuleHitsVO> ,Serializable{
 
     private long id;
 
-    private String activationName;
+    private String strategyName;
     
-    private String activationLable;
+    private String strategyLable;
     
     private String ruleLable;
 
@@ -55,12 +55,12 @@ public class RuleHitsVO implements Comparable<RuleHitsVO> ,Serializable{
         }
     }
 
-    public String getActivationLable() {
-        return activationLable;
+    public String getStrategyLable() {
+        return strategyLable;
     }
 
-    public void setActivationLable(String activationLable) {
-        this.activationLable = activationLable;
+    public void setStrategyLable(String strategyLable) {
+        this.strategyLable = strategyLable;
     }
 
     public String getRuleLable() {
@@ -71,12 +71,12 @@ public class RuleHitsVO implements Comparable<RuleHitsVO> ,Serializable{
         this.ruleLable = ruleLable;
     }
 
-    public String getActivationName() {
-        return activationName;
+    public String getStrategyName() {
+        return strategyName;
     }
 
-    public void setActivationName(String activationName) {
-        this.activationName = activationName;
+    public void setStrategyName(String strategyName) {
+        this.strategyName = strategyName;
     }
 
     

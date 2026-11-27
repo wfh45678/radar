@@ -2,7 +2,7 @@ package com.pgmmers.radar.service.engine;
 
 
 import com.pgmmers.radar.service.engine.vo.AbstractionResult;
-import com.pgmmers.radar.service.engine.vo.ActivationResult;
+import com.pgmmers.radar.service.engine.vo.StrategyResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 
 import java.util.Map;
@@ -35,6 +35,6 @@ public interface AntiFraudEngine {
       * @param data
       * @return
       */
-     ActivationResult executeActivation(Long modelId, Map<String, Map<String, ?>> data);
+     StrategyResult executeStrategy(Long modelId, Map<String, Map<String, ?>> data);
 
 }
