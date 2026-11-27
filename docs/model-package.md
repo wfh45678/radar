@@ -20,17 +20,22 @@
   "dataListMeta":    [ "..." ],
   "dataListRecords": [ "..." ],
   "abstractions":    [ "..." ],
-  "activations": [ "..." ],
+  "activations": [ { "activationName": "...", "type": "RULE_SET|SCORECARD|DECISION_TREE", "definition": "类型化定义（JSON 字符串形态，v4.0）", "...": "..." } ],
   "rules":       [ "...": { "scripts": "内嵌 Groovy 规则脚本" } ]
 }
 ```
 
-- 范围对齐单实例「复制」：`engine_model` + `engine_field/pre_item/data_lists(+meta/record)/abstraction/activation/rule`；
+- 范围对齐单实例「复制」：`engine_model` + `engine_field/pre_item/data_lists(+meta/record)/abstraction/strategy/rule`；
   事件流水、规则历史**不在包内**（运行数据不随策略分发）；
 - `engine_model_conf(+param)`（ML 特征 feed/expressions 配置）**不入包**——Estimator 自 v2.0 零实现，
   该配置处于休眠状态，待 ML 模块重做后随新方案扩展；
 - 文件内保留原 ID 作为**图内引用键**（`activationId`/`dataListId` 等），导入时整图重映射分配新 ID；
-- `formatVersion` 由导入端协商：不识别的版本会被拒绝并提示所需版本。
+- `formatVersion` 由导入端协商：不识别的版本会被拒绝并提示所需版本；
+- **v4.0 兼容性**：信封键 `activations` 与条目键 `activationName`/`activationId` **保持 v3.x 原名不变**
+  （代码内部已更名"策略 Strategy"），v3.x 导出的包可直接导入 v4.0；v4.0 新增条目字段
+  `type`（缺省按 RULE_SET 处理）与 `definition`（评分卡/决策树的 JSON 定义，**字符串形态**，
+  与 `ruleDefinition` 同约定），旧引擎不识别这两个字段——v4.0 导出的含评分卡/决策树的包
+  导入 v3.x 会丢失对应策略，请先升级引擎。
 
 ## 2. 导入语义
 

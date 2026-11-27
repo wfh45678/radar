@@ -2,6 +2,54 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [4.0.0] - 2026-11-27
+
+破坏性大版本：策略板块重构（[plan-v4.0](docs/plan-v4.0.md)、[升级指南](docs/upgrade-guide.md)）。
+"激活器（Activation）"更名"策略（Strategy）"并类型化——README/docs 宣示的多策略类型自此落地实现。
+
+### Added
+- **策略类型执行器 SPI**（v4.0 核心）：`StrategyExecutor` + `StrategyExecutorRegistry`
+  （范式对齐 PluginManager），引擎编排层按 `engine_strategy.TYPE` 分发、单策略异常隔离、
+  扩展新类型零改动编排层
+- **评分卡（SCORECARD）**：特征分箱加权求和（首个命中分箱生效 × 权重 + 初始分），阈值出决策；
+  `ScoreCardExecutor` 后端解释执行，命中明细逐特征输出（feature_*）
+- **决策树（DECISION_TREE）**：条件节点路径走查、叶节点直出决策（pass/review/reject + 分数 + 理由），
+  命中明细记录访问路径（node_*）；环防护（步数上限）与脏数据校验（重复 id/悬空分支/非法叶决策）
+- **后端条件求值器 `ConditionEvaluator`**：直接解释 ruleDefinition 同构 JSON（PDCT/SMPL +
+  20 个操作符，语义与前端 Groovy 编译器逐条对齐），不再依赖前端生成脚本；为后续规则集后端化解析铺路
+- **策略定义变更历史**：`engine_strategy_history` 评分卡/决策树保存快照（操作人/类型/定义），
+  `GET /strategy/history/{id}` 查询 + 编辑器「变更历史」弹窗
+- **transaction-risk 官方模板升级**：新增交易风险评分卡（3 特征 9 分箱）与交易准入决策树（7 节点），
+  三种策略类型同模板可验
+- 策略级指标 `radar_strategy_executions_total{type,result}`（原有 `radar_rule_hits_total`/
+  `radar_strategy_decision_total` 不变）
+- L3 全链路 IT：模板导入 → 三种策略类型决策断言（`EngineFullChainTest.step4`）；
+  e2e 新增 `strategy-types.spec.ts`（列表类型徽标/评分卡编辑保存/决策树渲染）
+
+### Changed
+- **BREAKING｜概念更名**：`engine_activation` → `engine_strategy`（列 `ACTIVATION_NAME` →
+  `STRATEGY_NAME`）、`engine_rule.ACTIVATION_ID` → `STRATEGY_ID`，Java 类
+  `Activation*` → `Strategy*`，管理端 API `/services/v1/activation` → `/services/v1/strategy`，
+  前端路由/组件随迁——升级需执行 `sql/upgrade-4.0.0.sql` 并同步更换前端
+- **BREAKING｜策略新增字段**：`engine_strategy` 新增 `TYPE`（存量默认 RULE_SET，行为不变）与
+  `DEFINITION`（评分卡/决策树 JSON）
+- 新增策略弹窗支持类型选择（默认规则集）；策略列表新增类型徽标；详情路由
+  `#/strategyDetail/:modelId/:strategyId` 按类型分发（规则集界面不变）
+
+### 不变（兼容承诺）
+- **引擎决策接口响应结构不变**：`activations`/`hitsDetail`/`abstractions`/`respTimes` 键名保持
+  （Java 内部更名经 `@JsonProperty` 锚定），调用方与 ES 报表零改造
+- **策略包 JSON 格式不变**：信封键 `activations`、条目键 `activationName`/`activationId` 保持
+  （`@JsonProperty` 锚定），v3.x 导出的包可直接导入；新包新增条目字段 `type`/`definition`
+  （旧引擎不识别，建议先升级引擎再互导），`formatVersion` 保持 `1.0`
+- Redis pub/sub 通道、决策三段阈值语义、规则集执行逻辑（原样抽取为 `RuleSetExecutor`）不变
+
+### Verification
+- L1/L2：`mvn test` 60 测试全绿（新增 ConditionEvaluatorTest 11 例 + ScoreCardExecutorTest 6 例 +
+  DecisionTreeExecutorTest 6 例；92 种子脚本 Groovy4 兼容回归）
+- 前端 `npm run build` 通过；e2e 与 L3 需容器环境（CI 执行）
+- 存量兼容：模板库/策略包/种子数据回归测试全绿（transaction-risk 模板含三种类型可解析导入）
+
 ## [3.5.1] - 2026-11-27
 
 补丁版本：在线模板源首次真实点亮后回归发现的两个修复（官方托管文件已就绪于

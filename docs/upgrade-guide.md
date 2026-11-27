@@ -1,7 +1,36 @@
-# Radar 升级指南：v1.x → v3.x
+# Radar 升级指南：v1.x → v3.x → v4.0
 
 > 面向仍在运行 v1.x（2020-2021 年版本）或 v2.x 早期版本的存量用户。
 > v3.x 不是原地升级，而是一次"底座重铺、模型延续"的现代化——这份指南说清楚：什么变了、什么没变、怎么迁。
+
+## v3.x → v4.0.0（策略板块重构，破坏性）
+
+v4.0 把"激活器（Activation）"更名"策略（Strategy）"并类型化（规则集/评分卡/决策树），
+详见 [plan-v4.0.md](plan-v4.0.md)。升级成本低（一个脚本 + 换前端），心智与数据全保留：
+
+**必做两步**
+
+1. 执行增量脚本 `sql/upgrade-4.0.0.sql`（表更名 `engine_activation`→`engine_strategy`、
+   列更名、新增 `TYPE`/`DEFINITION` 列、新建策略历史表——存量策略 `TYPE` 默认 `RULE_SET`，
+   行为与升级前完全一致）；
+2. 前端随 v4.0 安装包内嵌发布，管理端 API 路径 `/services/v1/activation` → `/services/v1/strategy`
+   （自建脚本/工具直连管理端 API 的需同步修改；管理端 UI 用户无感知除地址外）。
+
+**不变（零改造承诺）**
+
+| 项 | 说明 |
+|----|------|
+| 引擎决策接口 | `/services/v1/upload`、`/getScore` 响应 JSON 键 `activations`/`hitsDetail` **保持原名**（代码内部更名经 @JsonProperty 锚定），业务调用方与 ES 报表零改造 |
+| 策略包 | JSON 键 `activations`/`activationName`/`activationId` 保持原名，v3.x 导出的包直接导入 v4.0；v4.0 新包条目新增 `type`/`definition` 字段（含评分卡/决策树的包导入旧引擎会丢策略，建议先升级） |
+| 规则集行为 | 原 Groovy 执行逻辑原样抽取为 RuleSetExecutor，决策三段阈值、命中明细结构、rule_history 均不变 |
+| 事件数据 | Mongo/ES 存量事件不动；context 键 `activations` 保持 |
+
+**升级后验收**
+
+1. `sql/upgrade-4.0.0.sql` 执行无报错；登录管理端 → 模型工作区"策略管理"页正常列出存量策略（类型徽标为"规则集"）；
+2. 上传测试事件 → 决策结果与升级前一致（分数/命中明细对比）；
+3. 新建一个"评分卡"或"决策树"策略（或从模板库导入 transaction-risk 模板体验三种类型）→ 保存 → 事件命中；
+4. `/actuator/prometheus` 出现 `radar_strategy_executions_total{type,result}` 序列。
 
 ## 版本时间线
 
@@ -19,6 +48,7 @@
 | v3.3.0 | 2026-11-22 | 开源基建：Dependabot/CodeQL + 文档站 + Playwright E2E |
 | v3.4.0 | 2026-11-23 | 官方模板库：三场景模板 + 在线源（一键创建） |
 | v3.5.0 | 2026-11-23 | 官方种子插件三件套 + E2E 扩面 |
+| v4.0.0 | 2026-11-27 | 策略板块重构：激活器更名策略 + 类型化（规则集/评分卡/决策树），见上方 v3.x → v4.0 章节 |
 
 ## 什么没变（心智可以全盘保留）
 

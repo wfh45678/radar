@@ -11,7 +11,7 @@ The project is called Radar: like a radar, it monitors every transaction in the 
 
 * real-time risk decisions, sub-100ms response in common scenarios
 * visual rule editor with rich operators
-* 6 strategy types: rule engine / decision tree / scorecard / decision table / list matching / rule sets
+* Multiple strategy types (v4.0): **rule sets** (Groovy condition summing) / **scorecards** (feature binning & weighting) / **decision trees** (path decisions) — extensible via the strategy executor SPI; decision tables & list matching on the roadmap
 * Groovy-powered rule engine — scripts recompiled and effective immediately
 * plugin ecosystem (v3.0: external jars with dynamic forms)
 * single-module monolith (Java 17 + Spring Boot 3.5): one jar serves admin console + engine API
