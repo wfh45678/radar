@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 @RestController
 @RequestMapping("/services/v1/strategy")
-@Tag(name = "策略集API", description = "策略集管理相关操作")
+@Tag(name = "策略API", description = "策略管理相关操作（v4.0 起原「激活器/策略集」统一称「策略」）")
 public class StrategyApiController {
 
     /**
@@ -39,6 +39,9 @@ public class StrategyApiController {
      */
     @Autowired
     private StrategyService strategyService;
+
+    @Autowired
+    private com.pgmmers.radar.interceptor.ContextHolder contextHolder;
 
     @Autowired
     private FieldService fieldService;
@@ -153,7 +156,17 @@ public class StrategyApiController {
 
 	@PutMapping
     public CommonResult save(@RequestBody StrategyVO strategy) {
-        return strategyService.save(strategy);
+        return strategyService.save(strategy, contextHolder.getContext().getUsername());
+    }
+
+    /** 策略定义变更历史（v4.0：评分卡/决策树保存快照） */
+    @GetMapping("/history/{strategyId}")
+    public CommonResult history(@PathVariable Long strategyId) {
+        CommonResult result = new CommonResult();
+        List<StrategyHistoryVO> history = strategyService.listHistory(strategyId);
+        result.setSuccess(true);
+        result.getData().put("list", history);
+        return result;
     }
 
     @DeleteMapping

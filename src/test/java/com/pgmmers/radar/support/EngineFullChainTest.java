@@ -1,5 +1,6 @@
 package com.pgmmers.radar.support;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -199,6 +200,7 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                 "\"eventId\":\"" + REQ_ID + "_b\""));
         JSONObject upload2 = parse(exchange(HttpMethod.POST, "/services/v1/uploadInfo",
                 new HttpEntity<>(uploadForm2, formHeaders())), "事件上传2");
+        // activations 键为引擎对外契约（v4.0 策略更名后保持不变）
         assertTrue(upload2.containsKey("activations")
                         && !upload2.getJSONObject("activations").isEmpty(),
                 "上传结果应包含 activations 决策: " + upload2);
@@ -228,5 +230,79 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                 withAuth(new JSONObject(search).toJSONString())), "事件检索");
         JSONObject eventData = events.getJSONObject("data");
         assertFalse(eventData == null, "事件检索数据缺失");
+    }
+
+    /**
+     * v4.0 策略类型全链路：导入 transaction-risk 官方模板（含 规则集+评分卡+决策树 三种类型）
+     * → build → enable → 事件上传 → 断言三种策略均产出决策与命中明细
+     * （评分卡 hitsDetail 为 feature_* 特征分箱，决策树为 node_* 访问路径）。
+     */
+    @Test
+    @Order(4)
+    void step4_strategyTypesEndToEnd() {
+        assertTrue(authToken != null, "依赖 step1 登录态");
+        // 模板库应含 transaction-risk（v4.0 起该模板覆盖三种策略类型）
+        JSONObject library = parse(exchange(HttpMethod.GET, "/services/v1/model/templates",
+                withAuth(null)), "模板库");
+        JSONArray templateList = library.getJSONObject("data").getJSONArray("list");
+        if (templateList == null) {
+            templateList = library.getJSONObject("data").getJSONArray("templates");
+        }
+        assertNotNull(templateList, "模板库列表缺失: " + library);
+        assertTrue(templateList.stream().map(t -> (JSONObject) t)
+                        .anyMatch(t -> "transaction-risk".equals(t.getString("key"))),
+                "模板库缺少 transaction-risk: " + templateList);
+
+        // 导入（label/modelName 仅用于本次回查定位，label 唯一）
+        JSONObject imported = parse(exchange(HttpMethod.POST,
+                "/services/v1/model/templates/transaction-risk/import?modelName=it_strategy_types_" + UNIQUE,
+                withAuth(null)), "模板导入");
+        Long treeModelId = imported.getJSONObject("data").getLong("id");
+        assertNotNull(treeModelId, "导入模板应返回新模型 id: " + imported);
+
+        parse(exchange(HttpMethod.POST, "/services/v1/model/build/" + treeModelId,
+                withAuth(null)), "策略类型模板 build");
+        parse(exchange(HttpMethod.POST, "/services/v1/model/enable/" + treeModelId,
+                withAuth(null)), "策略类型模板 enable");
+
+        // 取 GUID 上传事件
+        JSONObject modelDetail = parse(exchange(HttpMethod.GET, "/services/v1/model/" + treeModelId,
+                withAuth(null)), "模板模型详情");
+        String treeGuid = modelDetail.getJSONObject("data").getJSONObject("model").getString("guid");
+        assertNotNull(treeGuid, "模板模型 GUID 缺失");
+
+        String reqId = "it_types_" + UNIQUE;
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("modelGuid", treeGuid);
+        form.add("reqId", reqId);
+        form.add("jsonInfo", demoEventJson().replace("\"eventId\":\"" + REQ_ID + "\"", "\"eventId\":\"" + reqId + "\""));
+        JSONObject upload = parse(exchange(HttpMethod.POST, "/services/v1/uploadInfo",
+                new HttpEntity<>(form, formHeaders())), "策略类型事件上传");
+
+        // 三种策略类型都应产出决策（键为策略名）
+        JSONObject activations = upload.getJSONObject("activations");
+        assertNotNull(activations, "决策结果缺失: " + upload);
+        assertTrue(activations.containsKey("transaction_exception"), "规则集策略未产出决策: " + activations);
+        assertTrue(activations.containsKey("transaction_scorecard"), "评分卡策略未产出决策: " + activations);
+        assertTrue(activations.containsKey("transaction_tree"), "决策树策略未产出决策: " + activations);
+
+        // 评分卡：特征分箱明细（feature_*）；首笔事件（频次=1、金额=500）总分 480 → pass
+        assertEquals("pass", activations.getJSONObject("transaction_scorecard").getString("risk"),
+                "评分卡决策与预期不符: " + activations);
+        JSONArray scorecardHits = upload.getJSONObject("hitsDetail").getJSONArray("transaction_scorecard");
+        assertNotNull(scorecardHits, "评分卡命中明细缺失");
+        assertTrue(scorecardHits.stream().map(h -> ((JSONObject) h).getString("key"))
+                        .allMatch(k -> k.startsWith("feature_")),
+                "评分卡明细 key 应为特征标识: " + scorecardHits);
+
+        // 决策树：路径明细（node_*）；白名单为空必走 N 分支，后续分支依赖 IP 插件可用性，容忍 pass/reject
+        String treeRisk = activations.getJSONObject("transaction_tree").getString("risk");
+        assertTrue("pass".equals(treeRisk) || "reject".equals(treeRisk),
+                "决策树决策异常: " + activations);
+        JSONArray treeHits = upload.getJSONObject("hitsDetail").getJSONArray("transaction_tree");
+        assertNotNull(treeHits, "决策树命中明细缺失");
+        assertTrue(treeHits.stream().map(h -> ((JSONObject) h).getString("key"))
+                        .anyMatch(k -> "node_n1".equals(k)),
+                "决策树明细应含根节点路径: " + treeHits);
     }
 }

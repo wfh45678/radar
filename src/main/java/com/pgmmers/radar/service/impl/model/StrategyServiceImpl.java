@@ -3,18 +3,22 @@ package com.pgmmers.radar.service.impl.model;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pgmmers.radar.common.util.JsonUtils;
 import com.pgmmers.radar.model.query.StrategyQuery;
 import com.pgmmers.radar.model.query.PageResult;
 import com.pgmmers.radar.converter.StrategyMapping;
 import com.pgmmers.radar.converter.RuleMapping;
+import com.pgmmers.radar.mapper.StrategyHistoryMapper;
 import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
+import com.pgmmers.radar.model.entity.StrategyHistoryPO;
 import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.RulePO;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.StrategyService;
+import com.pgmmers.radar.model.vo.model.StrategyHistoryVO;
 import com.pgmmers.radar.model.vo.model.StrategyVO;
 
 import java.util.ArrayList;
@@ -50,6 +54,10 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
 
     @Autowired
     private StrategyMapper strategyMapper;
+
+    @Autowired
+    private StrategyHistoryMapper strategyHistoryMapper;
+
     @Resource
     private StrategyMapping strategyMapping;
 
@@ -111,7 +119,7 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
     }
 
     @Override
-    public CommonResult save(StrategyVO strategy) {
+    public CommonResult save(StrategyVO strategy, String operator) {
         CommonResult result = new CommonResult();
         int count = saveStrategy(strategy);
         if (count > 0) {
@@ -119,12 +127,57 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
         		strategy.setStrategyName("strategy_"+strategy.getId());
         		saveStrategy(strategy);
         	}
+            // 类型化定义快照（v4.0）：评分卡/决策树每次保存记历史，规则集沿用 rule_history
+            saveDefinitionHistory(strategy, operator);
             result.getData().put("id", strategy.getId());
             result.setSuccess(true);
             // 通知更新
             cacheService.publishStrategy(strategy);
         }
         return result;
+    }
+
+    /** 评分卡/决策树定义快照；失败不阻断保存（审计旁路） */
+    private void saveDefinitionHistory(StrategyVO strategy, String operator) {
+        if (strategy.getDefinition() == null || strategy.getDefinition().isNull()
+                || strategy.getDefinition().isEmpty()) {
+            return;
+        }
+        try {
+            StrategyHistoryPO history = new StrategyHistoryPO();
+            history.setStrategyId(strategy.getId());
+            history.setMerchantCode(operator);
+            history.setType(strategy.getType());
+            history.setDefinition(JsonUtils.jsonNodeToString(strategy.getDefinition()));
+            history.setUpdateTime(new Date());
+            strategyHistoryMapper.insert(history);
+        } catch (Exception e) {
+            logger.warn("strategy history snapshot failed, strategyId={}", strategy.getId(), e);
+        }
+    }
+
+    @Override
+    public List<StrategyHistoryVO> listHistory(Long strategyId) {
+        List<StrategyHistoryPO> list = strategyHistoryMapper.selectList(
+                new LambdaQueryWrapper<StrategyHistoryPO>()
+                        .eq(StrategyHistoryPO::getStrategyId, strategyId)
+                        .orderByDesc(StrategyHistoryPO::getUpdateTime)
+                        .last("LIMIT 50"));
+        List<StrategyHistoryVO> vos = new ArrayList<>();
+        if (CollectionUtils.isEmpty(list)) {
+            return vos;
+        }
+        for (StrategyHistoryPO po : list) {
+            StrategyHistoryVO vo = new StrategyHistoryVO();
+            vo.setId(po.getId());
+            vo.setStrategyId(po.getStrategyId());
+            vo.setMerchantCode(po.getMerchantCode());
+            vo.setType(po.getType());
+            vo.setDefinition(JsonUtils.getJsonNode(po.getDefinition()));
+            vo.setUpdateTime(po.getUpdateTime());
+            vos.add(vo);
+        }
+        return vos;
     }
 
     /**
