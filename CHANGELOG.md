@@ -2,6 +2,24 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [3.5.1] - 2026-11-27
+
+补丁版本：在线模板源首次真实点亮后回归发现的两个修复（官方托管文件已就绪于
+`www.riskengine.cn/radar/templates/`）。
+
+### Fixed
+- **在线模板源默认地址改用 `www.riskengine.cn`**：裸域 `riskengine.cn` 未配置 DNS 解析
+  无法直连（2026-11-27 实测确认，官方托管文件位于 www 站点）；`sys.conf.template-source-url`
+  覆盖行为不变，置空禁用行为不变
+- **远程模板条目 stats 恒空**：`statsOfRemote` 为空桩且在合并时覆盖 catalog 声明值，
+  改为由 `parseCatalog` 解析 catalog stats、`toInfo` 携带——在线源连接后模板库卡片的
+  规则/抽象/字段统计恢复正常
+
+### Verification
+- 官方托管四文件实测 HTTP 200 且字节数与仓库一致（UTF-8 无损）
+- 测试服务器模板库 API：`sourceStatus=CONNECTED`，三模板 REMOTE 覆盖、stats 与 catalog 一致
+  （5/13/9、6/8/9、9/14/9）；十步全链路 verify-chain 绿；health UP、启动日志零 ERROR
+
 ## [3.5.0] - 2026-11-23
 
 生态内容补强版本（roadmap P2-9，[plan-v3.5](docs/plan-v3.5.md)）：官方种子插件三件套（纯内容，
