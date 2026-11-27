@@ -36,6 +36,7 @@ cd frontend && npm ci && npm run dev
 ```
 
 * 文档站：[docs/architecture.md](docs/architecture.md)（架构图）· [docs/operations.md](docs/operations.md)（运维手册）· GitHub Pages 自动部署（docs/ 内 VitePress）
+* 老版本升级：仍在运行 v1.x（2020-2021）或早期 v2.x？[升级指南](docs/upgrade-guide.md)——Breaking Changes 对照、数据迁移策略、验收清单
 * 模型策略包：导出/导入跨实例迁移与策略分享，[格式与操作](docs/model-package.md)；官方模板库一键创建场景风控模型（账户盗用/营销反作弊/交易风控）
 * 插件开发：[开发指南](docs/plugin-dev-guide.md) · 示例工程 [radar-plugin-demo](samples/radar-plugin-demo)（本地形态）/[radar-plugin-remote-demo](samples/radar-plugin-remote-demo)（远程形态，v3.1）· [插件注册表](PLUGIN_REGISTRY.md)
 * 插件管理：管理端顶栏「插件管理」（#/plugins）——上传 jar 热重载即时生效、启停持久化、执行统计；出访管控 `plugin.http.mode`（deny-private / allowlist / off）
