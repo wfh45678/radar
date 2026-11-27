@@ -108,7 +108,7 @@ public class TemplateCatalogService {
         boolean sourceConfigured = templateSourceService.isEnabled();
         if (sourceConfigured) {
             for (TemplateInfo remote : templateSourceService.fetchRemote()) {
-                remote.setStats(statsOfRemote(remote.getKey()));
+                // stats 已随 catalog 条目解析（TemplateSourceService.toInfo），不再覆盖
                 mergedMap.put(remote.getKey(), remote);
             }
         }
@@ -188,7 +188,4 @@ public class TemplateCatalogService {
     }
 
     /** 远程条目的统计需拉包体解析——列表阶段以远程 catalog 未含统计为常态，置空即可（前端不强依赖）。 */
-    private Map<String, Object> statsOfRemote(String key) {
-        return Map.of();
-    }
 }

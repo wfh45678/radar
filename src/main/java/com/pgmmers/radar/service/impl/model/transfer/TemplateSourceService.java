@@ -152,6 +152,11 @@ public class TemplateSourceService {
             rt.info.setMinRadarVersion(t.path("minRadarVersion").asText(""));
             rt.info.setTags(objectMapper.convertValue(t.path("tags"),
                     objectMapper.getTypeFactory().constructParametricType(List.class, String.class)));
+            // catalog 声明的统计（规则/抽象/字段数）——远程包体不懒解析，展示值以官方 catalog 为准
+            rt.info.setStats(t.hasNonNull("stats")
+                    ? objectMapper.convertValue(t.get("stats"),
+                            objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class))
+                    : Map.of());
             rt.info.setSource(TemplateInfo.Source.REMOTE);
             rt.bodyUrl = base.resolve(file).toString();
             out.put(key, rt);
@@ -160,7 +165,6 @@ public class TemplateSourceService {
     }
 
     private TemplateInfo toInfo(RemoteTemplate rt) {
-        // info.stats 由合并方填充
         TemplateInfo info = new TemplateInfo();
         info.setKey(rt.info.getKey());
         info.setName(rt.info.getName());
@@ -170,7 +174,8 @@ public class TemplateSourceService {
         info.setSource(TemplateInfo.Source.REMOTE);
         List<String> tags = info.getTags();
         info.setTags(tags == null ? List.of() : List.copyOf(tags));
-        info.setStats(Map.of());
+        // catalog 声明的统计（parseCatalog 已解析），合并方不再覆盖
+        info.setStats(rt.info.getStats() == null ? Map.of() : Map.copyOf(rt.info.getStats()));
         return info;
     }
 
