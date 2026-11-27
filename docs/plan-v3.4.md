@@ -36,7 +36,7 @@ v3.2 给了模型一个文件形态（策略包），解决了"怎么分享"；�
 
 | 决策 | 选择 | 理由 |
 |------|------|------|
-| 分发方式 | **内置基线 + 在线源**（2026-11-23 拍板 B）：`src/main/resources/models/*.json` + `catalog.json` 随 jar 分发；在线源官方地址定案 **riskengine.cn**，默认值内置为 `https://riskengine.cn/radar/templates/catalog.json`，`sys.conf.template-source-url` 可覆盖、**置空禁用** | 内置保底可用；在线源让官方上新不走发版（内容运营节奏）；官方域名为自有基础设施，国内可达、无第三方 CDN 依赖（jsDelivr 可作镜像备选） |
+| 分发方式 | **内置基线 + 在线源**（2026-11-23 拍板 B）：`src/main/resources/models/*.json` + `catalog.json` 随 jar 分发；在线源官方地址定案 **www.riskengine.cn**（2026-11-27 修正：裸域 riskengine.cn 未配 DNS 解析、无法直连，实测 www 可用后默认值改 www），默认值内置为 `https://www.riskengine.cn/radar/templates/catalog.json`，`sys.conf.template-source-url` 可覆盖、**置空禁用** | 内置保底可用；在线源让官方上新不走发版（内容运营节奏）；官方域名为自有基础设施，国内可达、无第三方 CDN 依赖（jsDelivr 可作镜像备选） |
 | 远程源协议 | 纯静态：catalog.json + 包体 json 两个 GET，无服务端 API | 官方侧维护成本=推静态文件到托管目录；无后端、无鉴权面。包体地址相对 catalog URL 解析 |
 | 在线源失败路径 | 列表请求时拉取（3s 超时）→ 失败仅显示内置 + 前端标"在线源不可用"；负缓存 60s 防重试风暴 | 降级永远可用；不给应用启动和核心链路引入网络依赖 |
 | key 冲突 | 合并列表中**远程同名 key 覆盖内置**（卡片标"在线"徽标）；导入按合并结果解析 | 官方可在线修订有问题的模板，不必等发版 |
@@ -61,7 +61,7 @@ v3.2 给了模型一个文件形态（策略包），解决了"怎么分享"；�
 
 - `resources/models/catalog.json`：内置模板索引（key/file/name/description/tags/minRadarVersion）
 - `TemplateCatalogService`：启动扫描解析（catalog + 各包 `parse` 预校验），缓存 `List<TemplateInfo>`（含规则数/名单数统计供卡片展示）；单文件损坏只告警不阻断启动
-- `TemplateSourceService`（在线源）：默认指向官方地址 `https://riskengine.cn/radar/templates/catalog.json`（`sys.conf.template-source-url` 可覆盖，**置空禁用**）；拉远程 catalog（3s 超时 + 60s 负缓存）→ 按 key 合并（远程覆盖内置）→ 包体按相对地址懒拉取；任一失败降级为仅内置并带状态标记
+- `TemplateSourceService`（在线源）：默认指向官方地址 `https://www.riskengine.cn/radar/templates/catalog.json`（`sys.conf.template-source-url` 可覆盖，**置空禁用**）；拉远程 catalog（3s 超时 + 60s 负缓存）→ 按 key 合并（远程覆盖内置）→ 包体按相对地址懒拉取；任一失败降级为仅内置并带状态标记
 
 ### 4.2 T2：端点
 

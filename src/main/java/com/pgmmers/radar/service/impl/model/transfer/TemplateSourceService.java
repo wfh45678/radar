@@ -17,7 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
- * 在线模板源（v3.4）：官方地址 riskengine.cn（内置默认），`sys.conf.template-source-url`
+ * 在线模板源（v3.4）：官方地址 www.riskengine.cn（内置默认；裸域 riskengine.cn 未配解析，
+ * 2026-11-27 实测后改用 www），`sys.conf.template-source-url`
  * 可覆盖、置空禁用。纯静态协议——catalog.json + 包体 json 两个 GET，包体地址相对 catalog URL 解析。
  *
  * <p>失败路径三保险：3s 超时、60s 负缓存（防重试风暴）、任一失败降级为仅内置并带状态标记。
@@ -31,7 +32,7 @@ public class TemplateSourceService {
     private static final Logger logger = LoggerFactory.getLogger(TemplateSourceService.class);
 
     /** 在线源官方地址；置空禁用在线源（纯内置模式）。 */
-    @Value("${sys.conf.template-source-url:https://riskengine.cn/radar/templates/catalog.json}")
+    @Value("${sys.conf.template-source-url:https://www.riskengine.cn/radar/templates/catalog.json}")
     private String sourceUrl;
 
     /** catalog/包体拉取超时。 */

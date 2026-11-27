@@ -71,7 +71,7 @@
 | `promo-abuse` | 营销反作弊 | 注册领奖批量小号：设备/IP 聚集 + 模式规则 |
 | `transaction-risk` | 交易风控 | 大额 + 非常用时段 + 异地 IP 组合规则 |
 
-- **在线模板源**：默认官方地址 `https://riskengine.cn/radar/templates/catalog.json`，
+- **在线模板源**：默认官方地址 `https://www.riskengine.cn/radar/templates/catalog.json`，
   官方上新模板无需升级引擎；远程同名 key 覆盖内置（可在线修订）；
 - **自托管/禁用**：`sys.conf.template-source-url` 覆盖为自己的 catalog 地址（静态 JSON，
   结构同内置 `resources/models/catalog.json`），**置空则禁用在线源**（纯内置模式）；
