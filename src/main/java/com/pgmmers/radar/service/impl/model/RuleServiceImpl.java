@@ -189,7 +189,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
             // 存储History
             RuleHistoryVO ruleHistoryVO=new RuleHistoryVO();
             ruleHistoryVO.setRuleId(rule.getId());
-            ruleHistoryVO.setMerchantCode(userCode);
+            ruleHistoryVO.setUserCode(userCode);
             ruleHistoryVO.setLabel(rule.getLabel());
             ruleHistoryVO.setInitScore(rule.getInitScore());
             ruleHistoryVO.setBaseNum(rule.getBaseNum());

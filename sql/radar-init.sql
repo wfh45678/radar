@@ -394,7 +394,7 @@ DROP TABLE IF EXISTS `engine_rule_history`;
 CREATE TABLE `engine_rule_history` (
   `ID` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
   `RULE_ID` bigint NOT NULL COMMENT '场景ID',
-  `MERCHANT_CODE` varchar(60) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `USER_CODE` varchar(60) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `LABEL` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '规则名称',
   `INIT_SCORE` int NOT NULL DEFAULT '0' COMMENT '初始分数',
   `BASE_NUM` int NOT NULL DEFAULT '0' COMMENT '基数',

@@ -20,8 +20,8 @@ public class RuleHistoryPO {
     @TableField("RULE_ID")
     private Long ruleId;
 
-    @TableField("MERCHANT_CODE")
-    private String merchantCode;
+    @TableField("USER_CODE")
+    private String userCode;
 
     /**
      * 规则名称
@@ -102,17 +102,17 @@ public class RuleHistoryPO {
     }
 
     /**
-     * @return MERCHANT_CODE
+     * @return USER_CODE
      */
     public String getMerchantCode() {
-        return merchantCode;
+        return userCode;
     }
 
     /**
-     * @param merchantCode
+     * @param userCode
      */
-    public void setMerchantCode(String merchantCode) {
-        this.merchantCode = merchantCode;
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
     }
 
     /**

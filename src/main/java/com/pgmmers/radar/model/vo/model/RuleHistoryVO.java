@@ -9,7 +9,7 @@ public class RuleHistoryVO implements Serializable{
 	
 	private Long ruleId;
 	
-	private String merchantCode;
+	private String userCode;
 	
 	private String label;
 	
@@ -43,12 +43,12 @@ public class RuleHistoryVO implements Serializable{
 		this.ruleId = ruleId;
 	}
 
-	public String getMerchantCode() {
-		return merchantCode;
+	public String getUserCode() {
+		return userCode;
 	}
 
-	public void setMerchantCode(String merchantCode) {
-		this.merchantCode = merchantCode;
+	public void setUserCode(String userCode) {
+		this.userCode = userCode;
 	}
 
 	public String getLabel() {
