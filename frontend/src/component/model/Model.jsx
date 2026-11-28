@@ -171,9 +171,8 @@ class Model extends React.Component{
 					        mode="horizontal"
 					        items={[
 					          { key:'field', label:<><FileTextOutlined />字段管理</> },
-					          { key:'preItem', label:<><CopyOutlined />预处理管理</> },
+					          { key:'feature', label:<><AppstoreOutlined />特征工程</> },
 					          { key:'datalist', label:<><AppstoreOutlined />黑/白名单管理</> },
-					          { key:'abstractionList', label:<><PictureOutlined />抽象处理</> },
 					          { key:'strategy', label:<><SolutionOutlined />策略管理</> },
 					        ]}
 					      />

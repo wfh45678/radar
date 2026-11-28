@@ -35,7 +35,7 @@ class Report extends React.Component{
         state[name]=value;
         this.setState(state);
 
-        FetchUtil('/abstraction/datacolumns/'+value,'GET','',
+        FetchUtil('/feature/columns/'+value,'GET','',
         (data) => {
             this.setState({
                 fieldList:data.data.list

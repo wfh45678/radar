@@ -343,7 +343,7 @@ export default class Rule extends React.Component{
                     */}
                         
                     <Cascader
-					    options={this.props.fieldList.filter(x=>x.value!='preItems')}
+					    options={this.props.fieldList}
 					    allowClear={false}
 	                    disabled={this.state.operator=='NONE'}
 					    displayRender={this.displayRender}

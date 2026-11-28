@@ -8,15 +8,13 @@ import 'dayjs/locale/zh-cn';
 
 dayjs.locale('zh-cn');
 
-import Abstraction from './component/abstraction/Abstraction';
-import AbstractionList from './component/abstraction/AbstractionList';
 import StrategyList from './component/strategy/StrategyList';
 import Datalist from './component/datalist/Datalist';
 import DatalistRecord from './component/datalist/DatalistRecord';
 import Field from './component/field/Field';
 import ModelList from './component/model/ModelList';
 import Model from './component/model/Model';
-import PreItem from './component/preItem/PreItem';
+import FeatureList from './component/feature/FeatureList';
 import RuleList from './component/strategy/RuleList';
 import HistoryRecordList from './component/strategy/HistoryRecordList';
 import StrategyDetail from './component/strategy/StrategyDetail';
@@ -88,11 +86,10 @@ const router = createHashRouter([
               { path: 'strategy/:id', element: <StrategyList /> },
               { path: 'datalist/:id', element: <Datalist /> },
               { path: 'datalistRecord/:id/:datalistId', element: <DatalistRecord /> },
-              { path: 'preItem/:id', element: <PreItem /> },
+              { path: 'feature/:id', element: <FeatureList /> },
               { path: 'ruleList/:id/:strategyId', element: <RuleList /> },
               { path: 'strategyDetail/:id/:strategyId', element: <StrategyDetail /> },
               { path: 'historyRecordList/:id/:strategyId/:ruleId', element: <HistoryRecordList /> },
-              { path: 'abstractionList/:id', element: <AbstractionList /> },
             ],
           },
           { path: 'report', element: <Navigate to="/event" replace /> },

@@ -73,7 +73,7 @@ export default class HistoryRecord extends React.Component{
 
         let abstractionList=[];
         if(this.props.fieldList.length>0){
-            abstractionList=this.props.fieldList.filter(x=>x.value=='abstractions')[0].children;
+            abstractionList=(this.props.fieldList.filter(x=>x.value=='features')[0]||{children:[]}).children;
         }
 
         const ruleHistory=this.props.ruleHistory;
