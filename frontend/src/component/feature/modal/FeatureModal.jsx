@@ -5,7 +5,7 @@ const FormItem = Form.Item;
 
 import {FetchUtil} from '../../utils/fetchUtil';
 import {FEATURE_TYPES, DERIVED_FUNCTIONS} from '../featureTypes';
-import ComplexCondition from '../../abstraction/ComplexCondition';
+import ComplexCondition from '../../common/ComplexCondition';
 import {validateRules} from '../../utils/groovyUtil';
 
 const formItemLayout = {labelCol: {span: 6}, wrapperCol: {span: 17}};

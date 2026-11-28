@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import {FetchUtil} from '../utils/fetchUtil';
 import {strategyTypeOf} from './strategyTypes';
 import {validateRules} from '../utils/groovyUtil';
-import ComplexCondition from '../abstraction/ComplexCondition';
+import ComplexCondition from '../common/ComplexCondition';
 import DefinitionHistoryModal from './DefinitionHistoryModal';
 
 const DECISIONS = [

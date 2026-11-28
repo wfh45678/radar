@@ -5,7 +5,7 @@ import {PlusOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 
-import ComplexCondition from '../abstraction/ComplexCondition';
+import ComplexCondition from '../common/ComplexCondition';
 
 export default class HistoryRecord extends React.Component{
 

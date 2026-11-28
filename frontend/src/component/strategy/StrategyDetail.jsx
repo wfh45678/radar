@@ -6,6 +6,8 @@ import {FetchUtil} from '../utils/fetchUtil';
 import RuleList from './RuleList';
 import ScorecardEditor from './ScorecardEditor';
 import DecisionTreeEditor from './DecisionTreeEditor';
+import DecisionTableEditor from './DecisionTableEditor';
+import ListMatchEditor from './ListMatchEditor';
 
 /**
  * 策略详情分发页（v4.0）：按策略 type 渲染对应编辑器——
@@ -45,6 +47,10 @@ class StrategyDetail extends Component{
         switch(this.state.type){
             case 'SCORECARD':
                 return <ScorecardEditor/>;
+            case 'DECISION_TABLE':
+                return <DecisionTableEditor/>;
+            case 'LIST_MATCH':
+                return <ListMatchEditor/>;
             case 'DECISION_TREE':
                 return <DecisionTreeEditor/>;
             default:

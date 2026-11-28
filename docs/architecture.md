@@ -26,12 +26,13 @@ flowchart LR
   引用前序产出；衍生表达式 13 内置函数），`AGGREGATE/RATIO` 在落库后执行（统计聚合 10 种 +
   两特征比率/差额）；**单特征异常隔离**（错误标记 + 指标，事件链路继续）。ENRICH 插件以外置
   jar 形态自助接入（SDK 4.0 FeatureProcessor 契约），见[插件开发指南](./plugin-dev-guide.md)；
-- **策略类型执行器（v4.0）**：引擎编排层遍历 ACTIVE 策略，按 `engine_strategy.TYPE` 分发到
-  `StrategyExecutorRegistry`（范式对齐 PluginManager）。首批三类：**规则集**（RULE_SET，Groovy
+- **策略类型执行器（v4.0，v5.1 补全五类）**：引擎编排层遍历 ACTIVE 策略，按 `engine_strategy.TYPE` 分发到
+  `StrategyExecutorRegistry`（范式对齐 PluginManager）。五类型：**规则集**（RULE_SET，Groovy
   条件求和 + 阈值决策，明细存 engine_rule）、**评分卡**（SCORECARD，DEFINITION JSON 特征分箱
-  加权求和 + 阈值决策）、**决策树**（DECISION_TREE，DEFINITION JSON 路径走查、叶节点直出决策）。
+  加权求和 + 阈值决策）、**决策树**（DECISION_TREE，DEFINITION JSON 路径走查、叶节点直出决策）、
+  **决策表**（DECISION_TABLE，条件矩阵行优先首中直出）、**名单匹配**（LIST_MATCH，数据名单比对直出）。
   扩展新类型 = 新增 StrategyExecutor bean + 枚举值，编排层零改动；单策略执行异常按策略隔离；
-- **规则 Groovy 脚本 / 评分卡 / 决策树**管理端编辑保存即生效（Redis pub/sub 推送，无需重启）；
+- **规则 Groovy 脚本 / 评分卡 / 决策树 / 决策表 / 名单匹配**管理端编辑保存即生效（Redis pub/sub 推送，无需重启）；
 - 引擎对外契约：顶层 `features`（特征产出）+ `strategies`（决策）+ `hitsDetail`（按策略分组的
   命中明细——规则集为规则粒度、评分卡为 feature_* 分箱、决策树为 node_* 路径）；
 - 各阶段耗时指标：`radar_engine_stage_seconds{stage}`、插件级 `radar_plugin_seconds{plugin}`、

@@ -2,6 +2,32 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [5.1.0] - 2026-11-28
+
+策略类型补全（[plan-v5.1.md](docs/plan-v5.1.md)）：**策略类型达五种**（规则集/评分卡/决策树/决策表/名单匹配），
+同时完成 v4 收口（死代码清理）与工程配套（JSX 扫描进 CI、测试补位）。
+
+### Added
+- **决策表策略（DECISION_TABLE）**：`DecisionTableExecutor`——条件矩阵行优先首中直出决策
+  （行内条件 AND，复用 ConditionEvaluator；无行命中走缺省决策），命中明细 row_*；
+  `DecisionTableEditor` 网格编辑器（行/条件增删改、决策/得分/理由行内编辑）
+- **名单匹配策略（LIST_MATCH）**：`ListMatchExecutor`——事件字段值比对预加载数据名单
+  （与规则条件 InList 同源缓存语义），命中直出决策、未命中/名单缺失降级放行，命中明细 list_*；
+  `ListMatchEditor` 表单编辑器（名单下拉 + 变量树匹配字段 + 命中决策/得分/理由）
+- 新类型进策略类型常量/详情分发路由/类型徽标（strategyTypes + StrategyDetail）
+- **JSX 引用静态扫描进 CI**（scripts/scan-jsx.js，构建前执行——esbuild 不查未定义标识符，
+  v4.1 连环 ReferenceError 的预防针）
+- L1 单测：DecisionTableExecutorTest / ListMatchExecutorTest（首中/顺序/缺省/降级/异常全口径）
+
+### Removed
+- 前端死代码：component/preItem/ 全目录、abstraction/{Abstraction,AbstractionList}.jsx
+  （v4.1 起无路由引用，构建已 tree-shake）；ComplexCondition/SimpleCondition 迁
+  component/common/（活组件名实归位）
+
+### Fixed
+- L3 copy 路径已在 v4.1.5 后由 verify-chain 覆盖；本期补齐两新类型 L1 用例
+  （EngineFullChainTest 的 copy 断言在 v4.x 已存在）
+
 ## [5.0.0] - 2026-11-28
 
 破坏性大版本：**场景化更名**——"模型"更名为"场景（scenario）"，"模型"一词自 v5.0 起专指算法模型

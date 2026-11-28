@@ -6,7 +6,7 @@ import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 
 const FormItem = Form.Item;
 
-import ComplexCondition from '../abstraction/ComplexCondition';
+import ComplexCondition from '../common/ComplexCondition';
 
 import {generateScript,validateRules} from '../utils/groovyUtil';
 import {FetchUtil} from '../utils/fetchUtil';

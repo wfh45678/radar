@@ -16,7 +16,13 @@ public enum StrategyType {
     SCORECARD("评分卡"),
 
     /** 决策树：条件节点逐层走路径，叶节点直接决策 */
-    DECISION_TREE("决策树");
+    DECISION_TREE("决策树"),
+
+    /** 决策表：条件列组合矩阵，行优先首中直出决策（v5.1） */
+    DECISION_TABLE("决策表"),
+
+    /** 名单匹配：事件字段值比对预加载数据名单，命中直出决策（v5.1） */
+    LIST_MATCH("名单匹配");
 
     private final String label;
 
