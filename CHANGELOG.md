@@ -2,6 +2,12 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [4.1.2] - 2026-11-28
+
+### Fixed
+- 特征工程「编辑特征」弹窗缺 `Tag` 组件 import，打开即报 `ReferenceError: Tag is not defined`
+  （FeatureModal.jsx；esbuild 构建期不校验未定义标识符，运行时才暴露）
+
 ## [4.1.1] - 2026-11-28
 
 补丁版本：v4.0/v4.1 重构的回归收口（真实迁移演练 + 模板/策略包导入链路端到端审查捕获），**首个 v4 tag**。

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Modal, Form, Row, Col, Input, InputNumber, Select, Cascader, Tooltip, message, Switch} from 'antd';
+import {Button, Modal, Form, Row, Col, Input, InputNumber, Select, Cascader, Tooltip, message, Switch, Tag} from 'antd';
 import {PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 const FormItem = Form.Item;
 
