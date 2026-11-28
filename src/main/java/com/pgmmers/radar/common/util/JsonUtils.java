@@ -21,7 +21,16 @@ import org.springframework.util.StringUtils;
 public class JsonUtils {
 
     private static Logger logger = LoggerFactory.getLogger(JsonUtils.class);
-    public static ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * 共享 mapper：日期格式 yyyy-MM-dd HH:mm:ss（与 fastjson2 发布侧对称——
+     * v5.0 修复：radar_channel_* 配置推送为 fastjson2 序列化（日期为格式化字符串），
+     * 订阅端裸 Jackson 只认 epoch/ISO 导致反序列化崩溃、缓存失效推送自 v2.x 起静默失效）。
+     */
+    public static ObjectMapper objectMapper = new ObjectMapper()
+            .setSerializationInclusion(Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .setDateFormat(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
     public static JsonNode getJsonNode(String str) {
         try {
@@ -52,8 +61,7 @@ public class JsonUtils {
 
     public static String toJson(Object object) {
         try {
-            return (new ObjectMapper()).setSerializationInclusion(Include.NON_NULL)
-                    .writeValueAsString(object);
+            return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException var2) {
             throw new RuntimeException(var2);
         }
@@ -61,9 +69,7 @@ public class JsonUtils {
 
     public static <E> E fromJson(String json, Class<E> type) {
         try {
-            return (new ObjectMapper())
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .readValue(json, type);
+            return objectMapper.readValue(json, type);
         } catch (IOException var3) {
             throw new RuntimeException(var3);
         }

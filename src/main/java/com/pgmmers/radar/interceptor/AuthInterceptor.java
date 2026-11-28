@@ -100,10 +100,10 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-
-        HandlerMethod method = (HandlerMethod) handler;
         contextHolder.clearContext();
-        logger.info("HandlerInterceptor afterCompletion, {}", method.getMethod().getName());
+        if (handler instanceof HandlerMethod) {
+            logger.info("HandlerInterceptor afterCompletion, {}", ((HandlerMethod) handler).getMethod().getName());
+        }
     }
 
 }

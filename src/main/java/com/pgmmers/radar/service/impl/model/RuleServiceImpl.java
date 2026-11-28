@@ -107,9 +107,14 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     @Override
     public void onMessage(String channel, String message) {
         logger.info("rule sub:{}", message);
-        RuleVO rule = JSON.parseObject(message, RuleVO.class);
-        if (rule != null) {
-            invalidateCache(rule.getStrategyId());
+        try {
+            // v5.1 修复：只取失效所需的 strategyId（RuleVO 含 JsonNode 字段，fastjson2 反序列化崩溃）
+            com.alibaba.fastjson2.JSONObject obj = JSON.parseObject(message);
+            if (obj != null) {
+                invalidateCache(obj.getLong("strategyId"));
+            }
+        } catch (Exception e) {
+            logger.warn("rule sub message handle failed: {}", e.getMessage());
         }
     }
 

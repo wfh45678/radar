@@ -58,13 +58,15 @@ public class ListMatchExecutor implements StrategyExecutor {
 
         Object value = resolveValue(data, matchField);
         boolean hit = false;
+        // v5.1 防护：编排层在场景无名单时传 null lists
+        Map<String, ?> safeLists = lists == null ? Map.of() : lists;
         if (value == null) {
             logger.debug("list match field value is null, strategy={} (matchField={})",
                     strategy.getStrategyName(), matchField);
-        } else if (listName == null || lists.get(listName) == null) {
+        } else if (listName == null || safeLists.get(listName) == null) {
             logger.warn("data list not found in cache, strategy={} (dataList={})",
                     strategy.getStrategyName(), listName);
-        } else if (lists.get(listName) instanceof Map<?, ?> recordMap) {
+        } else if (safeLists.get(listName) instanceof Map<?, ?> recordMap) {
             hit = value != null && recordMap.containsKey(String.valueOf(value));
         }
 

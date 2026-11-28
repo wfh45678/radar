@@ -15,6 +15,16 @@
   （与规则条件 InList 同源缓存语义），命中直出决策、未命中/名单缺失降级放行，命中明细 list_*；
   `ListMatchEditor` 表单编辑器（名单下拉 + 变量树匹配字段 + 命中决策/得分/理由）
 - 新类型进策略类型常量/详情分发路由/类型徽标（strategyTypes + StrategyDetail）
+
+### Fixed（引擎级验证捕获）
+- **配置推送订阅端崩溃（自 v2.0 fastjson2 迁移起潜伏）**：`radar_channel_*` 五个频道的
+  订阅端反序列化与发布端不对称——发布用 fastjson2（Date 为格式化字符串/JsonNode 为对象），
+  订阅端 StrategyVO/FeatureVO/RuleVO 含 JsonNode 字段 fastjson2 无法实例化、日期字符串裸
+  Jackson 不识别 → 每次配置保存的 lettuce 连接被打断、缓存失效推送静默失效。
+  修复：JsonUtils 共享 mapper 增加日期格式（与 fastjson2 对称）；strategy/feature/rule 三个
+  onMessage 改为只解析失效所需的 id 并增加异常防护
+- **ListMatchExecutor 空指针**：编排层在场景无名单时传 null lists，命中比对 NPE 被
+  策略隔离吞掉导致无决策输出（补空防护，走未命中降级）
 - **JSX 引用静态扫描进 CI**（scripts/scan-jsx.js，构建前执行——esbuild 不查未定义标识符，
   v4.1 连环 ReferenceError 的预防针）
 - L1 单测：DecisionTableExecutorTest / ListMatchExecutorTest（首中/顺序/缺省/降级/异常全口径）

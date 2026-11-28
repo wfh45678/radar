@@ -78,9 +78,15 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
     @Override
     public void onMessage(String channel, String message) {
         logger.info("strategy sub:{}", message);
-        StrategyVO act = JSON.parseObject(message, StrategyVO.class);
-        if (act != null) {
-            invalidateCache(act.getScenarioId());
+        try {
+            // v5.1 修复：只取失效所需的 scenarioId（完整 VO 含 JsonNode 字段，fastjson2 反序列化崩溃
+            // 会打断 lettuce 连接，造成配置推送后 Redis 短暂不可用）
+            com.alibaba.fastjson2.JSONObject obj = JSON.parseObject(message);
+            if (obj != null) {
+                invalidateCache(obj.getLong("scenarioId"));
+            }
+        } catch (Exception e) {
+            logger.warn("strategy sub message handle failed: {}", e.getMessage());
         }
     }
 

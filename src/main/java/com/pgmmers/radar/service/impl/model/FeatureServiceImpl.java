@@ -54,9 +54,14 @@ public class FeatureServiceImpl extends BaseLocalCacheService implements Feature
     @Override
     public void onMessage(String channel, String message) {
         logger.info("feature sub:{}", message);
-        FeatureVO feature = JSON.parseObject(message, FeatureVO.class);
-        if (feature != null) {
-            invalidateCache(feature.getScenarioId());
+        try {
+            // v5.1 修复：只取失效所需的 scenarioId（FeatureVO 含 JsonNode 字段，fastjson2 反序列化崩溃）
+            com.alibaba.fastjson2.JSONObject obj = JSON.parseObject(message);
+            if (obj != null) {
+                invalidateCache(obj.getLong("scenarioId"));
+            }
+        } catch (Exception e) {
+            logger.warn("feature sub message handle failed: {}", e.getMessage());
         }
     }
 
