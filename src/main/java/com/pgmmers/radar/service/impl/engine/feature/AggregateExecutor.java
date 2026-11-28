@@ -71,8 +71,10 @@ public class AggregateExecutor implements FeatureExecutor {
             return FeatureOutcome.empty();
         }
 
-        // 过滤条件：条件树后端解释
-        boolean matched = ConditionEvaluator.evaluate(definition.get("filter"), data, lists);
+        // 过滤条件：条件树后端解释（filter 缺省 = 无过滤全量统计；条件树为空节点按不命中处理）
+        JsonNode filterNode = definition.get("filter");
+        boolean matched = filterNode == null || filterNode.isNull()
+                || ConditionEvaluator.evaluate(filterNode, data, lists);
         if (!matched) {
             // 条件不命中的特征以 -1 哨兵占位（沿袭 v3.x 语义，报表/历史图可区分）
             return FeatureOutcome.of(-1);

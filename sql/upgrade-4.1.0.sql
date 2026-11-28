@@ -98,11 +98,11 @@ UPDATE `engine_strategy` SET
 UPDATE `engine_strategy_history` SET
   `DEFINITION` = REPLACE(REPLACE(`DEFINITION`, '"preItems.', '"features.'),
                          '"abstractions.', '"features.');
--- 4.4 ML 参数表达式（休眠配置，随迁保持一致）
+-- 4.4 ML 参数表达式（休眠配置，随迁保持一致；列名为小写 expressions——v1 时代建表从未更名）
 UPDATE `engine_model_conf_param` SET
-  `EXPRESSION` = REPLACE(REPLACE(`EXPRESSION`, 'preItems.', 'features.'),
-                         'abstractions.', 'features.')
-  WHERE `EXPRESSION` IS NOT NULL;
+  `expressions` = REPLACE(REPLACE(`expressions`, 'preItems.', 'features.'),
+                          'abstractions.', 'features.')
+  WHERE `expressions` IS NOT NULL;
 
 -- 5. 拆除旧表（升级前请确认已备份）
 DROP TABLE IF EXISTS `engine_pre_item`;

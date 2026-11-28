@@ -110,6 +110,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     @Autowired
     private MongoService mongoService;
 
+    @Autowired
     private FeatureMapper featureMapper;
     @Resource
     private FeatureMapping featureMapping;

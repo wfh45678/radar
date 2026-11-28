@@ -2,6 +2,36 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [4.1.1] - 2026-11-28
+
+补丁版本：v4.0/v4.1 重构的回归收口（真实迁移演练 + 模板/策略包导入链路端到端审查捕获），**首个 v4 tag**。
+
+### Fixed
+- **导入链路（v4.1 回归）**：`PackageV1Converter` 三处补齐——① `activations` → `strategies` 键名
+  转换（漏改导致策略整组丢弃，规则 STRATEGY_ID 重映射为 null 触发 NOT NULL 违例）；② v1 包内
+  `ruleDefinition` 为 JSON 字符串形态，原 object-only 判定丢过滤条件（导入模型聚合特征恒 -1），
+  解析回对象并同步改写列前缀；③ 规则脚本/规则名前缀改写（`data.preItems.`/`data.abstractions.` →
+  `data.features.`，与 upgrade-4.1.0.sql 对存量行的口径一致）
+- **AggregateExecutor filter 缺省语义**：无 filter = 无过滤全量统计（原 `evaluate(null)=false`
+  使无过滤特征的聚合恒 -1）
+- **ModelServiceImpl.featureMapper 漏注入注解**（v4.1 新增字段）：copy/delete 模型路径 NPE
+- **upgrade-4.1.0.sql**：`engine_model_conf_param` 列名 `EXPRESSION` → `expressions`（真实迁移演练捕获）
+- **verify-chain.sh**：决策断言对齐 v4.1 `strategies` 契约
+
+### Removed
+- `StrategyApiController` 两个 @Deprecated 变量树端点（`/strategy/feature/columns`、
+  `/strategy/abstraction/columns`）——前端已切换 `/feature/columns`
+
+### Changed
+- **内置官方模板包重导出为 formatVersion 2.0**（features/strategies 信封，脚本前缀已改写），
+  catalog stats 键 `abstractions` → `features`、minRadarVersion 4.1.0——模板示范样本与新格式一致
+- docs/architecture.md 对齐 v4.1 两阶段特征管线；指标描述/注释去旧术语（指标名不变）
+
+### Verification
+- 测试服务器真实迁移演练：备份 → upgrade-4.0.0 + 4.1.0 → 十步全链路绿（ENRICH 46/AGGREGATE 189 搬迁）
+- 模板「导入 → build/enable → 事件频控递增 → 导出 v2.0 → 再导入」round-trip 全通
+- 全库扫描确认无其他漏注入的 Mapper/Service 字段；L1/L2 回归绿
+
 ## [4.1.0] - 2026-11-28
 
 破坏性版本：特征工程重构（[plan-v4.1](docs/plan-v4.1.md)、[升级指南](docs/upgrade-guide.md)）。

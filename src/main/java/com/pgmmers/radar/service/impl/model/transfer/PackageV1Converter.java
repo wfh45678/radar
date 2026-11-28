@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.pgmmers.radar.enums.AggregateKind;
 
+import java.io.IOException;
+
 /**
  * v4.0（formatVersion 1.0）策略包 → v4.1（2.0）特征体系的导入转换器。
  *
@@ -43,7 +45,52 @@ public final class PackageV1Converter {
             root.remove("abstractions");
         }
         root.set("features", features);
+
+        // activations → strategies：v1 键名改名（ModelPackage 绑定 strategies，漏改会整组丢弃，
+        // 导入后规则 STRATEGY_ID 重映射为 null 触发 NOT NULL 违例）
+        if (root.has("activations") && !root.has("strategies")) {
+            root.set("strategies", root.get("activations"));
+            root.remove("activations");
+        }
+
+        // 规则字段前缀改写：与 upgrade-4.1.0.sql 对存量行的口径一致
+        // （脚本 data.preItems./data.abstractions. → data.features.；条件 JSON 与规则名同口径）
+        if (root.has("rules") && root.get("rules").isArray()) {
+            for (JsonNode rule : root.get("rules")) {
+                rewriteRulePrefixes((ObjectNode) rule);
+            }
+        }
+
+        root.put("formatVersion", "2.0");
         return true;
+    }
+
+    /** 规则内 v1 前缀改写（scripts / ruleDefinition / abstractionName）。 */
+    private static void rewriteRulePrefixes(ObjectNode rule) {
+        JsonNode scripts = rule.get("scripts");
+        if (scripts != null && scripts.isTextual()) {
+            rule.put("scripts", rewriteText(scripts.asText()));
+        }
+        JsonNode rd = rule.get("ruleDefinition");
+        if (rd != null && rd.isTextual()) {
+            rule.put("ruleDefinition", rewriteJsonPrefixes(rd.asText()));
+        } else if (rd != null && rd.isObject()) {
+            rule.put("ruleDefinition", rewriteJsonPrefixes(rd.toString()));
+        }
+        JsonNode name = rule.get("abstractionName");
+        if (name != null && name.isTextual()) {
+            rule.put("abstractionName", name.asText().replace("abstractions.", "features."));
+        }
+    }
+
+    private static String rewriteText(String script) {
+        return script.replace("data.preItems.", "data.features.")
+                .replace("data.abstractions.", "data.features.");
+    }
+
+    private static String rewriteJsonPrefixes(String json) {
+        return json.replace("\"preItems.", "\"features.")
+                .replace("\"abstractions.", "\"features.");
     }
 
     /** preItem 条目 → ENRICH 特征 */
@@ -98,9 +145,22 @@ public final class PackageV1Converter {
         definition.put("searchIntervalType", intOr(item, "searchIntervalType", 5));
         definition.put("searchIntervalValue", intOr(item, "searchIntervalValue", 1));
         definition.put("functionField", text(item, "functionField"));
+        // v1 包内 ruleDefinition 为 JSON 字符串形态（RulePO 同构），解析回对象；列前缀同步改写
         JsonNode filter = item.get("ruleDefinition");
-        if (filter != null && !filter.isNull() && filter.isObject()) {
-            definition.set("filter", filter);
+        if (filter != null && !filter.isNull()) {
+            if (filter.isObject()) {
+                definition.set("filter", rewriteJsonNodePrefixes((ObjectNode) filter));
+            } else if (filter.isTextual() && !filter.asText().isEmpty()) {
+                try {
+                    JsonNode parsed = new com.fasterxml.jackson.databind.ObjectMapper()
+                            .readTree(filter.asText());
+                    if (parsed != null && parsed.isObject()) {
+                        definition.set("filter", rewriteJsonNodePrefixes((ObjectNode) parsed));
+                    }
+                } catch (IOException ignore) {
+                    // 非法条件 JSON：不设置 filter（无过滤语义）
+                }
+            }
         }
         feature.put("definition", definition.toString());
         return feature;
@@ -114,5 +174,16 @@ public final class PackageV1Converter {
     private static int intOr(JsonNode node, String field, int defaultValue) {
         JsonNode v = node.get(field);
         return v == null || v.isNull() ? defaultValue : v.asInt(defaultValue);
+    }
+
+    /** 条件树列前缀改写：v1 编辑态（preItems./abstractions.）→ v4.1 features.。 */
+    private static ObjectNode rewriteJsonNodePrefixes(ObjectNode node) {
+        String json = node.toString().replace("\"preItems.", "\"features.")
+                .replace("\"abstractions.", "\"features.");
+        try {
+            return (ObjectNode) new com.fasterxml.jackson.databind.ObjectMapper().readTree(json);
+        } catch (IOException e) {
+            return node;
+        }
     }
 }
