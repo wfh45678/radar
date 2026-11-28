@@ -2,6 +2,13 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [4.1.3] - 2026-11-28
+
+### Fixed
+- 策略管理「配置」页（strategyDetail → Rule.jsx）使用 `<Option>` 未解构，渲染即报
+  `ReferenceError: Option is not defined`（补 `const { Option } = Select`）。
+  全库 JSX 引用静态扫描复扫干净（feature/strategy 全部页面引用可解析）
+
 ## [4.1.2] - 2026-11-28
 
 ### Fixed

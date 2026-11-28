@@ -11,6 +11,7 @@ import ComplexCondition from '../abstraction/ComplexCondition';
 import {generateScript,validateRules} from '../utils/groovyUtil';
 import {FetchUtil} from '../utils/fetchUtil';
 import {trim} from '../utils/validateUtil';
+const { Option } = Select;
 
 export default class Rule extends React.Component{
 
