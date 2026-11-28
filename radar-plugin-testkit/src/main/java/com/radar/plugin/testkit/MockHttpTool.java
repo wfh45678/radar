@@ -14,7 +14,7 @@ import java.util.function.Function;
  * <pre>{@code
  * MockHttpTool http = new MockHttpTool()
  *         .stub("https://api.example.com/rate", 200, "{\"USD\":7.24}");
- * PluginContext ctx = TestContexts.context(http);
+ * FeatureContext ctx = TestContexts.context(http);
  * // ... 执行插件 ...
  * assertEquals(1, http.calls().size());
  * }</pre>

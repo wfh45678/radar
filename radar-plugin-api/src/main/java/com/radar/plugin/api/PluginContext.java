@@ -9,7 +9,10 @@ import org.slf4j.Logger;
  * 每次执行都会传入，插件可保存引用但不应跨模型缓存业务数据。
  *
  * @since 3.0.0
- */
+ 
+ *
+ * @deprecated v3.x 插件契约（v4.1 起由新契约取代，v5 移除）。存量外置 jar 仍可加载。*/
+@Deprecated
 public final class PluginContext {
 
     /** 缓存工厂：按 (名称, TTL) 创建/复用进程内缓存（同名同 TTL 复用同一实例）。 */

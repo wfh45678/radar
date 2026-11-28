@@ -2,12 +2,12 @@ package com.radar.plugin.demo;
 
 import com.radar.plugin.api.OutputColumn;
 import com.radar.plugin.api.ParamDescriptor;
-import com.radar.plugin.api.Plugin;
-import com.radar.plugin.api.PluginContext;
-import com.radar.plugin.api.PluginException;
-import com.radar.plugin.api.PluginMeta;
-import com.radar.plugin.api.PluginRequest;
-import com.radar.plugin.api.PluginResult;
+import com.radar.plugin.api.FeatureProcessor;
+import com.radar.plugin.api.FeatureContext;
+import com.radar.plugin.api.FeatureException;
+import com.radar.plugin.api.FeatureMeta;
+import com.radar.plugin.api.FeatureRequest;
+import com.radar.plugin.api.FeatureResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -18,11 +18,11 @@ import java.util.Map;
  * （设备聚集、内嵌流量识别），不是精确设备识别库；精确场景请参考 PLUGIN_REGISTRY
  * 的社区专业插件。</p>
  */
-@PluginMeta(key = "USER_AGENT_PARSE", name = "UA 解析",
+@FeatureMeta(key = "USER_AGENT_PARSE", name = "UA 解析",
         desc = "User-Agent 解析：设备类型/OS/浏览器大类 + 微信/支付宝内嵌标识（简化版，风控特征用）",
         type = "JSON",
         version = "1.0.0", provider = "radar-official")
-public class UserAgentParsePlugin implements Plugin {
+public class UserAgentParsePlugin implements FeatureProcessor {
 
     @Override
     public java.util.List<ParamDescriptor> paramSchema() {
@@ -41,7 +41,7 @@ public class UserAgentParsePlugin implements Plugin {
     }
 
     @Override
-    public PluginResult execute(PluginRequest request, PluginContext context) throws PluginException {
+    public FeatureResponse execute(FeatureRequest request, FeatureContext context) throws FeatureException {
         Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
         String ua = raw == null ? "" : String.valueOf(raw);
 
@@ -51,7 +51,7 @@ public class UserAgentParsePlugin implements Plugin {
         out.put("browser", browser(ua));
         out.put("inWechat", String.valueOf(ua.contains("MicroMessenger")));
         out.put("inAlipay", String.valueOf(ua.contains("AlipayClient") || ua.contains("AliApp")));
-        return PluginResult.of(out);
+        return FeatureResponse.of(out);
     }
 
     /** 设备类型：iPad/平板平板优先，Android 无 Mobile 视为平板，其余含移动关键词为手机，默认 PC。 */

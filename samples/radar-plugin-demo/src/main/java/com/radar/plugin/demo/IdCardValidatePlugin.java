@@ -3,12 +3,12 @@ package com.radar.plugin.demo;
 import com.radar.plugin.api.OutputColumn;
 import com.radar.plugin.api.ParamDescriptor;
 import com.radar.plugin.api.ParamOption;
-import com.radar.plugin.api.Plugin;
-import com.radar.plugin.api.PluginContext;
-import com.radar.plugin.api.PluginException;
-import com.radar.plugin.api.PluginMeta;
-import com.radar.plugin.api.PluginRequest;
-import com.radar.plugin.api.PluginResult;
+import com.radar.plugin.api.FeatureProcessor;
+import com.radar.plugin.api.FeatureContext;
+import com.radar.plugin.api.FeatureException;
+import com.radar.plugin.api.FeatureMeta;
+import com.radar.plugin.api.FeatureRequest;
+import com.radar.plugin.api.FeatureResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
@@ -21,11 +21,11 @@ import java.util.Map;
  * 15 位老号在宽松模式输出 legacy 标记不阻断，严格模式拒绝。
  * mode 参数演示 paramSchema 的 options 下拉。</p>
  */
-@PluginMeta(key = "ID_CARD_VALIDATE", name = "身份证校验",
+@FeatureMeta(key = "ID_CARD_VALIDATE", name = "身份证校验",
         desc = "18 位身份证校验位算法 + 提取生日/性别/省份（15 位老号宽松模式标记 legacy）",
         type = "JSON",
         version = "1.0.0", provider = "radar-official")
-public class IdCardValidatePlugin implements Plugin {
+public class IdCardValidatePlugin implements FeatureProcessor {
 
     /** GB 11643-1999 校验位权重与码表。 */
     private static final int[] WEIGHTS = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
@@ -53,7 +53,7 @@ public class IdCardValidatePlugin implements Plugin {
     }
 
     @Override
-    public PluginResult execute(PluginRequest request, PluginContext context) throws PluginException {
+    public FeatureResponse execute(FeatureRequest request, FeatureContext context) throws FeatureException {
         Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
         String idCard = raw == null ? "" : String.valueOf(raw).trim().toUpperCase();
         boolean strict = "strict".equalsIgnoreCase(
@@ -62,20 +62,20 @@ public class IdCardValidatePlugin implements Plugin {
         Map<String, Object> out = new LinkedHashMap<>();
         if (idCard.isEmpty()) {
             out.put("valid", "false");
-            return PluginResult.of(out);
+            return FeatureResponse.of(out);
         }
 
         if (idCard.length() == 15) {
             // 15 位老号：无校验位，补 19 世纪解析生日/性别
             if (strict) {
-                throw new PluginException("15 位老身份证号，请升级为 18 位后重试: " + idCard);
+                throw new FeatureException("15 位老身份证号，请升级为 18 位后重试: " + idCard);
             }
             out.put("valid", "legacy");
             out.put("birthday", "19" + idCard.substring(6, 8) + "-" + idCard.substring(8, 10)
                     + "-" + idCard.substring(10, 12));
             out.put("gender", Integer.parseInt(idCard.substring(14, 15)) % 2 == 0 ? "女" : "男");
             out.put("province", PROVINCES.getOrDefault(idCard.substring(0, 2), "未知"));
-            return PluginResult.of(out);
+            return FeatureResponse.of(out);
         }
 
         boolean valid = idCard.length() == 18 && checksumValid(idCard) && birthValid(idCard);
@@ -93,13 +93,13 @@ public class IdCardValidatePlugin implements Plugin {
             province = PROVINCES.getOrDefault(idCard.substring(0, 2), "未知");
         }
         if (!valid && strict) {
-            throw new PluginException("身份证校验失败: " + idCard);
+            throw new FeatureException("身份证校验失败: " + idCard);
         }
         out.put("valid", valid ? "true" : "false");
         out.put("birthday", birthday);
         out.put("gender", gender);
         out.put("province", province);
-        return PluginResult.of(out);
+        return FeatureResponse.of(out);
     }
 
     /** GB 11643-1999 校验位。 */

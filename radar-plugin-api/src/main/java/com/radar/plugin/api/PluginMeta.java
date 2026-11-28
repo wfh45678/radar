@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Deprecated
 public @interface PluginMeta {
 
     /** 插件唯一标识（大写字母/数字/下划线，同库内不得重复）。 */

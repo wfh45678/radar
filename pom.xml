@@ -10,13 +10,13 @@
     </parent>
     <groupId>com.pgmmers</groupId>
     <artifactId>radar</artifactId>
-    <version>3.5.1</version>
+    <version>4.1.0</version>
     <name>radar</name>
     <description>Real-time risk control engine (Java 17 + Spring Boot 3 single module)</description>
     <packaging>jar</packaging>
 
     <properties>
-        <radar-plugin-api.version>3.1.0</radar-plugin-api.version>
+        <radar-plugin-api.version>4.0.0</radar-plugin-api.version>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- 项目级默认值：防止 env.CI 等激活其他 profile 时 activeByDefault 的 local 失效，

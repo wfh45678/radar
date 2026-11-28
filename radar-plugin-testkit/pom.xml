@@ -9,7 +9,7 @@
          当前仅本地/CI install 供示例工程引用，暂不走 Central 发布（需要时补 sources/javadoc/GPG 三件套）。 -->
     <groupId>cn.riskengine</groupId>
     <artifactId>radar-plugin-testkit</artifactId>
-    <version>3.1.0</version>
+    <version>4.0.0</version>
     <packaging>jar</packaging>
 
     <name>Radar Plugin Testkit</name>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>cn.riskengine</groupId>
             <artifactId>radar-plugin-api</artifactId>
-            <version>3.1.0</version>
+            <version>4.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -1,8 +1,8 @@
 package com.radar.plugin.demo;
 
-import com.radar.plugin.api.PluginResult;
+import com.radar.plugin.api.FeatureResponse;
 import com.radar.plugin.testkit.MockHttpTool;
-import com.radar.plugin.testkit.PluginRequestBuilder;
+import com.radar.plugin.testkit.FeatureRequestBuilder;
 import com.radar.plugin.testkit.RecordingCache;
 import com.radar.plugin.testkit.TestContexts;
 import java.util.Map;
@@ -15,14 +15,14 @@ public class SensitiveDataPluginTest {
 
     /**
      * v3.1 起 context/request 构造统一走 testkit（本测试 v3.0 时手搓 lambda 上下文，
-     * 现迁移为 PluginRequestBuilder + MockHttpTool + RecordingCache 组合）。
+     * 现迁移为 FeatureRequestBuilder + MockHttpTool + RecordingCache 组合）。
      */
     private final RecordingCache cache = new RecordingCache();
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> execute(Map<String, Object> args, String value) {
-        PluginResult result = plugin.execute(
-                PluginRequestBuilder.create()
+        FeatureResponse result = plugin.execute(
+                FeatureRequestBuilder.create()
                         .modelId(1L)
                         .destField("sd")
                         .sourceField("f1", value)

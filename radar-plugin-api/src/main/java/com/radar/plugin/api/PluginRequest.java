@@ -8,7 +8,10 @@ import java.util.Map;
  * 插件执行入参（只读视图）。由引擎在每次 preItem 执行时构造。
  *
  * @since 3.0.0
- */
+ 
+ *
+ * @deprecated v3.x 插件契约（v4.1 起由新契约取代，v5 移除）。存量外置 jar 仍可加载。*/
+@Deprecated
 public final class PluginRequest {
 
     private final Long modelId;

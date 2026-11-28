@@ -12,7 +12,10 @@ package com.radar.plugin.api;
  * </ul>
  *
  * @since 3.0.0
- */
+ 
+ *
+ * @deprecated v3.x 插件契约（v4.1 起由新契约取代，v5 移除）。存量外置 jar 仍可加载。*/
+@Deprecated
 public final class PluginResult {
 
     private final Object payload;

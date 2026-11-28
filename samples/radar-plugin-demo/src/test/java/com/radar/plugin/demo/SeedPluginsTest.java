@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.radar.plugin.api.Plugin;
-import com.radar.plugin.api.PluginException;
-import com.radar.plugin.api.PluginResult;
+import com.radar.plugin.api.FeatureProcessor;
+import com.radar.plugin.api.FeatureException;
+import com.radar.plugin.api.FeatureResponse;
 import com.radar.plugin.testkit.MockHttpTool;
-import com.radar.plugin.testkit.PluginRequestBuilder;
+import com.radar.plugin.testkit.FeatureRequestBuilder;
 import com.radar.plugin.testkit.TestContexts;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
@@ -22,10 +22,10 @@ import org.junit.jupiter.api.Test;
 class SeedPluginsTest {
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> execute(Plugin plugin, Object sourceValue, Map<String, Object> args)
-            throws PluginException {
-        PluginResult result = plugin.execute(
-                PluginRequestBuilder.create()
+    private Map<String, Object> execute(FeatureProcessor processor, Object sourceValue, Map<String, Object> args)
+            throws FeatureException {
+        FeatureResponse result = processor.execute(
+                FeatureRequestBuilder.create()
                         .sourceField("input", sourceValue)
                         .args(args)
                         .build(),
@@ -36,7 +36,7 @@ class SeedPluginsTest {
     // ---------- ID_CARD_VALIDATE ----------
 
     @Test
-    void idCardValidOutput() throws PluginException {
+    void idCardValidOutput() throws FeatureException {
         Map<String, Object> out = execute(new IdCardValidatePlugin(), "110101199003077168", Map.of());
         assertEquals("true", out.get("valid"));
         assertEquals("1990-03-07", out.get("birthday"));
@@ -45,7 +45,7 @@ class SeedPluginsTest {
     }
 
     @Test
-    void idCardGenderAndProvince() throws PluginException {
+    void idCardGenderAndProvince() throws FeatureException {
         Map<String, Object> sh = execute(new IdCardValidatePlugin(), "310101199001011621", Map.of());
         assertEquals("女", sh.get("gender"));
         assertEquals("上海", sh.get("province"));
@@ -54,20 +54,20 @@ class SeedPluginsTest {
     }
 
     @Test
-    void idCardChecksumFailureMarksInvalid() throws PluginException {
+    void idCardChecksumFailureMarksInvalid() throws FeatureException {
         Map<String, Object> out = execute(new IdCardValidatePlugin(), "110101199003077160", Map.of());
         assertEquals("false", out.get("valid"));
     }
 
     @Test
     void idCardStrictModeThrows() {
-        PluginException e = assertThrows(PluginException.class,
+        FeatureException e = assertThrows(FeatureException.class,
                 () -> execute(new IdCardValidatePlugin(), "110101199003077160", Map.of("mode", "strict")));
         assertTrue(e.getMessage().contains("身份证校验失败"));
     }
 
     @Test
-    void idCardLegacy15DigitInLenientMode() throws PluginException {
+    void idCardLegacy15DigitInLenientMode() throws FeatureException {
         Map<String, Object> out = execute(new IdCardValidatePlugin(), "110101491001123", Map.of());
         assertEquals("legacy", out.get("valid"));
         assertEquals("1949-10-01", out.get("birthday"));
@@ -76,23 +76,23 @@ class SeedPluginsTest {
 
     @Test
     void idCardLegacy15DigitRejectedInStrictMode() {
-        assertThrows(PluginException.class,
+        assertThrows(FeatureException.class,
                 () -> execute(new IdCardValidatePlugin(), "110101491001123", Map.of("mode", "strict")));
     }
 
     @Test
     void idCardMetadataDeclared() {
-        Plugin plugin = new IdCardValidatePlugin();
-        assertEquals("ID_CARD_VALIDATE", plugin.key());
-        assertFalse(plugin.remote());
-        assertEquals(1, plugin.paramSchema().size());
-        assertEquals(4, plugin.outputMeta().size());
+        FeatureProcessor processor = new IdCardValidatePlugin();
+        assertEquals("ID_CARD_VALIDATE", processor.key());
+        assertFalse(processor.remote());
+        assertEquals(1, processor.paramSchema().size());
+        assertEquals(4, processor.outputMeta().size());
     }
 
     // ---------- USER_AGENT_PARSE ----------
 
     @Test
-    void uaWechatMobile() throws PluginException {
+    void uaWechatMobile() throws FeatureException {
         Map<String, Object> out = execute(new UserAgentParsePlugin(),
                 "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 "
                         + "(KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.42",
@@ -105,7 +105,7 @@ class SeedPluginsTest {
     }
 
     @Test
-    void uaAndroidPcChrome() throws PluginException {
+    void uaAndroidPcChrome() throws FeatureException {
         Map<String, Object> out = execute(new UserAgentParsePlugin(),
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                         + "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -117,7 +117,7 @@ class SeedPluginsTest {
     }
 
     @Test
-    void uaAndroidTabletWithoutMobile() throws PluginException {
+    void uaAndroidTabletWithoutMobile() throws FeatureException {
         Map<String, Object> out = execute(new UserAgentParsePlugin(),
                 "Mozilla/5.0 (Linux; Android 13; SM-X710) AppleWebKit/537.36 (KHTML, like Gecko) "
                         + "Chrome/120.0.0.0 Safari/537.36",
@@ -127,7 +127,7 @@ class SeedPluginsTest {
     }
 
     @Test
-    void uaEmptyGivesUnknown() throws PluginException {
+    void uaEmptyGivesUnknown() throws FeatureException {
         Map<String, Object> out = execute(new UserAgentParsePlugin(), "", Map.of());
         assertEquals("unknown", out.get("deviceType"));
         assertEquals("其他", out.get("os"));
@@ -137,7 +137,7 @@ class SeedPluginsTest {
     // ---------- BANK_CARD_CHECK ----------
 
     @Test
-    void bankCardValidDebitWithBank() throws PluginException {
+    void bankCardValidDebitWithBank() throws FeatureException {
         Map<String, Object> out = execute(new BankCardCheckPlugin(), "6222021234567894", Map.of());
         assertEquals("true", out.get("valid"));
         assertEquals("借记", out.get("cardType"));
@@ -145,7 +145,7 @@ class SeedPluginsTest {
     }
 
     @Test
-    void bankCardValidVisaCredit() throws PluginException {
+    void bankCardValidVisaCredit() throws FeatureException {
         Map<String, Object> out = execute(new BankCardCheckPlugin(), "4111111111111111", Map.of());
         assertEquals("true", out.get("valid"));
         assertEquals("贷记", out.get("cardType"));
@@ -154,13 +154,13 @@ class SeedPluginsTest {
     }
 
     @Test
-    void bankCardLuhnFailureMarksInvalid() throws PluginException {
+    void bankCardLuhnFailureMarksInvalid() throws FeatureException {
         Map<String, Object> out = execute(new BankCardCheckPlugin(), "6222021234567895", Map.of());
         assertEquals("false", out.get("valid"));
     }
 
     @Test
-    void bankCardSpacesAreStripped() throws PluginException {
+    void bankCardSpacesAreStripped() throws FeatureException {
         Map<String, Object> out = execute(new BankCardCheckPlugin(), "6222 0212 3456 7894", Map.of());
         assertEquals("true", out.get("valid"));
     }

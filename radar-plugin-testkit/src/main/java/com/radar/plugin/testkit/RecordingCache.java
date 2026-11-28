@@ -12,7 +12,7 @@ import java.util.function.Function;
  *
  * <pre>{@code
  * RecordingCache cache = new RecordingCache();
- * PluginContext ctx = TestContexts.context(new MockHttpTool(), cache);
+ * FeatureContext ctx = TestContexts.context(new MockHttpTool(), cache);
  * // ... 执行插件两次 ...
  * assertEquals(1, cache.loads().size()); // 第二次应命中缓存
  * }</pre>

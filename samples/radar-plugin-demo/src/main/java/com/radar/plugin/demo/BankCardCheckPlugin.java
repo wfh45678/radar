@@ -2,12 +2,12 @@ package com.radar.plugin.demo;
 
 import com.radar.plugin.api.OutputColumn;
 import com.radar.plugin.api.ParamDescriptor;
-import com.radar.plugin.api.Plugin;
-import com.radar.plugin.api.PluginContext;
-import com.radar.plugin.api.PluginException;
-import com.radar.plugin.api.PluginMeta;
-import com.radar.plugin.api.PluginRequest;
-import com.radar.plugin.api.PluginResult;
+import com.radar.plugin.api.FeatureProcessor;
+import com.radar.plugin.api.FeatureContext;
+import com.radar.plugin.api.FeatureException;
+import com.radar.plugin.api.FeatureMeta;
+import com.radar.plugin.api.FeatureRequest;
+import com.radar.plugin.api.FeatureResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -18,11 +18,11 @@ import java.util.Map;
  * 精确卡 BIN 库请参考 PLUGIN_REGISTRY 社区插件）。卡种粗判：16 位 4/5 开头默认贷记，
  * 6 开头默认借记，其余未知。</p>
  */
-@PluginMeta(key = "BANK_CARD_CHECK", name = "银行卡校验",
+@FeatureMeta(key = "BANK_CARD_CHECK", name = "银行卡校验",
         desc = "Luhn 模 10 校验 + 卡种粗判（借记/贷记）+ 主流银行前缀识别（示例前缀表）",
         type = "JSON",
         version = "1.0.0", provider = "radar-official")
-public class BankCardCheckPlugin implements Plugin {
+public class BankCardCheckPlugin implements FeatureProcessor {
 
     /** 示例 BIN 前缀表（前 4 位 → 银行名）：仅覆盖主流卡段，非完整/非权威。 */
     private static final Map<String, String> BIN_BANKS = buildBins();
@@ -41,7 +41,7 @@ public class BankCardCheckPlugin implements Plugin {
     }
 
     @Override
-    public PluginResult execute(PluginRequest request, PluginContext context) throws PluginException {
+    public FeatureResponse execute(FeatureRequest request, FeatureContext context) throws FeatureException {
         Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
         String card = raw == null ? "" : String.valueOf(raw).replaceAll("[\\s-]", "");
 
@@ -50,7 +50,7 @@ public class BankCardCheckPlugin implements Plugin {
         out.put("valid", valid ? "true" : "false");
         out.put("cardType", cardType(card));
         out.put("bank", bank(card));
-        return PluginResult.of(out);
+        return FeatureResponse.of(out);
     }
 
     /** Luhn 模 10 算法。 */
