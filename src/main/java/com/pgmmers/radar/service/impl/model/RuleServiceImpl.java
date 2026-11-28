@@ -29,8 +29,8 @@ import com.pgmmers.radar.common.util.DateUtils;
 import com.pgmmers.radar.common.util.GroovyScriptUtil;
 import com.pgmmers.radar.model.vo.model.*;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.json.JsonData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -298,11 +298,16 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
                 keyStr = keyStr.replace("${ruleId}", rule.getId() + "");
                 long qty = 0;
                 try {
-                    QueryBuilder filter = QueryBuilders
-                            .rangeQuery("fields." + model.getReferenceDate())
-                            .from(beginTime).to(endTime);
-                    qty = searchService.count(model.getGuid().toLowerCase(),
-                            QueryBuilders.termQuery(keyStr,rule.getId() + ""), filter);
+                    final String fieldKey = keyStr;
+                    final long fromMillis = beginTime;
+                    final long toMillis = endTime;
+                    String rangeField = "fields." + model.getReferenceDate();
+                    Query filter = Query.of(q -> q.range(r -> r.untyped(u -> u
+                            .gte(JsonData.of(fromMillis))
+                            .lte(JsonData.of(toMillis))
+                            .field(rangeField))));
+                    Query hitQuery = Query.of(q -> q.term(t -> t.field(fieldKey).value(v -> v.stringValue(rule.getId() + ""))));
+                    qty = searchService.count(model.getGuid().toLowerCase(), hitQuery, filter);
                 } catch (Exception e) {
                     logger.error("search error", e);
                 }

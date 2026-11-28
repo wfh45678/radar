@@ -1,4 +1,4 @@
-# Radar 升级指南：v1.x → v3.x → v4.x → v5.x
+# Radar 升级指南：v1.x → v3.x → v4.x → v5.x → v5.x
 
 > 面向仍在运行 v1.x（2020-2021 年版本）或 v2.x/v3.x/v4.x 的存量用户。
 > v3.x 不是原地升级，而是一次"底座重铺、模型延续"的现代化——这份指南说清楚：什么变了、什么没变、怎么迁。
@@ -78,6 +78,50 @@
 4. 新建一个「衍生表达式」或「组合比率」特征 → 事件命中 → 特征值出现在响应 features 中；
 5. `/actuator/prometheus` 出现 `radar_feature_executions_total{type,result}` 序列。
 
+## v5.1.x → v5.2.0（ES 8 升级，基础设施破坏性）
+
+Elasticsearch 服务端 7.17.15 → **8.18.8**，客户端从已停止演进的 RestHighLevelClient（7.17 末版）
+整体迁移至官方 **elasticsearch-java**（co.elastic.clients，版本随 Spring Boot 3.5 BOM → 8.18.8）。
+事件检索数据可由 Mongo 全量重建（数据源为 Mongo），升级路径清晰。
+
+### 必做步骤
+
+1. **备份**后执行（若已有升级 SQL）并升级应用 jar；docker-compose.yml 的 ES 镜像已同步
+   `8.18.8`，并**显式关闭 xpack 安全**（8.x 默认开启 TLS+认证，compose/Testcontainers 均已设置
+   `xpack.security.enabled=false`；生产开启安全场景走 `elasticsearch.username/password` 配置分支，
+   EsConfig 已支持 Basic 认证）。
+2. **事件数据处理**（三选一，按业务需要）：
+   - **重建**（推荐）：事件流水数据源为 Mongo，升级后对每个场景执行「构建」重建 ES 索引
+     （先删后建 + Mongo 数据重新入检索），检索数据即恢复；
+   - **reindex-from-remote**：ES 8 集群对旧 7.17 集群执行 `POST _reindex?wait_for_completion=false`
+     （source.remote.host 指向旧集群，兼容 7→8 的动态 mapping 差异需人工核对）；
+   - **放弃检索历史**：仅保留 Mongo 流水，ES 索引随首个事件自动按新 mapping 重建。
+3. 自建脚本若直连 ES API（非经 radar），注意 8.x 断点：type 移除（已是无 type 写法）、
+   RestStatus 概念消失、`xpack.security.enabled` 默认 true。
+
+### BREAKING 变更对照（代码/API 面）
+
+| 项 | v5.1 | v5.2 |
+|----|------|------|
+| ES 客户端 | org.elasticsearch.client RestHighLevelClient 7.17.29 | co.elastic.clients ElasticsearchClient（elasticsearch-java 8.18.8，随 Boot BOM） |
+| 服务端依赖 jar | org.elasticsearch:elasticsearch 7.17.29（pom 显式） | 移除（新客户端自带所需类型，pom 不再显式引 server 核心 jar） |
+| 查询 DSL | org.elasticsearch.index.query.QueryBuilders | co.elastic.clients Query.of(lambda) |
+| 索引管理 | client.indices().exists/create/delete + RestStatus | client.indices().exists（BooleanResponse.value）/create（mappings.withJson）/delete |
+| 结果读取 | SearchHit.getSourceRef().utf8ToString() | SearchResponse<JsonData> hit.source().toJson().toString()（接口回传 SearchResult 模型，ES 类型不再泄漏） |
+| 服务端镜像 | 7.17.15 | 8.18.8（xpack.security.enabled=false 显式） |
+| 超时配置 | 无 | EsConfig 新增连接 5s / 请求 30s |
+
+### 检索链路回归说明
+
+以下链路已由 Testcontainers ES 8.18.8 容器自动化回归（CI 执行）：
+事件写入（ES 8 IndexRequest withJson）→ 事件检索分页（term + range + post filter）→
+规则命中统计（hitsSort 循环 count）→ 场景构建索引重建（先删后建 + alias + mapping JSON）。
+
+### 已知项（backlog，未随本次实施）
+
+- 规则命中统计 getHitSorts 为逐规则 count（N 次往返），可优化为单次 terms 聚合（列 backlog）；
+- MEDIAN/VARIANCE/SD 聚合若接入 ES（当前走 Mongo），注意近似算法选择。
+
 ## v3.x → v4.0.0（策略板块重构，破坏性）
 
 v4.0 把"激活器（Activation）"更名"策略（Strategy）"并类型化（规则集/评分卡/决策树），
@@ -124,7 +168,8 @@ v4.0 把"激活器（Activation）"更名"策略（Strategy）"并类型化（�
 | v3.4.0 | 2026-11-23 | 官方模板库：三场景模板 + 在线源（一键创建） |
 | v3.5.0 | 2026-11-23 | 官方种子插件三件套 + E2E 扩面 |
 | v4.0.0 | 2026-11-27 | 策略板块重构：激活器更名策略 + 类型化（规则集/评分卡/决策树），见下方 v3.x → v4.0 章节 |
-| v4.1.0 | 2026-11-28 | 特征工程重构：PreItem+抽象统一特征（Feature 四类型）+ 插件 SDK 4.0，见顶部 v4.0 → v4.1 章节 |
+| v4.1.0 | 2026-11-28 | 特征工程重构：PreItem+抽象统一特征（Feature 四类型）+ 插件 SDK 4.0，见上方 v4.0 → v4.1 章节 |
+| v5.2.0 | 2026-11-28 | ES 8 升级（P1-3 收口）：服务端 7.17→8.18.8 + elasticsearch-java 客户端，见顶部 v5.1.x → v5.2.0 章节 |
 
 ## 什么没变（心智可以全盘保留）
 

@@ -31,7 +31,7 @@
 |------|------|------|
 | 配置（场景/规则/插件注册） | MySQL `radar` 库 | 定期全备 + 升级前必备 |
 | 事件流水 | MongoDB（保留 `sys.conf.mongo-restore-days` 天） | 按合规要求归档 |
-| 事件检索 | Elasticsearch | 可重建（数据源为 Mongo） |
+| 事件检索 | Elasticsearch（v5.2 起为 8.x：默认开启 xpack 安全/TLS，compose 已显式关闭；生产开启认证走 elasticsearch.username/password） | 可重建（数据源为 Mongo） |
 | 外置插件 | `plugins/` 目录 | 与 MySQL 一起纳入备份 |
 
 最小可用备份 = MySQL 全备 + `plugins/` 目录。灾备恢复：建库导备份 + 拷回插件目录 + 应用启动。

@@ -2,6 +2,33 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [5.2.0] - 2026-11-28
+
+基础设施升级：Elasticsearch 7.17 → **8.18.8**（roadmap P1-3 收口，[升级指南](docs/upgrade-guide.md)）。
+
+### Changed
+- **BREAKING｜ES 服务端**：7.17.15 → 8.18.8（docker-compose/Testcontainers 同步；8.x 默认开启
+  xpack 安全，compose/Test 显式 `xpack.security.enabled=false`，生产安全场景走 username/password 配置）
+- **BREAKING｜ES 客户端**：RestHighLevelClient（7.17 末版，已停止演进）→ co.elastic.clients
+  **ElasticsearchClient**（elasticsearch-java 8.18.8，版本随 Spring Boot 3.5 BOM）；
+  SearchEngineService 接口去 ES 类型泄漏（新 SearchResult 模型，JSON 字符串回传，
+  下游 fastjson2 解析链路不变）；pom 移除 org.elasticsearch:elasticsearch server 核心 jar
+- EsConfig 补连接/请求超时（连接 5s / 请求 30s，原缺失）
+
+### Fixed
+- 事件检索数据升级路径明确：数据源为 Mongo 可全量重建（operations.md 既有结论），
+  升级指南给出 reindex-from-remote / 快照 / Mongo 重建三条路径
+
+### 不变（兼容承诺）
+- 检索语义：term/range/wrapper 查询、post filter、分页、count（search size=0 保留过滤语义）不变
+- Mongo 事件流水 flatten 结构不变（聚合查询不受影响）；事件检索数据可重建
+- HTTP 出访管控/插件/策略执行链路不变
+
+### Verification
+- L1/L2：76 例全绿；7 个 Testcontainers 集成测试（ES 8.18.8 容器）CI 执行覆盖
+  写入→hitsSort count→event query→场景建索引重建全链路
+- RestHighLevelClient/es.version/7.17 零残留（javadoc 历史说明除外）
+
 ## [5.1.1] - 2026-11-28
 
 ### Changed

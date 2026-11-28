@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.pgmmers</groupId>
     <artifactId>radar</artifactId>
-    <version>5.1.1</version>
+    <version>5.2.0</version>
     <name>radar</name>
     <description>Real-time risk control engine (Java 17 + Spring Boot 3 single module)</description>
     <packaging>jar</packaging>
@@ -28,7 +28,6 @@
         <fastjson2.version>2.0.66</fastjson2.version>
         <jjwt.version>0.12.6</jjwt.version>
         <groovy.version>4.0.33</groovy.version>
-        <es.version>7.17.29</es.version>
         <druid.version>1.2.28</druid.version>
         <easyexcel.version>4.0.3</easyexcel.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -132,20 +131,14 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- ES 8.x 新客户端（版本随 Spring Boot 3.5 BOM → 8.18.8，与 compose/Testcontainers 服务端 8.18.8 对齐） -->
         <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>${es.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>${es.version}</version>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-client</artifactId>
-            <version>${es.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

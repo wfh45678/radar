@@ -15,12 +15,9 @@ import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.slf4j.Logger;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.json.JsonData;
+import com.pgmmers.radar.service.search.SearchResult;import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,15 +63,12 @@ public class EventServiceImpl implements EventService {
             filterMap = null;
         }
 
-        SearchHits hitsRet = searchService.search(
+        SearchResult result = searchService.search(
                 model.getGuid().toLowerCase(), queryMap, filterMap,
                 (query.getPageNo() - 1) * query.getPageSize(),
                 query.getPageSize());
-        SearchHit[] hits = hitsRet.getHits();
-        for (SearchHit hit : hits) {
-            String info = hit.getSourceRef().utf8ToString();
+        for (String info : result.getSources()) {
             list.add(JSONObject.parse(info));
-            list.add(info);
         }
         return list;
     }
@@ -95,32 +89,31 @@ public class EventServiceImpl implements EventService {
                     term.getEndTime());
             return null;
         }
-        QueryBuilder query = null;
+        Query query = null;
         String fieldName = term.getFieldName();
         if (!StringUtils.isEmpty(fieldName)) {
-            query = QueryBuilders.termQuery(term.getFieldName(),
-                    term.getFieldValue());
+            String value = term.getFieldValue();
+            query = Query.of(q -> q.term(t -> t.field(fieldName).value(v -> v.stringValue(value))));
         }
-        RangeQueryBuilder filter = QueryBuilders.rangeQuery("fields."+dateField)
-                .from(beginTime.getTimeInMillis())
-                .to(endTime.getTimeInMillis());
-        SearchHits hitsRet;
-        SearchHit[] hits;
+        String rangeField = "fields." + dateField;
+        long fromMillis = beginTime.getTimeInMillis();
+        long toMillis = endTime.getTimeInMillis();
+        Query filter = Query.of(q -> q.range(r -> r.untyped(u -> u
+                .gte(JsonData.of(fromMillis))
+                .lte(JsonData.of(toMillis))
+                .field(rangeField))));
         PageResult<Object> pageResult = null;
         try {
-            hitsRet = searchService.search(model.getGuid().toLowerCase(),
+            SearchResult result = searchService.search(model.getGuid().toLowerCase(),
                     query, filter,
                     (term.getPageNo() - 1) * term.getPageSize(),
                     term.getPageSize());
 
-            hits = hitsRet.getHits();
-            for (SearchHit hit : hits) {
-                //String info = hit.sourceRef().toUtf8();
-                String info = hit.getSourceRef().utf8ToString();
+            for (String info : result.getSources()) {
                 list.add(JSONObject.parse(info));
             }
             pageResult = new PageResult<>(term.getPageNo(),
-                    term.getPageSize(), (int) hitsRet.getTotalHits().value, list);
+                    term.getPageSize(), (int) result.getTotal(), list);
         } catch (Exception e) {
             logger.error("", e);
         }

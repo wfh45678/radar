@@ -47,7 +47,7 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 |---|------|------|
 | P1-1 | 虚拟线程 | Boot 3.5 一个开关（`spring.threads.virtual.enabled=true`）。引擎为典型 IO 密集型（ES/Mongo/Redis 调用），预期吞吐收益明显；**先压测后开启** |
 | P1-2 | 可观测性 | Micrometer + Prometheus 暴露：事件 QPS、规则命中率、引擎延迟 P99、Groovy 编译耗时。风控是延迟敏感系统，专业度必备 |
-| P1-3 | ES 8 升级 | v2.0 方案明确留作后续（client 已升 7.17）。API 变化较大，单独立项，依赖 P0-1 测试基础 |
+| P1-3 | ES 8 升级 | **已实施完成**（2026-11-28，随 v5.2.0 发布）：服务端 7.17→8.18.8 + elasticsearch-java 客户端迁移，Testcontainers 全链路回归；升级路径见 [upgrade-guide](upgrade-guide.md) |
 | P1-4 | 事件存储演进（调研） | hitsSort 等聚合报表是 MongoDB/ES 弱项，评估 ClickHouse 作为报表侧可选存储 |
 | P1-5 | ML 评分重接（ONNX） | Estimator 接口已保留、零实现（TensorDnnEstimator 因 TF Java 不兼容 Java 17 移除，2026-11-14 拍板暂缓）。将来重接**选 ONNX Runtime 而非 TF Java**：features 特征层即特征工程（v4.1 已统一），接入即闭环；`sys.conf.machine-learning` 开关与 EstimatorContainer 注册机制均无需改动 |
 | P1-6 | 引擎/管理端分离部署 profile | 单体仍为默认形态；增加 profile 使 engine 可独立水平扩展、admin 留单实例。Redis pub/sub 已解耦配置推送，改造成本低 |

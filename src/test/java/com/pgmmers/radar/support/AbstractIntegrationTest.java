@@ -51,11 +51,11 @@ public abstract class AbstractIntegrationTest {
             .withExposedPorts(6379);
 
     /**
-     * 服务端用 7.17.x（tag 7.17.15 确定存在），与客户端 7.17.29 兼容；
-     * xpack 安全关闭对应应用 EsConfig 的无认证模式。
+     * v5.2 ES 8 升级：服务端 8.18.8 与客户端（Boot BOM elasticsearch-java 8.18.8）同 minor；
+     * 8.x 默认开启 xpack 安全，必须显式关闭对应应用 EsConfig 的无认证模式。
      */
     static ElasticsearchContainer es = new ElasticsearchContainer(
-                    DockerImageName.parse("docker.elastic.co/elasticsearch/elasticsearch:7.17.15"))
+                    DockerImageName.parse("docker.elastic.co/elasticsearch/elasticsearch:8.18.8"))
             .withEnv("discovery.type", "single-node")
             .withEnv("xpack.security.enabled", "false")
             .withEnv("ES_JAVA_OPTS", "-Xms512m -Xmx512m");
