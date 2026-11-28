@@ -14,11 +14,11 @@ public class TermQuery extends PageQuery {
     
     private String endTime;
 
-    public Long getModelId() {
+    public Long getScenarioId() {
         return scenarioId;
     }
 
-    public void setModelId(Long scenarioId) {
+    public void setScenarioId(Long scenarioId) {
         this.scenarioId = scenarioId;
     }
 

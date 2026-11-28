@@ -20,7 +20,7 @@ public class ScenarioPO {
     /**
      * 模型名称
      */
-    @TableField("MODEL_NAME")
+    @TableField("SCENARIO_NAME")
     private String scenarioName;
 
     @TableField("LABEL")
@@ -108,7 +108,7 @@ public class ScenarioPO {
      *
      * @return MODEL_NAME - 模型名称
      */
-    public String getModelName() {
+    public String getScenarioName() {
         return scenarioName;
     }
 
@@ -117,7 +117,7 @@ public class ScenarioPO {
      *
      * @param scenarioName 模型名称
      */
-    public void setModelName(String scenarioName) {
+    public void setScenarioName(String scenarioName) {
         this.scenarioName = scenarioName;
     }
 

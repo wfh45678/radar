@@ -33,7 +33,7 @@ public class ModelConfigApiController {
     @GetMapping("/list/{scenarioId}")
     public CommonResult list(@PathVariable Long scenarioId) {
         CommonResult result = new CommonResult();
-        ModelConfVO modelConfVO = modelConfService.getByModelId(scenarioId);
+        ModelConfVO modelConfVO = modelConfService.getByScenarioId(scenarioId);
         if (modelConfVO != null) {
             result.getData().put("modelConfig", modelConfVO);
         }

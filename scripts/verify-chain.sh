@@ -39,11 +39,14 @@ ids=[m['id'] for m in d['data']['scenarioList']]
 assert 103 in ids, f'103 not in {ids}'
 print('    OK')"
 
-# 5. copy 模板
+# 5. copy 场景（临时诊断：打印 HTTP 码与原始响应）
 step 5 "copy 模板 103"
-R=$(curl -s -X POST -H "$AUTH" -H 'Content-Type: application/json' \
-    -d "{\"id\":103,\"modelName\":\"it_model_$TS\",\"label\":\"$LABEL\"}" \
+CODE=$(curl -s -X POST -H "$AUTH" -H 'Content-Type: application/json' \
+    -d "{\"id\":103,\"scenarioName\":\"it_scenario_$TS\",\"label\":\"$LABEL\"}" \
+    -o /tmp/vc_copy_resp -w "%{http_code}" \
     "$BASE/services/v1/scenario/copy")
+echo "    HTTP $CODE, body 前 200 字符: $(head -c 200 /tmp/vc_copy_resp)"
+R=$(cat /tmp/vc_copy_resp)
 assert_ok "$R"
 
 # 6. 模型列表定位新模型

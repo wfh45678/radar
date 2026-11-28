@@ -34,12 +34,12 @@ public class ModelConfServiceImpl implements ModelConfService {
     }
 
     /**
-     * 原 ModelConfDalImpl.getByModelId 逻辑下沉。
+     * 原 ModelConfDalImpl.getByScenarioId 逻辑下沉。
      */
     @Override
-    public ModelConfVO getByModelId(Long scenarioId) {
+    public ModelConfVO getByScenarioId(Long scenarioId) {
         ModelConfPO modelConfPO = modelConfMapper.selectOne(
-                new LambdaQueryWrapper<ModelConfPO>().eq(ModelConfPO::getModelId, scenarioId));
+                new LambdaQueryWrapper<ModelConfPO>().eq(ModelConfPO::getScenarioId, scenarioId));
         return convert(modelConfPO);
     }
 

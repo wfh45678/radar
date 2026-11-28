@@ -182,7 +182,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
         AdaptationResult result = new AdaptationResult();
 //      启动机器学习
         if (machineLearning){
-            Estimator estimator = estimatorContainer.getByModelId(scenarioId);
+            Estimator estimator = estimatorContainer.getByScenarioId(scenarioId);
             if(estimator != null) {
                 float score = estimator.predict(scenarioId, data);
                 result.getAdaptationMap().put("score", score);

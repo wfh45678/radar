@@ -85,7 +85,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     private List<RuleVO> listRules(Long scenarioId, Long strategyId, Integer status) {
         List<RulePO> rulePoList = ruleMapper.selectList(
                 new LambdaQueryWrapper<RulePO>()
-                        .eq(scenarioId != null, RulePO::getModelId, scenarioId)
+                        .eq(scenarioId != null, RulePO::getScenarioId, scenarioId)
                         .eq(strategyId != null, RulePO::getStrategyId, strategyId)
                         .eq(status != null, RulePO::getStatus, status));
         if (CollectionUtils.isEmpty(rulePoList)) {
@@ -268,14 +268,14 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
         ScenarioVO model = modelPO == null ? null : modelMapping.sourceToTarget(modelPO);
         String keyTempl = "hitsDetail.${strategyName}.rule_${ruleId}.key";
         StrategyQuery actQuery = new StrategyQuery();
-        actQuery.setModelId(scenarioId);
+        actQuery.setScenarioId(scenarioId);
         // page size default is 10.
         actQuery.setPageSize(100);
         // 原 StrategyDalImpl.query 逻辑下沉
         Page<StrategyPO> actPage = strategyMapper.selectPage(
                 new Page<>(actQuery.getPageNo(), actQuery.getPageSize()),
                 new LambdaQueryWrapper<StrategyPO>()
-                        .eq(StrategyPO::getModelId, actQuery.getModelId())
+                        .eq(StrategyPO::getScenarioId, actQuery.getScenarioId())
                         .like(!StringUtils.isEmpty(actQuery.getName()),
                                 StrategyPO::getStrategyName, actQuery.getName())
                         .eq(actQuery.getStatus() != null,
@@ -358,7 +358,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     }
 
     @Override
-    public List<RuleVO> listRuleByModelId(Long scenarioId) {
+    public List<RuleVO> listRuleByScenarioId(Long scenarioId) {
         return listRules(scenarioId, null, null);
     }
 }

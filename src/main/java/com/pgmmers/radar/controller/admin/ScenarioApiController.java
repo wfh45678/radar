@@ -193,7 +193,7 @@ public class ScenarioApiController  {
 
     @PostMapping("/copy")
 	public CommonResult copy(@RequestBody ScenarioVO model, HttpServletRequest request) {
-        return scenarioService.copy(model.getId(), contextHolder.getContext().getCode(), model.getModelName(), model.getLabel());
+        return scenarioService.copy(model.getId(), contextHolder.getContext().getCode(), model.getScenarioName(), model.getLabel());
 	}
 
     /**

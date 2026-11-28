@@ -62,7 +62,7 @@ public class PluginIsolationTest {
         feature.setStatus(1);
         feature.setType(FeatureType.ENRICH.name());
         feature.setFeatureName(featureName);
-        feature.setModelId(1L);
+        feature.setScenarioId(1L);
         com.fasterxml.jackson.databind.node.ObjectNode definition = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
         definition.put("plugin", plugin);
         definition.putArray("sourceFields").add("f1");

@@ -117,7 +117,7 @@ public class RulePO {
      *
      * @return SCENARIO_ID - 模型ID
      */
-    public Long getModelId() {
+    public Long getScenarioId() {
         return scenarioId;
     }
 
@@ -126,7 +126,7 @@ public class RulePO {
      *
      * @param scenarioId 模型ID
      */
-    public void setModelId(Long scenarioId) {
+    public void setScenarioId(Long scenarioId) {
         this.scenarioId = scenarioId;
     }
 

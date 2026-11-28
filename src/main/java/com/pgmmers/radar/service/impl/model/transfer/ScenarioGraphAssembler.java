@@ -69,7 +69,7 @@ public class ScenarioGraphAssembler {
 
         // 字段
         for (FieldPO po : fields) {
-            po.setModelId(newModelId);
+            po.setScenarioId(newModelId);
             po.setId(null);
             po.setCreateTime(sysDate);
             po.setUpdateTime(sysDate);
@@ -79,7 +79,7 @@ public class ScenarioGraphAssembler {
 
         // 特征（v4.1 统一 ENRICH/AGGREGATE/DERIVED/RATIO）
         for (FeaturePO po : features) {
-            po.setModelId(newModelId);
+            po.setScenarioId(newModelId);
             po.setId(null);
             po.setCreateTime(sysDate);
             po.setUpdateTime(sysDate);
@@ -91,7 +91,7 @@ public class ScenarioGraphAssembler {
         Map<Long, Long> dataListIdMap = new HashMap<>();
         for (DataListsPO po : dataLists) {
             Long oldDataListId = po.getId();
-            po.setModelId(newModelId);
+            po.setScenarioId(newModelId);
             po.setId(null);
             po.setCreateTime(sysDate);
             po.setUpdateTime(sysDate);
@@ -120,7 +120,7 @@ public class ScenarioGraphAssembler {
         Map<Long, Long> strategyIdMap = new HashMap<>();
         for (StrategyPO po : strategies) {
             Long oldStrategyId = po.getId();
-            po.setModelId(newModelId);
+            po.setScenarioId(newModelId);
             po.setId(null);
             po.setCreateTime(sysDate);
             po.setUpdateTime(sysDate);
@@ -129,7 +129,7 @@ public class ScenarioGraphAssembler {
             count++;
         }
         for (RulePO po : rules) {
-            po.setModelId(newModelId);
+            po.setScenarioId(newModelId);
             po.setStrategyId(strategyIdMap.get(po.getStrategyId()));
             po.setId(null);
             po.setCreateTime(sysDate);

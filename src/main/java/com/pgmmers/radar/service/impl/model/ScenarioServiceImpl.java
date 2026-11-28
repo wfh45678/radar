@@ -219,8 +219,8 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
         Page<ScenarioPO> p = scenarioMapper.selectPage(
                 new Page<>(query.getPageNo(), query.getPageSize()),
                 new LambdaQueryWrapper<ScenarioPO>()
-                        .like(!StringUtils.isEmpty(query.getModelName()),
-                                ScenarioPO::getModelName, query.getModelName())
+                        .like(!StringUtils.isEmpty(query.getScenarioName()),
+                                ScenarioPO::getScenarioName, query.getScenarioName())
                         .like(!StringUtils.isEmpty(query.getLabel()),
                                 ScenarioPO::getLabel, query.getLabel())
                         .eq(query.getStatus() != null, ScenarioPO::getStatus, query.getStatus())
@@ -281,8 +281,8 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
         }
         int count = saveScenario(model);
         if (count > 0) {
-            if (StringUtils.isEmpty(model.getModelName())) {
-                model.setModelName("model" + model.getId());
+            if (StringUtils.isEmpty(model.getScenarioName())) {
+                model.setScenarioName("model" + model.getId());
                 saveScenario(model);
             }
 
@@ -307,11 +307,11 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
         // 原 ModelDalImpl.delete 逻辑下沉：删除模型及关联子表
         int count = scenarioMapper.delete(
                 new LambdaQueryWrapper<ScenarioPO>().in(ScenarioPO::getId, Arrays.asList(ids)));
-        fieldMapper.delete(new LambdaQueryWrapper<FieldPO>().in(FieldPO::getModelId, Arrays.asList(ids)));
-        featureMapper.delete(new LambdaQueryWrapper<FeaturePO>().in(FeaturePO::getModelId, Arrays.asList(ids)));
-        dataListMapper.delete(new LambdaQueryWrapper<DataListsPO>().in(DataListsPO::getModelId, Arrays.asList(ids)));
-        strategyMapper.delete(new LambdaQueryWrapper<StrategyPO>().in(StrategyPO::getModelId, Arrays.asList(ids)));
-        ruleMapper.delete(new LambdaQueryWrapper<RulePO>().in(RulePO::getModelId, Arrays.asList(ids)));
+        fieldMapper.delete(new LambdaQueryWrapper<FieldPO>().in(FieldPO::getScenarioId, Arrays.asList(ids)));
+        featureMapper.delete(new LambdaQueryWrapper<FeaturePO>().in(FeaturePO::getScenarioId, Arrays.asList(ids)));
+        dataListMapper.delete(new LambdaQueryWrapper<DataListsPO>().in(DataListsPO::getScenarioId, Arrays.asList(ids)));
+        strategyMapper.delete(new LambdaQueryWrapper<StrategyPO>().in(StrategyPO::getScenarioId, Arrays.asList(ids)));
+        ruleMapper.delete(new LambdaQueryWrapper<RulePO>().in(RulePO::getScenarioId, Arrays.asList(ids)));
 
         if (count > 0) {
             result.setSuccess(true);
@@ -327,11 +327,11 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
         ScenarioVO modelVO = getScenarioById(id);
         // 原 ModelDalImpl.listField / listPreItem 逻辑下沉（v4.1：统一特征）
         List<FieldPO> fieldPOList = fieldMapper.selectList(
-                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, id));
+                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getScenarioId, id));
         List<FieldVO> fields = CollectionUtils.isEmpty(fieldPOList)
                 ? new ArrayList<>() : fieldMapping.sourceToTarget(fieldPOList);
         List<FeaturePO> featurePOList = featureMapper.selectList(
-                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getModelId, id));
+                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getScenarioId, id));
         List<FeatureVO> features = CollectionUtils.isEmpty(featurePOList)
                 ? new ArrayList<>() : featureMapping.sourceToTarget(featurePOList);
         String collectionName = "entity_" + id;
@@ -374,7 +374,7 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
 
         // execute
         boolean isCreated = searchService
-                .createIndex(modelVO.getGuid().toLowerCase(), modelVO.getModelName().toLowerCase(),
+                .createIndex(modelVO.getGuid().toLowerCase(), modelVO.getScenarioName().toLowerCase(),
                         total.toJSONString());
         logger.info("index mapping:{} is create {}", total.toJSONString(), isCreated);
         if (isCreated) {
@@ -462,12 +462,12 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
 
         // 子对象装配（单事务，重映射逻辑与导入一致）
         count += graphAssembler.assemble(newId,
-                fieldMapper.selectList(new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, oldId)),
-                featureMapper.selectList(new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getModelId, oldId)),
-                dataListMapper.selectList(new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, oldId)),
+                fieldMapper.selectList(new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getScenarioId, oldId)),
+                featureMapper.selectList(new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getScenarioId, oldId)),
+                dataListMapper.selectList(new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getScenarioId, oldId)),
                 dataListMetaOf(oldId),
                 dataListRecordOf(oldId),
-                strategyMapper.selectList(new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, oldId)),
+                strategyMapper.selectList(new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getScenarioId, oldId)),
                 rulesOf(oldId));
         return count;
     }
@@ -475,7 +475,7 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
     /** 源模型的名单 meta/record（装配入参收集）。 */
     private List<DataListMetaPO> dataListMetaOf(Long scenarioId) {
         List<Long> ids = dataListMapper.selectList(
-                        new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, scenarioId))
+                        new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getScenarioId, scenarioId))
                 .stream().map(DataListsPO::getId).collect(Collectors.toList());
         return ids.isEmpty() ? List.of()
                 : dataListMetaMapper.selectList(
@@ -484,7 +484,7 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
 
     private List<DataListRecordPO> dataListRecordOf(Long scenarioId) {
         List<Long> ids = dataListMapper.selectList(
-                        new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, scenarioId))
+                        new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getScenarioId, scenarioId))
                 .stream().map(DataListsPO::getId).collect(Collectors.toList());
         return ids.isEmpty() ? List.of()
                 : dataListRecordMapper.selectList(
@@ -494,7 +494,7 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
     /** 源模型的规则（激活下挂，装配入参收集）。 */
     private List<RulePO> rulesOf(Long scenarioId) {
         List<Long> ids = strategyMapper.selectList(
-                        new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, scenarioId))
+                        new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getScenarioId, scenarioId))
                 .stream().map(StrategyPO::getId).collect(Collectors.toList());
         return ids.isEmpty() ? List.of()
                 : ruleMapper.selectList(new LambdaQueryWrapper<RulePO>().in(RulePO::getStrategyId, ids));
@@ -503,7 +503,7 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
     @Override
     public CommonResult copy(Long id, String merchantCode, String name, String label) {
         ScenarioVO model = getScenarioByIdFromDb(id);
-        model.setModelName(name);
+        model.setScenarioName(name);
         model.setLabel(label);
         model.setCode(merchantCode);
 
@@ -526,8 +526,8 @@ public class ScenarioServiceImpl extends BaseLocalCacheService implements Scenar
 
         int count = copyScenario(model);
         if (count > 0) {
-            if (StringUtils.isEmpty(model.getModelName())) {
-                model.setModelName("model_" + model.getId());
+            if (StringUtils.isEmpty(model.getScenarioName())) {
+                model.setScenarioName("model_" + model.getId());
                 model.setCreateTime(new Date());
                 saveScenario(model);
             }

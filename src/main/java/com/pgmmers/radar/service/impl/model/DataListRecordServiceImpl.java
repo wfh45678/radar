@@ -33,7 +33,7 @@ public class DataListRecordServiceImpl implements DataListRecordService,
                 DataListRecordVO.class);
         DataListsVO dataListVO = dataListsService.get(record.getDataListId());
         Map<String, Object> listRecordMap = dataListsService
-                .getDataListMap(record.getModelId());
+                .getDataListMap(record.getScenarioId());
         Map<String, String> dataListRecords = (Map<String, String>) listRecordMap
                 .get(dataListVO.getName());
         String opt = record.getOpt();

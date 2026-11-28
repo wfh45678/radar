@@ -8,11 +8,11 @@ public class DataListQuery extends PageQuery {
     private String listType;
     private Integer status;
 
-    public Long getModelId() {
+    public Long getScenarioId() {
         return scenarioId;
     }
 
-    public void setModelId(Long scenarioId) {
+    public void setScenarioId(Long scenarioId) {
         this.scenarioId = scenarioId;
     }
 

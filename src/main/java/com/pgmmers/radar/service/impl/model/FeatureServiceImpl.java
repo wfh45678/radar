@@ -56,7 +56,7 @@ public class FeatureServiceImpl extends BaseLocalCacheService implements Feature
         logger.info("feature sub:{}", message);
         FeatureVO feature = JSON.parseObject(message, FeatureVO.class);
         if (feature != null) {
-            invalidateCache(feature.getModelId());
+            invalidateCache(feature.getScenarioId());
         }
     }
 
@@ -68,7 +68,7 @@ public class FeatureServiceImpl extends BaseLocalCacheService implements Feature
     @Override
     public Object query(Long scenarioId) {
         List<FeaturePO> list = featureMapper.selectList(
-                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getModelId, scenarioId));
+                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getScenarioId, scenarioId));
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<FeatureVO>();
         }
@@ -96,7 +96,7 @@ public class FeatureServiceImpl extends BaseLocalCacheService implements Feature
         Page<FeaturePO> p = featureMapper.selectPage(
                 new Page<>(query.getPageNo(), query.getPageSize()),
                 new LambdaQueryWrapper<FeaturePO>()
-                        .eq(query.getModelId() != null, FeaturePO::getModelId, query.getModelId())
+                        .eq(query.getScenarioId() != null, FeaturePO::getScenarioId, query.getScenarioId())
                         .eq(!StringUtils.isEmpty(query.getType()), FeaturePO::getType, query.getType())
                         .like(!StringUtils.isEmpty(query.getLabel()), FeaturePO::getLabel, query.getLabel())
                         .eq(query.getStatus() != null, FeaturePO::getStatus, query.getStatus())
@@ -113,7 +113,7 @@ public class FeatureServiceImpl extends BaseLocalCacheService implements Feature
         // 同模型下 label 查重（沿袭原 PreItem/Abstraction 语义）
         Long count = featureMapper.selectCount(
                 new LambdaQueryWrapper<FeaturePO>()
-                        .eq(FeaturePO::getModelId, feature.getModelId())
+                        .eq(FeaturePO::getScenarioId, feature.getScenarioId())
                         .eq(FeaturePO::getLabel, feature.getLabel())
                         .ne(feature.getId() != null, FeaturePO::getId, feature.getId()));
         if (count != null && count > 0) {

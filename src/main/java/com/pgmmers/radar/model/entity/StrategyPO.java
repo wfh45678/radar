@@ -165,7 +165,7 @@ public class StrategyPO {
      *
      * @return SCENARIO_ID - model id
      */
-    public Long getModelId() {
+    public Long getScenarioId() {
         return scenarioId;
     }
 
@@ -174,7 +174,7 @@ public class StrategyPO {
      *
      * @param scenarioId model id
      */
-    public void setModelId(Long scenarioId) {
+    public void setScenarioId(Long scenarioId) {
         this.scenarioId = scenarioId;
     }
 

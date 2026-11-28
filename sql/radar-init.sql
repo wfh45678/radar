@@ -263,7 +263,7 @@ DROP TABLE IF EXISTS `engine_scenario`;
 CREATE TABLE `engine_scenario` (
   `ID` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
   `GUID` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `MODEL_NAME` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '模型名称',
+  `SCENARIO_NAME` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '模型名称',
   `LABEL` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `ENTITY_NAME` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '事件中标识实体的主键',
   `ENTRY_NAME` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '事件主键',

@@ -90,7 +90,7 @@ test.describe.serial('Radar 五步冒烟', () => {
     expect(templateId, '种子模板 103 存在').toBeTruthy();
 
     await api(request, 'POST', '/services/v1/scenario/copy', {
-      data: { id: templateId, modelName: `it_${UNIQUE}`, label: EVENT_MODEL_LABEL },
+      data: { id: templateId, scenarioName: `it_${UNIQUE}`, label: EVENT_MODEL_LABEL },
     });
     const list = await api(request, 'GET', '/services/v1/scenario/list');
     const rows = (list.data.scenarioList || list.data.list) as Array<Record<string, any>>;

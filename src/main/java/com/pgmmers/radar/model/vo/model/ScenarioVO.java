@@ -61,12 +61,12 @@ public class ScenarioVO implements Serializable{
     }
 
 
-    public String getModelName() {
+    public String getScenarioName() {
         return scenarioName;
     }
 
 
-    public void setModelName(String scenarioName) {
+    public void setScenarioName(String scenarioName) {
         this.scenarioName = scenarioName;
     }
 

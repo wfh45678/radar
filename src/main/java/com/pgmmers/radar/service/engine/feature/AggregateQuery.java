@@ -37,7 +37,7 @@ public class AggregateQuery {
         return new Builder();
     }
 
-    public String getModelId() {
+    public String getScenarioId() {
         return scenarioId;
     }
 

@@ -35,6 +35,10 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+        // 静态资源等非控制器处理器直接放行（v5.0 修复：强转 HandlerMethod 对 ResourceHttpRequestHandler 崩溃）
+        if (!(handler instanceof HandlerMethod)) {
+            return true;
+        }
         HandlerMethod method = (HandlerMethod) handler;
         logger.info("Interceptor preHandle, {}", method.getMethod().getName());
         String uri = request.getRequestURI();

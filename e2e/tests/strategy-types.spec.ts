@@ -10,7 +10,7 @@ import { login, gotoWithAuth, E2E_USER } from './helpers';
  */
 
 const UNIQUE = Date.now();
-const MODEL_NAME = `e2e_st_${UNIQUE}`;
+const SCENARIO_NAME = `e2e_st_${UNIQUE}`;
 let authToken = '';
 
 async function api(request: any, method: string, url: string, opts: any = {}) {
@@ -31,7 +31,7 @@ test.describe.serial('v4.0 策略类型', () => {
   test('step0 登录并导入策略类型模板', async ({ page, request }) => {
     authToken = await login(page);
     const imported = await api(request, 'POST',
-      `/services/v1/scenario/templates/transaction-risk/import?modelName=${MODEL_NAME}`);
+      `/services/v1/scenario/templates/transaction-risk/import?scenarioName=${SCENARIO_NAME}`);
     modelId = imported.data.id;
     expect(modelId, '导入应返回新模型 id').toBeTruthy();
     await api(request, 'POST', `/services/v1/scenario/build/${modelId}`);

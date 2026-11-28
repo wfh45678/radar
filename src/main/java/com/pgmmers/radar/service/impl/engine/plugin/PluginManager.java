@@ -157,7 +157,7 @@ public class PluginManager implements ApplicationContextAware {
         Map<String, Object> typedArgs = parseArgs(schema, rawArgs);
         FeatureContext featureContext = contextFactory.createFeature(processor.key());
         FeatureRequest request = new FeatureRequest(
-                feature.getModelId(), feature.getFeatureName(),
+                feature.getScenarioId(), feature.getFeatureName(),
                 sourceMap, sourceValues, typedArgs, rawArgs, jsonInfo, feature,
                 features == null ? java.util.Map.of() : features);
         FeatureResponse response = processor.execute(request, featureContext);

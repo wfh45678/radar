@@ -82,7 +82,7 @@ public class FieldPO {
      *
      * @return SCENARIO_ID - MODEL ID
      */
-    public Long getModelId() {
+    public Long getScenarioId() {
         return scenarioId;
     }
 
@@ -91,7 +91,7 @@ public class FieldPO {
      *
      * @param scenarioId MODEL ID
      */
-    public void setModelId(Long scenarioId) {
+    public void setScenarioId(Long scenarioId) {
         this.scenarioId = scenarioId;
     }
 

@@ -43,7 +43,7 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
     public Object query(Long scenarioId) {
         // 原 ModelDal.listStrategy(scenarioId, null) 逻辑下沉
         List<StrategyPO> list = strategyMapper.selectList(
-                new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, scenarioId));
+                new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getScenarioId, scenarioId));
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<StrategyVO>();
         }
@@ -80,7 +80,7 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
         logger.info("strategy sub:{}", message);
         StrategyVO act = JSON.parseObject(message, StrategyVO.class);
         if (act != null) {
-            invalidateCache(act.getModelId());
+            invalidateCache(act.getScenarioId());
         }
     }
 
@@ -108,7 +108,7 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
         Page<StrategyPO> p = strategyMapper.selectPage(
                 new Page<>(query.getPageNo(), query.getPageSize()),
                 new LambdaQueryWrapper<StrategyPO>()
-                        .eq(StrategyPO::getModelId, query.getModelId())
+                        .eq(StrategyPO::getScenarioId, query.getScenarioId())
                         .like(!StringUtils.isEmpty(query.getName()),
                                 StrategyPO::getStrategyName, query.getName())
                         .eq(query.getStatus() != null,

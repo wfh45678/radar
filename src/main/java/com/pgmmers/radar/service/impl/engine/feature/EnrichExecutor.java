@@ -56,7 +56,7 @@ public class EnrichExecutor implements FeatureExecutor {
         if (entry == null) {
             failReason = "plugin not found: " + pluginKey;
             logger.warn("enrich feature plugin missing, scenarioId={}, feature={}, {}",
-                    feature.getModelId(), feature.getFeatureName(), failReason);
+                    feature.getScenarioId(), feature.getFeatureName(), failReason);
         } else {
             try {
                 // v4.1：插件取值源为整体上下文（事件字段经 request.getEvent()，链式读前序特征经 request.getFeatures()）

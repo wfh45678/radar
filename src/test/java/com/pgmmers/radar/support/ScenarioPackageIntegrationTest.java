@@ -65,12 +65,12 @@ class ScenarioPackageIntegrationTest extends AbstractIntegrationTest {
 
         // 4) 图完整性：字段/规则数量一致
         List<FieldPO> newFields = fieldMapper.selectList(
-                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, newId));
+                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getScenarioId, newId));
         assertEquals(sourceFieldCount, newFields.size());
 
         // 5) ID 重映射：导入规则的 strategyId 均属于新模型的激活
         List<RulePO> newRules = ruleMapper.selectList(
-                new LambdaQueryWrapper<RulePO>().eq(RulePO::getModelId, newId));
+                new LambdaQueryWrapper<RulePO>().eq(RulePO::getScenarioId, newId));
         assertEquals(sourceRuleCount, newRules.size());
         for (RulePO rule : newRules) {
             assertNotEquals(pkg.getRules().get(0).getStrategyId(), rule.getStrategyId(),
@@ -82,7 +82,7 @@ class ScenarioPackageIntegrationTest extends AbstractIntegrationTest {
         ScenarioPO imported = scenarioMapper.selectById(newId);
         assertEquals(MERCHANT, imported.getCode());
         assertEquals(LABEL, imported.getLabel());
-        assertEquals("model_" + newId, imported.getModelName());
+        assertEquals("model_" + newId, imported.getScenarioName());
         assertNotEquals(source.getGuid(), imported.getGuid());
 
         // 7) 冲突拒绝（同商户码+名称）且不产生半写

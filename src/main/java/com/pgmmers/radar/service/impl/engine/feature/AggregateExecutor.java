@@ -80,7 +80,7 @@ public class AggregateExecutor implements FeatureExecutor {
             return FeatureOutcome.of(-1);
         }
 
-        Long scenarioId = feature.getModelId();
+        Long scenarioId = feature.getScenarioId();
         ScenarioVO model = scenarioService.getScenarioById(scenarioId);
         String refDateFieldName = model.getReferenceDate();
         Date refDate;

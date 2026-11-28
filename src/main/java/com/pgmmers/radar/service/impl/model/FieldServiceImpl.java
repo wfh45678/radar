@@ -50,7 +50,7 @@ public class FieldServiceImpl extends BaseLocalCacheService implements FieldServ
     @Override
     public Object query(Long scenarioId) {
         List<FieldPO> list = fieldMapper.selectList(
-                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, scenarioId));
+                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getScenarioId, scenarioId));
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<>();
         }
@@ -67,7 +67,7 @@ public class FieldServiceImpl extends BaseLocalCacheService implements FieldServ
     public void onMessage(String channel, String message) {
         logger.info("field sub: {},{}", channel, message);
         FieldVO field = JSON.parseObject(message, FieldVO.class);
-        invalidateCache(field.getModelId());
+        invalidateCache(field.getScenarioId());
     }
 
     @Override
@@ -86,7 +86,7 @@ public class FieldServiceImpl extends BaseLocalCacheService implements FieldServ
         Page<FieldPO> p = fieldMapper.selectPage(
                 new Page<>(query.getPageNo(), query.getPageSize()),
                 new LambdaQueryWrapper<FieldPO>()
-                        .eq(FieldPO::getModelId, query.getModelId())
+                        .eq(FieldPO::getScenarioId, query.getScenarioId())
                         .like(!StringUtils.isEmpty(query.getFieldName()),
                                 FieldPO::getFieldName, query.getFieldName())
                         .eq(!StringUtils.isEmpty(query.getFieldType()),
@@ -109,7 +109,7 @@ public class FieldServiceImpl extends BaseLocalCacheService implements FieldServ
         CommonResult result = new CommonResult();
         if (field.getId() == null) {
             FieldQuery query = new FieldQuery();
-            query.setModelId(field.getModelId());
+            query.setScenarioId(field.getScenarioId());
             query.setFieldName(field.getFieldName());
             PageResult<FieldVO> page = queryPage(query);
             if (page != null && page.getRowCount() > 0) {
@@ -154,7 +154,7 @@ public class FieldServiceImpl extends BaseLocalCacheService implements FieldServ
     public CommonResult delete(Long[] id) {
         CommonResult result = new CommonResult();
         FieldVO field = get(id[0]);
-        ScenarioPO modelPO = scenarioMapper.selectById(field.getModelId());
+        ScenarioPO modelPO = scenarioMapper.selectById(field.getScenarioId());
         ScenarioVO model = modelMapping.sourceToTarget(modelPO);
         if(model.getEntityName().equals(field.getFieldName())
         		||model.getEntryName().equals(field.getFieldName())

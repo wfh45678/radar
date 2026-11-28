@@ -27,5 +27,5 @@ public interface RuleService {
 
     CommonResult queryHistory(RuleHistoryQuery query);
     
-    List<RuleVO> listRuleByModelId(Long scenarioId);
+    List<RuleVO> listRuleByScenarioId(Long scenarioId);
 }

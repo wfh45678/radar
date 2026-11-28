@@ -113,7 +113,7 @@ public class EventApiController {
     @GetMapping("/download")
     public void downloadExcel(HttpServletRequest request, HttpServletResponse response) {
         TermQuery term = (TermQuery)  request.getSession().getAttribute("searchTerm");
-        if (term == null || term.getModelId() == null) {
+        if (term == null || term.getScenarioId() == null) {
             return;
         }
         EventExportQuery query = (EventExportQuery) request.getSession().getAttribute("exportQuery");
@@ -154,13 +154,13 @@ public class EventApiController {
         PageResult<Object> page = eventService.query(term);
         List<Object> records = page.getList();
 
-        List<FieldVO> fieldList = fieldService.listField(term.getModelId());
+        List<FieldVO> fieldList = fieldService.listField(term.getScenarioId());
         List<FeatureVO> featureList = featureService.listFeature(term
-                .getModelId());
+                .getScenarioId());
         List<StrategyVO> strategyList = strategyService
-                .listStrategy(term.getModelId());
+                .listStrategy(term.getScenarioId());
         List<RuleVO> ruleList = ruleService
-                .listRuleByModelId(term.getModelId());
+                .listRuleByScenarioId(term.getScenarioId());
 
         // 关联 rule id　与　strategy
         for (StrategyVO act : strategyList) {
@@ -318,7 +318,7 @@ public class EventApiController {
         // 4、 RULE
         ds = new DataColumnInfo(DataType.RULES.getDesc(),
                 DataType.RULES.getName());
-        List<RuleVO> listRule = ruleService.listRuleByModelId(scenarioId);
+        List<RuleVO> listRule = ruleService.listRuleByScenarioId(scenarioId);
         if (listRule != null && listRule.size() != 0) {
             for (RuleVO rule : listRule) {
                 ds.addChildren(rule.getLabel(), rule.getName(), "");

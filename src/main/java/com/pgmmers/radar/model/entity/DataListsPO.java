@@ -115,7 +115,7 @@ public class DataListsPO {
      *
      * @return SCENARIO_ID - 模型ID
      */
-    public Long getModelId() {
+    public Long getScenarioId() {
         return scenarioId;
     }
 
@@ -124,7 +124,7 @@ public class DataListsPO {
      *
      * @param scenarioId 模型ID
      */
-    public void setModelId(Long scenarioId) {
+    public void setScenarioId(Long scenarioId) {
         this.scenarioId = scenarioId;
     }
 

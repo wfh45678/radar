@@ -48,7 +48,7 @@ class ScenarioPackageTest {
         ScenarioPO model = new ScenarioPO();
         model.setId(99L);
         model.setGuid("GUID-99");
-        model.setModelName("model_99");
+        model.setScenarioName("model_99");
         model.setLabel("电商开户");
         model.setCode("demo");
         model.setEntityName("Event");
@@ -68,13 +68,13 @@ class ScenarioPackageTest {
 
         FieldPO field = new FieldPO();
         field.setId(1L);
-        field.setModelId(99L);
+        field.setScenarioId(99L);
         field.setFieldName("userIP");
         pkg.setFields(List.of(field));
 
         FeaturePO feature = new FeaturePO();
         feature.setId(2L);
-        feature.setModelId(99L);
+        feature.setScenarioId(99L);
         feature.setFeatureName("ipInfo");
         feature.setType("ENRICH");
         feature.setDefinition("{\"plugin\":\"IP2LOCATION\"}");
@@ -82,13 +82,13 @@ class ScenarioPackageTest {
 
         StrategyPO strategy = new StrategyPO();
         strategy.setId(3L);
-        strategy.setModelId(99L);
+        strategy.setScenarioId(99L);
         strategy.setStrategyName("strategy_1");
         pkg.setStrategies(List.of(strategy));
 
         RulePO rule = new RulePO();
         rule.setId(4L);
-        rule.setModelId(99L);
+        rule.setScenarioId(99L);
         rule.setStrategyId(3L);
         rule.setName("rule_ip");
         rule.setScripts("def x = 1\nreturn x");
@@ -109,7 +109,7 @@ class ScenarioPackageTest {
         assertEquals("ENRICH", parsed.getFeatures().get(0).getType());
         assertTrue(parsed.getFeatures().get(0).getDefinition().contains("IP2LOCATION"));
         // 图内引用键保留（导入时才重映射）
-        assertEquals(Long.valueOf(99L), parsed.getFields().get(0).getModelId());
+        assertEquals(Long.valueOf(99L), parsed.getFields().get(0).getScenarioId());
         assertEquals(Long.valueOf(3L), parsed.getRules().get(0).getStrategyId());
         assertTrue(parsed.getRules().get(0).getScripts().contains("def x = 1"));
     }

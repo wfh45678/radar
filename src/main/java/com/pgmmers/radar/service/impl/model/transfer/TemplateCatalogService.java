@@ -157,7 +157,7 @@ public class TemplateCatalogService {
             label = pkg.getScenario().getLabel();
         }
         if (scenarioName == null || scenarioName.isBlank()) {
-            scenarioName = pkg.getScenario().getModelName();
+            scenarioName = pkg.getScenario().getScenarioName();
         }
         List<String> warnings = scenarioPackageService.validate(pkg);
         Long newId = scenarioPackageService.importPackage(pkg, merchantCode, scenarioName, label);

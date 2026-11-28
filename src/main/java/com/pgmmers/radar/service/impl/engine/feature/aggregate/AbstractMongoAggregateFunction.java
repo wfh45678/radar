@@ -25,7 +25,7 @@ abstract class AbstractMongoAggregateFunction implements AggregateFunction {
     }
 
     protected String collection(AggregateQuery q) {
-        return "entity_" + q.getModelId();
+        return "entity_" + q.getScenarioId();
     }
 
     /** SD 复用：方差实现（子类构造注入后赋值）。 */

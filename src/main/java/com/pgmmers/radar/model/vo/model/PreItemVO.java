@@ -50,12 +50,12 @@ public class PreItemVO implements Serializable{
     }
 
 
-    public Long getModelId() {
+    public Long getScenarioId() {
         return scenarioId;
     }
 
 
-    public void setModelId(Long scenarioId) {
+    public void setScenarioId(Long scenarioId) {
         this.scenarioId = scenarioId;
     }
 

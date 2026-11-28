@@ -6,7 +6,7 @@ import { login, gotoWithAuth } from './helpers';
  * → 新建 DERIVED 衍生特征（UI 表单）→ 保存回显。
  */
 const UNIQUE = Date.now();
-const MODEL_NAME = `e2e_ft_${UNIQUE}`;
+const SCENARIO_NAME = `e2e_ft_${UNIQUE}`;
 let authToken = '';
 
 async function api(request: any, method: string, url: string, opts: any = {}) {
@@ -27,7 +27,7 @@ test.describe.serial('v4.1 特征工程', () => {
   test('step0 登录并导入策略模板', async ({ page, request }) => {
     authToken = await login(page);
     const imported = await api(request, 'POST',
-      `/services/v1/scenario/templates/transaction-risk/import?modelName=${MODEL_NAME}`);
+      `/services/v1/scenario/templates/transaction-risk/import?scenarioName=${SCENARIO_NAME}`);
     modelId = imported.data.id;
     expect(modelId).toBeTruthy();
     await api(request, 'POST', `/services/v1/scenario/build/${modelId}`);

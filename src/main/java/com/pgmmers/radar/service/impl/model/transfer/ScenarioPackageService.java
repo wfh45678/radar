@@ -116,9 +116,9 @@ public class ScenarioPackageService {
         pkg.setRadarVersion(RADAR_VERSION);
         pkg.setScenario(model);
         pkg.setFields(fieldMapper.selectList(
-                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, scenarioId)));
+                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getScenarioId, scenarioId)));
         List<DataListsPO> dataLists = dataListMapper.selectList(
-                new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, scenarioId));
+                new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getScenarioId, scenarioId));
         pkg.setDataLists(dataLists);
         if (!dataLists.isEmpty()) {
             List<Long> dataListIds = dataLists.stream().map(DataListsPO::getId).collect(Collectors.toList());
@@ -130,9 +130,9 @@ public class ScenarioPackageService {
                             .in(DataListRecordPO::getDataListId, dataListIds)));
         }
         pkg.setFeatures(featureMapper.selectList(
-                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getModelId, scenarioId)));
+                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getScenarioId, scenarioId)));
         List<StrategyPO> strategies = strategyMapper.selectList(
-                new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, scenarioId));
+                new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getScenarioId, scenarioId));
         pkg.setStrategies(strategies);
         if (!strategies.isEmpty()) {
             List<Long> strategyIds = strategies.stream().map(StrategyPO::getId).collect(Collectors.toList());
@@ -263,7 +263,7 @@ public class ScenarioPackageService {
         model.setGuid(UUID.randomUUID().toString().toUpperCase());
         // MODEL_NAME 列 NOT NULL 无默认值：留空时先以临时名插入，拿到 id 后归一为 model_<id>
         // （与 copy/save 的最终命名语义一致）
-        model.setModelName(scenarioName == null || scenarioName.isBlank()
+        model.setScenarioName(scenarioName == null || scenarioName.isBlank()
                 ? "model_tmp_" + Long.toHexString(System.currentTimeMillis())
                 : scenarioName);
         model.setLabel(label);
@@ -280,8 +280,8 @@ public class ScenarioPackageService {
         model.setUpdateTime(now);
         scenarioMapper.insert(model);
         Long newId = model.getId();
-        if (model.getModelName().startsWith("model_tmp_")) {
-            model.setModelName("model_" + newId);
+        if (model.getScenarioName().startsWith("model_tmp_")) {
+            model.setScenarioName("model_" + newId);
             scenarioMapper.updateById(model);
         }
         int count = assembler.assemble(newId,

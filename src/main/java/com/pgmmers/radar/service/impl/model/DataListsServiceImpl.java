@@ -70,7 +70,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     public List<DataListsVO> listDataLists(Long scenarioId, Integer status) {
         List<DataListsPO> list = dataListMapper.selectList(
                 new LambdaQueryWrapper<DataListsPO>()
-                        .eq(DataListsPO::getModelId, scenarioId)
+                        .eq(DataListsPO::getScenarioId, scenarioId)
                         .eq(status != null, DataListsPO::getStatus, status));
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<>();
@@ -111,7 +111,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
         // 原 DataListDalImpl.list 逻辑下沉：scenarioId + 系统名单(1L)
         List<DataListsPO> list = dataListMapper.selectList(
                 new LambdaQueryWrapper<DataListsPO>()
-                        .in(DataListsPO::getModelId, Arrays.asList(scenarioId, 1L)));
+                        .in(DataListsPO::getScenarioId, Arrays.asList(scenarioId, 1L)));
         List<DataListsVO> listVO = CollectionUtils.isEmpty(list)
                 ? new ArrayList<>() : dataListsMapping.sourceToTarget(list);
         result.getData().put("list", listVO);
@@ -133,7 +133,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
         Page<DataListsPO> p = dataListMapper.selectPage(
                 new Page<>(query.getPageNo(), query.getPageSize()),
                 new LambdaQueryWrapper<DataListsPO>()
-                        .eq(DataListsPO::getModelId, query.getModelId())
+                        .eq(DataListsPO::getScenarioId, query.getScenarioId())
                         .like(!StringUtils.isEmpty(query.getName()),
                                 DataListsPO::getName, query.getName())
                         .eq(!StringUtils.isEmpty(query.getListType()),
@@ -354,7 +354,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
         if (dataListRecord.getId() != null) {
             // 通知engine 先删除已经存在的，再update.
             DataListRecordVO oldRecord = getRecord(dataListRecord.getId());
-            oldRecord.setModelId(dataListVO.getModelId());
+            oldRecord.setScenarioId(dataListVO.getScenarioId());
             oldRecord.setOpt("delete");
             cacheService.publishDataListRecord(oldRecord);
         }
@@ -363,7 +363,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
             result.getData().put("id", dataListRecord.getId());
             result.setSuccess(true);
             // 通知更新
-            dataListRecord.setModelId(dataListVO.getModelId());
+            dataListRecord.setScenarioId(dataListVO.getScenarioId());
             dataListRecord.setOpt("update");
             cacheService.publishDataListRecord(dataListRecord);
         }
@@ -381,7 +381,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
             result.setSuccess(true);
             // 通知更新
             DataListsVO dataListVO = get(record.getDataListId());
-            record.setModelId(dataListVO.getModelId());
+            record.setScenarioId(dataListVO.getScenarioId());
             record.setOpt("delete");
             cacheService.publishDataListRecord(record);
         }
@@ -401,7 +401,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     public void onMessage(String channel, String message) {
         logger.info("data list sub:{}", message);
         DataListsVO dataListsVO = JSON.parseObject(message, DataListsVO.class);
-        Map<String, Object> listRecordMap = dataListRecordCacheMap.computeIfAbsent(dataListsVO.getModelId(), k -> new HashMap<>());
+        Map<String, Object> listRecordMap = dataListRecordCacheMap.computeIfAbsent(dataListsVO.getScenarioId(), k -> new HashMap<>());
         if (dataListsVO.getOpt().equals("delete")) {
             listRecordMap.remove(dataListsVO.getName());
         } else if (dataListsVO.getOpt().equals("new")) {
@@ -463,7 +463,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
         for (DataListsVO data : list) {
             data.setStatus(1);
             data.setName("");
-            data.setModelId(scenarioId);
+            data.setScenarioId(scenarioId);
             int count = saveDataList(data);
             if (count > 0) {
                 if(StringUtils.isEmpty(data.getName())){
@@ -489,7 +489,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
             if (count > 0) {
                 // 通知更新
                 DataListsVO dataListVO = get(dataListRecord.getDataListId());
-                dataListRecord.setModelId(dataListVO.getModelId());
+                dataListRecord.setScenarioId(dataListVO.getScenarioId());
                 dataListRecord.setOpt("update");
                 cacheService.publishDataListRecord(dataListRecord);
             }

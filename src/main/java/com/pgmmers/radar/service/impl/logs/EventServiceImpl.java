@@ -42,7 +42,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<Object> query(EventQuery query) throws IOException {
         List<Object> list = new ArrayList<>();
-        ScenarioVO model = scenarioService.getScenarioById(query.getModelId());
+        ScenarioVO model = scenarioService.getScenarioById(query.getScenarioId());
         String entityName = model.getEntityName();
         String dateField = model.getReferenceDate();
         Map<String, Object> queryMap = new HashMap<>();
@@ -82,7 +82,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public PageResult<Object> query(TermQuery term) {
         List<Object> list = new ArrayList<>();
-        ScenarioVO model = scenarioService.getScenarioById(term.getModelId());
+        ScenarioVO model = scenarioService.getScenarioById(term.getScenarioId());
         String dateField = model.getReferenceDate();
         Calendar beginTime = null;
         Calendar endTime = null;

@@ -7,11 +7,11 @@ public class ScenarioQuery extends PageQuery {
 	private String merchantCode;
 	private String label;
 
-	public String getModelName() {
+	public String getScenarioName() {
 		return scenarioName;
 	}
 
-	public void setModelName(String scenarioName) {
+	public void setScenarioName(String scenarioName) {
 		this.scenarioName = scenarioName;
 	}
 

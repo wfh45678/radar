@@ -29,6 +29,12 @@
 ### Added
 - JSX 引用静态扫描进 CI（esbuild 不查未定义标识符，v4.1 连环 ReferenceError 的预防针）
 
+### Fixed
+- 新增策略无法选择类型（Radio.Group onChange 事件对象兼容，用户验收发现）
+- 决策树编辑器误报「存在从根不可达的节点」（校验走查只跟"是"分支，改递归双分支遍历）
+- AuthInterceptor 对非控制器处理器（静态资源）强转 HandlerMethod 崩溃（instanceof 防护）
+- MyBatis-Plus 大写方法名漏改（getModelId/setModelId 等与已改字段名不一致导致 lambda 缓存查不到）
+
 ### Changed
 - 内置官方模板重导出 formatVersion 3.0（在线源 minRadarVersion 5.0.0）
 - 文档全量术语对齐：README/文档站/架构图/场景策略包/升级指南（含术语对照表）
