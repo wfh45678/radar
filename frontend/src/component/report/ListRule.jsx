@@ -326,14 +326,17 @@ class Rule extends React.Component{
                 data['fields'+Key]=info.fields[Key];
             }
 
-            for(var Key in info.preItems){
-                if(typeof info.preItems[Key]=='object'){
-                    for(var subKey in info.preItems[Key]){
-                        data['preItems'+Key+subKey]=info.preItems[Key][subKey];
+            // v4.1 ES 文档键：features（老文档兼容读 preItems，列头由变量树驱动）
+            var featureSrc = info.features || info.preItems || {};
+            var featurePrefix = info.features ? 'features' : 'preItems';
+            for(var Key in featureSrc){
+                if(typeof featureSrc[Key]=='object'){
+                    for(var subKey in featureSrc[Key]){
+                        data[featurePrefix+Key+subKey]=featureSrc[Key][subKey];
                     }
                 }
                 else{
-                    data['preItems'+Key]=info.preItems[Key];
+                    data[featurePrefix+Key]=featureSrc[Key];
                 }
             }
 

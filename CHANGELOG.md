@@ -2,6 +2,18 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [4.1.4] - 2026-11-28
+
+### Fixed
+- 策略配置页（strategyDetail → Rule.jsx）变量树分组仍按 v3 三组取 `abstractions`，
+  v4.1 树为 `fields + features` 两组 → 取组 undefined，路由级
+  `TypeError: reading 'children'`（改为 features 分组优先、v3 abstractions 兼容回退、缺省空数组）
+- 事件检索详情（ListEvent/ListRule）特征列仍读 ES 文档 v3 键 `preItems`，
+  v4.1 文档键为 `features` → 特征列静默消失（改为 features 优先、老文档 preItems 兼容回退，
+  列头由变量树驱动不受影响）
+- 前端全库 JSX 引用/旧键/旧端点静态扫描清零（preItem/abstraction 旧组件目录为无路由死代码，
+  构建时 tree-shake）
+
 ## [4.1.3] - 2026-11-28
 
 ### Fixed

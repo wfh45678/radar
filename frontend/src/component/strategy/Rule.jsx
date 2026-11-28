@@ -203,7 +203,11 @@ export default class Rule extends React.Component{
 
         let abstractionList=[];
         if(this.props.fieldList.length>0){
-	        abstractionList=this.props.fieldList.filter(x=>x.value=='abstractions')[0].children;
+            // v4.1 变量树：fields + features 两组（v3 为 fields/preItems/abstractions 三组）
+            const group = this.props.fieldList.find(x=>x.value=='features')
+                || this.props.fieldList.find(x=>x.value=='abstractions')
+                || {children:[]};
+            abstractionList = group.children || [];
 	    }
 
         let validate={
