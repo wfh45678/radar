@@ -46,8 +46,7 @@ public class AggregateFunctionRegistryTest {
                 new com.pgmmers.radar.service.impl.engine.feature.aggregate.MinAggregateFunction(),
                 new com.pgmmers.radar.service.impl.engine.feature.aggregate.MedianAggregateFunction(),
                 new com.pgmmers.radar.service.impl.engine.feature.aggregate.VarianceAggregateFunction(),
-                new com.pgmmers.radar.service.impl.engine.feature.aggregate.SdAggregateFunction(
-                        new com.pgmmers.radar.service.impl.engine.feature.aggregate.VarianceAggregateFunction()),
+                new com.pgmmers.radar.service.impl.engine.feature.aggregate.SdAggregateFunction(),
                 new com.pgmmers.radar.service.impl.engine.feature.aggregate.DeviationAggregateFunction(
                         new com.pgmmers.radar.service.impl.engine.feature.aggregate.AverageAggregateFunction())));
         for (AggregateKind kind : AggregateKind.values()) {

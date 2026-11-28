@@ -2,6 +2,22 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [5.2.1] - 2026-11-28
+
+性能优化：统计聚合特征（AGGREGATE）三种内存敏感聚合不再全量拉内存——
+服务端聚合取代 JVM 内存计算（[backlog 出自 plan-v4.1](docs/plan-v4.1.md)）。
+
+### Changed
+- **MEDIAN**：服务端 `$sort` + `$skip/$limit` 只取中间 1~2 行算中位数（精确语义不变，
+  奇取中、偶取两行均值；网络/内存 O(1)，不再随命中事件数线性增长）
+- **VARIANCE/SD**：`$group $stdDevPop` 服务端聚合（Mongo 3.2+，总体口径与原实现一致）；
+  SD 改为全精度标准差直接舍入（不再经两位舍入方差开方，精度略提升）
+- 行为改善：统计字段含非数值的事件行，从"整特征报错隔离"变为"被 Mongo 忽略、按数值行计算"
+
+### Verification
+- L1：MedianVarianceSdPipelineTest 8 例（pipeline 断言：$skip/$limit、$stdDevPop、
+  奇/偶/空集语义、不再 find 全量）+ 全量 84 例全绿
+
 ## [5.2.0] - 2026-11-28
 
 基础设施升级：Elasticsearch 7.17 → **8.18.8**（roadmap P1-3 收口，[升级指南](docs/upgrade-guide.md)）。

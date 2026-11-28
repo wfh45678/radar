@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeviationAggregateFunction extends AbstractMongoAggregateFunction {
 
+    private final AverageAggregateFunction averageFunction;
+
     public DeviationAggregateFunction(AverageAggregateFunction averageFunction) {
         this.averageFunction = averageFunction;
     }

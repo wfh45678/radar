@@ -2,9 +2,10 @@ package com.pgmmers.radar.service.impl.engine.feature.aggregate;
 
 import com.pgmmers.radar.enums.AggregateKind;
 import com.pgmmers.radar.service.engine.feature.AggregateQuery;
+import org.bson.Document;
 import org.springframework.stereotype.Component;
 
-/** 方差。 */
+/** 方差（v5.2.1 起服务端聚合：$group $stdDevPop 平方，不再全量拉内存；非数值行被服务端忽略）。 */
 @Component
 public class VarianceAggregateFunction extends AbstractMongoAggregateFunction {
 
@@ -15,22 +16,12 @@ public class VarianceAggregateFunction extends AbstractMongoAggregateFunction {
 
     @Override
     public Object aggregate(AggregateQuery q) {
-        java.util.List<java.math.BigDecimal> records = new java.util.ArrayList<>();
-        mongoService.find(collection(q), filter(q)).forEach(t -> records.add(
-                new java.math.BigDecimal(t.get(q.getFunctionField(), q.getFunctionFieldType().getClazz()).toString())));
-        if (records.isEmpty()) {
-            // v4.1 修复：空数据集除零（原实现会 ArithmeticException），返回 0
+        Document doc = stdDevPopRow(q);
+        // 空数据集/字段无数值：$stdDevPop 为 null → 返回 0（沿袭 v4.1 空集语义）
+        if (doc == null || doc.get("stdDevPop") == null) {
             return java.math.BigDecimal.ZERO.setScale(2, java.math.RoundingMode.HALF_UP);
         }
-        java.math.BigDecimal sum = java.math.BigDecimal.ZERO;
-        for (java.math.BigDecimal val : records) {
-            sum = sum.add(val);
-        }
-        java.math.BigDecimal avg = sum.divide(new java.math.BigDecimal(records.size()), 2, java.math.RoundingMode.HALF_UP);
-        java.math.BigDecimal sq = java.math.BigDecimal.ZERO;
-        for (java.math.BigDecimal val : records) {
-            sq = sq.add(val.subtract(avg).multiply(val.subtract(avg)));
-        }
-        return sq.divide(new java.math.BigDecimal(records.size()), 2, java.math.RoundingMode.HALF_UP);
+        double sd = ((Number) doc.get("stdDevPop")).doubleValue();
+        return new java.math.BigDecimal(sd * sd).setScale(2, java.math.RoundingMode.HALF_UP);
     }
 }

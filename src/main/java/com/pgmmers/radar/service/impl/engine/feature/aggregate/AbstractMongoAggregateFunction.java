@@ -1,6 +1,7 @@
 package com.pgmmers.radar.service.impl.engine.feature.aggregate;
 
 import com.mongodb.client.model.Filters;
+import org.bson.Document;
 import com.pgmmers.radar.service.engine.feature.AggregateFunction;
 import com.pgmmers.radar.service.engine.feature.AggregateQuery;
 import com.pgmmers.radar.service.data.MongoService;
@@ -28,9 +29,16 @@ abstract class AbstractMongoAggregateFunction implements AggregateFunction {
         return "entity_" + q.getScenarioId();
     }
 
-    /** SD 复用：方差实现（子类构造注入后赋值）。 */
-    protected VarianceAggregateFunction varianceFunction;
-
-    /** DEVIATION 复用：平均实现（子类构造注入后赋值）。 */
-    protected AverageAggregateFunction averageFunction;
+    /**
+     * 服务端总体标准差（$group $stdDevPop，v5.2.1 起取代全量拉内存计算；
+     * Mongo 3.2+ 支持，非数值行被服务端忽略）。
+     *
+     * @return 单行分组结果（stdDevPop 键），空数据集返回 null
+     */
+    protected Document stdDevPopRow(AggregateQuery q) {
+        var match = new Document("$match", filter(q));
+        var group = new Document("$group", new Document("_id", null)
+                .append("stdDevPop", new Document("$stdDevPop", "$" + q.getFunctionField())));
+        return mongoService.aggregate(collection(q), java.util.Arrays.asList(match, group)).first();
+    }
 }
