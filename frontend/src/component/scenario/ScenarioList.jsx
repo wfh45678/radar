@@ -43,7 +43,7 @@ export default class ScenarioList extends React.Component{
         param.label=this.state.scenarioName;
         //param.status=this.state.status;   默认查询不传递该参数，否则只有单一数据，不完整
 
-        FetchUtil('/model','POST',JSON.stringify(param),
+        FetchUtil('/scenario','POST',JSON.stringify(param),
             (data)=>{
                 this.setState({loading:false});
                 this.setState({
