@@ -8,7 +8,7 @@ import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.enums.FeatureType;
 import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import com.pgmmers.radar.service.engine.feature.AggregateFunction;
 import com.pgmmers.radar.service.engine.feature.AggregateQuery;
 import com.pgmmers.radar.service.engine.feature.FeatureExecutor;
@@ -16,7 +16,7 @@ import com.pgmmers.radar.service.engine.feature.FeatureOutcome;
 import com.pgmmers.radar.service.engine.strategy.ConditionEvaluator;
 import com.pgmmers.radar.service.model.DataListsService;
 import com.pgmmers.radar.service.model.FieldService;
-import com.pgmmers.radar.service.model.ModelService;
+import com.pgmmers.radar.service.model.ScenarioService;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,7 +42,7 @@ public class AggregateExecutor implements FeatureExecutor {
     private AggregateFunctionRegistry functionRegistry;
 
     @Autowired
-    private ModelService modelService;
+    private ScenarioService scenarioService;
 
     @Autowired
     private FieldService fieldService;
@@ -80,8 +80,8 @@ public class AggregateExecutor implements FeatureExecutor {
             return FeatureOutcome.of(-1);
         }
 
-        Long modelId = feature.getModelId();
-        ModelVO model = modelService.getModelById(modelId);
+        Long scenarioId = feature.getModelId();
+        ScenarioVO model = scenarioService.getScenarioById(scenarioId);
         String refDateFieldName = model.getReferenceDate();
         Date refDate;
         try {
@@ -109,7 +109,7 @@ public class AggregateExecutor implements FeatureExecutor {
 
         FieldType functionFieldType = null;
         if (!StringUtils.isEmpty(functionField)) {
-            for (FieldVO field : fieldService.listField(modelId)) {
+            for (FieldVO field : fieldService.listField(scenarioId)) {
                 if (field.getFieldName().equals(functionField)) {
                     functionFieldType = FieldType.valueOf(field.getFieldType());
                     break;
@@ -123,7 +123,7 @@ public class AggregateExecutor implements FeatureExecutor {
 
         engineMetrics.recordFeatureExecution(FeatureType.AGGREGATE.name(), "success");
         AggregateQuery query = AggregateQuery.builder()
-                .modelId(modelId.toString())
+                .scenarioId(scenarioId.toString())
                 .searchField(searchField)
                 .searchFieldValue(searchFieldVal)
                 .refDateFieldName(refDateFieldName)

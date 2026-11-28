@@ -7,7 +7,7 @@ import { gotoWithAuth, login } from './helpers';
  */
 test('策略包导出下载与导入弹窗', async ({ page }) => {
   const token = await login(page);
-  await gotoWithAuth(page, '/#/modelList', token);
+  await gotoWithAuth(page, '/#/scenarioList', token);
 
   // 找一个有 entityName 的模型行（种子模板复制后的模型或模板本身）
   const anyRow = page.locator('#table .ant-table-row').first();
@@ -26,7 +26,7 @@ test('策略包导出下载与导入弹窗', async ({ page }) => {
 
 test('导入弹窗可达并关闭', async ({ page }) => {
   const token = await login(page);
-  await gotoWithAuth(page, '/#/modelList', token);
+  await gotoWithAuth(page, '/#/scenarioList', token);
 
   await page.getByRole('button', { name: '导入模型' }).click();
   const modal = page.locator('.ant-modal', { hasText: '导入模型策略包' });

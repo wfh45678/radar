@@ -25,7 +25,7 @@ public class AggregateFunctionRegistryTest {
 
     private AggregateQuery query() {
         return com.pgmmers.radar.service.engine.feature.AggregateQuery.builder()
-                .modelId("1").searchField("userId").searchFieldValue("u1")
+                .scenarioId("1").searchField("userId").searchFieldValue("u1")
                 .refDateFieldName("radar_ref_datetime")
                 .begin(new Date(0)).end(new Date())
                 .functionField("amount")

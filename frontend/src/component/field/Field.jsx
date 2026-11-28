@@ -30,7 +30,7 @@ class Field extends React.Component{
             model:null
         }
 
-        FetchUtil('/model/'+this.props.params.id,'GET','',
+        FetchUtil('/scenario/'+this.props.params.id,'GET','',
             (data) => {
                 const model=data.data.model;
                 this.setState({
@@ -47,7 +47,7 @@ class Field extends React.Component{
         var param={};
         param.pageNo=this.state.pageNo;
         param.pageSize=pageSize;
-        param.modelId=this.props.params.id;
+        param.scenarioId=this.props.params.id;
         param.fieldName=this.state.fieldName;
         param.label=this.state.label;
         param.fieldType=this.state.fieldType;
@@ -155,7 +155,7 @@ class Field extends React.Component{
                 (t,r,i) => {
                     return(
                     <span>
-                    	<EditField modelId={this.props.params.id} indexedAll={this.state.indexedAll} row={r} reload={this.fetchTableData}/>
+                    	<EditField scenarioId={this.props.params.id} indexedAll={this.state.indexedAll} row={r} reload={this.fetchTableData}/>
                         <span className="ant-divider"></span>
                         <Popconfirm placement="bottomRight" title={'确认删除该字段吗？'} onConfirm={this.deleteModel.bind(this,r.id)}>
                             <Tooltip title="删除"><a style={{color:'#FD5B5B'}}>删除</a></Tooltip>
@@ -173,7 +173,7 @@ class Field extends React.Component{
                                     <Input value={this.state.fieldName} name="fieldName" id="blue" onChange={this.handleChange}/>
                                 </FormItem>                                
                                 {' '}
-                                <AddField modelId={this.props.params.id} indexedAll={this.state.indexedAll} reload={this.fetchTableData} />
+                                <AddField scenarioId={this.props.params.id} indexedAll={this.state.indexedAll} reload={this.fetchTableData} />
                             </Form>
                         </div>
 

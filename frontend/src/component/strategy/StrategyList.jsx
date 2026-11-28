@@ -28,7 +28,7 @@ class Strategy extends React.Component{
             model:null
         }
 
-	    FetchUtil('/model/'+this.props.params.id,'GET','',
+	    FetchUtil('/scenario/'+this.props.params.id,'GET','',
 	    	(data) => {
 	            const model=data.data.model;
 	        	this.setState({
@@ -45,7 +45,7 @@ class Strategy extends React.Component{
         var param={};
         param.pageNo=this.state.pageNo;
         param.pageSize=pageSize;
-        param.modelId=this.props.params.id;
+        param.scenarioId=this.props.params.id;
         param.name=this.state.name;
         param.label=this.state.label;
 
@@ -151,10 +151,10 @@ class Strategy extends React.Component{
                     <span>
                         <Tooltip title="复制"><a onClick={this.handleCopy.bind(this,r.id)}>复制</a></Tooltip>
                         <span className="ant-divider"></span>
-                    	<EditStrategy modelId={this.props.params.id} row={r} reload={this.fetchTableData}/>
+                    	<EditStrategy scenarioId={this.props.params.id} row={r} reload={this.fetchTableData}/>
                         <span className="ant-divider"></span>
                     	<Tooltip title={strategyTypeOf(r.type).label + '配置'}>
-                            <Link to={"/strategyDetail/"+r.modelId+"/"+r.id}>配置</Link>
+                            <Link to={"/strategyDetail/"+r.scenarioId+"/"+r.id}>配置</Link>
                         </Tooltip>
                         <span className="ant-divider"></span>
                         <Popconfirm placement="bottomRight" title={'确认删除该策略吗？'} onConfirm={this.deleteStrategy.bind(this,r.id)}>
@@ -175,7 +175,7 @@ class Strategy extends React.Component{
                             <Input value={this.state.name} name="name" id="blue" onChange={this.handleChange}/>
                         </FormItem>
                         {' '}
-                        <AddStrategy modelId={this.props.params.id} reload={this.fetchTableData} />
+                        <AddStrategy scenarioId={this.props.params.id} reload={this.fetchTableData} />
                     </Form>
                 </div>
 

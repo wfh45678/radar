@@ -61,11 +61,11 @@ public class FeatureApiController {
         return result;
     }
 
-    @GetMapping("/list/{modelId}")
-    public CommonResult list(@PathVariable Long modelId) {
+    @GetMapping("/list/{scenarioId}")
+    public CommonResult list(@PathVariable Long scenarioId) {
         CommonResult result = new CommonResult();
         result.setSuccess(true);
-        result.getData().put("list", featureService.listFeature(modelId));
+        result.getData().put("list", featureService.listFeature(scenarioId));
         return result;
     }
 
@@ -99,12 +99,12 @@ public class FeatureApiController {
      * ENRICH 多列特征（OUTPUT 声明）展开子列 features.&lt;name&gt;.&lt;column&gt;，
      * 单值特征与 AGGREGATE/DERIVED/RATIO 为标量节点 features.&lt;name&gt;。
      */
-    @GetMapping("/columns/{modelId}")
-    public CommonResult getColumns(@PathVariable Long modelId) {
+    @GetMapping("/columns/{scenarioId}")
+    public CommonResult getColumns(@PathVariable Long scenarioId) {
         List<DataColumnInfo> list = new ArrayList<>();
         // 1、fields
         DataColumnInfo ds = new DataColumnInfo(DataType.FIELDS.getDesc(), DataType.FIELDS.getName());
-        List<FieldVO> listField = fieldService.listField(modelId);
+        List<FieldVO> listField = fieldService.listField(scenarioId);
         if (listField != null && !listField.isEmpty()) {
             for (FieldVO field : listField) {
                 ds.addChildren(field.getLabel(), field.getFieldName(), field.getFieldType());
@@ -114,7 +114,7 @@ public class FeatureApiController {
 
         // 2、features
         ds = new DataColumnInfo(DataType.FEATURES.getDesc(), DataType.FEATURES.getName());
-        List<FeatureVO> features = featureService.listFeature(modelId);
+        List<FeatureVO> features = featureService.listFeature(scenarioId);
         if (features != null && !features.isEmpty()) {
             for (FeatureVO feature : features) {
                 addFeatureNode(ds, feature);

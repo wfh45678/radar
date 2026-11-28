@@ -40,8 +40,8 @@ public class FeaturePO {
     /**
      * model id
      */
-    @TableField("MODEL_ID")
-    private Long modelId;
+    @TableField("SCENARIO_ID")
+    private Long scenarioId;
 
     /**
      * 阶段内执行顺序（ENRICH/DERIVED 链式依赖按此排序）
@@ -115,11 +115,11 @@ public class FeaturePO {
     }
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     public Integer getOrderNo() {

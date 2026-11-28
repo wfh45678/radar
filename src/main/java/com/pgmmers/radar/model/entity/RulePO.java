@@ -18,13 +18,13 @@ public class RulePO {
     /**
      * 模型ID
      */
-    @TableField("MODEL_ID")
-    private Long modelId;
+    @TableField("SCENARIO_ID")
+    private Long scenarioId;
 
     /**
-     * 所属策略ID（策略包 JSON 键保持 activationId，兼容 v3.x 包格式）
+     * 所属策略ID（策略包 JSON 键 v5.0 起正名 strategyId（docs/scenario-package.md））
      */
-    @JsonProperty("activationId")
+    @JsonProperty("strategyId")
     @TableField("STRATEGY_ID")
     private Long strategyId;
 
@@ -62,10 +62,10 @@ public class RulePO {
     private String operator;
 
     /**
-     * 抽象名称
+     * 特征名称
      */
-    @TableField("ABSTRACTION_NAME")
-    private String abstractionName;
+    @TableField("FEATURE_NAME")
+    private String featureName;
 
     /**
      * 比例
@@ -115,19 +115,19 @@ public class RulePO {
     /**
      * 获取模型ID
      *
-     * @return MODEL_ID - 模型ID
+     * @return SCENARIO_ID - 模型ID
      */
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
     /**
      * 设置模型ID
      *
-     * @param modelId 模型ID
+     * @param scenarioId 模型ID
      */
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     /**
@@ -253,21 +253,21 @@ public class RulePO {
     }
 
     /**
-     * 获取抽象名称
+     * 获取特征名称
      *
-     * @return ABSTRACTION_NAME - 抽象名称
+     * @return FEATURE_NAME - 特征名称
      */
-    public String getAbstractionName() {
-        return abstractionName;
+    public String getFeatureName() {
+        return featureName;
     }
 
     /**
-     * 设置抽象名称
+     * 设置特征名称
      *
-     * @param abstractionName 抽象名称
+     * @param featureName 特征名称
      */
-    public void setAbstractionName(String abstractionName) {
-        this.abstractionName = abstractionName;
+    public void setFeatureName(String featureName) {
+        this.featureName = featureName;
     }
 
     /**

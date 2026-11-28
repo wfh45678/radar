@@ -1,5 +1,5 @@
 package com.pgmmers.radar.service.data;
 
 public interface RiskResultService {
-    void sendResult(String modelGuid, String reqId, String info);
+    void sendResult(String scenarioGuid, String reqId, String info);
 }

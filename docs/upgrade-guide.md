@@ -1,7 +1,38 @@
-# Radar 升级指南：v1.x → v3.x → v4.x
+# Radar 升级指南：v1.x → v3.x → v4.x → v5.x
 
-> 面向仍在运行 v1.x（2020-2021 年版本）或 v2.x 早期版本的存量用户。
+> 面向仍在运行 v1.x（2020-2021 年版本）或 v2.x/v3.x/v4.x 的存量用户。
 > v3.x 不是原地升级，而是一次"底座重铺、模型延续"的现代化——这份指南说清楚：什么变了、什么没变、怎么迁。
+
+## v4.x → v5.0（场景化更名，破坏性大版本）
+
+"模型（model）"更名为"**场景（scenario）**"——它本来就是场景级决策配置；"模型"一词自 v5.0 起
+专指**算法模型**（评分卡/ONNX 模型，休眠配置 `engine_model_conf` 保留原名即为此用途）。
+
+**升级路径 = 重新安装 + 配置按术语对照表重建**：v5.0 不提供数据迁移脚本、不兼容旧 API 参数与
+旧格式策略包（1.0/2.0 不可导入）——存量用户均为二次开发用户，请按对照表重建配置并调整
+事件接入参数。
+
+### 术语对照表
+
+| v4.x | v5.0 | 说明 |
+|------|------|------|
+| 模型 | **场景（scenario）** | 用户可见术语/文档/界面 |
+| engine_model | engine_scenario | DB 表 |
+| 子表 MODEL_ID 列 | SCENARIO_ID | field/feature/strategy/rule/rule_history/data_lists 等八张子表 |
+| modelGuid | scenarioGuid | 引擎接口 `/uploadInfo`、`/getScore` 参数及管理端 API |
+| `/services/v1/model/**` | `/services/v1/scenario/**` | 管理端 API 基路径 |
+| 模型策略包 | 场景策略包 | formatVersion **3.0**（信封键 `model`→`scenario`，正名 `strategyId`/`featureName`/`strategyName`） |
+| Plugin v3 契约插件 | **不再支持** | PluginManager legacy 桥移除，必须 FeatureProcessor（radar-plugin-api 4.x） |
+| 算法模型配置 engine_model_conf(+param) | **保留原名** | "模型"一词的正当归属（休眠，P1-5 回归本体） |
+
+### 必做步骤
+
+1. 全新部署：清库导入 `sql/radar-init.sql`（v5 基线；历史 `upgrade-*.sql` 已随 v5.0 移除）；
+2. 配置重建：按对照表在管理端重建字段/特征/名单/策略（或用 v4.1.5 导出包按对照表手工调整后——
+   注意 1.0/2.0 包 v5 不识别，需调整为 3.0 键名）；
+3. 事件接入改造：`modelGuid` → `scenarioGuid`（对接代码一行改动）；
+4. 插件：全部使用 FeatureProcessor 契约（v3 契约插件不再装载）；
+5. 官方模板：模板库一键创建（在线源/内置均为 3.0 格式）。
 
 ## v4.0 → v4.1.0（特征工程重构，破坏性）
 
@@ -88,7 +119,7 @@ v4.0 把"激活器（Activation）"更名"策略（Strategy）"并类型化（�
 | v2.4.x | 2026-11-14/15 | 前端现代化：React 18 + antd 5 + Vite（产物内嵌 jar，UI 无需单独部署） |
 | v3.0.0 | 2026-11-15 | preItem 插件 SDK 化：radar-plugin-api + 外置 jar 加载 + 动态表单 |
 | v3.1.0 | 2026-11-21 | 插件生命周期（上传/启停/热重载）+ 出访管控 + testkit |
-| v3.2.0 | 2026-11-21 | 模型策略包：全图导出/导入 + 校验报告 |
+| v3.2.0 | 2026-11-21 | 场景策略包：全图导出/导入 + 校验报告 |
 | v3.3.0 | 2026-11-22 | 开源基建：Dependabot/CodeQL + 文档站 + Playwright E2E |
 | v3.4.0 | 2026-11-23 | 官方模板库：三场景模板 + 在线源（一键创建） |
 | v3.5.0 | 2026-11-23 | 官方种子插件三件套 + E2E 扩面 |
@@ -138,5 +169,5 @@ v4.0 把"激活器（Activation）"更名"策略（Strategy）"并类型化（�
 
 ## 帮助
 
-- 文档站：见仓库 [docs/](.) ；插件开发：[plugin-dev-guide.md](plugin-dev-guide.md)；策略包格式：[model-package.md](model-package.md)
+- 文档站：见仓库 [docs/](.) ；插件开发：[plugin-dev-guide.md](plugin-dev-guide.md)；策略包格式：[scenario-package.md](scenario-package.md)
 - 问题反馈：GitHub / Gitee Issues（附策略包 json 可加速定位——这是 v3.2 的设计初衷之一）

@@ -33,10 +33,10 @@ public class RiskResultAsyncService implements RiskResultService {
     }
 
     @Override
-    public void sendResult(String modelGuid, String reqId, String info) {
+    public void sendResult(String scenarioGuid, String reqId, String info) {
         CompletableFuture.runAsync(() -> {
                     try {
-                        IndexRequest request = new IndexRequest(modelGuid.toLowerCase());
+                        IndexRequest request = new IndexRequest(scenarioGuid.toLowerCase());
                         request.id(reqId);
                         request.source(info, XContentType.JSON);
                         IndexResponse result = restHighLevelClient.index(request, RequestOptions.DEFAULT);

@@ -14,7 +14,7 @@ export async function login(page: Page): Promise<string> {
   await page.fill('input[name=password]', E2E_PASS);
   await page.fill('input[name=captcha]', E2E_CAPTCHA);
   await page.getByRole('button', { name: '登录' }).click();
-  await page.waitForURL(/modelList/, { timeout: 20_000 });
+  await page.waitForURL(/scenarioList/, { timeout: 20_000 });
   const token = await page.evaluate(() => localStorage.getItem('x-auth-token') || '');
   expect(token, '登录应下发 x-auth-token').toBeTruthy();
   return token;

@@ -71,7 +71,7 @@ export default class EditDataList extends React.Component{
 		else{
 			var param={};
 			param.id=this.props.row.id;
-			param.modelId=this.props.modelId;
+			param.scenarioId=this.props.scenarioId;
 			param.name=this.state.name;
 			param.label=this.state.label;
 			param.comment=this.state.comment;

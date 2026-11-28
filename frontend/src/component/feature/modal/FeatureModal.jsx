@@ -51,7 +51,7 @@ export default class FeatureModal extends React.Component {
     }
 
     componentDidMount() {
-        FetchUtil('/feature/columns/' + this.props.modelId, 'GET', '',
+        FetchUtil('/feature/columns/' + this.props.scenarioId, 'GET', '',
             (data) => {
                 this.setState({fieldList: data.data.list || []});
             });
@@ -208,7 +208,7 @@ export default class FeatureModal extends React.Component {
         const s = this.state;
         const param = {
             id: s.id || null,
-            modelId: Number(this.props.modelId),
+            scenarioId: Number(this.props.scenarioId),
             featureName: s.featureName || '',
             label: s.label,
             type: s.type,

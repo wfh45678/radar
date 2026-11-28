@@ -6,7 +6,6 @@ import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.radar.plugin.api.OutputColumn;
 import com.radar.plugin.api.ParamDescriptor;
 import com.radar.plugin.api.FeatureProcessor;
-import com.radar.plugin.api.Plugin;
 import com.radar.plugin.api.FeatureContext;
 import com.radar.plugin.api.PluginContext;
 import com.radar.plugin.api.FeatureRequest;
@@ -124,12 +123,7 @@ public class PluginManager implements ApplicationContextAware {
         // 1) v4 主契约插件（Spring bean）
         applicationContext.getBeansOfType(FeatureProcessor.class)
                 .forEach((beanName, processor) -> register(v4Entry(processor, PluginEntry.Source.BUILTIN_V4)));
-        // 2) v3 旧契约插件（legacy 桥，Spring bean，v5 移除）
-        applicationContext.getBeansOfType(Plugin.class)
-                .forEach((beanName, plugin) -> {
-                    logger.warn("legacy v3 plugin '{}' loaded (Source.BUILTIN_V3)——请迁移到 FeatureProcessor（radar-plugin-api 4.0），v5 将移除该桥", plugin.key());
-                    register(v3Entry(plugin, PluginEntry.Source.BUILTIN_V3));
-                });
+        // 2) v3 旧契约插件：v5.0 起 legacy 桥已移除，仅支持 FeatureProcessor 契约（见 samples/radar-plugin-demo）
         // 3) plugins/ 目录外置插件
         loadExternalPlugins();
         logger.info("plugin registry ready: {} plugins {}",
@@ -168,38 +162,6 @@ public class PluginManager implements ApplicationContextAware {
                 features == null ? java.util.Map.of() : features);
         FeatureResponse response = processor.execute(request, featureContext);
         return response == null ? null : response.getPayload();
-    }
-
-    private PluginEntry v3Entry(Plugin plugin, PluginEntry.Source source) {
-        List<ParamDescriptor> schema = plugin.paramSchema();
-        return new PluginEntry(
-                plugin.key(), plugin.name(), plugin.desc(),
-                plugin.type(), plugin.remote(), source,
-                plugin.version(), plugin.provider(),
-                plugin.outputMeta(), schema,
-                (item, jsonInfo, sourceField) -> executeV3(plugin, schema, item, jsonInfo, sourceField));
-    }
-
-    private Object executeV3(Plugin plugin, List<ParamDescriptor> schema, FeatureVO feature,
-                             Map<String, Map<String, ?>> context, String[] sourceField) throws Exception {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> jsonInfo = (Map<String, Object>) context.get("fields");
-        Map<String, Object> sourceMap = new LinkedHashMap<>();
-        List<Object> sourceValues = new ArrayList<>();
-        if (sourceField != null) {
-            for (String f : sourceField) {
-                sourceMap.put(f, jsonInfo.get(f));
-                sourceValues.add(jsonInfo.get(f));
-            }
-        }
-        String rawArgs = feature.getDefinition() == null ? null : feature.getDefinition().path("args").asText(null);
-        Map<String, Object> typedArgs = parseArgs(schema, rawArgs);
-        PluginContext pluginContext = contextFactory.create(plugin.key());
-        PluginRequest request = new PluginRequest(
-                feature.getModelId(), feature.getFeatureName(),
-                sourceMap, sourceValues, typedArgs, rawArgs, jsonInfo, feature);
-        PluginResult result = plugin.execute(request, pluginContext);
-        return result == null ? null : result.getPayload();
     }
 
     /**
@@ -303,30 +265,8 @@ public class PluginManager implements ApplicationContextAware {
                     failed++;
                 }
             }
-            // v3 legacy 契约（deprecated 桥）
-            for (Plugin plugin : ServiceLoader.load(Plugin.class, newLoader)) {
-                logger.warn("legacy v3 external plugin '{}' loaded——请迁移到 FeatureProcessor（radar-plugin-api 4.0），v5 将移除该桥", plugin.key());
-                try {
-                    PluginEntry entry = v3Entry(plugin, PluginEntry.Source.EXTERNAL);
-                    // 与内置 key 冲突：告警并跳过（内置优先，DB 存量配置不受外置 jar 影响）
-                    PluginEntry builtin = entries.get(entry.getKey());
-                    if (builtin != null && builtin.getSource() != PluginEntry.Source.EXTERNAL) {
-                        logger.warn("external plugin key conflicts with builtin, skip: {} ({})",
-                                entry.getKey(), plugin.getClass().getName());
-                        failed++;
-                        continue;
-                    }
-                    PluginEntry previous = fresh.putIfAbsent(entry.getKey(), entry);
-                    if (previous != null) {
-                        logger.warn("duplicate external plugin key across jars, keep first: {} ({} vs {})",
-                                entry.getKey(), previous, plugin.getClass().getName());
-                        failed++;
-                    }
-                } catch (Exception e) {
-                    logger.warn("external plugin init failed: {}", plugin.getClass().getName(), e);
-                    failed++;
-                }
-            }
+            // v3 legacy 契约：v5.0 起不再支持（旧插件 jar 会被下方 FeatureProcessor 扫描自然跳过，
+            // 如需继续使用请按 docs/plugin-dev-guide.md 迁移到 FeatureProcessor 契约）
         } catch (Throwable t) {
             // ServiceLoader 迭代中断（坏 jar 等）：注册表不动，关闭新 loader
             logger.error("external plugin scan aborted, keep previous registry", t);

@@ -29,8 +29,8 @@ public class DataListsPO {
     /**
      * 模型ID
      */
-    @TableField("MODEL_ID")
-    private Long modelId;
+    @TableField("SCENARIO_ID")
+    private Long scenarioId;
 
     /**
      * 注释
@@ -113,19 +113,19 @@ public class DataListsPO {
     /**
      * 获取模型ID
      *
-     * @return MODEL_ID - 模型ID
+     * @return SCENARIO_ID - 模型ID
      */
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
     /**
      * 设置模型ID
      *
-     * @param modelId 模型ID
+     * @param scenarioId 模型ID
      */
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     /**

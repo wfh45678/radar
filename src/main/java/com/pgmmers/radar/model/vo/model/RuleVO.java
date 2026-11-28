@@ -11,7 +11,7 @@ public class RuleVO implements Serializable{
     private Long id;
 
 
-    private Long modelId;
+    private Long scenarioId;
 
 
     private Long strategyId;
@@ -33,7 +33,7 @@ public class RuleVO implements Serializable{
     private String operator;
 
 
-    private String abstractionName;
+    private String featureName;
 
 
     private Integer status;
@@ -65,12 +65,12 @@ public class RuleVO implements Serializable{
 
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
 
@@ -134,13 +134,13 @@ public class RuleVO implements Serializable{
     }
 
 
-    public String getAbstractionName() {
-        return abstractionName;
+    public String getFeatureName() {
+        return featureName;
     }
 
 
-    public void setAbstractionName(String abstractionName) {
-        this.abstractionName = abstractionName;
+    public void setFeatureName(String featureName) {
+        this.featureName = featureName;
     }
 
 

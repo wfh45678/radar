@@ -26,7 +26,7 @@ class FeatureList extends React.Component {
             model: null
         };
 
-        FetchUtil('/model/' + this.props.params.id, 'GET', '',
+        FetchUtil('/scenario/' + this.props.params.id, 'GET', '',
             (data) => {
                 this.setState({model: data.data.model});
             });
@@ -37,7 +37,7 @@ class FeatureList extends React.Component {
         var param = {};
         param.pageNo = 1;
         param.pageSize = 1000;
-        param.modelId = this.props.params.id;
+        param.scenarioId = this.props.params.id;
         param.label = this.state.label;
         FetchUtil('/feature', 'POST', JSON.stringify(param),
             (data) => {
@@ -112,7 +112,7 @@ class FeatureList extends React.Component {
                 dataIndex: 'handle',
                 render: (t, r) => (
                     <span>
-                        <FeatureModal modelId={this.props.params.id} row={r} reload={this.fetchTableData}/>
+                        <FeatureModal scenarioId={this.props.params.id} row={r} reload={this.fetchTableData}/>
                         <span className="ant-divider"></span>
                         <Popconfirm placement="bottomRight" title={'确认删除该特征吗？'}
                             onConfirm={this.deleteFeature.bind(this, r.id)}>
@@ -137,7 +137,7 @@ class FeatureList extends React.Component {
                             this.setState({label: ''}, () => this.fetchTableData());
                         }}>查询</Button>
                         {' '}
-                        <FeatureModal modelId={this.props.params.id} reload={this.fetchTableData}/>
+                        <FeatureModal scenarioId={this.props.params.id} reload={this.fetchTableData}/>
                         {' '}
                         <Tooltip title="规则与策略通过 features.<特征名> 引用特征值">
                             <a style={{color: '#999'}}>引用方式：features.&lt;特征名&gt;</a>

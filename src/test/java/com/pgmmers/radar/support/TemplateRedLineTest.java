@@ -38,7 +38,7 @@ class TemplateRedLineTest extends AbstractIntegrationTest {
 
     private static final String CAPTCHA = "TPLCAP";
     private static final String UNIQUE = String.valueOf(System.currentTimeMillis()).substring(7);
-    // label 须 <= 32 字符（engine_model.LABEL varchar(32)）：key 缩写 + 6 位时间戳
+    // label 须 <= 32 字符（engine_scenario.LABEL varchar(32)）：key 缩写 + 6 位时间戳
     private static final java.util.Map<String, String> KEY_ABBR = java.util.Map.of(
             "account-takeover", "ATO", "promo-abuse", "PRM", "transaction-risk", "TXN");
     private static final String LOGIN_NAME = "tpl_user_" + UNIQUE;
@@ -102,7 +102,7 @@ class TemplateRedLineTest extends AbstractIntegrationTest {
     void step2_eachTemplateImportsAndBuildsCleanly() {
         assertTrue(authToken != null, "依赖 step1 登录态");
         // 模板库列表：3 个官方内置模板可见
-        JSONObject library = parse(exchange(HttpMethod.GET, "/services/v1/model/templates",
+        JSONObject library = parse(exchange(HttpMethod.GET, "/services/v1/scenario/templates",
                 withAuth(null)), "模板库");
         JSONArray templates = library.getJSONObject("data").getJSONArray("templates");
         assertNotNull(templates, "模板列表缺失");
@@ -115,11 +115,11 @@ class TemplateRedLineTest extends AbstractIntegrationTest {
             // 一键创建（label 唯一：场景 + 时间戳）
             String label = "TPL红线_" + KEY_ABBR.get(key) + "_" + UNIQUE;
             ResponseEntity<String> resp = exchange(HttpMethod.POST,
-                    "/services/v1/model/templates/" + key + "/import?label=" + label,
+                    "/services/v1/scenario/templates/" + key + "/import?label=" + label,
                     withAuth(null));
             JSONObject imported = parse(resp, "导入模板 " + key);
-            Long modelId = imported.getJSONObject("data").getLong("id");
-            assertNotNull(modelId, "导入应返回新模型 id");
+            Long scenarioId = imported.getJSONObject("data").getLong("id");
+            assertNotNull(scenarioId, "导入应返回新模型 id");
 
             // 质量红线：导入告警必须为零（内置插件齐备 + Groovy 全部可编译）
             JSONArray warnings = imported.getJSONObject("data").getJSONArray("warnings");
@@ -127,9 +127,9 @@ class TemplateRedLineTest extends AbstractIntegrationTest {
                     "模板 " + key + " 导入不应有告警: " + warnings);
 
             // 构建通过（Groovy/规则在引擎真实编译）
-            parse(exchange(HttpMethod.POST, "/services/v1/model/build/" + modelId,
+            parse(exchange(HttpMethod.POST, "/services/v1/scenario/build/" + scenarioId,
                     withAuth(null)), "构建 " + key);
-            parse(exchange(HttpMethod.POST, "/services/v1/model/enable/" + modelId,
+            parse(exchange(HttpMethod.POST, "/services/v1/scenario/enable/" + scenarioId,
                     withAuth(null)), "启用 " + key);
         }
     }
@@ -138,9 +138,9 @@ class TemplateRedLineTest extends AbstractIntegrationTest {
     @Order(3)
     void step3_eachTemplateAcceptsEventAndScores() {
         assertTrue(authToken != null, "依赖 step1 登录态");
-        JSONObject list = parse(exchange(HttpMethod.GET, "/services/v1/model/list",
+        JSONObject list = parse(exchange(HttpMethod.GET, "/services/v1/scenario/list",
                 withAuth(null)), "模型列表");
-        JSONArray rows = list.getJSONObject("data").getJSONArray("modelList");
+        JSONArray rows = list.getJSONObject("data").getJSONArray("scenarioList");
         if (rows == null) {
             rows = list.getJSONObject("data").getJSONArray("list");
         }
@@ -153,13 +153,13 @@ class TemplateRedLineTest extends AbstractIntegrationTest {
                     .filter(r -> label.equals(r.getString("label")))
                     .findFirst()
                     .orElseThrow(() -> new AssertionError("未找到模板模型: " + label));
-            String modelGuid = model.getString("guid");
-            assertNotNull(modelGuid, "模型 GUID 缺失");
+            String scenarioGuid = model.getString("guid");
+            assertNotNull(scenarioGuid, "模型 GUID 缺失");
 
             // 造事件（按模板字段构造：入口/实体字段必填，其余通用占位）
             String eventJson = eventJsonFor(key);
             MultiValueMap<String, String> uploadForm = new LinkedMultiValueMap<>();
-            uploadForm.add("modelGuid", modelGuid);
+            uploadForm.add("scenarioGuid", scenarioGuid);
             uploadForm.add("reqId", "tpl_req_" + key + "_" + UNIQUE);
             uploadForm.add("jsonInfo", eventJson);
             JSONObject upload = parse(exchange(HttpMethod.POST, "/services/v1/uploadInfo",

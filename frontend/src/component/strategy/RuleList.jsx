@@ -32,7 +32,7 @@ class RuleList extends Component{
             ruleOrder:[]
         }
 
-        FetchUtil('/model/'+this.props.params.id,'GET','',
+        FetchUtil('/scenario/'+this.props.params.id,'GET','',
         	(data) => {
                 const model=data.data.model;
                 this.setState({
@@ -281,8 +281,8 @@ class RuleList extends Component{
                             return  true; 
                         }
                     }).map((info,index)=>{
-                        return (<Collapse ruleId={info.id} ruleOrder={this.state.ruleOrder} switcher={info.status=='1'} modelId={this.props.params.id} strategyId={this.props.params.strategyId} type="calendar" onSwitch={this.handleSwitch.bind(this,info)} key={info.id?info.id:index} title={info.label?info.label:'新增（请保存）'}>
-                            <Rule rule={info} modelId={this.props.params.id} strategyId={this.props.params.strategyId} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData} delete={this.handleDelete.bind(this,index)}/>
+                        return (<Collapse ruleId={info.id} ruleOrder={this.state.ruleOrder} switcher={info.status=='1'} scenarioId={this.props.params.id} strategyId={this.props.params.strategyId} type="calendar" onSwitch={this.handleSwitch.bind(this,info)} key={info.id?info.id:index} title={info.label?info.label:'新增（请保存）'}>
+                            <Rule rule={info} scenarioId={this.props.params.id} strategyId={this.props.params.strategyId} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData} delete={this.handleDelete.bind(this,index)}/>
                         </Collapse>);
                     })
                     }

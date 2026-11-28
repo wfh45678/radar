@@ -31,11 +31,11 @@ echo "    token len=${#TOKEN}"
 
 # 4. 模板列表含 103
 step 4 "模板列表含种子模板 103"
-R=$(curl -s -H "$AUTH" "$BASE/services/v1/model/list/template")
+R=$(curl -s -H "$AUTH" "$BASE/services/v1/scenario/list/template")
 echo "$R" | python3 -c "
 import json,sys
 d=json.load(sys.stdin); assert d.get('success'), d
-ids=[m['id'] for m in d['data']['modelList']]
+ids=[m['id'] for m in d['data']['scenarioList']]
 assert 103 in ids, f'103 not in {ids}'
 print('    OK')"
 
@@ -43,16 +43,16 @@ print('    OK')"
 step 5 "copy 模板 103"
 R=$(curl -s -X POST -H "$AUTH" -H 'Content-Type: application/json' \
     -d "{\"id\":103,\"modelName\":\"it_model_$TS\",\"label\":\"$LABEL\"}" \
-    "$BASE/services/v1/model/copy")
+    "$BASE/services/v1/scenario/copy")
 assert_ok "$R"
 
 # 6. 模型列表定位新模型
 step 6 "模型列表定位新模型"
-R=$(curl -s -H "$AUTH" "$BASE/services/v1/model/list")
+R=$(curl -s -H "$AUTH" "$BASE/services/v1/scenario/list")
 read -r MODEL_ID MODEL_GUID <<< "$(echo "$R" | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
-rows=d.get('data',{}).get('modelList') or d.get('data',{}).get('list') or []
+rows=d.get('data',{}).get('scenarioList') or d.get('data',{}).get('list') or []
 m=[x for x in rows if x.get('label')=='$LABEL']
 assert m, f'not found: {d}'
 print(m[0]['id'], m[0].get('guid') or m[0].get('GUID'))")"
@@ -60,17 +60,17 @@ echo "    modelId=$MODEL_ID guid=$MODEL_GUID"
 
 # 7/8. build + enable
 step 7 "build 模型"
-assert_ok "$(curl -s -X POST -H "$AUTH" "$BASE/services/v1/model/build/$MODEL_ID")"
+assert_ok "$(curl -s -X POST -H "$AUTH" "$BASE/services/v1/scenario/build/$MODEL_ID")"
 step 8 "enable 模型"
-assert_ok "$(curl -s -X POST -H "$AUTH" "$BASE/services/v1/model/enable/$MODEL_ID")"
+assert_ok "$(curl -s -X POST -H "$AUTH" "$BASE/services/v1/scenario/enable/$MODEL_ID")"
 
 # 9. 事件上传（两条——频次类规则需第二笔才达阈值，同 v2.0 冒烟口径）
 step 9 "上传两条事件，断言规则命中"
 EVENT="{\"eventId\":\"$REQID\",\"mobile\":\"18516249909\",\"userId\":\"$LOGIN\",\"eventTime\":$(date +%s000),\"userIP\":\"180.175.166.148\",\"deviceId\":\"IT-DEVICE\",\"os\":\"ios\",\"amount\":500.0,\"channel\":\"alipay\"}"
-R=$(curl -s -X POST "$BASE/services/v1/uploadInfo" -d "modelGuid=$MODEL_GUID" -d "reqId=$REQID" --data-urlencode "jsonInfo=$EVENT")
+R=$(curl -s -X POST "$BASE/services/v1/uploadInfo" -d "scenarioGuid=$MODEL_GUID" -d "reqId=$REQID" --data-urlencode "jsonInfo=$EVENT")
 assert_ok "$R"
 EVENT2="{\"eventId\":\"${REQID}_b\",\"mobile\":\"18516249909\",\"userId\":\"$LOGIN\",\"eventTime\":$(date +%s000),\"userIP\":\"180.175.166.148\",\"deviceId\":\"IT-DEVICE\",\"os\":\"ios\",\"amount\":500.0,\"channel\":\"alipay\"}"
-R=$(curl -s -X POST "$BASE/services/v1/uploadInfo" -d "modelGuid=$MODEL_GUID" -d "reqId=${REQID}_b" --data-urlencode "jsonInfo=$EVENT2")
+R=$(curl -s -X POST "$BASE/services/v1/uploadInfo" -d "scenarioGuid=$MODEL_GUID" -d "reqId=${REQID}_b" --data-urlencode "jsonInfo=$EVENT2")
 assert_ok "$R"
 echo "$R" | python3 -c "
 import json,sys
@@ -84,7 +84,7 @@ print(f'    decisions: {json.dumps({k: v[\"risk\"]+\"/\"+str(v.get(\"score\",\"?
 
 # 10a. getScore
 step "10a" "getScore（Redis 通道）"
-R=$(curl -s -H "$AUTH" "$BASE/services/v1/getScore?modelGuid=$MODEL_GUID&reqId=$REQID")
+R=$(curl -s -H "$AUTH" "$BASE/services/v1/getScore?scenarioGuid=$MODEL_GUID&reqId=$REQID")
 assert_ok "$R"
 
 # 10b. hitsSort 报表

@@ -6,7 +6,7 @@ import com.pgmmers.radar.mapper.DataListRecordMapper;
 import com.pgmmers.radar.mapper.DataListsMapper;
 import com.pgmmers.radar.mapper.FieldMapper;
 import com.pgmmers.radar.mapper.MobileInfoMapper;
-import com.pgmmers.radar.mapper.ModelMapper;
+import com.pgmmers.radar.mapper.ScenarioMapper;
 import com.pgmmers.radar.mapper.FeatureMapper;
 import com.pgmmers.radar.mapper.RuleHistoryMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
@@ -17,7 +17,7 @@ import com.pgmmers.radar.converter.DataListRecordMapping;
 import com.pgmmers.radar.converter.DataListsMapping;
 import com.pgmmers.radar.converter.FieldMapping;
 import com.pgmmers.radar.converter.MobileInfoMapping;
-import com.pgmmers.radar.converter.ModelMapping;
+import com.pgmmers.radar.converter.ScenarioMapping;
 import com.pgmmers.radar.converter.FeatureMapping;
 import com.pgmmers.radar.converter.RuleHistoryMapping;
 import com.pgmmers.radar.converter.RuleMapping;
@@ -29,7 +29,7 @@ import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.DataListsPO;
 import com.pgmmers.radar.model.entity.FieldPO;
 import com.pgmmers.radar.model.entity.MobileInfoPO;
-import com.pgmmers.radar.model.entity.ModelPO;
+import com.pgmmers.radar.model.entity.ScenarioPO;
 import com.pgmmers.radar.model.entity.RuleHistoryPO;
 import com.pgmmers.radar.model.entity.RulePO;
 import com.pgmmers.radar.model.entity.UserPO;
@@ -41,7 +41,7 @@ import com.pgmmers.radar.model.vo.model.DataListMetaVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import com.pgmmers.radar.model.vo.model.RuleHistoryVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
 import com.pgmmers.radar.support.AbstractIntegrationTest;
@@ -62,9 +62,9 @@ public class MapStructTest extends AbstractIntegrationTest {
 
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ScenarioMapper scenarioMapper;
     @Autowired
-    private ModelMapping modelMapping;
+    private ScenarioMapping modelMapping;
 
     @Resource
     private StrategyMapping strategyMapping;
@@ -81,11 +81,11 @@ public class MapStructTest extends AbstractIntegrationTest {
 
     @Test
     public void modelTest() {
-        List<ModelPO> pos = modelMapper.selectList(null);
+        List<ScenarioPO> pos = scenarioMapper.selectList(null);
         Assertions.assertNotNull(pos);
-        List<ModelVO> vos = modelMapping.sourceToTarget(pos);
+        List<ScenarioVO> vos = modelMapping.sourceToTarget(pos);
         Assertions.assertNotNull(vos);
-        List<ModelPO> pos1 = modelMapping.targetToSource(vos);
+        List<ScenarioPO> pos1 = modelMapping.targetToSource(vos);
         Assertions.assertNotNull(pos1);
     }
 

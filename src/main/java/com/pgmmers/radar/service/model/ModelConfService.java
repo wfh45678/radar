@@ -5,7 +5,7 @@ import com.pgmmers.radar.model.vo.model.ModelConfVO;
 public interface ModelConfService {
     ModelConfVO get(Long id);
 
-    ModelConfVO getByModelId(Long modelId);
+    ModelConfVO getByModelId(Long scenarioId);
 
     ModelConfVO save(ModelConfVO modelConf);
 

@@ -15,9 +15,9 @@ import com.pgmmers.radar.model.query.RuleHistoryQuery;
 import com.pgmmers.radar.model.query.RuleQuery;
 import com.pgmmers.radar.interceptor.ContextHolder;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.service.model.ModelService;
+import com.pgmmers.radar.service.model.ScenarioService;
 import com.pgmmers.radar.service.model.RuleService;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class RuleApiController {
     private RuleService ruleService;
         
     @Autowired
-    private ModelService modelService;
+    private ScenarioService scenarioService;
 
     @Autowired
     private ContextHolder contextHolder;
@@ -65,14 +65,14 @@ public class RuleApiController {
         return ruleService.delete(id);
     }
 
-    @PostMapping("/hitsSort/{modelId}")
-    public CommonResult hitsSort(@PathVariable Long modelId, @RequestBody EventQuery query) {
+    @PostMapping("/hitsSort/{scenarioId}")
+    public CommonResult hitsSort(@PathVariable Long scenarioId, @RequestBody EventQuery query) {
         CommonResult result = new CommonResult();
-        ModelVO modelVO = modelService.getModelById(modelId);
+        ScenarioVO modelVO = scenarioService.getScenarioById(scenarioId);
         if (modelVO == null) {
             return result; 
         }
-        return ruleService.getHitSorts(modelId, query.getBeginTime(), query.getEndTime());
+        return ruleService.getHitSorts(scenarioId, query.getBeginTime(), query.getEndTime());
     }
 
 	@PostMapping("/ruleHistory")

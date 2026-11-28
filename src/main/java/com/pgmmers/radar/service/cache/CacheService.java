@@ -6,7 +6,7 @@ import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
 
@@ -15,11 +15,11 @@ import com.pgmmers.radar.model.vo.model.RuleVO;
  * @author feihu.wang
  */
 public interface CacheService {
-     void saveAntiFraudResult(String modelId, String sessionId, CommonResult result);
+     void saveAntiFraudResult(String scenarioId, String sessionId, CommonResult result);
 
-     CommonResult getAntiFraudResult(String modelId, String sessionId);
+     CommonResult getAntiFraudResult(String scenarioId, String sessionId);
 
-     void publishModel(ModelVO model);
+     void publishModel(ScenarioVO model);
 
      void subscribeModel(SubscribeHandle handler);
 

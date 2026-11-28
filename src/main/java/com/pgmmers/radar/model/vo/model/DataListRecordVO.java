@@ -21,7 +21,7 @@ public class DataListRecordVO implements Serializable{
 
     private Date updateTime;
 
-    private Long modelId;
+    private Long scenarioId;
 
     /**
      * operate
@@ -79,12 +79,12 @@ public class DataListRecordVO implements Serializable{
 
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
 
@@ -111,7 +111,7 @@ public class DataListRecordVO implements Serializable{
                 "id=" + id +
                 ", dataListId=" + dataListId +
                 ", dataRecord='" + dataRecord + '\'' +
-                ", modelId=" + modelId +
+                ", scenarioId=" + scenarioId +
                 ", opt='" + opt + '\'' +
                 '}';
     }

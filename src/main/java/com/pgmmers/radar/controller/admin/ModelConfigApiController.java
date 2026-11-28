@@ -23,17 +23,17 @@ import org.springframework.web.bind.annotation.*;
  * @author wangfeihu
  */
 @RestController
-@RequestMapping("/services/v1/modelConfig")
+@RequestMapping("/services/v1/scenarioConfig")
 @Tag(name = "机器学习配置API", description = "模型机器学习配置相关操作")
 public class ModelConfigApiController {
 
     @Autowired
     private ModelConfService modelConfService;
 
-    @GetMapping("/list/{modelId}")
-    public CommonResult list(@PathVariable Long modelId) {
+    @GetMapping("/list/{scenarioId}")
+    public CommonResult list(@PathVariable Long scenarioId) {
         CommonResult result = new CommonResult();
-        ModelConfVO modelConfVO = modelConfService.getByModelId(modelId);
+        ModelConfVO modelConfVO = modelConfService.getByModelId(scenarioId);
         if (modelConfVO != null) {
             result.getData().put("modelConfig", modelConfVO);
         }

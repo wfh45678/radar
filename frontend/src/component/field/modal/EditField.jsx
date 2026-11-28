@@ -90,7 +90,7 @@ export default class EditField extends React.Component{
 		else{
 			var param = {};
 			param.id = this.props.row.id;
-			param.modelId = this.props.modelId;
+			param.scenarioId = this.props.scenarioId;
 			param.fieldName = this.state.fieldName;
 			param.label = this.state.label;
 			param.fieldType = this.state.fieldType;

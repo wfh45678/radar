@@ -137,7 +137,7 @@ export default class Rule extends React.Component{
 			if(this.props.rule.id!=0){
 				param.id=this.props.rule.id;
 			}
-			param.modelId=this.props.modelId;
+			param.scenarioId=this.props.scenarioId;
 			param.strategyId=this.props.strategyId;
 			param.label=this.state.label;
 			param.initScore=this.state.initScore,

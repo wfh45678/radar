@@ -21,8 +21,8 @@ public class ValidateServiceImpl implements ValidateService {
     private FieldService fieldService;
 
     @Override
-    public Map<String, Object> validate(Long modelId, Map data) {
-        List<FieldVO> fieldList = fieldService.listField(modelId);
+    public Map<String, Object> validate(Long scenarioId, Map data) {
+        List<FieldVO> fieldList = fieldService.listField(scenarioId);
         Map<String, Object> result = new HashMap<>();
         for (FieldVO field : fieldList) {
             String validateType = field.getValidateType();

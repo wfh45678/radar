@@ -39,7 +39,7 @@ flowchart LR
 
 ## 部署形态
 
-单体为默认形态；v3.1 起管理端可完成插件全生命周期运维，模型可导出策略包迁移。
+单体为默认形态；v3.1 起管理端可完成插件全生命周期运维，场景可导出策略包迁移。
 
 ```mermaid
 flowchart TB
@@ -57,15 +57,15 @@ flowchart TB
 - **水平扩展**：引擎端无状态（配置经 Redis pub/sub 推送），可直接多副本；
   引擎/管理端分离部署 profile 在 [Roadmap](./roadmap.md) P1-6 规划中；
 - **插件分发**：`plugins/` 目录外置 jar（管理端上传热重载）；
-- **策略分发**：模型导出策略包 JSON，任意实例导入为新模型（见[模型策略包](./model-package.md)）。
+- **策略分发**：场景导出策略包 JSON，任意实例导入为新场景（见[场景策略包](./scenario-package.md)）。
 
 ## 代码地图
 
 ```
 src/main/java/com/pgmmers/radar
-  ├ controller/admin   管理端 API（模型/字段/规则/插件/策略包…）
+  ├ controller/admin   管理端 API（场景/字段/规则/插件/策略包…）
   ├ service/impl/engine   引擎核心（feature 两阶段管线/strategy 执行链）
-  ├ service/impl/model   模型域（含 transfer 策略包）
+  ├ service/impl/model   场景域（历史包名沿用，含 transfer 场景策略包）
   ├ service/impl/dnn     Estimator 容器（ML 预留，零实现）
   └ common/util          Groovy/Crypt 等工具
 radar-plugin-api / radar-plugin-testkit   插件 SDK（独立工程，已上 Maven Central）

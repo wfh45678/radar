@@ -43,11 +43,11 @@ public class FieldApiController {
         return fieldService.query(query);
     }
 
-    @GetMapping("/list/{modelId}")
-    public CommonResult list(@PathVariable Long modelId) {
+    @GetMapping("/list/{scenarioId}")
+    public CommonResult list(@PathVariable Long scenarioId) {
         CommonResult result = new CommonResult();
         result.setSuccess(true);
-        result.getData().put("field", fieldService.listField(modelId));
+        result.getData().put("field", fieldService.listField(scenarioId));
         return result;
     }
 

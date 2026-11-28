@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface FieldService {
 
-     List<FieldVO> listField(Long modelId);
+     List<FieldVO> listField(Long scenarioId);
 
      FieldVO get(Long id);
 

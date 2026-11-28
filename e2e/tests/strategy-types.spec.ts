@@ -31,11 +31,11 @@ test.describe.serial('v4.0 策略类型', () => {
   test('step0 登录并导入策略类型模板', async ({ page, request }) => {
     authToken = await login(page);
     const imported = await api(request, 'POST',
-      `/services/v1/model/templates/transaction-risk/import?modelName=${MODEL_NAME}`);
+      `/services/v1/scenario/templates/transaction-risk/import?modelName=${MODEL_NAME}`);
     modelId = imported.data.id;
     expect(modelId, '导入应返回新模型 id').toBeTruthy();
-    await api(request, 'POST', `/services/v1/model/build/${modelId}`);
-    await api(request, 'POST', `/services/v1/model/enable/${modelId}`);
+    await api(request, 'POST', `/services/v1/scenario/build/${modelId}`);
+    await api(request, 'POST', `/services/v1/scenario/enable/${modelId}`);
   });
 
   test('step1 策略列表展示三种类型徽标', async ({ page }) => {

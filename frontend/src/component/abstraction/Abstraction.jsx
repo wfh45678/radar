@@ -115,7 +115,7 @@ export default class Abstraction extends React.Component{
 				return false;
 			}
 
-			param.modelId=this.props.modelId;
+			param.scenarioId=this.props.scenarioId;
 			param.name=this.state.name;
 			param.label=this.state.label;
 			param.aggregateType=this.state.aggregateType;

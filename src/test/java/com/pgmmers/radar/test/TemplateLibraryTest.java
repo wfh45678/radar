@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.pgmmers.radar.service.impl.model.transfer.ModelPackage;
-import com.pgmmers.radar.service.impl.model.transfer.ModelPackageService;
+import com.pgmmers.radar.service.impl.model.transfer.ScenarioPackage;
+import com.pgmmers.radar.service.impl.model.transfer.ScenarioPackageService;
 import com.pgmmers.radar.service.impl.model.transfer.TemplateCatalogService;
 import com.pgmmers.radar.service.impl.model.transfer.TemplateInfo;
 import com.pgmmers.radar.service.impl.model.transfer.TemplateSourceService;
-import com.pgmmers.radar.service.impl.model.transfer.ModelPackageService.ModelPackageException;
+import com.pgmmers.radar.service.impl.model.transfer.ScenarioPackageService.ScenarioPackageException;
 import com.sun.net.httpserver.HttpServer;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -29,7 +29,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  */
 class TemplateLibraryTest {
 
-    private ModelPackageService packageService;
+    private ScenarioPackageService packageService;
     private TemplateSourceService sourceService;
     private TemplateCatalogService catalogService;
     private HttpServer mockServer;
@@ -37,12 +37,12 @@ class TemplateLibraryTest {
 
     @BeforeEach
     void setUp() {
-        packageService = new ModelPackageService();
+        packageService = new ScenarioPackageService();
         sourceService = new TemplateSourceService();
         catalogService = new TemplateCatalogService();
         ReflectionTestUtils.setField(packageService, "maxUploadSize", 10 * 1024 * 1024L);
         ReflectionTestUtils.setField(packageService, "recordWarnThreshold", 100000L);
-        ReflectionTestUtils.setField(catalogService, "modelPackageService", packageService);
+        ReflectionTestUtils.setField(catalogService, "scenarioPackageService", packageService);
         ReflectionTestUtils.setField(catalogService, "templateSourceService", sourceService);
     }
 
@@ -163,13 +163,13 @@ class TemplateLibraryTest {
         });
         catalogService.loadBuiltins();
         // 坏包在 parse 层拒绝（真实调用链：bodyByKey 取回字节 → parse 校验）
-        assertThrows(ModelPackageException.class,
+        assertThrows(ScenarioPackageException.class,
                 () -> packageService.parse(catalogService.bodyByKey("bad")));
         // 内置 key 不受影响
         byte[] body = catalogService.bodyByKey("account-takeover");
         assertTrue(body.length > 0);
         assertFalse(new String(body, StandardCharsets.UTF_8).isEmpty());
-        ModelPackage ok = packageService.parse(body);
-        assertEquals("账户盗用防护", ok.getModel().getLabel());
+        ScenarioPackage ok = packageService.parse(body);
+        assertEquals("账户盗用防护", ok.getScenario().getLabel());
     }
 }

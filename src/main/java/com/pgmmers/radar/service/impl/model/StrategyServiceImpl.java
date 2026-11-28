@@ -40,10 +40,10 @@ import org.springframework.util.CollectionUtils;
 public class StrategyServiceImpl extends BaseLocalCacheService implements StrategyService, SubscribeHandle {
 
     @Override
-    public Object query(Long modelId) {
-        // 原 ModelDal.listStrategy(modelId, null) 逻辑下沉
+    public Object query(Long scenarioId) {
+        // 原 ModelDal.listStrategy(scenarioId, null) 逻辑下沉
         List<StrategyPO> list = strategyMapper.selectList(
-                new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, modelId));
+                new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, scenarioId));
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<StrategyVO>();
         }
@@ -70,9 +70,9 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
     private CacheService cacheService;
 
     @Override
-    public List<StrategyVO> listStrategy(Long modelId) {
+    public List<StrategyVO> listStrategy(Long scenarioId) {
         //noinspection unchecked
-        return (List<StrategyVO>) getByCache(modelId);
+        return (List<StrategyVO>) getByCache(scenarioId);
     }
 
     @Override

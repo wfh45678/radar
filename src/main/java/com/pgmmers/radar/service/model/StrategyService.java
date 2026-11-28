@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface StrategyService {
 
-	 List<StrategyVO> listStrategy(Long modelId);
+	 List<StrategyVO> listStrategy(Long scenarioId);
 
 	 StrategyVO get(Long id);
 

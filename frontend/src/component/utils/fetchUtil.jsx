@@ -4,7 +4,7 @@ import {Modal,message} from 'antd';
 export var fetchVersion='/services/v1';
 
 export var FetchUtil=function(url,method,param,callback,done=()=>{}){
-	// Boot3(Spring6) 取消尾斜杠路径匹配：2022 老代码 CRUD URL（如 /model/、/field/）带尾斜杠
+	// Boot3(Spring6) 取消尾斜杠路径匹配：2022 老代码 CRUD URL（如 /scenario/、/field/）带尾斜杠
 	// 会被落到静态资源处理器返回 400（v2.2.0 及之前已存在，v2.4 冒烟发现），此处统一剥离
 	url=url.replace(/\/+$/,'');
 	let config={

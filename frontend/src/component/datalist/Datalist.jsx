@@ -38,7 +38,7 @@ class Datalist extends React.Component{
         var param={};
         param.pageNo=this.state.pageNo;
         param.pageSize=pageSize;
-        param.modelId=this.props.params.id;
+        param.scenarioId=this.props.params.id;
         param.name=this.state.name;
         param.label=this.state.label;
         param.listType=this.state.listType;
@@ -113,13 +113,13 @@ class Datalist extends React.Component{
                 (t,r,i) => {
                     return(
                     <span>
-                        <EditDataList modelId={this.props.params.id} row={r} reload={this.fetchTableData}/>
+                        <EditDataList scenarioId={this.props.params.id} row={r} reload={this.fetchTableData}/>
                         <span className="ant-divider"></span>
-                        <EditDataListMeta modelId={this.props.params.id} row={r}/>
+                        <EditDataListMeta scenarioId={this.props.params.id} row={r}/>
                         <span className="ant-divider"></span>
                         <Tooltip title="管理黑/白名单内容"><Link to={"/datalistRecord/"+this.props.params.id+"/"+r.id}>管理内容</Link></Tooltip>
                         <span className="ant-divider"></span>
-                        <Popconfirm placement="bottomRight" title={'确认删除该模型吗？'} onConfirm={this.deleteModel.bind(this,r.id)}>
+                        <Popconfirm placement="bottomRight" title={'确认删除该场景吗？'} onConfirm={this.deleteModel.bind(this,r.id)}>
                             <Tooltip title="删除"><a style={{color:'#FD5B5B'}}>删除</a></Tooltip>
                         </Popconfirm>
                     </span>
@@ -135,7 +135,7 @@ class Datalist extends React.Component{
                                     <Input value={this.state.name} name="name" id="blue" onChange={this.handleChange}/>
                                 </FormItem>
                                 {' '}
-                                <AddDataList modelId={this.props.params.id} reload={this.fetchTableData} />
+                                <AddDataList scenarioId={this.props.params.id} reload={this.fetchTableData} />
                     </Form>
                 </div>
 

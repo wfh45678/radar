@@ -78,7 +78,7 @@ export default class ExportField extends React.Component{
 				:<Button type="primary" loading={this.state.loading} onClick={this.showModal}>导出</Button>
 				}*/}
 				<Modal title="选择需要导出的字段" open={this.state.open} maskClosable={false} closable={false} onOk={this.handleOk} okText={'导出报表'} onCancel={this.handleCancel}>
-					{this.props.eventFieldList.length==0?'该模型无字段可选':
+					{this.props.eventFieldList.length==0?'该场景无字段可选':
 					<Tree checkable onCheck={this.onSelect} selectedKeys={this.state.selectedKeys}>					
 						{this.props.eventFieldList.map((info,i)=>{
 							return (

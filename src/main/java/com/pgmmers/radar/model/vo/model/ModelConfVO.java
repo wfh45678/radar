@@ -18,7 +18,7 @@ public class ModelConfVO implements Serializable {
      */
     private Long id;
 
-    private Long modelId;
+    private Long scenarioId;
     /**
      * 模型名称
      */
@@ -123,11 +123,11 @@ public class ModelConfVO implements Serializable {
     }
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     public ModelConfParamVO getConfParam() {
@@ -142,7 +142,7 @@ public class ModelConfVO implements Serializable {
     public String toString() {
         return "ModelConfVO{" +
                 "id=" + id +
-                ", modelId=" + modelId +
+                ", scenarioId=" + scenarioId +
                 ", name='" + name + '\'' +
                 ", path='" + path + '\'' +
                 ", tag='" + tag + '\'' +

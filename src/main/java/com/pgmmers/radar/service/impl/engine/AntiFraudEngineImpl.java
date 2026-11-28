@@ -28,7 +28,7 @@ import com.pgmmers.radar.service.model.StrategyService;
 import com.pgmmers.radar.service.model.DataListsService;
 import com.pgmmers.radar.service.model.EntityService;
 import com.pgmmers.radar.service.model.FieldService;
-import com.pgmmers.radar.service.model.ModelService;
+import com.pgmmers.radar.service.model.ScenarioService;
 import com.pgmmers.radar.common.util.DateUtils;
 import com.pgmmers.radar.service.engine.strategy.ConditionEvaluator;
 import com.pgmmers.radar.common.util.GroovyScriptUtil;
@@ -37,7 +37,7 @@ import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -76,7 +76,7 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     private FieldService fieldService;
 
     @Autowired
-    private ModelService modelService;
+    private ScenarioService scenarioService;
 
     @Autowired
     private DataListsService dataListsService;
@@ -91,17 +91,17 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     private EngineMetrics engineMetrics;
 
     @Override
-    public FeatureResult executeFeatures(Long modelId, Map<String, Map<String, ?>> data, FeatureStage stage) {
+    public FeatureResult executeFeatures(Long scenarioId, Map<String, Map<String, ?>> data, FeatureStage stage) {
         FeatureResult result = new FeatureResult();
         List<FeatureVO> features = new ArrayList<>();
-        for (FeatureVO feature : featureService.listFeature(modelId)) {
+        for (FeatureVO feature : featureService.listFeature(scenarioId)) {
             if (stage.getTypes().stream().anyMatch(t -> t.name().equals(feature.getType()))) {
                 features.add(feature);
             }
         }
         features.sort(Comparator.comparingInt(f -> f.getOrderNo() == null ? Integer.MAX_VALUE : f.getOrderNo()));
 
-        Map<String, Object> dataCollectionMap = dataListsService.getDataListMap(modelId);
+        Map<String, Object> dataCollectionMap = dataListsService.getDataListMap(scenarioId);
         for (FeatureVO feature : features) {
             if (!feature.getStatus().equals(StatusType.ACTIVE.getKey())) {
                 continue;
@@ -145,20 +145,20 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
      *
      * 后续需要优化.delete from next version
      *
-     * @param modelId
+     * @param scenarioId
      * @return
      * @author feihu.wang
      * 2016年8月10日
      */
     @Deprecated
-    private Map<String, Object> getPrepareDataCollection(Long modelId) {
+    private Map<String, Object> getPrepareDataCollection(Long scenarioId) {
         Map<String, Object> dataListMap = null;
-        if (dataListCacheMap.containsKey(modelId)) {
-            dataListMap = dataListCacheMap.get(modelId);
+        if (dataListCacheMap.containsKey(scenarioId)) {
+            dataListMap = dataListCacheMap.get(scenarioId);
             return dataListMap;
         }
         dataListMap = new HashMap<>();
-        List<DataListsVO> list = dataListsService.listDataLists(modelId, StatusType.ACTIVE.getKey());
+        List<DataListsVO> list = dataListsService.listDataLists(scenarioId, StatusType.ACTIVE.getKey());
         // 系统自带黑/白名单
         List<DataListsVO> list2 = dataListsService.listDataLists(1L, StatusType.ACTIVE.getKey());
         list.addAll(list2);
@@ -173,18 +173,18 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
             }
             dataListMap.put(vo.getName(), dataListRecords);
         }
-        dataListCacheMap.put(modelId, dataListMap);
+        dataListCacheMap.put(scenarioId, dataListMap);
         return dataListMap;
     }
 
     @Override
-    public AdaptationResult executeAdaptation(Long modelId, Map<String, Map<String, ?>> data) {
+    public AdaptationResult executeAdaptation(Long scenarioId, Map<String, Map<String, ?>> data) {
         AdaptationResult result = new AdaptationResult();
 //      启动机器学习
         if (machineLearning){
-            Estimator estimator = estimatorContainer.getByModelId(modelId);
+            Estimator estimator = estimatorContainer.getByModelId(scenarioId);
             if(estimator != null) {
-                float score = estimator.predict(modelId, data);
+                float score = estimator.predict(scenarioId, data);
                 result.getAdaptationMap().put("score", score);
             }
         }
@@ -194,11 +194,11 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     }
 
     @Override
-    public StrategyResult executeStrategy(Long modelId, Map<String, Map<String, ?>> data) {
+    public StrategyResult executeStrategy(Long scenarioId, Map<String, Map<String, ?>> data) {
         StrategyResult result = new StrategyResult();
-        List<StrategyVO> strategies = strategyService.listStrategy(modelId);
+        List<StrategyVO> strategies = strategyService.listStrategy(scenarioId);
         // 获取预加载的黑/白名单集合
-        Map<String, Object> dataCollectionMap = dataListsService.getDataListMap(modelId);
+        Map<String, Object> dataCollectionMap = dataListsService.getDataListMap(scenarioId);
 
         for (StrategyVO strategy : strategies) {
             if (!strategy.getStatus().equals(StatusType.ACTIVE.getKey())) {

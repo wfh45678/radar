@@ -9,15 +9,15 @@ import com.pgmmers.radar.model.query.PageResult;
 import com.pgmmers.radar.model.query.RuleHistoryQuery;
 import com.pgmmers.radar.model.query.RuleQuery;
 import com.pgmmers.radar.converter.StrategyMapping;
-import com.pgmmers.radar.converter.ModelMapping;
+import com.pgmmers.radar.converter.ScenarioMapping;
 import com.pgmmers.radar.converter.RuleHistoryMapping;
 import com.pgmmers.radar.converter.RuleMapping;
 import com.pgmmers.radar.mapper.StrategyMapper;
-import com.pgmmers.radar.mapper.ModelMapper;
+import com.pgmmers.radar.mapper.ScenarioMapper;
 import com.pgmmers.radar.mapper.RuleHistoryMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
 import com.pgmmers.radar.model.entity.StrategyPO;
-import com.pgmmers.radar.model.entity.ModelPO;
+import com.pgmmers.radar.model.entity.ScenarioPO;
 import com.pgmmers.radar.model.entity.RuleHistoryPO;
 import com.pgmmers.radar.model.entity.RulePO;
 import com.pgmmers.radar.service.cache.CacheService;
@@ -61,7 +61,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     @Autowired
     private StrategyMapper strategyMapper;
     @Autowired
-    private ModelMapper modelMapper;
+    private ScenarioMapper scenarioMapper;
     @Resource
     private RuleMapping ruleMapping;
     @Resource
@@ -69,7 +69,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     @Resource
     private StrategyMapping strategyMapping;
     @Resource
-    private ModelMapping modelMapping;
+    private ScenarioMapping modelMapping;
 
     @Autowired
     private CacheService cacheService;
@@ -82,10 +82,10 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     /**
      * 原 ModelDalImpl.listRules 逻辑下沉。
      */
-    private List<RuleVO> listRules(Long modelId, Long strategyId, Integer status) {
+    private List<RuleVO> listRules(Long scenarioId, Long strategyId, Integer status) {
         List<RulePO> rulePoList = ruleMapper.selectList(
                 new LambdaQueryWrapper<RulePO>()
-                        .eq(modelId != null, RulePO::getModelId, modelId)
+                        .eq(scenarioId != null, RulePO::getModelId, scenarioId)
                         .eq(strategyId != null, RulePO::getStrategyId, strategyId)
                         .eq(status != null, RulePO::getStatus, status));
         if (CollectionUtils.isEmpty(rulePoList)) {
@@ -94,8 +94,8 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
         return ruleMapping.sourceToTarget(rulePoList);
     }
 
-    public List<RuleVO> listRule(Long modelId, Long strategyId, Integer status) {
-        return listRules(modelId, strategyId, status);
+    public List<RuleVO> listRule(Long scenarioId, Long strategyId, Integer status) {
+        return listRules(scenarioId, strategyId, status);
     }
 
     @Override
@@ -189,7 +189,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
             ruleHistoryVO.setInitScore(rule.getInitScore());
             ruleHistoryVO.setBaseNum(rule.getBaseNum());
             ruleHistoryVO.setOperator(rule.getOperator());
-            ruleHistoryVO.setAbstractionName(rule.getAbstractionName());
+            ruleHistoryVO.setFeatureName(rule.getFeatureName());
             ruleHistoryVO.setRate(rule.getRate());
             ruleHistoryVO.setRuleDefinition(rule.getRuleDefinition().asText());
             ruleHistoryVO.setUpdateTime(rule.getUpdateTime());
@@ -253,22 +253,22 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     }
 
     @Override
-    public CommonResult getHitSorts(Long modelId) {
+    public CommonResult getHitSorts(Long scenarioId) {
         Calendar now = Calendar.getInstance();
         now.add(Calendar.MONTH , -1);
-        return getHitSorts(modelId, now.getTimeInMillis(), Calendar.getInstance().getTimeInMillis());
+        return getHitSorts(scenarioId, now.getTimeInMillis(), Calendar.getInstance().getTimeInMillis());
     }
 
     @Override
-    public CommonResult getHitSorts(Long modelId, Long beginTime, Long endTime) {
+    public CommonResult getHitSorts(Long scenarioId, Long beginTime, Long endTime) {
         CommonResult result = new CommonResult();
         Set<RuleHitsVO> treeSet = new TreeSet<>();
-        // 原 ModelDal.getModelById 逻辑下沉
-        ModelPO modelPO = modelMapper.selectById(modelId);
-        ModelVO model = modelPO == null ? null : modelMapping.sourceToTarget(modelPO);
+        // 原 ModelDal.getScenarioById 逻辑下沉
+        ScenarioPO modelPO = scenarioMapper.selectById(scenarioId);
+        ScenarioVO model = modelPO == null ? null : modelMapping.sourceToTarget(modelPO);
         String keyTempl = "hitsDetail.${strategyName}.rule_${ruleId}.key";
         StrategyQuery actQuery = new StrategyQuery();
-        actQuery.setModelId(modelId);
+        actQuery.setModelId(scenarioId);
         // page size default is 10.
         actQuery.setPageSize(100);
         // 原 StrategyDalImpl.query 逻辑下沉
@@ -319,14 +319,14 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     }
 
     @Override
-    public CommonResult getHitSorts(Long modelId, String beginTime, String endTime) {
+    public CommonResult getHitSorts(Long scenarioId, String beginTime, String endTime) {
         CommonResult result = new CommonResult();
         try {
             logger.info("search hits:{},{}", beginTime, endTime);
             long begin = DateUtils.parseDateTime(beginTime).getTime();
             long end = DateUtils.parseDateTime(endTime).getTime();
             if (end > begin) {
-                return getHitSorts(modelId, begin, end);
+                return getHitSorts(scenarioId, begin, end);
             }
         } catch (ParseException e) {
             logger.error("时间格式错误", e);
@@ -358,7 +358,7 @@ public class RuleServiceImpl extends BaseLocalCacheService implements RuleServic
     }
 
     @Override
-    public List<RuleVO> listRuleByModelId(Long modelId) {
-        return listRules(modelId, null, null);
+    public List<RuleVO> listRuleByModelId(Long scenarioId) {
+        return listRules(scenarioId, null, null);
     }
 }

@@ -2,7 +2,7 @@ package com.pgmmers.radar.model.query;
 
 public class FeatureQuery extends PageQuery {
 
-    private Long modelId;
+    private Long scenarioId;
 
     /** 特征类型：ENRICH/AGGREGATE/DERIVED/RATIO（可空） */
     private String type;
@@ -12,11 +12,11 @@ public class FeatureQuery extends PageQuery {
     private Integer status;
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     public String getType() {

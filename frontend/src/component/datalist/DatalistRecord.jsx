@@ -115,7 +115,7 @@ class DatalistRecord extends React.Component{
                     <span>
                         <EditDataListRecord metaList={this.state.metaList} dataListId={this.props.params.datalistId} row={r} reload={this.fetchTableData}/>
                         <span className="ant-divider"></span>
-                        <Popconfirm placement="bottomRight" title={'确认删除该模型吗？'} onConfirm={this.deleteModel.bind(this,r.id)}>
+                        <Popconfirm placement="bottomRight" title={'确认删除该场景吗？'} onConfirm={this.deleteModel.bind(this,r.id)}>
                             <Tooltip title="删除"><a style={{color:'#FD5B5B'}}>删除</a></Tooltip>
                         </Popconfirm>
                     </span>

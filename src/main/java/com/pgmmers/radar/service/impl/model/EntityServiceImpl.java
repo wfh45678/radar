@@ -2,8 +2,8 @@ package com.pgmmers.radar.service.impl.model;
 
 import com.pgmmers.radar.service.data.MongoService;
 import com.pgmmers.radar.service.model.EntityService;
-import com.pgmmers.radar.service.model.ModelService;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.service.model.ScenarioService;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import java.util.Date;
 import java.util.List;
 import org.bson.Document;
@@ -20,17 +20,17 @@ public class EntityServiceImpl implements EntityService {
     private Logger logger = LoggerFactory.getLogger(EntityServiceImpl.class);
 
     @Resource
-    private ModelService modelService;
+    private ScenarioService scenarioService;
     @Resource
     private MongoService mongoService;
 
 
     @Override
-    public int save(Long modelId, String jsonString, boolean isAllowDuplicate) {
-        String tmpUrl = "entity_" + modelId;
+    public int save(Long scenarioId, String jsonString, boolean isAllowDuplicate) {
+        String tmpUrl = "entity_" + scenarioId;
         Document doc = Document.parse(jsonString);
         if (!isAllowDuplicate) {
-            ModelVO model = modelService.getModelById(modelId);
+            ScenarioVO model = scenarioService.getScenarioById(scenarioId);
             Document filter = new Document();
             filter.append(model.getEntryName(), doc.get(model.getEntryName()));
             long qty = mongoService.count(tmpUrl, filter);
@@ -44,29 +44,29 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public List<Object> find(Long modelId, String conds) {
+    public List<Object> find(Long scenarioId, String conds) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public long update(Long modelId, String eventId, String status) {
-        ModelVO model = modelService.getModelById(modelId);
+    public long update(Long scenarioId, String eventId, String status) {
+        ScenarioVO model = scenarioService.getScenarioById(scenarioId);
         Document filter = new Document();
         filter.append(model.getEntryName(), eventId);
         Document updateDoc = new Document();
         updateDoc.append("status", status);
-        String collectionName = buildCollectionName(modelId);
+        String collectionName = buildCollectionName(scenarioId);
         return mongoService.update(collectionName, filter, updateDoc);
     }
 
     @Override
-    public int save(Long modelId, String jsonString, String attachJson,
+    public int save(Long scenarioId, String jsonString, String attachJson,
             boolean isAllowDuplicate) {
-        String collectionName = buildCollectionName(modelId);
+        String collectionName = buildCollectionName(scenarioId);
         Document doc = Document.parse(jsonString);
         Document attach = Document.parse(attachJson);
-        ModelVO model = modelService.getModelById(modelId);
+        ScenarioVO model = scenarioService.getScenarioById(scenarioId);
         attach.put("radar_ref_datetime", new Date(doc.getLong(model.getReferenceDate())));
         attach.put("status", "1");
         doc.putAll(attach);
@@ -84,8 +84,8 @@ public class EntityServiceImpl implements EntityService {
         return 1;
     }
 
-    private String buildCollectionName(Long modelId) {
-        return "entity_" + modelId;
+    private String buildCollectionName(Long scenarioId) {
+        return "entity_" + scenarioId;
     }
 
 }

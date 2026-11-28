@@ -30,7 +30,7 @@ class PreItem extends React.Component{
             plugins:[]
         }
 
-        FetchUtil('/model/'+this.props.params.id,'GET','',
+        FetchUtil('/scenario/'+this.props.params.id,'GET','',
             (data) => {
                 const model=data.data.model;
                 this.setState({
@@ -60,7 +60,7 @@ class PreItem extends React.Component{
         var param={};
         param.pageNo=this.state.pageNo;
         param.pageSize=pageSize;
-        param.modelId=this.props.params.id;
+        param.scenarioId=this.props.params.id;
         param.destField=this.state.destField;
         param.label=this.state.label;
         param.plugin=this.state.plugin;
@@ -142,7 +142,7 @@ class PreItem extends React.Component{
                 (t,r,i) => {
                     return(
                     <span>
-                    	<EditPreItem modelId={this.props.params.id} row={r} fieldList={this.state.fieldList} plugins={this.state.plugins} reload={this.fetchTableData}/>
+                    	<EditPreItem scenarioId={this.props.params.id} row={r} fieldList={this.state.fieldList} plugins={this.state.plugins} reload={this.fetchTableData}/>
                         <span className="ant-divider"></span>
                         <Popconfirm placement="bottomRight" title={'确认删除该字段吗？'} onConfirm={this.deletePreItem.bind(this,r.id)}>
                             <Tooltip title="删除"><a style={{color:'#FD5B5B'}}>删除</a></Tooltip>
@@ -160,7 +160,7 @@ class PreItem extends React.Component{
                             <Input value={this.state.destField} name="destField" id="blue" onChange={this.handleChange}/>
                         </FormItem>                                
                         {' '}
-                        <AddPreItem modelId={this.props.params.id} fieldList={this.state.fieldList} plugins={this.state.plugins} reload={this.fetchTableData} />
+                        <AddPreItem scenarioId={this.props.params.id} fieldList={this.state.fieldList} plugins={this.state.plugins} reload={this.fetchTableData} />
                     </Form>
                 </div>
 

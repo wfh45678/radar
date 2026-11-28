@@ -5,19 +5,19 @@ import java.util.List;
 
 public interface EntityService {
 
-    int save(Long modelId, String jsonString, boolean isAllowDuplicate);
+    int save(Long scenarioId, String jsonString, boolean isAllowDuplicate);
     
-    int save(Long modelId, String jsonString, String attachJson, boolean isAllowDuplicate);
+    int save(Long scenarioId, String jsonString, String attachJson, boolean isAllowDuplicate);
         
-    List<Object> find(Long modelId, String conds);
+    List<Object> find(Long scenarioId, String conds);
 
     /**
      * update status.
-     * @param modelId
+     * @param scenarioId
      * @param eventId
      * @param status
      * @return
      */
-    long update(Long modelId, String eventId, String status);
+    long update(Long scenarioId, String eventId, String status);
 
 }

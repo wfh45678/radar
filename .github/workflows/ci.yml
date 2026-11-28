@@ -30,6 +30,7 @@ jobs:
       # 此处重建并校验未漂移：改动 frontend/ 源码后必须重跑 scripts/build-frontend.sh 一并提交
       - name: Build frontend and check artifact sync
         run: |
+          node scripts/scan-jsx.js
           bash scripts/build-frontend.sh
           git diff --exit-code -- src/main/resources/static
 

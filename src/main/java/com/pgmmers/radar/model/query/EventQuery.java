@@ -2,7 +2,7 @@ package com.pgmmers.radar.model.query;
 
 public class EventQuery extends PageQuery {
 
-    private Long modelId;
+    private Long scenarioId;
     
     private String entityId;
     
@@ -11,11 +11,11 @@ public class EventQuery extends PageQuery {
     private String endTime;
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     public String getBeginTime() {

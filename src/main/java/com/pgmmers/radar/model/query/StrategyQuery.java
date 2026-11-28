@@ -3,16 +3,16 @@ package com.pgmmers.radar.model.query;
 
 public class StrategyQuery extends PageQuery {
 
-    private Long modelId;
+    private Long scenarioId;
     private String name;
     private Integer status;
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     public String getName() {

@@ -19,7 +19,7 @@ class RuleGraph extends React.Component{
 		super(props);
 
 		this.state={
-			modelId:'',
+			scenarioId:'',
 			tData:[],
 
 			loading:true,
@@ -30,7 +30,7 @@ class RuleGraph extends React.Component{
 			ruleLabelList:[],
 			countList:[],
 
-			modelList:[],
+			scenarioList:[],
 			fieldList:[],
 			beginTime:dayjs().add(-1,'months'),
 			endTime:dayjs(),
@@ -61,7 +61,7 @@ class RuleGraph extends React.Component{
     }
 
     componentDidMount=()=>{
-    	this.fetchTableData(this.props.modelId);
+    	this.fetchTableData(this.props.scenarioId);
     }
 
     handleSelect=(name,value)=>{
@@ -86,7 +86,7 @@ class RuleGraph extends React.Component{
     }
     handleSearch = () => {
         this.setState({loading:true});
- 		this.fetchTableData(this.props.modelId);
+ 		this.fetchTableData(this.props.scenarioId);
     }
     handleCalendar=(dates,dateStrings)=>{
     	this.setState({
@@ -132,7 +132,7 @@ class RuleGraph extends React.Component{
 				title: '操作',
 				dataIndex: 'handle',
 				render:(t,r)=>{
-					return <Link to={"/ruleid/"+this.props.modelId+"/"+r.id+"/"+r.strategyName} target="_blank">查看明细</Link>;
+					return <Link to={"/ruleid/"+this.props.scenarioId+"/"+r.id+"/"+r.strategyName} target="_blank">查看明细</Link>;
 				}
 
 			}
@@ -167,11 +167,11 @@ class RuleGraph extends React.Component{
 		);
 	}
 
-	// componentDidUpdate 合并实现：modelId 变更重取数据 + echarts 重绘（见上方方法声明，
+	// componentDidUpdate 合并实现：scenarioId 变更重取数据 + echarts 重绘（见上方方法声明，
 	// 此处箭头字段会覆盖原型方法，因此两段逻辑都放在这里）
 	componentDidUpdate=(prevProps)=>{
-		if(prevProps && prevProps.modelId!=this.props.modelId){
-			this.fetchTableData(this.props.modelId);
+		if(prevProps && prevProps.scenarioId!=this.props.scenarioId){
+			this.fetchTableData(this.props.scenarioId);
 		}
 		// 基于准备好的dom元素，初始化echarts实例
 		let myChart = echarts.init(document.getElementById('echartsMain'));

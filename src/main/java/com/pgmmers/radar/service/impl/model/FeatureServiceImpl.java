@@ -46,9 +46,9 @@ public class FeatureServiceImpl extends BaseLocalCacheService implements Feature
     private CacheService cacheService;
 
     @Override
-    public List<FeatureVO> listFeature(Long modelId) {
+    public List<FeatureVO> listFeature(Long scenarioId) {
         //noinspection unchecked
-        return (List<FeatureVO>) getByCache(modelId);
+        return (List<FeatureVO>) getByCache(scenarioId);
     }
 
     @Override
@@ -66,9 +66,9 @@ public class FeatureServiceImpl extends BaseLocalCacheService implements Feature
     }
 
     @Override
-    public Object query(Long modelId) {
+    public Object query(Long scenarioId) {
         List<FeaturePO> list = featureMapper.selectList(
-                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getModelId, modelId));
+                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getModelId, scenarioId));
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<FeatureVO>();
         }

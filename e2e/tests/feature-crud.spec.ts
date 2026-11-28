@@ -27,11 +27,11 @@ test.describe.serial('v4.1 特征工程', () => {
   test('step0 登录并导入策略模板', async ({ page, request }) => {
     authToken = await login(page);
     const imported = await api(request, 'POST',
-      `/services/v1/model/templates/transaction-risk/import?modelName=${MODEL_NAME}`);
+      `/services/v1/scenario/templates/transaction-risk/import?modelName=${MODEL_NAME}`);
     modelId = imported.data.id;
     expect(modelId).toBeTruthy();
-    await api(request, 'POST', `/services/v1/model/build/${modelId}`);
-    await api(request, 'POST', `/services/v1/model/enable/${modelId}`);
+    await api(request, 'POST', `/services/v1/scenario/build/${modelId}`);
+    await api(request, 'POST', `/services/v1/scenario/enable/${modelId}`);
   });
 
   test('step1 特征列表展示类型徽标（v1 模板自动转换）', async ({ page }) => {

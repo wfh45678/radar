@@ -17,8 +17,8 @@ public class FieldPO {
     /**
      * MODEL ID
      */
-    @TableField("MODEL_ID")
-    private Long modelId;
+    @TableField("SCENARIO_ID")
+    private Long scenarioId;
 
     /**
      * 事件信息中的包含的字段
@@ -80,19 +80,19 @@ public class FieldPO {
     /**
      * 获取MODEL ID
      *
-     * @return MODEL_ID - MODEL ID
+     * @return SCENARIO_ID - MODEL ID
      */
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
     /**
      * 设置MODEL ID
      *
-     * @param modelId MODEL ID
+     * @param scenarioId MODEL ID
      */
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     /**

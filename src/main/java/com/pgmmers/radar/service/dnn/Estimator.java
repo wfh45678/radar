@@ -27,7 +27,7 @@ public interface Estimator {
      */
     String TYPE_TENSOR_DNN = "TENSOR_DNN";
 
-    float predict(Long modelId, Map<String, Map<String, ?>> data);
+    float predict(Long scenarioId, Map<String, Map<String, ?>> data);
 
     String getType();
 }

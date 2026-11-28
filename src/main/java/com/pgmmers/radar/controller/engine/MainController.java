@@ -33,18 +33,18 @@ public class MainController {
     @Deprecated
     @PostMapping("/uploadInfo")
     @Operation(summary = "事件数据提交接口")
-    public CommonResult upload(@RequestParam @Parameter(name="modelGuid", description ="模型Guid", required=true) String modelGuid,
+    public CommonResult upload(@RequestParam @Parameter(name="scenarioGuid", description ="模型Guid", required=true) String scenarioGuid,
                                @RequestParam @Parameter(name="reqId",description ="请求流水号",required=true) String reqId,
                                @RequestParam @Parameter(name="jsonInfo",description ="事件内容(json 格式)",required=true) String jsonInfo) {
-        CommonResult result = engineApi.uploadInfo(modelGuid, reqId, jsonInfo);
+        CommonResult result = engineApi.uploadInfo(scenarioGuid, reqId, jsonInfo);
         return result;
     }
 
     @GetMapping("/getScore")
     @Operation(summary = "查询事件处理结果")
-    public CommonResult getScore(@RequestParam  @Parameter(name="modelGuid",description ="模型Guid",required=true)  String modelGuid,
+    public CommonResult getScore(@RequestParam  @Parameter(name="scenarioGuid",description ="模型Guid",required=true)  String scenarioGuid,
                            @RequestParam  @Parameter(name="reqId",description ="请求流水号",required=true)  String reqId) {
-        CommonResult result = engineApi.getScore(modelGuid, reqId);
+        CommonResult result = engineApi.getScore(scenarioGuid, reqId);
         return result;
     }
 

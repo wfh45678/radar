@@ -69,7 +69,7 @@ export default class AddStrategy extends React.Component{
 		}
 		else{
 			var param={};
-			param.modelId=this.props.modelId;
+			param.scenarioId=this.props.scenarioId;
 			param.strategyName=this.state.strategyName;
 			param.label=this.state.label;
 			param.comment=this.state.comment;

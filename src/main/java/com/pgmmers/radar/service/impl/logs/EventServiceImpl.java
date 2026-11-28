@@ -6,12 +6,12 @@ import com.alibaba.fastjson2.JSONObject;
 import com.pgmmers.radar.model.query.EventQuery;
 import com.pgmmers.radar.model.query.PageResult;
 import com.pgmmers.radar.model.query.TermQuery;
-import com.pgmmers.radar.service.model.ModelService;
+import com.pgmmers.radar.service.model.ScenarioService;
 import com.pgmmers.radar.service.logs.EventService;
 import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.common.util.DateUtils;
 import com.pgmmers.radar.model.vo.common.FieldValueVO;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -37,12 +37,12 @@ public class EventServiceImpl implements EventService {
     private SearchEngineService searchService;
 
     @Autowired
-    private ModelService modelService;
+    private ScenarioService scenarioService;
 
     @Override
     public List<Object> query(EventQuery query) throws IOException {
         List<Object> list = new ArrayList<>();
-        ModelVO model = modelService.getModelById(query.getModelId());
+        ScenarioVO model = scenarioService.getScenarioById(query.getModelId());
         String entityName = model.getEntityName();
         String dateField = model.getReferenceDate();
         Map<String, Object> queryMap = new HashMap<>();
@@ -82,7 +82,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public PageResult<Object> query(TermQuery term) {
         List<Object> list = new ArrayList<>();
-        ModelVO model = modelService.getModelById(term.getModelId());
+        ScenarioVO model = scenarioService.getScenarioById(term.getModelId());
         String dateField = model.getReferenceDate();
         Calendar beginTime = null;
         Calendar endTime = null;

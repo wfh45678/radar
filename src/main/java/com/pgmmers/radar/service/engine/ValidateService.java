@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public interface ValidateService {
 
-    public Map<String, Object> validate(Long modelId, Map data);
+    public Map<String, Object> validate(Long scenarioId, Map data);
     
     public Map<String, Object> validate(List<FieldVO> fieldList, Map data);
     

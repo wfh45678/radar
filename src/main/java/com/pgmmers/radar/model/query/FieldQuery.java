@@ -2,16 +2,16 @@ package com.pgmmers.radar.model.query;
 
 public class FieldQuery extends PageQuery {
 
-    private Long modelId;
+    private Long scenarioId;
     private String fieldName;
     private String fieldType;
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     public String getFieldName() {

@@ -79,7 +79,7 @@ export default class AddField extends React.Component{
 		}
 		else{
 			var param = {};
-			param.modelId = this.props.modelId;
+			param.scenarioId = this.props.scenarioId;
 			param.fieldName = this.state.fieldName;
 			param.label = this.state.label;
 			param.fieldType = this.state.fieldType;

@@ -48,10 +48,10 @@ public class RuleHistoryPO {
     private String operator;
 
     /**
-     * 抽象名称
+     * 特征名称
      */
-    @TableField("ABSTRACTION_NAME")
-    private String abstractionName;
+    @TableField("FEATURE_NAME")
+    private String featureName;
 
     /**
      * 比例
@@ -188,21 +188,21 @@ public class RuleHistoryPO {
     }
 
     /**
-     * 获取抽象名称
+     * 获取特征名称
      *
-     * @return ABSTRACTION_NAME - 抽象名称
+     * @return FEATURE_NAME - 特征名称
      */
-    public String getAbstractionName() {
-        return abstractionName;
+    public String getFeatureName() {
+        return featureName;
     }
 
     /**
-     * 设置抽象名称
+     * 设置特征名称
      *
-     * @param abstractionName 抽象名称
+     * @param featureName 特征名称
      */
-    public void setAbstractionName(String abstractionName) {
-        this.abstractionName = abstractionName;
+    public void setFeatureName(String featureName) {
+        this.featureName = featureName;
     }
 
     /**

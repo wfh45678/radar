@@ -15,7 +15,7 @@ public class StrategyVO implements Serializable{
     private String type;
 
 
-    private Long modelId;
+    private Long scenarioId;
 
 
     private String label;
@@ -76,12 +76,12 @@ public class StrategyVO implements Serializable{
 
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
 

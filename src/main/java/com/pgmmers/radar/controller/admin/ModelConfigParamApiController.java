@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
  * @author wangfeihu
  */
 @RestController
-@RequestMapping("/services/v1/modelConfigParam")
+@RequestMapping("/services/v1/scenarioConfigParam")
 @Tag(name = "机器学习配置API", description = "模型机器学习配置相关操作")
 public class ModelConfigParamApiController {
 

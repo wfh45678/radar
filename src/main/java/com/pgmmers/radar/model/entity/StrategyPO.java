@@ -16,9 +16,9 @@ public class StrategyPO {
     private Long id;
 
     /**
-     * 名称（策略包 JSON 键保持 activationName，兼容 v3.x 包格式，见 docs/model-package.md）
+     * 名称（策略包 JSON 键 v5.0 起正名 strategyName（docs/scenario-package.md））
      */
-    @JsonProperty("activationName")
+    @JsonProperty("strategyName")
     @TableField("STRATEGY_NAME")
     private String strategyName;
 
@@ -40,8 +40,8 @@ public class StrategyPO {
     /**
      * model id
      */
-    @TableField("MODEL_ID")
-    private Long modelId;
+    @TableField("SCENARIO_ID")
+    private Long scenarioId;
 
     /**
      * 注释
@@ -163,19 +163,19 @@ public class StrategyPO {
     /**
      * 获取model id
      *
-     * @return MODEL_ID - model id
+     * @return SCENARIO_ID - model id
      */
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
     /**
      * 设置model id
      *
-     * @param modelId model id
+     * @param scenarioId model id
      */
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     /**

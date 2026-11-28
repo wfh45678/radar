@@ -277,13 +277,13 @@ public class EventApiController {
 
     }
 
-    @GetMapping("/datacolumns/{modelId}")
-    public CommonResult getDataColumns(@PathVariable Long modelId) {
+    @GetMapping("/datacolumns/{scenarioId}")
+    public CommonResult getDataColumns(@PathVariable Long scenarioId) {
         List<DataColumnInfo> list = new ArrayList<DataColumnInfo>();
         // 1、Data
         DataColumnInfo ds = new DataColumnInfo(DataType.FIELDS.getDesc(),
                 DataType.FIELDS.getName());
-        List<FieldVO> listField = fieldService.listField(modelId);
+        List<FieldVO> listField = fieldService.listField(scenarioId);
         if (listField != null && listField.size() != 0) {
             for (FieldVO field : listField) {
                 ds.addChildren(field.getLabel(), field.getFieldName(), "");
@@ -294,7 +294,7 @@ public class EventApiController {
         // 2、FEATURES
         ds = new DataColumnInfo(DataType.FEATURES.getDesc(),
                 DataType.FEATURES.getName());
-        List<FeatureVO> listFeature = featureService.listFeature(modelId);
+        List<FeatureVO> listFeature = featureService.listFeature(scenarioId);
         if (listFeature != null && !listFeature.isEmpty()) {
             for (FeatureVO feature : listFeature) {
                 ds.addChildren(feature.getLabel(), feature.getFeatureName(), "");
@@ -306,7 +306,7 @@ public class EventApiController {
         ds = new DataColumnInfo(DataType.STRATEGIES.getDesc(),
                 DataType.STRATEGIES.getName());
         List<StrategyVO> listStrategy = strategyService
-                .listStrategy(modelId);
+                .listStrategy(scenarioId);
         if (listStrategy != null && listStrategy.size() != 0) {
             for (StrategyVO strategy : listStrategy) {
                 ds.addChildren(strategy.getLabel(),
@@ -318,7 +318,7 @@ public class EventApiController {
         // 4、 RULE
         ds = new DataColumnInfo(DataType.RULES.getDesc(),
                 DataType.RULES.getName());
-        List<RuleVO> listRule = ruleService.listRuleByModelId(modelId);
+        List<RuleVO> listRule = ruleService.listRuleByModelId(scenarioId);
         if (listRule != null && listRule.size() != 0) {
             for (RuleVO rule : listRule) {
                 ds.addChildren(rule.getLabel(), rule.getName(), "");

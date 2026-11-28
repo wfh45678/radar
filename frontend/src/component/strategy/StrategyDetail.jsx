@@ -10,7 +10,7 @@ import DecisionTreeEditor from './DecisionTreeEditor';
 /**
  * 策略详情分发页（v4.0）：按策略 type 渲染对应编辑器——
  * RULE_SET → RuleList（规则列表，v3.x 界面）；SCORECARD → 评分卡编辑器；DECISION_TREE → 决策树编辑器。
- * 路由 #/strategyDetail/:id/:strategyId（:id 为模型 id，参数名与 ruleList 保持一致以复用子组件）。
+ * 路由 #/strategyDetail/:id/:strategyId（:id 为场景 id，参数名与 ruleList 保持一致以复用子组件）。
  */
 class StrategyDetail extends Component{
 

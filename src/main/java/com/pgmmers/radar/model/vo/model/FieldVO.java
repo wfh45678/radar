@@ -7,7 +7,7 @@ public class FieldVO implements Serializable{
 
     private Long id;
 
-    private Long modelId;
+    private Long scenarioId;
 
     private String fieldName;
     
@@ -51,11 +51,11 @@ public class FieldVO implements Serializable{
     }
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     public String getFieldName() {

@@ -2,6 +2,37 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [5.0.0] - 2026-11-28
+
+破坏性大版本：**场景化更名**——"模型"更名为"场景（scenario）"，"模型"一词自 v5.0 起专指算法模型
+（休眠配置 `engine_model_conf` 保留原名即为此用途）。按用户决策彻底断历史包袱：**无数据迁移脚本、
+无 API 兼容双读、无旧格式包导入，升级路径唯一 = 重新安装 + 按术语对照表重建配置**
+（对照表见 [upgrade-guide.md](docs/upgrade-guide.md)）。
+
+### Changed（BREAKING）
+- **DB**：engine_model → engine_scenario；八张子表 MODEL_ID 列 → SCENARIO_ID
+- **引擎接口**：`/uploadInfo`、`/getScore` 参数 `modelGuid` → `scenarioGuid`（对接代码一行改动）
+- **管理端 API**：`/services/v1/model/**` → `/services/v1/scenario/**`；JSON 键
+  modelName/modelId/modelList → scenarioName/scenarioId/scenarioList
+- **Redis 频道**：radar_channel_model → radar_channel_scenario
+- **前端路由**：`#/model/**` → `#/scenario/**`（无旧 hash 兼容跳转）
+- **策略包格式 3.0**：信封 `model` → `scenario`、`modelName` → `scenarioName`；
+  rules[].`activationId` → `strategyId`、`abstractionName` → `featureName`；
+  strategies[].`activationName` → `strategyName`；1.0/2.0 格式不再导入
+- **升级脚本移除**：sql/ 仅保留 radar-init.sql（历史 upgrade-*.sql 可从 git 史获取）
+
+### Removed
+- PluginManager **Plugin v3 legacy 桥**（兑现 v4.1 预告）——插件必须 FeatureProcessor 契约
+  （radar-plugin-api 4.x）；v3 契约插件不再装载
+- PackageV1Converter（随旧格式导入支持一并移除）
+
+### Added
+- JSX 引用静态扫描进 CI（esbuild 不查未定义标识符，v4.1 连环 ReferenceError 的预防针）
+
+### Changed
+- 内置官方模板重导出 formatVersion 3.0（在线源 minRadarVersion 5.0.0）
+- 文档全量术语对齐：README/文档站/架构图/场景策略包/升级指南（含术语对照表）
+
 ## [4.1.5] - 2026-11-28
 
 ### Fixed

@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface FeatureService {
 
-    List<FeatureVO> listFeature(Long modelId);
+    List<FeatureVO> listFeature(Long scenarioId);
 
     FeatureVO get(Long id);
 

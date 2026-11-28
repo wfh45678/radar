@@ -109,7 +109,7 @@ export default class Collapse extends React.Component{
                         :''}
                     {
                         this.props.type!=undefined?
-                            <div className='p-block-title-right'><Link to={"/historyRecordList/"+this.props.modelId+"/" + this.props.strategyId+"/"+this.props.ruleId}><CalendarOutlined style={{fontSize:'24px',lineHeight:1.5}}/></Link></div>
+                            <div className='p-block-title-right'><Link to={"/historyRecordList/"+this.props.scenarioId+"/" + this.props.strategyId+"/"+this.props.ruleId}><CalendarOutlined style={{fontSize:'24px',lineHeight:1.5}}/></Link></div>
                             :''
                     }
 

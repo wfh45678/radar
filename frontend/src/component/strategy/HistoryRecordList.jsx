@@ -30,7 +30,7 @@ class HistoryRecordList extends Component{
             dataList:[]
         }
 
-        FetchUtil('/model/'+this.props.params.id,'GET','',
+        FetchUtil('/scenario/'+this.props.params.id,'GET','',
             (data) => {
                 const model=data.data.model;
                 this.setState({
@@ -109,7 +109,7 @@ class HistoryRecordList extends Component{
                         return (
                             <Timeline.Item key={index}>
                                 <span style={{position:'absolute',left:'-120px'}}>{dayjs(info.updateTime).format('YYYY-MM-DD HH:mm:ss')}</span>
-                                <HistoryRecord ruleHistory={info} modelId={this.props.params.id} strategyId={this.props.params.strategyId} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData}/>
+                                <HistoryRecord ruleHistory={info} scenarioId={this.props.params.id} strategyId={this.props.params.strategyId} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData}/>
                             </Timeline.Item>
                             );
                         })

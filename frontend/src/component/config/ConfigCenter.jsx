@@ -18,7 +18,7 @@ export default class ConfigCenter extends React.Component{
 						
 						<Col span={6}>
 						    <Card size="small" title="数据列表配置" extra={<Link to={"/datalist/1"}>More</Link>} style={{ width: 300 }}>
-						     	  <p>配置系统级黑白名单数据，此数据所有模型共用。</p>
+						     	  <p>配置系统级黑白名单数据，此数据所有场景共用。</p>
 						     	  <p>&nbsp;</p>
 						     	  <Link to={"/datalist/1"}>进入配置</Link>
 						    </Card>

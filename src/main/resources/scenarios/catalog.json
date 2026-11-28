@@ -1,0 +1,45 @@
+{
+ "formatVersion": "1.0",
+ "updatedAt": "2026-11-28T00:00:00Z",
+ "templates": [
+  {
+   "key": "account-takeover",
+   "file": "account-takeover.json",
+   "name": "账户盗用防护",
+   "description": "账户盗用/暴力破解防护：IP、设备、用户三维登录频控特征（1天/1小时/10分钟窗口）+ IP 关联用户/设备聚集检测，规则命中按评分分级处置（reject/review）。名单仅结构种子，规则以特征频控为主。",
+   "tags": [],
+   "minRadarVersion": "5.0.0",
+   "stats": {
+    "rules": 5,
+    "features": 16,
+    "fields": 9
+   }
+  },
+  {
+   "key": "promo-abuse",
+   "file": "promo-abuse.json",
+   "name": "营销反作弊",
+   "description": "营销领奖反作弊：注册/领奖环节的设备与 IP 聚集频控 + 用户名/手机号模式规则，识别批量小号。适用于注册送券、新人红包等营销场景的准入拦截。",
+   "tags": [],
+   "minRadarVersion": "5.0.0",
+   "stats": {
+    "rules": 6,
+    "features": 11,
+    "fields": 9
+   }
+  },
+  {
+   "key": "transaction-risk",
+   "file": "transaction-risk.json",
+   "name": "交易风控",
+   "description": "交易风控基线：大额交易 + 非常用时段 + 异地 IP（IP2LOCATION/GPS2LOCATION 归属地插件）组合规则，评分分级处置。适用于支付/提现/转账场景的实时拦截与人工审核分流。",
+   "tags": [],
+   "minRadarVersion": "5.0.0",
+   "stats": {
+    "rules": 9,
+    "features": 17,
+    "fields": 9
+   }
+  }
+ ]
+}

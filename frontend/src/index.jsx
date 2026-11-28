@@ -12,8 +12,8 @@ import StrategyList from './component/strategy/StrategyList';
 import Datalist from './component/datalist/Datalist';
 import DatalistRecord from './component/datalist/DatalistRecord';
 import Field from './component/field/Field';
-import ModelList from './component/model/ModelList';
-import Model from './component/model/Model';
+import ScenarioList from './component/scenario/ScenarioList';
+import Scenario from './component/scenario/Scenario';
 import FeatureList from './component/feature/FeatureList';
 import RuleList from './component/strategy/RuleList';
 import HistoryRecordList from './component/strategy/HistoryRecordList';
@@ -56,15 +56,15 @@ function App() {
   return <Outlet />;
 }
 
-// /model/:id 默认跳转：等价原 IndexRedirect to="/field/:id"（复用同一个 id）
-function ModelIndexRedirect() {
+// /scenario/:id 默认跳转：等价原 IndexRedirect to="/field/:id"（复用同一个 id）
+function ScenarioIndexRedirect() {
   const { id } = useParams();
   return <Navigate to={`/field/${id}`} replace />;
 }
 
 // URL 结构与 2022 版（react-router 3 绝对 path，扁平 URL）保持一致：
-// #/modelList、#/field/:id、#/event、#/ruleid/:modelId/:ruleId/:strategyName 等。
-// Index / Model / Report 是嵌套的 pathless layout route，仅承担组件层级，不往 URL 加前缀。
+// #/scenarioList、#/field/:id、#/event、#/ruleid/:scenarioId/:ruleId/:strategyName 等。
+// Index / Scenario / Report 是嵌套的 pathless layout route，仅承担组件层级，不往 URL 加前缀。
 const router = createHashRouter([
   {
     path: '/',
@@ -76,11 +76,11 @@ const router = createHashRouter([
       {
         element: <Index />,
         children: [
-          { path: 'modelList', element: <ModelList /> },
-          { path: 'model/:id', element: <ModelIndexRedirect /> },
+          { path: 'scenarioList', element: <ScenarioList /> },
+          { path: 'scenario/:id', element: <ScenarioIndexRedirect /> },
           {
-            // 模型工作区框架（原 rr3 中 /model/:id 的布局父组件）
-            element: <Model />,
+            // 场景工作区框架（原 rr3 中 /scenario/:id 的布局父组件）
+            element: <Scenario />,
             children: [
               { path: 'field/:id', element: <Field /> },
               { path: 'strategy/:id', element: <StrategyList /> },
@@ -94,13 +94,13 @@ const router = createHashRouter([
           },
           { path: 'report', element: <Navigate to="/event" replace /> },
           {
-            // 报表工作区框架（向子页注入模型选择等 props，见 Report 的 Outlet context）
+            // 报表工作区框架（向子页注入场景选择等 props，见 Report 的 Outlet context）
             element: <Report />,
             children: [
               { path: 'event', element: <ListEvent /> },
               { path: 'graph', element: <RuleGraph /> },
               { path: 'rule', element: <ListRule /> },
-              { path: 'ruleid/:modelId/:ruleId/:strategyName', element: <ListEvent /> },
+              { path: 'ruleid/:scenarioId/:ruleId/:strategyName', element: <ListEvent /> },
               { path: 'dashboard', element: <DashBoard /> },
             ],
           },

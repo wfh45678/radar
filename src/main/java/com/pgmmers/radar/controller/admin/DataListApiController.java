@@ -49,9 +49,9 @@ public class DataListApiController {
         return result;
     }
 
-    @GetMapping("/list/{modelId}")
-    public CommonResult list(@PathVariable Long modelId) {
-        return dataListsService.list(modelId);
+    @GetMapping("/list/{scenarioId}")
+    public CommonResult list(@PathVariable Long scenarioId) {
+        return dataListsService.list(scenarioId);
     }
 
     @PostMapping
@@ -74,12 +74,12 @@ public class DataListApiController {
      *
      * 批量导入黑/白名单管理
      * @param file    文件
-     * @param modelId 模型ID
+     * @param scenarioId 模型ID
      * @return
      * @author xushuai
      */
     @PostMapping(value = "/batchImportData")
-    public CommonResult batchImportData(@Parameter(description = "file detail") @RequestPart("file") MultipartFile file, @RequestParam(value = "modelId", required = true)Long modelId) {
+    public CommonResult batchImportData(@Parameter(description = "file detail") @RequestPart("file") MultipartFile file, @RequestParam(value = "scenarioId", required = true)Long scenarioId) {
         CommonResult result = new CommonResult();
         result.setSuccess(false);
         String fileName = file.getOriginalFilename();
@@ -103,7 +103,7 @@ public class DataListApiController {
             result.setMsg("最大导入不能超过" + 1000 + "条");
             return result;
         }
-        return dataListsService.batchImportData(list, modelId);
+        return dataListsService.batchImportData(list, scenarioId);
     }
 
     private ExportExcelInfo<DataListsVO> getImportMeta() {

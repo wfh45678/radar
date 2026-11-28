@@ -124,28 +124,28 @@ class EngineFullChainTest extends AbstractIntegrationTest {
     void step2_copyTemplateBuildAndEnable() {
         assertTrue(authToken != null, "依赖 step1 登录态");
         // 模板列表应包含种子模板 103
-        JSONObject templates = parse(exchange(HttpMethod.GET, "/services/v1/model/list/template",
+        JSONObject templates = parse(exchange(HttpMethod.GET, "/services/v1/scenario/list/template",
                 withAuth(null)), "模板列表");
-        JSONArray modelList = templates.getJSONObject("data").getJSONArray("modelList");
-        assertTrue(modelList != null && !modelList.isEmpty(), "模板列表为空");
-        long templateId = modelList.stream()
+        JSONArray scenarioList = templates.getJSONObject("data").getJSONArray("scenarioList");
+        assertTrue(scenarioList != null && !scenarioList.isEmpty(), "模板列表为空");
+        long templateId = scenarioList.stream()
                 .mapToLong(t -> ((JSONObject) t).getLongValue("id"))
                 .filter(id -> id == 103L)
                 .findFirst()
-                .orElseThrow(() -> new AssertionError("种子模板 103 不存在: " + modelList));
+                .orElseThrow(() -> new AssertionError("种子模板 103 不存在: " + scenarioList));
 
         // copy
         JSONObject copyBody = new JSONObject();
         copyBody.put("id", templateId);
-        copyBody.put("modelName", "IT链路模型_" + UNIQUE);
+        copyBody.put("scenarioName", "IT链路模型_" + UNIQUE);
         copyBody.put("label", MODEL_LABEL);
-        parse(exchange(HttpMethod.POST, "/services/v1/model/copy",
+        parse(exchange(HttpMethod.POST, "/services/v1/scenario/copy",
                 withAuth(copyBody.toJSONString())), "copy 模板");
 
         // 从模型列表找到新模型（含 GUID）
-        JSONObject list = parse(exchange(HttpMethod.GET, "/services/v1/model/list",
+        JSONObject list = parse(exchange(HttpMethod.GET, "/services/v1/scenario/list",
                 withAuth(null)), "模型列表");
-        JSONArray rows = list.getJSONObject("data").getJSONArray("modelList");
+        JSONArray rows = list.getJSONObject("data").getJSONArray("scenarioList");
         if (rows == null) {
             rows = list.getJSONObject("data").getJSONArray("list");
         }
@@ -155,14 +155,14 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                 .filter(r -> MODEL_LABEL.equals(r.getString("label")))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("copy 后未找到模型: " + list));
-        Long modelId = copied.getLong("id");
-        String modelGuid = copied.getString("guid");
-        assertNotNull(modelId, "新模型 id 缺失");
-        assertNotNull(modelGuid, "新模型 GUID 缺失");
+        Long scenarioId = copied.getLong("id");
+        String scenarioGuid = copied.getString("guid");
+        assertNotNull(scenarioId, "新模型 id 缺失");
+        assertNotNull(scenarioGuid, "新模型 GUID 缺失");
 
-        parse(exchange(HttpMethod.POST, "/services/v1/model/build/" + modelId,
+        parse(exchange(HttpMethod.POST, "/services/v1/scenario/build/" + scenarioId,
                 withAuth(null)), "build");
-        parse(exchange(HttpMethod.POST, "/services/v1/model/enable/" + modelId,
+        parse(exchange(HttpMethod.POST, "/services/v1/scenario/enable/" + scenarioId,
                 withAuth(null)), "enable");
     }
 
@@ -171,9 +171,9 @@ class EngineFullChainTest extends AbstractIntegrationTest {
     void step3_uploadEventAndGetScoreAndReport() {
         assertTrue(authToken != null, "依赖 step1 登录态");
         // 重新定位新模型（step2 的局部变量不跨方法）
-        JSONObject list = parse(exchange(HttpMethod.GET, "/services/v1/model/list",
+        JSONObject list = parse(exchange(HttpMethod.GET, "/services/v1/scenario/list",
                 withAuth(null)), "模型列表");
-        JSONArray rows = list.getJSONObject("data").getJSONArray("modelList");
+        JSONArray rows = list.getJSONObject("data").getJSONArray("scenarioList");
         if (rows == null) {
             rows = list.getJSONObject("data").getJSONArray("list");
         }
@@ -182,19 +182,19 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                 .filter(r -> MODEL_LABEL.equals(r.getString("label")))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("未找到 copy 的模型"));
-        Long modelId = copied.getLong("id");
-        String modelGuid = copied.getString("guid");
+        Long scenarioId = copied.getLong("id");
+        String scenarioGuid = copied.getString("guid");
 
         // 事件上传（公开接口，表单参数；两条——频次类规则需第二笔才达阈值，同 v2.0 冒烟口径）
         MultiValueMap<String, String> uploadForm = new LinkedMultiValueMap<>();
-        uploadForm.add("modelGuid", modelGuid);
+        uploadForm.add("scenarioGuid", scenarioGuid);
         uploadForm.add("reqId", REQ_ID);
         uploadForm.add("jsonInfo", demoEventJson());
         JSONObject upload = parse(exchange(HttpMethod.POST, "/services/v1/uploadInfo",
                 new HttpEntity<>(uploadForm, formHeaders())), "事件上传1");
 
         MultiValueMap<String, String> uploadForm2 = new LinkedMultiValueMap<>();
-        uploadForm2.add("modelGuid", modelGuid);
+        uploadForm2.add("scenarioGuid", scenarioGuid);
         uploadForm2.add("reqId", REQ_ID + "_b");
         uploadForm2.add("jsonInfo", demoEventJson().replace("\"eventId\":\"" + REQ_ID + "\"",
                 "\"eventId\":\"" + REQ_ID + "_b\""));
@@ -210,7 +210,7 @@ class EngineFullChainTest extends AbstractIntegrationTest {
 
         // getScore（Redis 通道）
         JSONObject score = parse(exchange(HttpMethod.GET,
-                "/services/v1/getScore?modelGuid=" + modelGuid + "&reqId=" + REQ_ID,
+                "/services/v1/getScore?scenarioGuid=" + scenarioGuid + "&reqId=" + REQ_ID,
                 withAuth(null)), "getScore");
         assertNotNull(score.getJSONObject("data"), "getScore 数据缺失: " + score);
 
@@ -218,15 +218,15 @@ class EngineFullChainTest extends AbstractIntegrationTest {
         String begin = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String end = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Map<String, Object> query = new HashMap<>();
-        query.put("modelId", modelId);
+        query.put("scenarioId", scenarioId);
         query.put("beginTime", begin);
         query.put("endTime", end);
-        parse(exchange(HttpMethod.POST, "/services/v1/rule/hitsSort/" + modelId,
+        parse(exchange(HttpMethod.POST, "/services/v1/rule/hitsSort/" + scenarioId,
                 withAuth(new JSONObject(query).toJSONString())), "hitsSort 报表");
 
         // 事件检索（ES 通道，异步落库留缓冲，容忍一次空结果）
         Map<String, Object> search = new HashMap<>();
-        search.put("modelId", modelId);
+        search.put("scenarioId", scenarioId);
         search.put("beginTime", begin);
         search.put("endTime", end);
         JSONObject events = parse(exchange(HttpMethod.POST, "/services/v1/event/query",
@@ -245,7 +245,7 @@ class EngineFullChainTest extends AbstractIntegrationTest {
     void step4_strategyTypesEndToEnd() {
         assertTrue(authToken != null, "依赖 step1 登录态");
         // 模板库应含 transaction-risk（v4.0 起该模板覆盖三种策略类型）
-        JSONObject library = parse(exchange(HttpMethod.GET, "/services/v1/model/templates",
+        JSONObject library = parse(exchange(HttpMethod.GET, "/services/v1/scenario/templates",
                 withAuth(null)), "模板库");
         JSONArray templateList = library.getJSONObject("data").getJSONArray("list");
         if (templateList == null) {
@@ -256,27 +256,27 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                         .anyMatch(t -> "transaction-risk".equals(t.getString("key"))),
                 "模板库缺少 transaction-risk: " + templateList);
 
-        // 导入（label/modelName 仅用于本次回查定位，label 唯一）
+        // 导入（label/scenarioName 仅用于本次回查定位，label 唯一）
         JSONObject imported = parse(exchange(HttpMethod.POST,
-                "/services/v1/model/templates/transaction-risk/import?modelName=it_strategy_types_" + UNIQUE,
+                "/services/v1/scenario/templates/transaction-risk/import?scenarioName=it_strategy_types_" + UNIQUE,
                 withAuth(null)), "模板导入");
         Long treeModelId = imported.getJSONObject("data").getLong("id");
         assertNotNull(treeModelId, "导入模板应返回新模型 id: " + imported);
 
-        parse(exchange(HttpMethod.POST, "/services/v1/model/build/" + treeModelId,
+        parse(exchange(HttpMethod.POST, "/services/v1/scenario/build/" + treeModelId,
                 withAuth(null)), "策略类型模板 build");
-        parse(exchange(HttpMethod.POST, "/services/v1/model/enable/" + treeModelId,
+        parse(exchange(HttpMethod.POST, "/services/v1/scenario/enable/" + treeModelId,
                 withAuth(null)), "策略类型模板 enable");
 
         // 取 GUID 上传事件
-        JSONObject modelDetail = parse(exchange(HttpMethod.GET, "/services/v1/model/" + treeModelId,
+        JSONObject modelDetail = parse(exchange(HttpMethod.GET, "/services/v1/scenario/" + treeModelId,
                 withAuth(null)), "模板模型详情");
         String treeGuid = modelDetail.getJSONObject("data").getJSONObject("model").getString("guid");
         assertNotNull(treeGuid, "模板模型 GUID 缺失");
 
         String reqId = "it_types_" + UNIQUE;
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-        form.add("modelGuid", treeGuid);
+        form.add("scenarioGuid", treeGuid);
         form.add("reqId", reqId);
         form.add("jsonInfo", demoEventJson().replace("\"eventId\":\"" + REQ_ID + "\"", "\"eventId\":\"" + reqId + "\""));
         JSONObject upload = parse(exchange(HttpMethod.POST, "/services/v1/uploadInfo",

@@ -14,13 +14,13 @@ import java.util.Map;
 
 public interface DataListsService {
 
-    List<DataListsVO> listDataLists(Long modelId, Integer status);
+    List<DataListsVO> listDataLists(Long scenarioId, Integer status);
 
     List<DataListRecordVO> listDataListRecords(Long dataListId);
 
      DataListsVO get(Long id);
 
-     CommonResult list(Long modelId);
+     CommonResult list(Long scenarioId);
 
      CommonResult query(DataListQuery query);
 
@@ -46,9 +46,9 @@ public interface DataListsService {
 
      CommonResult deleteRecord(Long[] id);
     
-     Map<String, Object> getDataListMap(Long modelId);
+     Map<String, Object> getDataListMap(Long scenarioId);
 
-     CommonResult batchImportData(List<DataListsVO> list, Long modelId);
+     CommonResult batchImportData(List<DataListsVO> list, Long scenarioId);
 
      CommonResult batchImportDataRecord(List<DataListRecordVO> list, Long dataListId);
 }

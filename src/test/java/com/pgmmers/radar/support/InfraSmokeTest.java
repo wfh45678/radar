@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * S1 测试基建冒烟：验证四件套容器接线与 MySQL 种子脚本导入。
  * radar-init.sql（v2.0.0 全量基线）含 system 模型等种子数据，
- * 故 engine_model 计数 ≥ 1 即证明初始化脚本执行成功。
+ * 故 engine_scenario 计数 ≥ 1 即证明初始化脚本执行成功。
  */
 class InfraSmokeTest extends AbstractIntegrationTest {
 
@@ -25,8 +25,8 @@ class InfraSmokeTest extends AbstractIntegrationTest {
 
     @Test
     void mysqlSeedImported() {
-        Integer modelCount = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM engine_model", Integer.class);
-        assertTrue(modelCount != null && modelCount >= 1, "engine_model 应包含种子模型，实际: " + modelCount);
+        Integer modelCount = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM engine_scenario", Integer.class);
+        assertTrue(modelCount != null && modelCount >= 1, "engine_scenario 应包含种子模型，实际: " + modelCount);
     }
 
     @Test

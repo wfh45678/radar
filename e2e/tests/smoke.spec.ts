@@ -55,14 +55,14 @@ test.describe.serial('Radar 五步冒烟', () => {
     await page.fill('input[name=password]', PASS);
     await page.fill('input[name=captcha]', CAPTCHA_PLACEHOLDER);
     await page.getByRole('button', { name: '登录' }).click();
-    await page.waitForURL(/modelList/, { timeout: 20_000 });
+    await page.waitForURL(/scenarioList/, { timeout: 20_000 });
     authToken = await page.evaluate(() => localStorage.getItem('x-auth-token') || '');
     expect(authToken, '登录应下发 x-auth-token').toBeTruthy();
   });
 
   test('step2 新建模型（模板复制）', async ({ page }) => {
     await page.addInitScript((t) => localStorage.setItem('x-auth-token', t), authToken);
-    await page.goto('/#/modelList');
+    await page.goto('/#/scenarioList');
     await page.getByRole('button', { name: '新建模型' }).click();
     await page.fill('.ant-modal input[name=label]', CREATE_MODEL_LABEL);
     // 模板下拉：选第一个 [系统] 模板（antd5 选项渲染在 portal）
@@ -74,7 +74,7 @@ test.describe.serial('Radar 五步冒烟', () => {
 
   test('step3 进入模型工作区', async ({ page }) => {
     await page.addInitScript((t) => localStorage.setItem('x-auth-token', t), authToken);
-    await page.goto('/#/modelList');
+    await page.goto('/#/scenarioList');
     const row = page.locator('#table .ant-table-row').filter({ hasText: CREATE_MODEL_LABEL }).first();
     await expect(row).toBeVisible();
     await row.getByText('进入模型').click();
@@ -84,26 +84,26 @@ test.describe.serial('Radar 五步冒烟', () => {
 
   test('step4 事件发布（模板链路 + 引擎公开接口）', async ({ request }) => {
     // 模板 103 → copy → build → enable（频次类规则完整继承）
-    const templates = await api(request, 'GET', '/services/v1/model/list/template');
-    const templateList = templates.data.modelList as Array<{ id: number; label: string }>;
+    const templates = await api(request, 'GET', '/services/v1/scenario/list/template');
+    const templateList = templates.data.scenarioList as Array<{ id: number; label: string }>;
     const templateId = templateList.map((t) => Number(t.id)).find((id) => id === 103);
     expect(templateId, '种子模板 103 存在').toBeTruthy();
 
-    await api(request, 'POST', '/services/v1/model/copy', {
+    await api(request, 'POST', '/services/v1/scenario/copy', {
       data: { id: templateId, modelName: `it_${UNIQUE}`, label: EVENT_MODEL_LABEL },
     });
-    const list = await api(request, 'GET', '/services/v1/model/list');
-    const rows = (list.data.modelList || list.data.list) as Array<Record<string, any>>;
+    const list = await api(request, 'GET', '/services/v1/scenario/list');
+    const rows = (list.data.scenarioList || list.data.list) as Array<Record<string, any>>;
     const copied = rows.find((r) => r.label === EVENT_MODEL_LABEL);
     expect(copied, 'copy 后可定位新模型').toBeTruthy();
     expect(copied!.guid, '新模型含 GUID').toBeTruthy();
 
-    await api(request, 'POST', `/services/v1/model/build/${copied!.id}`);
-    await api(request, 'POST', `/services/v1/model/enable/${copied!.id}`);
+    await api(request, 'POST', `/services/v1/scenario/build/${copied!.id}`);
+    await api(request, 'POST', `/services/v1/scenario/enable/${copied!.id}`);
 
     // 事件上传（公开接口，表单参数；返回即含引擎打分结果）
     const upload = await api(request, 'POST', '/services/v1/uploadInfo', {
-      form: { modelGuid: copied!.guid, reqId: REQ_ID, jsonInfo: demoEventJson() },
+      form: { scenarioGuid: copied!.guid, reqId: REQ_ID, jsonInfo: demoEventJson() },
     });
     expect(upload.data, '引擎返回打分数据').toBeTruthy();
   });

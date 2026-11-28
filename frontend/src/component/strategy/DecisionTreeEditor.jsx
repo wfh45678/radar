@@ -233,7 +233,7 @@ class DecisionTreeEditor extends Component{
         };
         const param={
             id:strategy.id,
-            modelId:strategy.modelId,
+            scenarioId:strategy.scenarioId,
             strategyName:strategy.strategyName,
             label:strategy.label,
             comment:strategy.comment,

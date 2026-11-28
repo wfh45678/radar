@@ -19,7 +19,7 @@ public class RuleHistoryVO implements Serializable{
 	
 	private String operator;
 	
-	private String abstractionName;
+	private String featureName;
 	
 	private Integer rate;
 	
@@ -83,12 +83,12 @@ public class RuleHistoryVO implements Serializable{
 		this.operator = operator;
 	}
 
-	public String getAbstractionName() {
-		return abstractionName;
+	public String getFeatureName() {
+		return featureName;
 	}
 
-	public void setAbstractionName(String abstractionName) {
-		this.abstractionName = abstractionName;
+	public void setFeatureName(String featureName) {
+		this.featureName = featureName;
 	}
 
 	public Integer getRate() {

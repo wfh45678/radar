@@ -174,7 +174,7 @@ assertEquals(1, cache.loads().size());       // 断言缓存未命中次数（�
 | 删除 | 仅外置插件可删；删 jar + 立即重载 |
 | 手动重载 | 手工替换 plugins/ 目录文件后的人工兜底 |
 
-- 热重载模型：外置插件整体换用新类加载器（代际替换），旧加载器宽限 30s 后关闭
+- 热重载机制：外置插件整体换用新类加载器（代际替换），旧加载器宽限 30s 后关闭
   （`plugin.admin.reload-grace-ms` 可配），in-flight 执行由失败隔离兜底；
   `plugin.admin.hot-reload=false` 时上传/删除仅落盘并提示"重启生效"。
 - Windows 提示：宽限期内旧 jar 句柄未释放，同名重复上传/删除可能报"文件被占用"，

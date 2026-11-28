@@ -30,7 +30,7 @@ class AbstractionList extends Component{
             dataList:[],
         }
 
-        FetchUtil('/model/'+this.props.params.id,'GET','',
+        FetchUtil('/scenario/'+this.props.params.id,'GET','',
             (data) => {
                 const model=data.data.model;
                 this.setState({
@@ -47,7 +47,7 @@ class AbstractionList extends Component{
         var param={};
         param.pageNo=this.state.pageNo;
         param.pageSize=pageSize;
-        param.modelId=this.props.params.id;
+        param.scenarioId=this.props.params.id;
         param.aggregateType=this.state.aggregateType;
         param.name=this.state.name;
         param.label=this.state.label;
@@ -170,7 +170,7 @@ class AbstractionList extends Component{
                     }
                 }).map((info,index)=>{
                     return (<Collapse key={info.id+""+index} title={info.label?info.label:'新增（请保存）'}>
-                        <Abstraction abstraction={info} modelId={this.props.params.id} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData} delete={this.handleDelete.bind(this,index)}/>
+                        <Abstraction abstraction={info} scenarioId={this.props.params.id} fieldList={this.state.fieldList} dataList={this.state.dataList} reload={this.fetchTableData} delete={this.handleDelete.bind(this,index)}/>
                     </Collapse>);
                 })
                 }

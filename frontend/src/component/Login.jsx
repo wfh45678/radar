@@ -75,7 +75,7 @@ export default class Login extends React.Component{
 	        .then((data)=>{
                 if(data.success){
                     localStorage.setItem('x-auth-token',data.data['x-auth-token'])
-                    window.location.href="#/modelList";
+                    window.location.href="#/scenarioList";
                 }
                 else{
                     this.captchaRef.current.click();

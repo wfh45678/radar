@@ -19,11 +19,11 @@ import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.DataListsService;
-import com.pgmmers.radar.service.model.ModelService;
+import com.pgmmers.radar.service.model.ScenarioService;
 import com.pgmmers.radar.model.vo.model.DataListMetaVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -59,7 +59,7 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     @Autowired
     private CacheService cacheService;
     @Autowired
-    private ModelService modelService;
+    private ScenarioService scenarioService;
 
     private static Map<Long, Map<String, Object>> dataListRecordCacheMap = new HashMap<>();
 
@@ -67,10 +67,10 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
      * 原 DataListDalImpl.listDataLists 逻辑下沉。
      */
     @Override
-    public List<DataListsVO> listDataLists(Long modelId, Integer status) {
+    public List<DataListsVO> listDataLists(Long scenarioId, Integer status) {
         List<DataListsPO> list = dataListMapper.selectList(
                 new LambdaQueryWrapper<DataListsPO>()
-                        .eq(DataListsPO::getModelId, modelId)
+                        .eq(DataListsPO::getModelId, scenarioId)
                         .eq(status != null, DataListsPO::getStatus, status));
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<>();
@@ -105,13 +105,13 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     }
 
     @Override
-    public CommonResult list(Long modelId) {
+    public CommonResult list(Long scenarioId) {
         CommonResult result = new CommonResult();
         result.setSuccess(true);
-        // 原 DataListDalImpl.list 逻辑下沉：modelId + 系统名单(1L)
+        // 原 DataListDalImpl.list 逻辑下沉：scenarioId + 系统名单(1L)
         List<DataListsPO> list = dataListMapper.selectList(
                 new LambdaQueryWrapper<DataListsPO>()
-                        .in(DataListsPO::getModelId, Arrays.asList(modelId, 1L)));
+                        .in(DataListsPO::getModelId, Arrays.asList(scenarioId, 1L)));
         List<DataListsVO> listVO = CollectionUtils.isEmpty(list)
                 ? new ArrayList<>() : dataListsMapping.sourceToTarget(list);
         result.getData().put("list", listVO);
@@ -415,12 +415,12 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     public void init() {
         cacheService.subscribeDataList(this);
         new Thread(() ->{
-                List<ModelVO> modelList = modelService.listModel(null);
+                List<ScenarioVO> scenarioList = scenarioService.listScenario(null);
                 // 加载系统数据名单列表
                 Map<String, Object> sysDataListMap = new HashMap<>(32);
                 List<DataListsVO> sysList = listDataLists(1L, null);
                 buildList2Map(sysDataListMap, sysList);
-                for (ModelVO model : modelList) {
+                for (ScenarioVO model : scenarioList) {
                     Map<String, Object> dataListMap = new HashMap<>(32);
                     // datalist list
                     List<DataListsVO> dataLists = listDataLists(model.getId(), null);
@@ -452,18 +452,18 @@ public class DataListsServiceImpl implements DataListsService, SubscribeHandle {
     }
 
     @Override
-    public Map<String, Object> getDataListMap(Long modelId) {
-        Map<String, Object> listMap = dataListRecordCacheMap.get(modelId);
+    public Map<String, Object> getDataListMap(Long scenarioId) {
+        Map<String, Object> listMap = dataListRecordCacheMap.get(scenarioId);
         return listMap;
     }
 
     @Override
-    public CommonResult batchImportData(List<DataListsVO> list, Long modelId) {
+    public CommonResult batchImportData(List<DataListsVO> list, Long scenarioId) {
         CommonResult result = new CommonResult();
         for (DataListsVO data : list) {
             data.setStatus(1);
             data.setName("");
-            data.setModelId(modelId);
+            data.setModelId(scenarioId);
             int count = saveDataList(data);
             if (count > 0) {
                 if(StringUtils.isEmpty(data.getName())){

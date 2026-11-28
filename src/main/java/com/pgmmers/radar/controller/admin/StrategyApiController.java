@@ -66,14 +66,14 @@ public class StrategyApiController {
 
     /**
      * 变量树统一入口已迁移：{@link com.pgmmers.radar.controller.admin.FeatureApiController#getColumns}
-     * （/services/v1/feature/columns/{modelId}，fields + features 两组，原 preItems/abstractions
+     * （/services/v1/feature/columns/{scenarioId}，fields + features 两组，原 preItems/abstractions
      * 三组合并）——v4.1.1 移除本控制器内的旧路径。
      */
 
-    @GetMapping("/rule/columns/{modelId}")
-	public CommonResult getRuleColumns(@PathVariable Long modelId) {
+    @GetMapping("/rule/columns/{scenarioId}")
+	public CommonResult getRuleColumns(@PathVariable Long scenarioId) {
 		List<DataColumnInfo> list = new ArrayList<>();
-		List<StrategyVO> listStrategy=strategyService.listStrategy(modelId);
+		List<StrategyVO> listStrategy=strategyService.listStrategy(scenarioId);
 		if(listStrategy!=null){
 			for(StrategyVO strategy:listStrategy){
 				DataColumnInfo ds=new DataColumnInfo(strategy.getLabel(),strategy.getStrategyName());

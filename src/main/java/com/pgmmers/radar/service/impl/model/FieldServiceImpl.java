@@ -4,11 +4,11 @@ import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pgmmers.radar.converter.FieldMapping;
-import com.pgmmers.radar.converter.ModelMapping;
+import com.pgmmers.radar.converter.ScenarioMapping;
 import com.pgmmers.radar.mapper.FieldMapper;
-import com.pgmmers.radar.mapper.ModelMapper;
+import com.pgmmers.radar.mapper.ScenarioMapper;
 import com.pgmmers.radar.model.entity.FieldPO;
-import com.pgmmers.radar.model.entity.ModelPO;
+import com.pgmmers.radar.model.entity.ScenarioPO;
 import com.pgmmers.radar.model.query.FieldQuery;
 import com.pgmmers.radar.model.query.PageResult;
 import com.pgmmers.radar.service.cache.CacheService;
@@ -16,7 +16,7 @@ import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.model.FieldService;
 import com.pgmmers.radar.model.vo.model.FieldVO;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,11 +35,11 @@ public class FieldServiceImpl extends BaseLocalCacheService implements FieldServ
     public static Logger logger = LoggerFactory.getLogger(FieldServiceImpl.class);
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ScenarioMapper scenarioMapper;
     @Autowired
     private FieldMapper fieldMapper;
     @Resource
-    private ModelMapping modelMapping;
+    private ScenarioMapping modelMapping;
     @Resource
     private FieldMapping fieldMapping;
     private final CacheService cacheService;
@@ -48,9 +48,9 @@ public class FieldServiceImpl extends BaseLocalCacheService implements FieldServ
     }
 
     @Override
-    public Object query(Long modelId) {
+    public Object query(Long scenarioId) {
         List<FieldPO> list = fieldMapper.selectList(
-                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, modelId));
+                new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, scenarioId));
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<>();
         }
@@ -58,9 +58,9 @@ public class FieldServiceImpl extends BaseLocalCacheService implements FieldServ
     }
 
     @Override
-    public List<FieldVO> listField(Long modelId) {
+    public List<FieldVO> listField(Long scenarioId) {
         //noinspection unchecked
-        return (List<FieldVO>) getByCache(modelId);
+        return (List<FieldVO>) getByCache(scenarioId);
     }
 
     @Override
@@ -154,8 +154,8 @@ public class FieldServiceImpl extends BaseLocalCacheService implements FieldServ
     public CommonResult delete(Long[] id) {
         CommonResult result = new CommonResult();
         FieldVO field = get(id[0]);
-        ModelPO modelPO = modelMapper.selectById(field.getModelId());
-        ModelVO model = modelMapping.sourceToTarget(modelPO);
+        ScenarioPO modelPO = scenarioMapper.selectById(field.getModelId());
+        ScenarioVO model = modelMapping.sourceToTarget(modelPO);
         if(model.getEntityName().equals(field.getFieldName())
         		||model.getEntryName().equals(field.getFieldName())
         		||model.getReferenceDate().equals(field.getFieldName())){

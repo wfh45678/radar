@@ -214,7 +214,7 @@ export default class EditPreItem extends React.Component{
 		this.submitting=true;
 		var param={};
 		param.id=this.props.row.id;
-		param.modelId=this.props.modelId;
+		param.scenarioId=this.props.scenarioId;
 		param.destField=this.state.destField;
 		param.label=this.state.label;
         param.sourceField=this.state.sourceField;

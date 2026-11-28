@@ -60,7 +60,7 @@ export default class AddDataList extends React.Component{
 		}
 		else{
 			var param={};
-			param.modelId=this.props.modelId;
+			param.scenarioId=this.props.scenarioId;
 			param.name=this.state.name;
 			param.label=this.state.label;
 			param.comment=this.state.comment;

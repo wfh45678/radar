@@ -12,7 +12,7 @@ public class ModelConfPO {
     private Long id;
 
     @TableField("model_id")
-    private Long modelId;
+    private Long scenarioId;
 
     private String name;
 
@@ -50,14 +50,14 @@ public class ModelConfPO {
      * @return model_id
      */
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
     /**
-     * @param modelId
+     * @param scenarioId
      */
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     /**

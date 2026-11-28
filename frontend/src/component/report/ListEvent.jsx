@@ -40,7 +40,7 @@ class ListEvent extends React.Component{
             searchType:''
 		}
 
-        if(this.props.params.modelId){
+        if(this.props.params.scenarioId){
             this.state.showAdvance=true;
             this.state.searchType='rule';
             this.state.strategyName=this.props.params.strategyName;
@@ -102,7 +102,7 @@ class ListEvent extends React.Component{
 
         param.pageNo=this.state.pageNo;
         param.pageSize=pageSize;
-        param.modelId=this.props.modelId;
+        param.scenarioId=this.props.scenarioId;
         param.beginTime=this.state.beginTime.format('YYYY-MM-DD HH:mm:ss');
         param.endTime=this.state.endTime.format('YYYY-MM-DD HH:mm:ss');
 
@@ -135,7 +135,7 @@ class ListEvent extends React.Component{
 
     // 原 componentWillReceiveProps 在 React 17+ 已移除，等价迁移为 componentDidUpdate
     componentDidUpdate(prevProps){
-        if(prevProps.modelId!=this.props.modelId){
+        if(prevProps.scenarioId!=this.props.scenarioId){
             this.setState({
                 fieldName:'',
                 fieldValue:'',

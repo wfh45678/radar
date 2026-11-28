@@ -9,7 +9,7 @@ const TEMPLATE_NAMES = ['账户盗用防护', '营销反作弊', '交易风控']
 
 test('模板库浏览与一键创建', async ({ page }) => {
   const token = await login(page);
-  await gotoWithAuth(page, '/#/modelList', token);
+  await gotoWithAuth(page, '/#/scenarioList', token);
 
   // 打开模板库弹窗
   await page.getByRole('button', { name: '模板库' }).click();
@@ -34,7 +34,7 @@ test('模板库浏览与一键创建', async ({ page }) => {
   await expect(resultModal.or(page.getByText('模板创建成功'))).toBeVisible({ timeout: 20_000 });
   await resultModal.getByRole('button', { name: '知道了' }).click().catch(() => {});
 
-  await gotoWithAuth(page, '/#/modelList', token);
+  await gotoWithAuth(page, '/#/scenarioList', token);
   await page.reload();
   await expect(page.locator('#table')).toContainText(label, { timeout: 20_000 });
 });

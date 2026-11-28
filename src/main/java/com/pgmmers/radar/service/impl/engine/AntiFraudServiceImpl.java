@@ -17,7 +17,7 @@ import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.AntiFraudProcessResult;
 import com.pgmmers.radar.service.impl.engine.feature.FeatureExecutorRegistry;
 import com.pgmmers.radar.service.model.FeatureService;
-import com.pgmmers.radar.service.model.ModelService;
+import com.pgmmers.radar.service.model.ScenarioService;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
     private FeatureService featureService;
 
     @Autowired
-    private ModelService modelService;
+    private ScenarioService scenarioService;
 
     @Autowired
     private FeatureExecutorRegistry executorRegistry;
@@ -54,7 +54,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
     private EngineMetrics engineMetrics;
 
     @Override
-    public CommonResult process(Long modelId, Map<String, Map<String, ?>> context) {
+    public CommonResult process(Long scenarioId, Map<String, Map<String, ?>> context) {
         AntiFraudProcessResult analysisResult = new AntiFraudProcessResult();
         //上下文参数,用于存放中间计算结果
         long start = 0;
@@ -63,7 +63,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
         // do features（ANALYSIS 阶段：AGGREGATE/RATIO）
         logger.info("start features(analysis)...");
         start = System.currentTimeMillis();
-        FeatureResult featResult = antiFraudEngine.executeFeatures(modelId, context, FeatureStage.ANALYSIS);
+        FeatureResult featResult = antiFraudEngine.executeFeatures(scenarioId, context, FeatureStage.ANALYSIS);
         end = System.currentTimeMillis();
         analysisResult.getRespTimes().put("features", end - start);
         engineMetrics.recordStage("features", end - start);
@@ -78,7 +78,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
         // do adaptation
         logger.info("start adaptation...");
         start = System.currentTimeMillis();
-        AdaptationResult adaptResult = antiFraudEngine.executeAdaptation(modelId, context);
+        AdaptationResult adaptResult = antiFraudEngine.executeAdaptation(scenarioId, context);
         end = System.currentTimeMillis();
         analysisResult.getRespTimes().put("adaptations", end - start);
         engineMetrics.recordStage("adaptations", end - start);
@@ -93,7 +93,7 @@ public class AntiFraudServiceImpl implements AntiFraudService {
         // do strategy
         logger.info("start strategy...");
         start = System.currentTimeMillis();
-        StrategyResult strategyResult = antiFraudEngine.executeStrategy(modelId, context);
+        StrategyResult strategyResult = antiFraudEngine.executeStrategy(scenarioId, context);
         end = System.currentTimeMillis();
         analysisResult.getRespTimes().put("strategies", end - start);
         engineMetrics.recordStage("strategies", end - start);
@@ -117,9 +117,9 @@ public class AntiFraudServiceImpl implements AntiFraudService {
      * 产出合并进事件特征集合随实体落库。失败隔离由各执行器/编排层按特征粒度处理。
      */
     @Override
-    public Map<String, Object> executeEntryFeatures(Long modelId, Map<String, Object> jsonInfo) {
+    public Map<String, Object> executeEntryFeatures(Long scenarioId, Map<String, Object> jsonInfo) {
         List<FeatureVO> features = new ArrayList<>();
-        for (FeatureVO feature : featureService.listFeature(modelId)) {
+        for (FeatureVO feature : featureService.listFeature(scenarioId)) {
             if (FeatureStage.ENTRY.getTypes().stream()
                     .anyMatch(t -> t.name().equals(feature.getType()))) {
                 features.add(feature);

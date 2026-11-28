@@ -28,7 +28,7 @@ export default class Index extends React.Component{
       <div className="ant-layout-header">
         <div className="ant-layout-wrapper">
           <div className="ant-layout-logo">
-            <Tooltip title="回到首页"><Link to="/modelList"><HomeOutlined /></Link></Tooltip>
+            <Tooltip title="回到首页"><Link to="/scenarioList"><HomeOutlined /></Link></Tooltip>
           </div>
           <div className="ant-layout-logo">
             <Tooltip title="统计报表"><Link to="/report"><LineChartOutlined /></Link></Tooltip>

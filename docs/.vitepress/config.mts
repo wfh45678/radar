@@ -7,7 +7,7 @@ export default withMermaid(
   defineConfig({
     lang: 'zh-CN',
     title: 'Radar 风控引擎',
-    description: '开源实时风控决策引擎：Groovy 规则 + 插件生态 + 模型策略包',
+    description: '开源实时风控决策引擎：Groovy 规则 + 插件生态 + 场景策略包',
     ignoreDeadLinks: true,
     themeConfig: {
       siteTitle: 'Radar 风控引擎',
@@ -21,7 +21,7 @@ export default withMermaid(
         { text: '首页', link: '/' },
         { text: '快速开始', link: '/operations' },
         { text: '插件生态', link: '/plugin-dev-guide' },
-        { text: '模型策略包', link: '/model-package' },
+        { text: '场景策略包', link: '/scenario-package' },
         { text: 'Roadmap', link: '/roadmap' },
       ],
       sidebar: [
@@ -42,8 +42,8 @@ export default withMermaid(
           ],
         },
         {
-          text: '模型策略包',
-          items: [{ text: '格式与操作', link: '/model-package' }],
+          text: '场景策略包',
+          items: [{ text: '格式与操作', link: '/scenario-package' }],
         },
         {
           text: '官方模板',

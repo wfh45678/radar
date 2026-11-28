@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * 引擎业务指标（Micrometer/Prometheus）。
  *
- * <p>标签纪律：不引入 modelGuid 等高基数标签（防指标爆炸），模型维度分析由 hitsSort 报表承担。
+ * <p>标签纪律：不引入 scenarioGuid 等高基数标签（防指标爆炸），模型维度分析由 hitsSort 报表承担。
  * 埋点位置：事件入口 {@code RiskAnalysisEngineServiceImpl.uploadInfo}、
  * 各阶段 {@code AntiFraudServiceImpl.process}（features/adaptations/strategies）/ entity 落库、
  * 决策分布 {@code AntiFraudEngineImpl.executeStrategy}、Groovy 编译 {@code GroovyScriptUtil}。</p>

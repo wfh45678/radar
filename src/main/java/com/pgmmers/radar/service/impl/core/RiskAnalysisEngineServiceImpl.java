@@ -10,10 +10,10 @@ import com.pgmmers.radar.service.data.RiskResultService;
 import com.pgmmers.radar.service.engine.AntiFraudService;
 import com.pgmmers.radar.service.engine.ValidateService;
 import com.pgmmers.radar.service.model.EntityService;
-import com.pgmmers.radar.service.model.ModelService;
+import com.pgmmers.radar.service.model.ScenarioService;
 import com.pgmmers.radar.common.util.DateUtils;
 import com.pgmmers.radar.config.EngineMetrics;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
 
     private static Logger logger = LoggerFactory.getLogger(RiskAnalysisEngineServiceImpl.class);
 
-    private final ModelService modelService;
+    private final ScenarioService scenarioService;
 
     private final EntityService entityService;
 
@@ -45,11 +45,11 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
     private final EngineMetrics engineMetrics;
 
     public RiskAnalysisEngineServiceImpl(
-            ModelService modelService, EntityService entityService,
+            ScenarioService scenarioService, EntityService entityService,
             AntiFraudService antiFraudService, CacheService cacheService,
             @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") RiskResultService riskResultService,
             ValidateService validateService, EngineMetrics engineMetrics) {
-        this.modelService = modelService;
+        this.scenarioService = scenarioService;
         this.entityService = entityService;
         this.antiFraudService = antiFraudService;
         this.cacheService = cacheService;
@@ -59,14 +59,14 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
     }
 
     @Override
-    public CommonResult uploadInfo(String modelGuid, String reqId, String jsonInfo) {
-        return uploadInfo(modelGuid, reqId, JSON.parseObject(jsonInfo));
+    public CommonResult uploadInfo(String scenarioGuid, String reqId, String jsonInfo) {
+        return uploadInfo(scenarioGuid, reqId, JSON.parseObject(jsonInfo));
     }
 
     @Override
-    public CommonResult uploadInfo(String modelGuid, String reqId, JSONObject jsonInfo) {
+    public CommonResult uploadInfo(String scenarioGuid, String reqId, JSONObject jsonInfo) {
         try {
-            CommonResult result = doUpload(modelGuid, reqId, jsonInfo);
+            CommonResult result = doUpload(scenarioGuid, reqId, jsonInfo);
             engineMetrics.recordEvent(result.isSuccess());
             return result;
         } catch (RuntimeException e) {
@@ -75,16 +75,16 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
         }
     }
 
-    private CommonResult doUpload(String modelGuid, String reqId, JSONObject jsonInfo) {
-        logger.info("req info:{},{},{}", modelGuid, reqId, jsonInfo);
+    private CommonResult doUpload(String scenarioGuid, String reqId, JSONObject jsonInfo) {
+        logger.info("req info:{},{},{}", scenarioGuid, reqId, jsonInfo);
         CommonResult result = new CommonResult();
         Map<String, Map<String, ?>> context = new HashMap<>();
-        ModelVO model;
+        ScenarioVO model;
         try {
             // 1. check
             JSONObject eventJson = jsonInfo;
 
-            model = modelService.getModelByGuid(modelGuid);
+            model = scenarioService.getModelByGuid(scenarioGuid);
 
             if (model == null) {
                 result.setMsg("模型不存在!");
@@ -138,18 +138,18 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
         }
 
         // 缓存分析结果
-        cacheService.saveAntiFraudResult(modelGuid, reqId, result);
+        cacheService.saveAntiFraudResult(scenarioGuid, reqId, result);
 
         // 保存事件信息和分析结果用于后续分析
-        riskResultService.sendResult(modelGuid, reqId, JSON.toJSONString(context));
+        riskResultService.sendResult(scenarioGuid, reqId, JSON.toJSONString(context));
         // 返回分析结果
         return result;
     }
 
 
     @Override
-    public CommonResult getScore(String modelGuid, String reqId) {
-        CommonResult result = cacheService.getAntiFraudResult(modelGuid, reqId);
+    public CommonResult getScore(String scenarioGuid, String reqId) {
+        CommonResult result = cacheService.getAntiFraudResult(scenarioGuid, reqId);
         if (result == null) {
             result = new CommonResult();
             result.setCode("601");
@@ -159,9 +159,9 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
     }
 
     @Override
-    public CommonResult syncStatus(String modelGuid, String eventId, String status) {
+    public CommonResult syncStatus(String scenarioGuid, String eventId, String status) {
         CommonResult result = new CommonResult();
-        ModelVO model = modelService.getModelByGuid(modelGuid);
+        ScenarioVO model = scenarioService.getModelByGuid(scenarioGuid);
         if (model == null) {
             result.setMsg("模型不存在!");
             return result;

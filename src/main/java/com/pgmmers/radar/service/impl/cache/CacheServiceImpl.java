@@ -9,7 +9,7 @@ import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
-import com.pgmmers.radar.model.vo.model.ModelVO;
+import com.pgmmers.radar.model.vo.model.ScenarioVO;
 import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class CacheServiceImpl implements CacheService {
 
     public static final String prefix = "radar_";
 
-    public static final String PUB_SUB_MODEL_CHANNEL = "radar_channel_model";
+    public static final String PUB_SUB_MODEL_CHANNEL = "radar_channel_scenario";
     public static final String PUB_SUB_FIELD_CHANNEL = "radar_channel_field";
     public static final String PUB_SUB_FEATURE_CHANNEL = "radar_channel_feature";
     public static final String PUB_SUB_RULE_CHANNEL = "radar_channel_rule";
@@ -38,20 +38,20 @@ public class CacheServiceImpl implements CacheService {
     private RedisService redisService;
 
     @Override
-    public void saveAntiFraudResult(String modelId, String sessionId, CommonResult result) {
-        String key = prefix + "engine_" + modelId + sessionId;
+    public void saveAntiFraudResult(String scenarioId, String sessionId, CommonResult result) {
+        String key = prefix + "engine_" + scenarioId + sessionId;
         redisService.setex(key, result, 5 * 60);
     }
 
     @Override
-    public CommonResult getAntiFraudResult(String modelId, String sessionId) {
-        String key = prefix + "engine_" + modelId + sessionId;
+    public CommonResult getAntiFraudResult(String scenarioId, String sessionId) {
+        String key = prefix + "engine_" + scenarioId + sessionId;
         CommonResult result = (CommonResult) redisService.get(key);
         return result;
     }
 
     @Override
-    public void publishModel(ModelVO model) {
+    public void publishModel(ScenarioVO model) {
         redisService.publish(PUB_SUB_MODEL_CHANNEL, JSON.toJSONString(model));
     }
 

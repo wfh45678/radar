@@ -61,7 +61,7 @@ public class RuleSetExecutor implements StrategyExecutor {
                 BigDecimal rate = new BigDecimal(rule.getRate() * 0.01);
                 BigDecimal base = new BigDecimal(rule.getBaseNum());
                 BigDecimal extra = BigDecimal.ZERO;
-                String by = rule.getAbstractionName();
+                String by = rule.getFeatureName();
                 BigDecimal maxScore = new BigDecimal(rule.getMax());
                 if (!StringUtils.isEmpty(by)) {
                     if (by.indexOf(".") != -1) {
@@ -78,7 +78,7 @@ public class RuleSetExecutor implements StrategyExecutor {
                         }
                     } else {
                         //兼容以前的处理。
-                        Object abs = data.get("abstractions").get(rule.getAbstractionName());
+                        Object abs = data.get("abstractions").get(rule.getFeatureName());
                         if (abs != null) {
                             extra = new BigDecimal(abs.toString());
                         }

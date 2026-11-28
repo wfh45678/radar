@@ -36,7 +36,7 @@ class Rule extends React.Component{
             strategyNameOne:'' //存储策略中的第一个value值，便于按处理结果查询
         }
 
-        if(this.props.params.modelId){
+        if(this.props.params.scenarioId){
             this.state.strategyName=this.props.params.strategyName;
             this.state.ruleId=this.props.params.ruleId+'';
         }
@@ -50,7 +50,7 @@ class Rule extends React.Component{
         var param={};
         param.pageNo=this.state.pageNo;
         param.pageSize=pageSize;
-        param.modelId=this.props.modelId;
+        param.scenarioId=this.props.scenarioId;
         if(this.state.risk.length != 0){
             if(this.state.strategyName!=''){
                 param.fieldName='strategies.'+this.state.strategyName+'.risk';
@@ -96,7 +96,7 @@ class Rule extends React.Component{
 
     // 原 componentWillReceiveProps 在 React 17+ 已移除，等价迁移为 componentDidUpdate
     componentDidUpdate(prevProps){
-        if(prevProps.modelId!=this.props.modelId){
+        if(prevProps.scenarioId!=this.props.scenarioId){
             this.setState({
                 beginTime:dayjs().add(-3,'days'),
                 endTime:dayjs(),
@@ -119,7 +119,7 @@ class Rule extends React.Component{
         var state = this.state;
         state[name] = trim(value);
         this.setState(state);
-        // if(name=='modelId'){
+        // if(name=='scenarioId'){
         //     this.setState({
         //         tData:[]
         //     });
@@ -135,7 +135,7 @@ class Rule extends React.Component{
         //                 strategyList:data.data.list
         //             });
         //         });
-        //     FetchUtil('/model/'+value,'GET','',
+        //     FetchUtil('/scenario/'+value,'GET','',
         //         (data) => {
         //             this.setState({
         //                 model:data.data.model

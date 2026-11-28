@@ -15,8 +15,8 @@ class Report extends React.Component{
 		this.state={
 			current:'',
 
-            modelList:[],
-            modelId:'',
+            scenarioList:[],
+            scenarioId:'',
             fieldList:[],
             eventFieldList:[],
             strategyList:[]
@@ -57,7 +57,7 @@ class Report extends React.Component{
 
     componentDidMount(){
         let key='';
-        let modelId='';
+        let scenarioId='';
         switch(this.props.location.pathname.split('/')[1]){
             case 'event':
                 key='event';break;
@@ -65,7 +65,7 @@ class Report extends React.Component{
                 key='graph';break;
             case 'ruleid':
                 key='event';
-                modelId=this.props.location.pathname.split('/')[2];
+                scenarioId=this.props.location.pathname.split('/')[2];
                 break;
             case 'dashboard':
                 key='dashboard';break;
@@ -74,29 +74,29 @@ class Report extends React.Component{
             current:key
         });
 
-        FetchUtil('/model/list','GET',{},
+        FetchUtil('/scenario/list','GET',{},
             (data) => {
                 this.setState({
-                    modelList:data.data.modelList
+                    scenarioList:data.data.scenarioList
                 },()=>{
-                    if(this.state.modelList.length>0&&modelId==''){
-                        this.handleSelect('modelId',this.state.modelList[0].id+'');
+                    if(this.state.scenarioList.length>0&&scenarioId==''){
+                        this.handleSelect('scenarioId',this.state.scenarioList[0].id+'');
                     }
                     else{
-                        this.handleSelect('modelId',modelId);
+                        this.handleSelect('scenarioId',scenarioId);
                     }
                 });
             });       
     }
 
     getItems=()=>{
-        if(this.state.modelId==''){
-            return '请选择模型！';
+        if(this.state.scenarioId==''){
+            return '请选择场景！';
         }
         // 原 rr3 cloneElement 注入子页 props，router 6/7 下走 Outlet context
         const ctx={
-            modelId:this.state.modelId,
-            model:this.state.modelList.filter(x=>x.id==this.state.modelId)[0],
+            scenarioId:this.state.scenarioId,
+            model:this.state.scenarioList.filter(x=>x.id==this.state.scenarioId)[0],
             fieldList:this.state.fieldList,
             eventFieldList:this.state.eventFieldList,
             strategyList:this.state.strategyList
@@ -113,9 +113,9 @@ class Report extends React.Component{
                 <div className="ant-layout-container">
                     <div style={{lineHeight:"46px",padding:"0 20px 0",margin:"0 24px",borderBottom:"1px solid #e9e9e9"}}>
                         <Form layout="inline">
-                            <FormItem label="模型：">
-                                <Select dropdownMatchSelectWidth={false} value={this.state.modelId} onChange={this.handleSelect.bind(this,'modelId')} style={{width:100}}
-                                    options={this.state.modelList.map((info)=>({label:info.label, value:info.id+''}))}
+                            <FormItem label="场景：">
+                                <Select dropdownMatchSelectWidth={false} value={this.state.scenarioId} onChange={this.handleSelect.bind(this,'scenarioId')} style={{width:100}}
+                                    options={this.state.scenarioList.map((info)=>({label:info.label, value:info.id+''}))}
                                 />
                             </FormItem>
                         </Form>

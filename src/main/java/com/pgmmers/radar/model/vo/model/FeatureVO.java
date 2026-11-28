@@ -21,7 +21,7 @@ public class FeatureVO implements Serializable {
 
     private String label;
 
-    private Long modelId;
+    private Long scenarioId;
 
     /** 阶段内执行顺序 */
     private Integer orderNo;
@@ -73,11 +73,11 @@ public class FeatureVO implements Serializable {
     }
 
     public Long getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
-    public void setModelId(Long modelId) {
-        this.modelId = modelId;
+    public void setModelId(Long scenarioId) {
+        this.scenarioId = scenarioId;
     }
 
     public Integer getOrderNo() {

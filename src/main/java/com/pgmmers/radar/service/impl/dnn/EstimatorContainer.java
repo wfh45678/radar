@@ -36,8 +36,8 @@ public class EstimatorContainer {
         return estimatorMap.get(type);
     }
 
-    public Estimator getByModelId(Long modelId) {
-        ModelConfVO mold = modelConfService.getByModelId(modelId);
+    public Estimator getByModelId(Long scenarioId) {
+        ModelConfVO mold = modelConfService.getByModelId(scenarioId);
         if (mold == null) {
             return null;
         }

@@ -19,13 +19,13 @@ public interface RuleService {
 
     CommonResult delete(Long[] id);
 
-    CommonResult getHitSorts(Long modelId);
+    CommonResult getHitSorts(Long scenarioId);
 
-    CommonResult getHitSorts(Long modelId, Long beginTime, Long endTime);
+    CommonResult getHitSorts(Long scenarioId, Long beginTime, Long endTime);
 
-    CommonResult getHitSorts(Long modelId, String beginTime, String endTime);
+    CommonResult getHitSorts(Long scenarioId, String beginTime, String endTime);
 
     CommonResult queryHistory(RuleHistoryQuery query);
     
-    List<RuleVO> listRuleByModelId(Long modelId);
+    List<RuleVO> listRuleByModelId(Long scenarioId);
 }

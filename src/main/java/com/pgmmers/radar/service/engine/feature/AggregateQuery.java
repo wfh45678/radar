@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class AggregateQuery {
 
-    private final String modelId;
+    private final String scenarioId;
     private final String searchField;
     private final Object searchFieldValue;
     private final String refDateFieldName;
@@ -22,7 +22,7 @@ public class AggregateQuery {
     private final BigDecimal currentEventValue;
 
     private AggregateQuery(Builder builder) {
-        this.modelId = builder.modelId;
+        this.scenarioId = builder.scenarioId;
         this.searchField = builder.searchField;
         this.searchFieldValue = builder.searchFieldValue;
         this.refDateFieldName = builder.refDateFieldName;
@@ -38,7 +38,7 @@ public class AggregateQuery {
     }
 
     public String getModelId() {
-        return modelId;
+        return scenarioId;
     }
 
     public String getSearchField() {
@@ -74,7 +74,7 @@ public class AggregateQuery {
     }
 
     public static class Builder {
-        private String modelId;
+        private String scenarioId;
         private String searchField;
         private Object searchFieldValue;
         private String refDateFieldName;
@@ -84,8 +84,8 @@ public class AggregateQuery {
         private FieldType functionFieldType;
         private BigDecimal currentEventValue;
 
-        public Builder modelId(String modelId) {
-            this.modelId = modelId;
+        public Builder scenarioId(String scenarioId) {
+            this.scenarioId = scenarioId;
             return this;
         }
 

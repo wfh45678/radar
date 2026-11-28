@@ -3,7 +3,7 @@ package com.pgmmers.radar.service.impl.model.transfer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pgmmers.radar.service.impl.model.transfer.ModelPackageService.ModelPackageException;
+import com.pgmmers.radar.service.impl.model.transfer.ScenarioPackageService.ScenarioPackageException;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -18,11 +18,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 /**
- * 模板目录服务（v3.4）：启动扫描内置模板（resources/models/），
+ * 模板目录服务（v3.4）：启动扫描内置模板（resources/scenarios/），
  * 合并在线源（远程同名 key 覆盖内置），提供模板库列表与按 key 导入。
  *
  * <p>统计以包体解析为准（catalog 仅存展示元数据）；单文件损坏只告警不阻断启动。
- * 导入复用 {@link ModelPackageService} 的 validate + importPackage——模板导入
+ * 导入复用 {@link ScenarioPackageService} 的 validate + importPackage——模板导入
  * 就是特定来源的普通导入，零新导入逻辑。</p>
  *
  * @since 3.4.0
@@ -33,7 +33,7 @@ public class TemplateCatalogService {
     private static final Logger logger = LoggerFactory.getLogger(TemplateCatalogService.class);
 
     /** 内置模板目录资源路径。 */
-    public static final String CATALOG_RESOURCE = "models/catalog.json";
+    public static final String CATALOG_RESOURCE = "scenarios/catalog.json";
 
     /** 在线源状态（透传给前端展示）。 */
     public enum SourceStatus {
@@ -41,7 +41,7 @@ public class TemplateCatalogService {
     }
 
     @Autowired
-    private ModelPackageService modelPackageService;
+    private ScenarioPackageService scenarioPackageService;
     @Autowired
     private TemplateSourceService templateSourceService;
 
@@ -74,13 +74,13 @@ public class TemplateCatalogService {
                     continue;
                 }
                 try {
-                    byte[] body = readResource("models/" + file);
-                    ModelPackage pkg = modelPackageService.parse(body);
+                    byte[] body = readResource("scenarios/" + file);
+                    ScenarioPackage pkg = scenarioPackageService.parse(body);
                     BuiltinTemplate bt = new BuiltinTemplate();
                     bt.body = body;
                     bt.info = new TemplateInfo();
                     bt.info.setKey(key);
-                    bt.info.setName(t.path("name").asText(pkg.getModel().getLabel()));
+                    bt.info.setName(t.path("name").asText(pkg.getScenario().getLabel()));
                     bt.info.setDescription(t.path("description").asText(""));
                     bt.info.setMinRadarVersion(t.path("minRadarVersion").asText(""));
                     bt.info.setTags(readTags(t));
@@ -139,7 +139,7 @@ public class TemplateCatalogService {
                 }
             }
             if (source == TemplateInfo.Source.BUILTIN) {
-                throw new ModelPackageException("模板不存在: " + key);
+                throw new ScenarioPackageException("模板不存在: " + key);
             }
         }
         byte[] body = templateSourceService.bodyByKey(key, source);
@@ -150,18 +150,18 @@ public class TemplateCatalogService {
     }
 
     /** 按 key 导入模板：加载 → validate → importPackage（复用普通导入全链路）。 */
-    public Long importTemplate(String key, String merchantCode, String modelName, String label) {
+    public Long importTemplate(String key, String merchantCode, String scenarioName, String label) {
         byte[] body = bodyByKey(key);
-        ModelPackage pkg = modelPackageService.parse(body);
+        ScenarioPackage pkg = scenarioPackageService.parse(body);
         if (label == null || label.isBlank()) {
-            label = pkg.getModel().getLabel();
+            label = pkg.getScenario().getLabel();
         }
-        if (modelName == null || modelName.isBlank()) {
-            modelName = pkg.getModel().getModelName();
+        if (scenarioName == null || scenarioName.isBlank()) {
+            scenarioName = pkg.getScenario().getModelName();
         }
-        List<String> warnings = modelPackageService.validate(pkg);
-        Long newId = modelPackageService.importPackage(pkg, merchantCode, modelName, label);
-        logger.info("template imported: key={}, new modelId={}, warnings={}", key, newId, warnings.size());
+        List<String> warnings = scenarioPackageService.validate(pkg);
+        Long newId = scenarioPackageService.importPackage(pkg, merchantCode, scenarioName, label);
+        logger.info("template imported: key={}, new scenarioId={}, warnings={}", key, newId, warnings.size());
         return newId;
     }
 
@@ -179,7 +179,7 @@ public class TemplateCatalogService {
         return tags == null ? List.of() : List.of(tags);
     }
 
-    private Map<String, Object> statsOf(ModelPackage pkg) {
+    private Map<String, Object> statsOf(ScenarioPackage pkg) {
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("rules", pkg.getRules().size());
         stats.put("features", pkg.getFeatures().size());
