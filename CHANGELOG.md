@@ -2,6 +2,14 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [5.1.1] - 2026-11-28
+
+### Changed
+- `engine_rule_history.MERCHANT_CODE` → `USER_CODE`：该列实际存储**保存规则的修改人用户名**
+  （历史回看展示"用户XXX修改"），正名后与 strategy_history.OPERATOR（操作人）、
+  engine_rule.OPERATOR（规则运算符快照）三列语义各自清晰；仅全新安装基线（radar-init.sql）
+  生效，不影响存量数据语义
+
 ## [5.1.0] - 2026-11-28
 
 策略类型补全（[plan-v5.1.md](docs/plan-v5.1.md)）：**策略类型达五种**（规则集/评分卡/决策树/决策表/名单匹配），

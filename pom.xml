@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.pgmmers</groupId>
     <artifactId>radar</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
     <name>radar</name>
     <description>Real-time risk control engine (Java 17 + Spring Boot 3 single module)</description>
     <packaging>jar</packaging>
