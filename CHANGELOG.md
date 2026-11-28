@@ -35,6 +35,8 @@
   component/common/（活组件名实归位）
 
 ### Fixed
+- 场景列表分页查询漏改旧路径 `/services/v1/model` → `/scenario`（无尾斜杠形态未被批量
+  更名覆盖，用户验收暴露）
 - L3 copy 路径已在 v4.1.5 后由 verify-chain 覆盖；本期补齐两新类型 L1 用例
   （EngineFullChainTest 的 copy 断言在 v4.x 已存在）
 
