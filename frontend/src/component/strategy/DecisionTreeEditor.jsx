@@ -197,18 +197,20 @@ class DecisionTreeEditor extends Component{
                 if(DECISIONS.every(d=>d.value!==n.decision)){ return '叶节点「'+(n.label||n.id)+'」决策非法'; }
             }
         }
-        // 无环 + 全部可达（从根走查）
+        // 无环 + 全部可达（从根递归走查，"是/否"分支均遍历；visited 同时作环防护）
         const visited=new Set();
-        let current=this.nodeById(this.state.rootId);
-        let steps=0;
-        while(current&&steps<=nodes.length){
-            if(visited.has(current.id)){ return '决策树存在环路（节点 '+current.id+'）'; }
-            visited.add(current.id);
-            steps++;
-            current=current.type==='CONDITION'?this.nodeById(current.trueChild):null;
-            // 叶节点终止
-            if(current&&current.type==='LEAF'){ visited.add(current.id); break; }
-        }
+        let cycle=false;
+        const walkCheck=(n)=>{
+            if(!n){ return; }
+            if(visited.has(n.id)){ cycle=true; return; }
+            visited.add(n.id);
+            if(n.type==='CONDITION'){
+                walkCheck(this.nodeById(n.trueChild));
+                walkCheck(this.nodeById(n.falseChild));
+            }
+        };
+        walkCheck(this.nodeById(this.state.rootId));
+        if(cycle){ return '决策树存在环路或重复挂接的节点'; }
         const unreachable=nodes.filter(n=>!visited.has(n.id));
         if(unreachable.length>0){
             return '存在从根不可达的节点：'+unreachable.map(n=>n.label||n.id).join('、');

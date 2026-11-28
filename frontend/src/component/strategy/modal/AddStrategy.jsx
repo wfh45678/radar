@@ -37,7 +37,11 @@ export default class AddStrategy extends React.Component{
     }
 
     handleSelect=(name,value)=>{
-    	var state = this.state;	
+    	var state = this.state;
+        // antd 兼容：Radio.Group/Checkbox onChange 传事件对象，InputNumber/Select 直接传值
+        if (value && value.target) {
+            value = value.target.value !== undefined ? value.target.value : value.target.checked;
+        }
         state[name] = value;
         this.setState(state);
     }

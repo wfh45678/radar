@@ -2,6 +2,20 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [4.1.5] - 2026-11-28
+
+### Fixed
+- **新增策略无法选择类型**：AddStrategy 的 `Radio.Group` onChange 传事件对象而
+  `handleSelect` 直接 setState，受控值永不匹配选项（handleSelect 增加事件对象兼容，
+  InputNumber/Select 直接传值调用不受影响；全库扫描 RadioGroup 仅此一处如此使用）
+- **决策树误报「存在从根不可达的节点」**：编辑器可达性校验的走查只跟"是"分支且遇叶即停
+  （挂"否"分支的节点被误判不可达），改为递归双分支遍历 + 环路/重复挂接显式检测
+  （树展示区原本就是正确的递归实现，两套逻辑合并为一套）
+
+### Verification
+- 测试环境全新安装库验收：类型选择三类型可选、决策树双叶分支保存通过、
+  build/enable + 事件执行决策输出正常（用户验收）
+
 ## [4.1.4] - 2026-11-28
 
 ### Fixed
