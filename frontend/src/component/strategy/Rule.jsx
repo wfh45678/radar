@@ -26,7 +26,7 @@ export default class Rule extends React.Component{
 				initScore:rule.initScore,
 				baseNum:rule.baseNum,
 				operator:rule.operator,
-				abstractionName:rule.abstractionName,
+				featureName:rule.featureName,
 				rate:rule.rate,
 				max:rule.max,
 				ruleDefinition:rule.ruleDefinition==undefined?null:rule.ruleDefinition,
@@ -39,7 +39,7 @@ export default class Rule extends React.Component{
 				initScore:'0',
 				baseNum:'0',
 				operator:'NONE',
-				abstractionName:'',
+				featureName:'',
 				rate:'100',
 				max:'0',
 				ruleDefinition:null,
@@ -63,7 +63,7 @@ export default class Rule extends React.Component{
         state[name] = value;
 
         if(name=='operator'&&value=='NONE'){
-        	state['abstractionName']='';
+        	state['featureName']='';
         }
         this.setState(state);
     }
@@ -143,7 +143,7 @@ export default class Rule extends React.Component{
 			param.initScore=this.state.initScore,
 			param.baseNum=this.state.baseNum,
 			param.operator=this.state.operator,
-			param.abstractionName=this.state.abstractionName,
+			param.featureName=this.state.featureName,
 			param.rate=this.state.rate,
 			param.max=this.state.max,
 			param.ruleDefinition=this.state.ruleDefinition;
@@ -190,7 +190,7 @@ export default class Rule extends React.Component{
 		if(name=='expression'){
 			param = value[0] + "." + value[1];
 			console.log("param:", param);
-			state['abstractionName'] = param;
+			state['featureName'] = param;
 		}
 		this.setState(state);
 	}
@@ -223,7 +223,7 @@ export default class Rule extends React.Component{
         		help:'',
         		status:'success'
         	},
-        	abstractionName:{
+        	featureName:{
         		help:'',
         		status:'success'
         	},
@@ -262,9 +262,9 @@ export default class Rule extends React.Component{
         	validate.baseNum.status='warning';
         	isValidated=false;
         }
-        if(this.state.operator!='NONE'&&!this.state.abstractionName){
-        	validate.abstractionName.help='请选择特征字段';
-        	validate.abstractionName.status='warning';
+        if(this.state.operator!='NONE'&&!this.state.featureName){
+        	validate.featureName.help='请选择特征字段';
+        	validate.featureName.status='warning';
         	isValidated=false;
         }
         if(this.state.rate < 0 ){
@@ -340,9 +340,9 @@ export default class Rule extends React.Component{
                         <Select value={this.state.operator} onChange={this.handleSelect.bind(this,'operator')} options={[{label:'无', value:'NONE'}, {label:'加', value:'ADD'}, {label:'减', value:'SUB'}, {label:'乘', value:'MUL'}, {label:'除', value:'DIV'}]}/>
                     </FormItem>
 
-                    <FormItem {...formItemLayout} label="指标字段：" help={validate.abstractionName.help} validateStatus={validate.abstractionName.status}>
+                    <FormItem {...formItemLayout} label="指标字段：" help={validate.featureName.help} validateStatus={validate.featureName.status}>
                     {/* 
-                        <Select disabled={this.state.operator=='NONE'} value={this.state.abstractionName} onChange={this.handleSelect.bind(this,'abstractionName')}> 
+                        <Select disabled={this.state.operator=='NONE'} value={this.state.featureName} onChange={this.handleSelect.bind(this,'featureName')}> 
                               {abstractionList==undefined?null:abstractionList.map((x,index)=><Option key={x.value+index} value={x.value}>{x.label}</Option>)}  
                         <Select>
                     */}
@@ -353,7 +353,7 @@ export default class Rule extends React.Component{
 	                    disabled={this.state.operator=='NONE'}
 					    displayRender={this.displayRender}
 					    
-					    defaultValue={this.state.abstractionName.split('.')}
+					    defaultValue={this.state.featureName.split('.')}
 					    onChange={this.handleConditionColumn.bind(this,'expression')}
 						readOnly={this.props.readOnly}
 

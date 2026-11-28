@@ -99,7 +99,7 @@ class RuleList extends Component{
 			initScore:'0',
 			baseNum:'0',
 			operator:'NONE',
-			abstractionName:'',
+			featureName:'',
 			rate:'100',
             max:'0',
 			ruleDefinition:null,

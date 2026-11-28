@@ -112,7 +112,7 @@ export default class HistoryRecord extends React.Component{
                         </FormItem>
 
                         <FormItem {...formItemLayout} label="指标字段：">
-                            <Select value={ruleHistory.abstractionName} readOnly options={[...abstractionList==undefined?null:abstractionList.map(x=>({label:x.label, value:x.value}))]}/>
+                            <Select value={ruleHistory.featureName} readOnly options={[...abstractionList==undefined?null:abstractionList.map(x=>({label:x.label, value:x.value}))]}/>
                         </FormItem>
 
                         <FormItem required={true} {...formItemLayout} label="比率：">
