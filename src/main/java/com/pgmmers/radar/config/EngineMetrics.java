@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  *
  * <p>标签纪律：不引入 modelGuid 等高基数标签（防指标爆炸），模型维度分析由 hitsSort 报表承担。
  * 埋点位置：事件入口 {@code RiskAnalysisEngineServiceImpl.uploadInfo}、
- * 各阶段 {@code AntiFraudServiceImpl.process} / preItems / entity 落库、
+ * 各阶段 {@code AntiFraudServiceImpl.process}（features/adaptations/strategies）/ entity 落库、
  * 决策分布 {@code AntiFraudEngineImpl.executeStrategy}、Groovy 编译 {@code GroovyScriptUtil}。</p>
  *
  * <p>暴露端点：/actuator/prometheus（见 application.yml management 配置）。</p>
@@ -60,7 +60,7 @@ public class EngineMetrics {
         (success ? eventsSuccess : eventsFail).increment();
     }
 
-    /** 记录引擎阶段耗时（毫秒）。stage: entity / preItems / abstractions / adaptations / strategies */
+    /** 记录引擎阶段耗时（毫秒）。stage: entity / features / adaptations / strategies */
     public void recordStage(String stage, long elapsedMillis) {
         Timer.builder(STAGE).tag("stage", stage)
                 .description("引擎各阶段耗时")
@@ -69,10 +69,10 @@ public class EngineMetrics {
                 .record(elapsedMillis, TimeUnit.MILLISECONDS);
     }
 
-    /** 激活器决策分布（pass/review/reject） */
+    /** 策略决策分布（pass/review/reject） */
     public void recordDecision(String risk) {
         Counter.builder(DECISION).tag("risk", risk)
-                .description("激活器决策分布").register(registry)
+                .description("策略决策分布").register(registry)
                 .increment();
     }
 
@@ -114,7 +114,7 @@ public class EngineMetrics {
     }
 
     /**
-     * preItem 插件执行计数 + 耗时（v3.0 插件加固）。
+     * ENRICH 特征插件执行计数 + 耗时（v3.0 插件加固，v4.1 归入特征管线）。
      *
      * <p>plugin 标签取注册表插件 key；插件缺失时统一记为 {@code unknown}（防标签基数爆炸）。
      * result: success / fail / not_found。</p>
@@ -122,9 +122,9 @@ public class EngineMetrics {
     public void recordPluginExecution(String plugin, String result, long elapsedMillis) {
         String boundedPlugin = plugin == null || plugin.isEmpty() ? "unknown" : plugin;
         Counter.builder(PLUGIN_EXEC).tag("plugin", boundedPlugin).tag("result", result)
-                .description("preItem 插件执行计数").register(registry).increment();
+                .description("特征插件执行计数").register(registry).increment();
         Timer.builder(PLUGIN_SECONDS).tag("plugin", boundedPlugin)
-                .description("preItem 插件执行耗时")
+                .description("特征插件执行耗时")
                 .publishPercentiles(0.5, 0.95, 0.99)
                 .register(registry)
                 .record(elapsedMillis, TimeUnit.MILLISECONDS);

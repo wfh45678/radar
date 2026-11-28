@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  *   "features": [
  *     {
  *       "name": "f_ip_qty", "label": "IP交易频次",
- *       "column": "abstractions.tran_ip_1_day_qty",   // 特征变量（fields/preItems/abstractions 路径）
+ *       "column": "features.tran_ip_1_day_qty",       // 特征变量（fields/features 路径，v4.0 包兼容旧前缀）
  *       "weight": 1.0, "defaultScore": 0,
  *       "bins": [
  *         {"label": "<10",  "operator": "Less",         "value": "10", "score": -10},

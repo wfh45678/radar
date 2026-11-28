@@ -14,7 +14,6 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.pgmmers.radar.model.query.StrategyQuery;
-import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.engine.vo.DataColumnInfo;
 import com.pgmmers.radar.service.enums.DataType;
@@ -42,9 +41,6 @@ public class StrategyApiController {
 
     @Autowired
     private com.pgmmers.radar.interceptor.ContextHolder contextHolder;
-
-    @Autowired
-    private FieldService fieldService;
     @Autowired
     private FeatureService featureService;
     @Autowired
@@ -69,76 +65,10 @@ public class StrategyApiController {
     }
 
     /**
-     * 变量树（v4.1 统一）：fields + features 两组（原 preItems/abstractions 三组合并）。
-     * @deprecated 见 {@link FeatureApiController#getColumns}（/feature/columns/{modelId}），前端随 v4.1 切换后移除。
+     * 变量树统一入口已迁移：{@link com.pgmmers.radar.controller.admin.FeatureApiController#getColumns}
+     * （/services/v1/feature/columns/{modelId}，fields + features 两组，原 preItems/abstractions
+     * 三组合并）——v4.1.1 移除本控制器内的旧路径。
      */
-    @Deprecated
-    @GetMapping("/feature/columns/{modelId}")
-    public CommonResult getDataColumns(@PathVariable Long modelId) {
-        CommonResult result = new CommonResult();
-        result.setSuccess(true);
-        result.getData().put("list", featureColumns(modelId));
-        return result;
-    }
-
-    /** 聚合类特征标量节点（报表页历史图选择用，路径随前端 v4.1 切换）。 */
-    @Deprecated
-    @GetMapping("/abstraction/columns/{modelId}")
-    public CommonResult getAbstractionColumns(@PathVariable Long modelId) {
-        CommonResult result = new CommonResult();
-        result.setSuccess(true);
-        List<com.pgmmers.radar.service.engine.vo.DataColumnInfo> features =
-                featureColumns(modelId);
-        com.pgmmers.radar.service.engine.vo.DataColumnInfo featureGroup = null;
-        for (com.pgmmers.radar.service.engine.vo.DataColumnInfo ds : features) {
-            if (com.pgmmers.radar.service.enums.DataType.FEATURES.getName().equals(ds.getValue())) {
-                featureGroup = ds;
-            }
-        }
-        result.getData().put("columns", featureGroup == null ? java.util.List.of() : featureGroup.getChildren());
-        return result;
-    }
-
-    /** fields + features 统一变量树（与 /services/v1/feature/columns 同源）。 */
-    private List<com.pgmmers.radar.service.engine.vo.DataColumnInfo> featureColumns(Long modelId) {
-        List<com.pgmmers.radar.service.engine.vo.DataColumnInfo> list = new ArrayList<>();
-        com.pgmmers.radar.service.engine.vo.DataColumnInfo ds =
-                new com.pgmmers.radar.service.engine.vo.DataColumnInfo(
-                        com.pgmmers.radar.service.enums.DataType.FIELDS.getDesc(),
-                        com.pgmmers.radar.service.enums.DataType.FIELDS.getName());
-        List<FieldVO> listField = fieldService.listField(modelId);
-        for (FieldVO field : listField) {
-            ds.addChildren(field.getLabel(), field.getFieldName(), field.getFieldType());
-        }
-        list.add(ds);
-
-        com.pgmmers.radar.service.engine.vo.DataColumnInfo featureGroup =
-                new com.pgmmers.radar.service.engine.vo.DataColumnInfo(
-                        com.pgmmers.radar.service.enums.DataType.FEATURES.getDesc(),
-                        com.pgmmers.radar.service.enums.DataType.FEATURES.getName());
-        for (FeatureVO feature : featureService.listFeature(modelId)) {
-            com.fasterxml.jackson.databind.JsonNode output = feature.getOutput();
-            if (output != null && output.isArray() && !output.isEmpty()) {
-                List<com.pgmmers.radar.service.engine.vo.DataColumnInfo> children = new ArrayList<>();
-                for (com.fasterxml.jackson.databind.JsonNode col : output) {
-                    String column = col.path("column").asText("");
-                    if (!column.isEmpty()) {
-                        children.add(new com.pgmmers.radar.service.engine.vo.DataColumnInfo(
-                                col.path("title").asText(column), column,
-                                col.path("type").asText("STRING")));
-                    }
-                }
-                if (!children.isEmpty()) {
-                    featureGroup.addChildren(feature.getLabel(), feature.getFeatureName(), children);
-                    continue;
-                }
-            }
-            String type = "ENRICH".equals(feature.getType()) ? "STRING" : FieldType.DOUBLE.name();
-            featureGroup.addChildren(feature.getLabel(), feature.getFeatureName(), type);
-        }
-        list.add(featureGroup);
-        return list;
-    }
 
     @GetMapping("/rule/columns/{modelId}")
 	public CommonResult getRuleColumns(@PathVariable Long modelId) {

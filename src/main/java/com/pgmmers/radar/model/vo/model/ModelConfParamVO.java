@@ -18,7 +18,7 @@ public class ModelConfParamVO implements Serializable {
      */
     private String feed;
     /**
-     * 取数表达式，英文逗号分隔fields.deviceId，abstractions.log_uid_ip_1_day_qty
+     * 取数表达式，英文逗号分隔fields.deviceId，features.log_uid_ip_1_day_qty
      */
     private String expressions;
 

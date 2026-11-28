@@ -75,11 +75,12 @@ assert_ok "$R"
 echo "$R" | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
-acts=d.get('activations') or {}
-assert acts, f'no activations: {d}'
+# v4.1 契约：顶层 strategies（v4.0 为 activations，随特征工程统一更名）
+strs=d.get('strategies') or {}
+assert strs, f'no strategies: {d}'
 hits=d.get('hitsDetail') or {}
 total_hits=sum(len(v) for v in hits.values())
-print(f'    decisions: {json.dumps({k: v[\"risk\"]+\"/\"+str(v[\"score\"]) for k,v in acts.items()}, ensure_ascii=False)}, hits={total_hits}')"
+print(f'    decisions: {json.dumps({k: v[\"risk\"]+\"/\"+str(v.get(\"score\",\"?\")) for k,v in strs.items()}, ensure_ascii=False)}, hits={total_hits}')"
 
 # 10a. getScore
 step "10a" "getScore（Redis 通道）"

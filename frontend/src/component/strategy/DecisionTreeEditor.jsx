@@ -55,7 +55,7 @@ class DecisionTreeEditor extends Component{
                     loading:false
                 });
             });
-        FetchUtil('/strategy/feature/columns/'+this.props.params.id,'GET','',
+        FetchUtil('/feature/columns/'+this.props.params.id,'GET','',
             (data) => {
                 this.setState({
                     fieldList:data.data.list
