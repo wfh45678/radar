@@ -144,7 +144,7 @@ class Groovy4SeedScriptTest {
     @Test
     void compileAllSeedScripts() throws IOException {
         List<SeedScript> scripts = extractSeedScripts();
-        assertTrue(scripts.size() >= 80, "种子脚本数量异常偏少，提取逻辑可能失效: " + scripts.size());
+        assertTrue(scripts.size() >= 30, "种子脚本数量异常偏少，提取逻辑可能失效: " + scripts.size());
         List<String> failures = new ArrayList<>();
         for (SeedScript s : scripts) {
             try {

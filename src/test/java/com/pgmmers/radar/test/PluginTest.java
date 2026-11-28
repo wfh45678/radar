@@ -1,7 +1,7 @@
 package com.pgmmers.radar.test;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
 import com.pgmmers.radar.support.AbstractIntegrationTest;
 import java.util.Comparator;
@@ -52,28 +52,46 @@ public class PluginTest extends AbstractIntegrationTest {
         Assertions.assertNotNull(pluginManager.entry("IP2LOCATION").legacyMetaJson());
     }
 
-    private Object execute(String pluginKey, PreItemVO item) throws Exception {
-        String[] sourceField = item.getSourceField() == null ? new String[0] : item.getSourceField().split(",");
-        return pluginManager.entry(pluginKey).execute(item, jsonInfo, sourceField);
+    private Object execute(String pluginKey, FeatureVO feature) throws Exception {
+        java.util.List<String> sf = new java.util.ArrayList<>();
+        if (feature.getDefinition() != null && feature.getDefinition().has("sourceFields")) {
+            feature.getDefinition().get("sourceFields").forEach(f -> sf.add(f.asText()));
+        }
+        Map<String, Map<String, ?>> context = new HashMap<>();
+        context.put("fields", jsonInfo);
+        context.put("features", new HashMap<String, Object>());
+        return pluginManager.entry(pluginKey).execute(feature, context, sf.toArray(new String[0]));
     }
 
     @Test
     public void ALLINONE() throws Exception {
-        PreItemVO item = new PreItemVO();
-        item.setSourceField("firsName,lastName");
+                FeatureVO feature = new FeatureVO();
+        feature.setType("ENRICH");
+        com.fasterxml.jackson.databind.node.ObjectNode definition = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        definition.put("plugin", "ALLINONE");
+        com.fasterxml.jackson.databind.node.ArrayNode sourceFields = definition.putArray("sourceFields");
+        sourceFields.add("firsName");
+        sourceFields.add("lastName");
+        feature.setDefinition(definition);
         jsonInfo.put("firsName", "aaa");
         jsonInfo.put("lastName", "ccc");
-        Object result = execute("ALLINONE", item);
+        Object result = execute("ALLINONE", feature);
+
         Assertions.assertEquals("aaa_ccc", result);
     }
 
     @Test
     public void DATEFORMAT() throws Exception {
-        PreItemVO item = new PreItemVO();
-        item.setArgs("yyyyMMdd HH:mm:ss");
-        item.setSourceField("time");
+        FeatureVO feature = new FeatureVO();
+        feature.setType("ENRICH");
+        com.fasterxml.jackson.databind.node.ObjectNode definition = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        definition.put("plugin", "DATEFORMAT");
+        definition.put("args", "yyyyMMdd HH:mm:ss");
+        com.fasterxml.jackson.databind.node.ArrayNode sourceFields = definition.putArray("sourceFields");
+        sourceFields.add("time");
+        feature.setDefinition(definition);
         jsonInfo.put("time", System.currentTimeMillis());
-        Object result = execute("DATEFORMAT", item);
+        Object result = execute("DATEFORMAT", feature);
         Assertions.assertNotNull(result);
         logger.info("{}", result);
     }
@@ -85,13 +103,18 @@ public class PluginTest extends AbstractIntegrationTest {
 
     @Test
     public void HTTP_UTIL() throws Exception {
-        PreItemVO item = new PreItemVO();
-        item.setReqType(HttpMethod.GET.name());
-        item.setArgs("http://t.weather.sojson.com/api/weather/city/101030100");
-        item.setSourceField("json");
+        FeatureVO feature = new FeatureVO();
+        feature.setType("ENRICH");
+        com.fasterxml.jackson.databind.node.ObjectNode definition = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        definition.put("plugin", "HTTP_UTIL");
+        definition.put("reqType", "GET");
+        definition.put("args", "http://t.weather.sojson.com/api/weather/city/101030100");
+        com.fasterxml.jackson.databind.node.ArrayNode sourceFields = definition.putArray("sourceFields");
+        sourceFields.add("json");
+        feature.setDefinition(definition);
         jsonInfo.put("json", "");
         try {
-            Object result = execute("HTTP_UTIL", item);
+            Object result = execute("HTTP_UTIL", feature);
             Assertions.assertNotNull(result);
             logger.info("{}", result);
         } catch (Exception e) {
@@ -102,11 +125,16 @@ public class PluginTest extends AbstractIntegrationTest {
 
     @Test
     public void IP2LOCATION() throws Exception {
-        PreItemVO item = new PreItemVO();
-        item.setSourceField("ip");
+        FeatureVO feature = new FeatureVO();
+        feature.setType("ENRICH");
+        com.fasterxml.jackson.databind.node.ObjectNode definition = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        definition.put("plugin", "IP2LOCATION");
+        com.fasterxml.jackson.databind.node.ArrayNode sourceFields = definition.putArray("sourceFields");
+        sourceFields.add("ip");
+        feature.setDefinition(definition);
         jsonInfo.put("ip", "1.1.1.1");
         @SuppressWarnings("unchecked")
-        Map<String, Object> location = (Map<String, Object>) execute("IP2LOCATION", item);
+        Map<String, Object> location = (Map<String, Object>) execute("IP2LOCATION", feature);
         Assertions.assertNotNull(location);
         Assertions.assertNotNull(location.get("country"));
         logger.info("{}", location);
@@ -114,11 +142,16 @@ public class PluginTest extends AbstractIntegrationTest {
 
     @Test
     public void MOBILE2LOCATION() throws Exception {
-        PreItemVO item = new PreItemVO();
-        item.setSourceField("phone");
+        FeatureVO feature = new FeatureVO();
+        feature.setType("ENRICH");
+        com.fasterxml.jackson.databind.node.ObjectNode definition = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        definition.put("plugin", "MOBILE2LOCATION");
+        com.fasterxml.jackson.databind.node.ArrayNode sourceFields = definition.putArray("sourceFields");
+        sourceFields.add("phone");
+        feature.setDefinition(definition);
         jsonInfo.put("phone", "18657150000");
         @SuppressWarnings("unchecked")
-        Map<String, Object> location = (Map<String, Object>) execute("MOBILE2LOCATION", item);
+        Map<String, Object> location = (Map<String, Object>) execute("MOBILE2LOCATION", feature);
         Assertions.assertNotNull(location);
         Assertions.assertEquals("中国", location.get("country"));
         logger.info("{}", location);
@@ -126,21 +159,32 @@ public class PluginTest extends AbstractIntegrationTest {
 
     @Test
     public void SENSITIVE_TIME() throws Exception {
-        PreItemVO item = new PreItemVO();
-        item.setSourceField("time");
+                FeatureVO feature = new FeatureVO();
+        feature.setType("ENRICH");
+        com.fasterxml.jackson.databind.node.ObjectNode definition = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        definition.put("plugin", "SENSITIVE_TIME");
+        com.fasterxml.jackson.databind.node.ArrayNode sourceFields = definition.putArray("sourceFields");
+        sourceFields.add("time");
+        feature.setDefinition(definition);
         jsonInfo.put("time", System.currentTimeMillis());
-        Object result = execute("SENSITIVE_TIME", item);
+        Object result = execute("SENSITIVE_TIME", feature);
+
         Assertions.assertNotNull(result);
         logger.info("{}", result);
     }
 
     @Test
     public void SUBSTRING() throws Exception {
-        PreItemVO item = new PreItemVO();
-        item.setArgs("0,7");
-        item.setSourceField("phone");
+        FeatureVO feature = new FeatureVO();
+        feature.setType("ENRICH");
+        com.fasterxml.jackson.databind.node.ObjectNode definition = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        definition.put("plugin", "SUBSTRING");
+        definition.put("args", "0,7");
+        com.fasterxml.jackson.databind.node.ArrayNode sourceFields = definition.putArray("sourceFields");
+        sourceFields.add("phone");
+        feature.setDefinition(definition);
         jsonInfo.put("phone", "18657150000");
-        Object result = execute("SUBSTRING", item);
+        Object result = execute("SUBSTRING", feature);
         Assertions.assertEquals("1865715", result);
     }
 }

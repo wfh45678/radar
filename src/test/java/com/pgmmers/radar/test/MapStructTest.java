@@ -1,6 +1,5 @@
 package com.pgmmers.radar.test;
 
-import com.pgmmers.radar.mapper.AbstractionMapper;
 import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
 import com.pgmmers.radar.mapper.DataListRecordMapper;
@@ -8,11 +7,10 @@ import com.pgmmers.radar.mapper.DataListsMapper;
 import com.pgmmers.radar.mapper.FieldMapper;
 import com.pgmmers.radar.mapper.MobileInfoMapper;
 import com.pgmmers.radar.mapper.ModelMapper;
-import com.pgmmers.radar.mapper.PreItemMapper;
+import com.pgmmers.radar.mapper.FeatureMapper;
 import com.pgmmers.radar.mapper.RuleHistoryMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
 import com.pgmmers.radar.mapper.UserMapper;
-import com.pgmmers.radar.converter.AbstractionMapping;
 import com.pgmmers.radar.converter.StrategyMapping;
 import com.pgmmers.radar.converter.DataListMetaMapping;
 import com.pgmmers.radar.converter.DataListRecordMapping;
@@ -20,11 +18,11 @@ import com.pgmmers.radar.converter.DataListsMapping;
 import com.pgmmers.radar.converter.FieldMapping;
 import com.pgmmers.radar.converter.MobileInfoMapping;
 import com.pgmmers.radar.converter.ModelMapping;
-import com.pgmmers.radar.converter.PreItemMapping;
+import com.pgmmers.radar.converter.FeatureMapping;
 import com.pgmmers.radar.converter.RuleHistoryMapping;
 import com.pgmmers.radar.converter.RuleMapping;
 import com.pgmmers.radar.converter.UserMapping;
-import com.pgmmers.radar.model.entity.AbstractionPO;
+import com.pgmmers.radar.model.entity.FeaturePO;
 import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListMetaPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
@@ -32,20 +30,18 @@ import com.pgmmers.radar.model.entity.DataListsPO;
 import com.pgmmers.radar.model.entity.FieldPO;
 import com.pgmmers.radar.model.entity.MobileInfoPO;
 import com.pgmmers.radar.model.entity.ModelPO;
-import com.pgmmers.radar.model.entity.PreItemPO;
 import com.pgmmers.radar.model.entity.RuleHistoryPO;
 import com.pgmmers.radar.model.entity.RulePO;
 import com.pgmmers.radar.model.entity.UserPO;
 import com.pgmmers.radar.model.vo.admin.UserVO;
 import com.pgmmers.radar.model.vo.data.MobileInfoVO;
-import com.pgmmers.radar.model.vo.model.AbstractionVO;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListMetaVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
 import com.pgmmers.radar.model.vo.model.ModelVO;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
 import com.pgmmers.radar.model.vo.model.RuleHistoryVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
 import com.pgmmers.radar.support.AbstractIntegrationTest;
@@ -71,10 +67,6 @@ public class MapStructTest extends AbstractIntegrationTest {
     private ModelMapping modelMapping;
 
     @Resource
-    private AbstractionMapping abstractionMapping;
-    @Autowired
-    private AbstractionMapper abstractionMapper;
-    @Resource
     private StrategyMapping strategyMapping;
     @Autowired
     private StrategyMapper strategyMapper;
@@ -98,12 +90,12 @@ public class MapStructTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void abstractionTest() {
-        List<AbstractionPO> pos = abstractionMapper.selectList(null);
+    public void featureTest() {
+        List<FeaturePO> pos = featureMapper.selectList(null);
         Assertions.assertNotNull(pos);
-        List<AbstractionVO> vos = abstractionMapping.sourceToTarget(pos);
+        List<FeatureVO> vos = featureMapping.sourceToTarget(pos);
         Assertions.assertNotNull(vos);
-        List<AbstractionPO> pos1 = abstractionMapping.targetToSource(vos);
+        List<FeaturePO> pos1 = featureMapping.targetToSource(vos);
         Assertions.assertNotNull(pos1);
     }
 
@@ -207,19 +199,10 @@ public class MapStructTest extends AbstractIntegrationTest {
     }
 
     @Resource
-    private PreItemMapping preItemMapping;
+    private FeatureMapping featureMapping;
     @Autowired
-    private PreItemMapper preItemMapper;
+    private FeatureMapper featureMapper;
 
-    @Test
-    public void preItemTest() {
-        List<PreItemPO> pos = preItemMapper.selectList(null);
-        Assertions.assertNotNull(pos);
-        List<PreItemVO> vos = preItemMapping.sourceToTarget(pos);
-        Assertions.assertNotNull(vos);
-        List<PreItemPO> pos1 = preItemMapping.targetToSource(vos);
-        Assertions.assertNotNull(pos1);
-    }
 
     @Resource
     private RuleHistoryMapping ruleHistoryMapping;

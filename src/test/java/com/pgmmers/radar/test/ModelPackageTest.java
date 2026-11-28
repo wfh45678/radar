@@ -8,7 +8,7 @@ import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.FieldPO;
 import com.pgmmers.radar.model.entity.ModelPO;
-import com.pgmmers.radar.model.entity.PreItemPO;
+import com.pgmmers.radar.model.entity.FeaturePO;
 import com.pgmmers.radar.model.entity.RulePO;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginEntry;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
@@ -72,12 +72,13 @@ class ModelPackageTest {
         field.setFieldName("userIP");
         pkg.setFields(List.of(field));
 
-        PreItemPO preItem = new PreItemPO();
-        preItem.setId(2L);
-        preItem.setModelId(99L);
-        preItem.setDestField("ipInfo");
-        preItem.setPlugin("IP2LOCATION");
-        pkg.setPreItems(List.of(preItem));
+        FeaturePO feature = new FeaturePO();
+        feature.setId(2L);
+        feature.setModelId(99L);
+        feature.setFeatureName("ipInfo");
+        feature.setType("ENRICH");
+        feature.setDefinition("{\"plugin\":\"IP2LOCATION\"}");
+        pkg.setFeatures(List.of(feature));
 
         StrategyPO strategy = new StrategyPO();
         strategy.setId(3L);
@@ -105,7 +106,8 @@ class ModelPackageTest {
         assertEquals("Event", parsed.getModel().getEntityName());
         assertEquals(1, parsed.getFields().size());
         assertEquals("userIP", parsed.getFields().get(0).getFieldName());
-        assertEquals("IP2LOCATION", parsed.getPreItems().get(0).getPlugin());
+        assertEquals("ENRICH", parsed.getFeatures().get(0).getType());
+        assertTrue(parsed.getFeatures().get(0).getDefinition().contains("IP2LOCATION"));
         // 图内引用键保留（导入时才重映射）
         assertEquals(Long.valueOf(99L), parsed.getFields().get(0).getModelId());
         assertEquals(Long.valueOf(3L), parsed.getRules().get(0).getStrategyId());

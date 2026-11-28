@@ -35,17 +35,14 @@ class ConditionEvaluatorTest {
         fields.put("emptyStr", "");
         fields.put("zero", 0);
 
-        Map<String, Object> preItems = new HashMap<>();
-        preItems.put("ipProvince", "浙江省");
-
-        Map<String, Object> abstractions = new HashMap<>();
-        abstractions.put("tran_ip_1_day_qty", 35);
-        abstractions.put("amt_1_day_sum", 9800.0);
+        Map<String, Object> features = new HashMap<>();
+        features.put("ipProvince", "浙江省");
+        features.put("tran_ip_1_day_qty", 35);
+        features.put("amt_1_day_sum", 9800.0);
 
         data = new HashMap<>();
         data.put("fields", fields);
-        data.put("preItems", preItems);
-        data.put("abstractions", abstractions);
+        data.put("features", features);
 
         Map<String, String> blackIp = new HashMap<>();
         blackIp.put("1.2.3.4", "");
@@ -74,9 +71,9 @@ class ConditionEvaluatorTest {
     @Test
     @DisplayName("数值排序操作符：Greater/Less 及边界（>=30 命中 35）")
     void numericOrdering() {
-        assertTrue(eval(smpl("Greater_Equal", "abstractions.tran_ip_1_day_qty", "DOUBLE", "30", "DOUBLE")));
-        assertTrue(eval(smpl("Greater", "abstractions.tran_ip_1_day_qty", "DOUBLE", "34.9", "DOUBLE")));
-        assertFalse(eval(smpl("Greater", "abstractions.tran_ip_1_day_qty", "DOUBLE", "35", "DOUBLE")));
+        assertTrue(eval(smpl("Greater_Equal", "features.tran_ip_1_day_qty", "DOUBLE", "30", "DOUBLE")));
+        assertTrue(eval(smpl("Greater", "features.tran_ip_1_day_qty", "DOUBLE", "34.9", "DOUBLE")));
+        assertFalse(eval(smpl("Greater", "features.tran_ip_1_day_qty", "DOUBLE", "35", "DOUBLE")));
         assertTrue(eval(smpl("Less", "fields.age", "INTEGER", "65", "INTEGER")));
         assertTrue(eval(smpl("Less_Equal", "fields.age", "INTEGER", "20", "INTEGER")));
         assertFalse(eval(smpl("Less_Equal", "fields.age", "INTEGER", "19", "INTEGER")));
@@ -123,14 +120,14 @@ class ConditionEvaluatorTest {
         assertFalse(eval("{\"class\":\"SMPL\",\"operator\":\"IsNotNull\",\"expressions\":[{\"class\":\"ENTATTR\",\"column\":\"fields.emptyStr\"}]}"));
         assertFalse(eval("{\"class\":\"SMPL\",\"operator\":\"IsNotNull\",\"expressions\":[{\"class\":\"ENTATTR\",\"column\":\"fields.zero\"}]}"));
         assertTrue(eval("{\"class\":\"SMPL\",\"operator\":\"IsNull\",\"expressions\":[{\"class\":\"ENTATTR\",\"column\":\"fields.notExist\"}]}"));
-        assertTrue(eval("{\"class\":\"SMPL\",\"operator\":\"IsNotNull\",\"expressions\":[{\"class\":\"ENTATTR\",\"column\":\"preItems.ipProvince\"}]}"));
+        assertTrue(eval("{\"class\":\"SMPL\",\"operator\":\"IsNotNull\",\"expressions\":[{\"class\":\"ENTATTR\",\"column\":\"features.ipProvince\"}]}"));
     }
 
     @Test
     @DisplayName("Field_ 前缀：字段对字段比较")
     void fieldOps() {
         assertTrue(eval("{\"class\":\"SMPL\",\"operator\":\"Field_Greater\",\"expressions\":["
-                + "{\"class\":\"ENTATTR\",\"column\":\"abstractions.amt_1_day_sum\"},"
+                + "{\"class\":\"ENTATTR\",\"column\":\"features.amt_1_day_sum\"},"
                 + "{\"class\":\"ENTATTR\",\"column\":\"fields.amount\"}]}"));
         assertTrue(eval("{\"class\":\"SMPL\",\"operator\":\"Field_Equal\",\"expressions\":["
                 + "{\"class\":\"ENTATTR\",\"column\":\"fields.age\"},"
@@ -143,7 +140,7 @@ class ConditionEvaluatorTest {
     @Test
     @DisplayName("PDCT linking：All/Any/NotAll/None（对齐前端生成语义）")
     void compositeLinking() {
-        String ge30 = smpl("Greater_Equal", "abstractions.tran_ip_1_day_qty", "DOUBLE", "30", "DOUBLE");
+        String ge30 = smpl("Greater_Equal", "features.tran_ip_1_day_qty", "DOUBLE", "30", "DOUBLE");
         String le25 = smpl("Less_Equal", "fields.age", "INTEGER", "25", "INTEGER");
         String eqWeb = smpl("Equal", "fields.channel", "STRING", "web", "STRING");
 
@@ -179,7 +176,7 @@ class ConditionEvaluatorTest {
         assertTrue(eval(smpl("Equal", "fields.notExist", "STRING", "", "STRING") // null vs 空串 → 不等
                 ) == false);
         // 非数值字段回退字符串排序
-        assertTrue(eval(smpl("Greater", "preItems.ipProvince", "STRING", "江苏", "STRING")));
+        assertTrue(eval(smpl("Greater", "features.ipProvince", "STRING", "江苏", "STRING")));
     }
 
     @Test
@@ -191,12 +188,24 @@ class ConditionEvaluatorTest {
     }
 
     @Test
-    @DisplayName("resolveColumn：点号路径 + 无点号回退 abstractions/fields")
+    @DisplayName("resolveColumn：点号路径 + 多级嵌套 + 无点号回退 features/fields + 旧前缀 alias")
     void resolveColumnFallback() {
-        assertEquals(35, ((Number) ConditionEvaluator.resolveColumn("abstractions.tran_ip_1_day_qty", data)).intValue());
+        assertEquals(35, ((Number) ConditionEvaluator.resolveColumn("features.tran_ip_1_day_qty", data)).intValue());
         assertEquals("app", ConditionEvaluator.resolveColumn("fields.channel", data));
-        // 无点号：先 abstractions 后 fields
+        // 无点号：先 features 后 fields
         assertEquals(35, ((Number) ConditionEvaluator.resolveColumn("tran_ip_1_day_qty", data)).intValue());
         assertEquals("app", ConditionEvaluator.resolveColumn("channel", data));
+        // v4.0 旧前缀 alias → features（兼容未搬迁的 v4.0 策略包 DEFINITION）
+        assertEquals(35, ((Number) ConditionEvaluator.resolveColumn("abstractions.tran_ip_1_day_qty", data)).intValue());
+        assertEquals("浙江省", ConditionEvaluator.resolveColumn("preItems.ipProvince", data));
+        // 多级点路径嵌套（多列特征 features.<name>.<column>）
+        @SuppressWarnings("unchecked")
+        Map<String, Object> featuresMap = (Map<String, Object>) data.get("features");
+        Map<String, Object> ipInfo = new HashMap<>();
+        ipInfo.put("country", "中国");
+        featuresMap.put("ipInfo", ipInfo);
+        assertEquals("中国", ConditionEvaluator.resolveColumn("features.ipInfo.country", data));
+        // 旧前缀 + 嵌套组合
+        assertEquals("中国", ConditionEvaluator.resolveColumn("preItems.ipInfo.country", data));
     }
 }

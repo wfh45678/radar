@@ -36,7 +36,7 @@ class ScoreCardExecutorTest {
         abstractions.put("amt_1_day_sum", 9800.0);
         data = new HashMap<>();
         data.put("fields", fields);
-        data.put("abstractions", abstractions);
+        data.put("features", abstractions);
 
         Map<String, String> highRiskArea = new HashMap<>();
         highRiskArea.put("OVERSEAS", "");
@@ -64,7 +64,7 @@ class ScoreCardExecutorTest {
                 + "     {\"label\":\"<18\",\"operator\":\"Less\",\"value\":\"18\",\"score\":-20},"
                 + "     {\"label\":\"18-25\",\"operator\":\"Less_Equal\",\"value\":\"25\",\"score\":-10}"
                 + "   ]},"
-                + "  {\"name\":\"f_ip\",\"label\":\"IP频次\",\"column\":\"abstractions.tran_ip_1_day_qty\",\"weight\":2.0,\"defaultScore\":5,"
+                + "  {\"name\":\"f_ip\",\"label\":\"IP频次\",\"column\":\"features.tran_ip_1_day_qty\",\"weight\":2.0,\"defaultScore\":5,"
                 + "   \"bins\":["
                 + "     {\"label\":\">=30\",\"operator\":\"Greater_Equal\",\"value\":\"30\",\"score\":30}"
                 + "   ]}"
@@ -100,7 +100,7 @@ class ScoreCardExecutorTest {
         String definition = "{"
                 + "\"initialScore\": 0,"
                 + "\"features\": ["
-                + "  {\"name\":\"f_ip\",\"label\":\"IP频次\",\"column\":\"abstractions.tran_ip_1_day_qty\",\"weight\":1.0,\"defaultScore\":0,"
+                + "  {\"name\":\"f_ip\",\"label\":\"IP频次\",\"column\":\"features.tran_ip_1_day_qty\",\"weight\":1.0,\"defaultScore\":0,"
                 + "   \"bins\":[{\"label\":\">=30\",\"operator\":\"Greater_Equal\",\"value\":\"30\",\"score\":120}]}"
                 + "]}";
         assertEquals("reject", executor.execute(strategy(definition, 100, 50), data, lists).getRisk());
@@ -113,11 +113,11 @@ class ScoreCardExecutorTest {
     void listBin() throws Exception {
         Map<String, Object> preItems = new HashMap<>();
         preItems.put("country", "OVERSEAS");
-        data.put("preItems", preItems);
+        data.put("features", preItems);
         String definition = "{"
                 + "\"initialScore\": 0,"
                 + "\"features\": ["
-                + "  {\"name\":\"f_area\",\"label\":\"地区\",\"column\":\"preItems.country\",\"weight\":1.0,\"defaultScore\":0,"
+                + "  {\"name\":\"f_area\",\"label\":\"地区\",\"column\":\"features.country\",\"weight\":1.0,\"defaultScore\":0,"
                 + "   \"bins\":[{\"label\":\"高危地区\",\"operator\":\"InList\",\"value\":\"high_risk_area\",\"score\":80}]}"
                 + "]}";
         StrategyOutcome outcome = executor.execute(strategy(definition, 100, 50), data, lists);

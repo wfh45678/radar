@@ -34,7 +34,7 @@ class DecisionTreeExecutorTest {
         abstractions.put("tran_ip_1_day_qty", 35);
         data = new HashMap<>();
         data.put("fields", fields);
-        data.put("abstractions", abstractions);
+        data.put("features", abstractions);
 
         Map<String, String> whiteUser = new HashMap<>();
         whiteUser.put("u_1001", "");
@@ -66,7 +66,7 @@ class DecisionTreeExecutorTest {
                 + "{\"class\":\"ENTATTR\",\"column\":\"fields.userId\"},"
                 + "{\"class\":\"CONST\",\"type\":\"LIST\",\"value\":\"white_user\"}]}";
         String ipFrequent = "{\"class\":\"SMPL\",\"operator\":\"Greater_Equal\",\"expressions\":["
-                + "{\"class\":\"ENTATTR\",\"column\":\"abstractions.tran_ip_1_day_qty\"},"
+                + "{\"class\":\"ENTATTR\",\"column\":\"features.tran_ip_1_day_qty\"},"
                 + "{\"class\":\"CONST\",\"type\":\"DOUBLE\",\"value\":\"30\"}]}";
         return "{\"rootId\":\"n1\",\"nodes\":["
                 + cond("n1", "白名单?", whiteCheck, "n2", "n3") + ","
@@ -114,10 +114,10 @@ class DecisionTreeExecutorTest {
     void reviewPath() throws Exception {
         Map<String, Object> fields = new HashMap<>(data.get("fields"));
         fields.put("userId", "u_9999");
-        Map<String, Object> abstractions = new HashMap<>(data.get("abstractions"));
+        Map<String, Object> abstractions = new HashMap<>(data.get("features"));
         abstractions.put("tran_ip_1_day_qty", 5);
         data.put("fields", fields);
-        data.put("abstractions", abstractions);
+        data.put("features", abstractions);
         StrategyOutcome outcome = executor.execute(strategy(sampleTree()), data, lists);
         assertEquals("review", outcome.getRisk());
         assertEquals(50, outcome.getScore().intValue());

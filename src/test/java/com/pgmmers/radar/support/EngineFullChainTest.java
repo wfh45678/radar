@@ -200,10 +200,13 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                 "\"eventId\":\"" + REQ_ID + "_b\""));
         JSONObject upload2 = parse(exchange(HttpMethod.POST, "/services/v1/uploadInfo",
                 new HttpEntity<>(uploadForm2, formHeaders())), "事件上传2");
-        // activations 键为引擎对外契约（v4.0 策略更名后保持不变）
-        assertTrue(upload2.containsKey("activations")
-                        && !upload2.getJSONObject("activations").isEmpty(),
-                "上传结果应包含 activations 决策: " + upload2);
+        // strategies 键为 v4.1 引擎对外契约（v4.0 为 activations，随特征工程统一更名）
+        assertTrue(upload2.containsKey("strategies")
+                        && !upload2.getJSONObject("strategies").isEmpty(),
+                "上传结果应包含 strategies 决策: " + upload2);
+        // features 键：ENRICH 特征产出（ipLocationPre 等）合并入 features 命名空间
+        assertTrue(upload2.containsKey("features"),
+                "上传结果应包含 features: " + upload2);
 
         // getScore（Redis 通道）
         JSONObject score = parse(exchange(HttpMethod.GET,
@@ -280,15 +283,15 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                 new HttpEntity<>(form, formHeaders())), "策略类型事件上传");
 
         // 三种策略类型都应产出决策（键为策略名）
-        JSONObject activations = upload.getJSONObject("activations");
-        assertNotNull(activations, "决策结果缺失: " + upload);
-        assertTrue(activations.containsKey("transaction_exception"), "规则集策略未产出决策: " + activations);
-        assertTrue(activations.containsKey("transaction_scorecard"), "评分卡策略未产出决策: " + activations);
-        assertTrue(activations.containsKey("transaction_tree"), "决策树策略未产出决策: " + activations);
+        JSONObject strategies = upload.getJSONObject("strategies");
+        assertNotNull(strategies, "决策结果缺失: " + upload);
+        assertTrue(strategies.containsKey("transaction_exception"), "规则集策略未产出决策: " + strategies);
+        assertTrue(strategies.containsKey("transaction_scorecard"), "评分卡策略未产出决策: " + strategies);
+        assertTrue(strategies.containsKey("transaction_tree"), "决策树策略未产出决策: " + strategies);
 
         // 评分卡：特征分箱明细（feature_*）；首笔事件（频次=1、金额=500）总分 480 → pass
-        assertEquals("pass", activations.getJSONObject("transaction_scorecard").getString("risk"),
-                "评分卡决策与预期不符: " + activations);
+        assertEquals("pass", strategies.getJSONObject("transaction_scorecard").getString("risk"),
+                "评分卡决策与预期不符: " + strategies);
         JSONArray scorecardHits = upload.getJSONObject("hitsDetail").getJSONArray("transaction_scorecard");
         assertNotNull(scorecardHits, "评分卡命中明细缺失");
         assertTrue(scorecardHits.stream().map(h -> ((JSONObject) h).getString("key"))
@@ -296,9 +299,14 @@ class EngineFullChainTest extends AbstractIntegrationTest {
                 "评分卡明细 key 应为特征标识: " + scorecardHits);
 
         // 决策树：路径明细（node_*）；白名单为空必走 N 分支，后续分支依赖 IP 插件可用性，容忍 pass/reject
-        String treeRisk = activations.getJSONObject("transaction_tree").getString("risk");
+        String treeRisk = strategies.getJSONObject("transaction_tree").getString("risk");
         assertTrue("pass".equals(treeRisk) || "reject".equals(treeRisk),
-                "决策树决策异常: " + activations);
+                "决策树决策异常: " + strategies);
+        // features 命名空间：ENRICH 多列（ipLocationPre）与 AGGREGATE 标量并存
+        JSONObject features = upload.getJSONObject("features");
+        assertNotNull(features, "features 缺失: " + upload);
+        assertTrue(features.containsKey("tran_ip_1_day_qty") || features.containsKey("log_ip_1_day_qty"),
+                "AGGREGATE 特征产出缺失: " + features);
         JSONArray treeHits = upload.getJSONObject("hitsDetail").getJSONArray("transaction_tree");
         assertNotNull(treeHits, "决策树命中明细缺失");
         assertTrue(treeHits.stream().map(h -> ((JSONObject) h).getString("key"))
