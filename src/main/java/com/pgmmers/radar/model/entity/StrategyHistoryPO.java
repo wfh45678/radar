@@ -28,8 +28,8 @@ public class StrategyHistoryPO {
     /**
      * 操作人
      */
-    @TableField("MERCHANT_CODE")
-    private String merchantCode;
+    @TableField("OPERATOR")
+    private String operator;
 
     /**
      * 策略类型
@@ -63,12 +63,12 @@ public class StrategyHistoryPO {
         this.strategyId = strategyId;
     }
 
-    public String getMerchantCode() {
-        return merchantCode;
+    public String getOperator() {
+        return operator;
     }
 
-    public void setMerchantCode(String merchantCode) {
-        this.merchantCode = merchantCode;
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 
     public String getType() {

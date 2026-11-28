@@ -152,7 +152,7 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
         try {
             StrategyHistoryPO history = new StrategyHistoryPO();
             history.setStrategyId(strategy.getId());
-            history.setMerchantCode(operator);
+            history.setOperator(operator);
             history.setType(strategy.getType());
             history.setDefinition(JsonUtils.jsonNodeToString(strategy.getDefinition()));
             history.setUpdateTime(new Date());
@@ -177,7 +177,7 @@ public class StrategyServiceImpl extends BaseLocalCacheService implements Strate
             StrategyHistoryVO vo = new StrategyHistoryVO();
             vo.setId(po.getId());
             vo.setStrategyId(po.getStrategyId());
-            vo.setMerchantCode(po.getMerchantCode());
+            vo.setOperator(po.getOperator());
             vo.setType(po.getType());
             vo.setDefinition(JsonUtils.getJsonNode(po.getDefinition()));
             vo.setUpdateTime(po.getUpdateTime());

@@ -15,7 +15,7 @@ public class StrategyHistoryVO implements Serializable {
 
     private Long strategyId;
 
-    private String merchantCode;
+    private String operator;
 
     private String type;
 
@@ -39,12 +39,12 @@ public class StrategyHistoryVO implements Serializable {
         this.strategyId = strategyId;
     }
 
-    public String getMerchantCode() {
-        return merchantCode;
+    public String getOperator() {
+        return operator;
     }
 
-    public void setMerchantCode(String merchantCode) {
-        this.merchantCode = merchantCode;
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 
     public String getType() {

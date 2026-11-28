@@ -11,7 +11,7 @@ import java.util.Map;
  * 单个策略的执行结果（v4.0 策略 SPI）。
  *
  * <p>由 {@link StrategyExecutor} 产出，编排层（AntiFraudEngineImpl）统一汇总为
- * 引擎响应的 activations / hitsDetail 结构（键名保持 v3.x 兼容）。</p>
+ * 引擎响应的 strategies / hitsDetail 结构（v4.1 起正名）。</p>
  */
 public class StrategyOutcome {
 

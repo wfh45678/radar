@@ -55,7 +55,7 @@ CREATE TABLE `engine_feature` (
   `FEATURE_NAME` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '特征名（上下文引用键 features.<featureName>）',
   `TYPE` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '特征类型：ENRICH/AGGREGATE/DERIVED/RATIO',
   `LABEL` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT '',
-  `SCENARIO_ID` bigint NOT NULL COMMENT 'model id',
+  `SCENARIO_ID` bigint NOT NULL COMMENT 'scenario id',
   `ORDER_NO` int DEFAULT NULL COMMENT '阶段内执行顺序（链式依赖按此排序）',
   `COMMENT` varchar(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '备注',
   `STATUS` int NOT NULL DEFAULT '1' COMMENT '状态：1=启用',
@@ -64,7 +64,7 @@ CREATE TABLE `engine_feature` (
   `CREATE_TIME` datetime NOT NULL,
   `UPDATE_TIME` datetime NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `idx_feature_model` (`SCENARIO_ID`)
+  KEY `idx_feature_scenario` (`SCENARIO_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=475 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -90,7 +90,7 @@ CREATE TABLE `engine_strategy` (
   `STRATEGY_NAME` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '名称',
   `TYPE` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'RULE_SET' COMMENT '策略类型：RULE_SET/SCORECARD/DECISION_TREE',
   `LABEL` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `SCENARIO_ID` bigint NOT NULL COMMENT 'model id',
+  `SCENARIO_ID` bigint NOT NULL COMMENT 'scenario id',
   `COMMENT` varchar(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '注释',
   `BOTTOM` int NOT NULL DEFAULT '0' COMMENT '底部阀值',
   `MEDIAN` int NOT NULL DEFAULT '0' COMMENT '中间阀值',
@@ -114,7 +114,7 @@ DROP TABLE IF EXISTS `engine_strategy_history`;
 CREATE TABLE `engine_strategy_history` (
   `ID` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
   `STRATEGY_ID` bigint NOT NULL COMMENT '策略ID',
-  `MERCHANT_CODE` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '操作人',
+  `OPERATOR` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '操作人',
   `TYPE` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '策略类型',
   `DEFINITION` mediumtext CHARACTER SET utf8 COLLATE utf8_unicode_ci COMMENT '保存时的定义快照',
   `UPDATE_TIME` datetime NOT NULL,
@@ -201,7 +201,7 @@ CREATE TABLE `engine_data_lists` (
   `ID` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
   `NAME` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '列表名',
   `LABEL` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '列表名中文描叙',
-  `SCENARIO_ID` bigint NOT NULL COMMENT '模型ID',
+  `SCENARIO_ID` bigint NOT NULL COMMENT '场景ID',
   `COMMENT` varchar(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '注释',
   `LIST_TYPE` varchar(11) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'BLACK' COMMENT '列表类型',
   `STATUS` int NOT NULL COMMENT '状态',
@@ -230,7 +230,7 @@ DROP TABLE IF EXISTS `engine_field`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `engine_field` (
   `ID` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `SCENARIO_ID` bigint NOT NULL COMMENT 'MODEL ID',
+  `SCENARIO_ID` bigint NOT NULL COMMENT 'SCENARIO ID',
   `FIELD_NAME` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '事件信息中的包含的字段',
   `LABEL` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `FIELD_TYPE` varchar(16) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '字段类型',
@@ -355,7 +355,7 @@ DROP TABLE IF EXISTS `engine_rule`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `engine_rule` (
   `ID` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `SCENARIO_ID` bigint NOT NULL COMMENT '模型ID',
+  `SCENARIO_ID` bigint NOT NULL COMMENT '场景ID',
   `STRATEGY_ID` bigint NOT NULL COMMENT '所属策略ID',
   `NAME` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `LABEL` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '规则名称',
@@ -393,7 +393,7 @@ DROP TABLE IF EXISTS `engine_rule_history`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `engine_rule_history` (
   `ID` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `RULE_ID` bigint NOT NULL COMMENT '模型ID',
+  `RULE_ID` bigint NOT NULL COMMENT '场景ID',
   `MERCHANT_CODE` varchar(60) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `LABEL` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '规则名称',
   `INIT_SCORE` int NOT NULL DEFAULT '0' COMMENT '初始分数',
