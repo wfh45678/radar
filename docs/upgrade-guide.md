@@ -1,7 +1,51 @@
-# Radar 升级指南：v1.x → v3.x → v4.0
+# Radar 升级指南：v1.x → v3.x → v4.x
 
 > 面向仍在运行 v1.x（2020-2021 年版本）或 v2.x 早期版本的存量用户。
 > v3.x 不是原地升级，而是一次"底座重铺、模型延续"的现代化——这份指南说清楚：什么变了、什么没变、怎么迁。
+
+## v4.0 → v4.1.0（特征工程重构，破坏性）
+
+预处理（PreItem）与抽象（Abstraction）统一为**特征（Feature）**体系（ENRICH/AGGREGATE/DERIVED/RATIO），
+插件 SDK 升 radar-plugin-api **4.0.0**。详见 [plan-v4.1.md](plan-v4.1.md)。
+
+### 必做步骤
+
+1. **备份**后执行 `sql/upgrade-4.1.0.sql`：
+   - 建 engine_feature 并自动搬迁 engine_pre_item（→ENRICH）与 engine_abstraction（→AGGREGATE）；
+   - 列前缀搬迁：规则脚本/条件 JSON/打分字段/策略 DEFINITION 中的 `preItems.`/`abstractions.` → `features.`；
+   - DROP 旧表（脚本不可重入，失败请从备份恢复重跑）。
+   - 升级前建议执行脚本头部注释中的**特征名重复检测 SQL**（历史无唯一约束）。
+2. 前端随 v4.1 安装包发布（Tab 合并为「特征工程」，路由 /preitem、/abstractionList 移除，新增 /feature）。
+3. 直连管理端 API 的自建脚本：`/services/v1/preitem`+`/abstraction` → `/services/v1/feature`。
+
+### BREAKING 变更对照
+
+| 项 | v4.0 | v4.1 | 对策 |
+|----|------|------|------|
+| 引擎响应/ES 特征键 | `preItems` + `abstractions` | `features`（合并） | 业务调用方读取侧改键；ES 存量文档不动 |
+| 引擎响应/ES 决策键 | `activations` | `strategies` | 修复历史失配；调用方改键 |
+| 列引用前缀 | `preItems.x`/`abstractions.x` | `features.x` | DB 已自动搬迁；策略包经 alias 兼容 |
+| 插件 SDK | com.radar.plugin.api.Plugin（3.x） | FeatureProcessor（4.0，主契约） | 存量插件改类名/注解/类型后重发；引擎保留 legacy 桥（加载时告警，v5 移除） |
+| 插件链式 | 不支持 | FeatureRequest.getFeatures() 只读视图 | 见 plugin-dev-guide |
+| Redis 频道 | radar_channel_preitem + abstraction | radar_channel_feature | 多副本必须同时升级 |
+| Prometheus stage | preItems/abstractions | features + radar_feature_executions_total{type} | Grafana 看板更新 |
+| 统计口径 | 仅 COUNT 过滤 status='1' | 全部聚合过滤 status='1' | 数值可能有变化（人工改过状态的事件不再计入） |
+
+### 不变（兼容承诺）
+
+- 策略包 v4.0（formatVersion 1.0）可直接导入 v4.1：preItems/abstractions 自动转换为特征形态；
+  v4.0 策略 DEFINITION 中旧列前缀由条件求值器 alias 透明兼容；
+- 条件求值/评分卡/决策树语义不变（除列前缀）；
+- 插件 HTTP 出访管控、失败隔离（__plugin_error__ 标记）、HttpTool/缓存契约不变；
+- Mongo 事件流水结构不变（特征产出仍 flatten 裸名落库，聚合查询不受影响）。
+
+### 升级后验收清单
+
+1. upgrade SQL 执行无报错；`SELECT TYPE, COUNT(*) FROM engine_feature GROUP BY TYPE` 行数与原两表一致；
+2. 登录管理端 → 模型工作区「特征工程」页正常列出存量特征（类型徽标：插件加工/统计聚合）；
+3. 上传测试事件 → 决策结果与升级前一致（分数/命中明细对比）；
+4. 新建一个「衍生表达式」或「组合比率」特征 → 事件命中 → 特征值出现在响应 features 中；
+5. `/actuator/prometheus` 出现 `radar_feature_executions_total{type,result}` 序列。
 
 ## v3.x → v4.0.0（策略板块重构，破坏性）
 
@@ -48,7 +92,8 @@ v4.0 把"激活器（Activation）"更名"策略（Strategy）"并类型化（�
 | v3.3.0 | 2026-11-22 | 开源基建：Dependabot/CodeQL + 文档站 + Playwright E2E |
 | v3.4.0 | 2026-11-23 | 官方模板库：三场景模板 + 在线源（一键创建） |
 | v3.5.0 | 2026-11-23 | 官方种子插件三件套 + E2E 扩面 |
-| v4.0.0 | 2026-11-27 | 策略板块重构：激活器更名策略 + 类型化（规则集/评分卡/决策树），见上方 v3.x → v4.0 章节 |
+| v4.0.0 | 2026-11-27 | 策略板块重构：激活器更名策略 + 类型化（规则集/评分卡/决策树），见下方 v3.x → v4.0 章节 |
+| v4.1.0 | 2026-11-28 | 特征工程重构：PreItem+抽象统一特征（Feature 四类型）+ 插件 SDK 4.0，见顶部 v4.0 → v4.1 章节 |
 
 ## 什么没变（心智可以全盘保留）
 

@@ -1,11 +1,17 @@
-# Radar 插件开发指南（v3.1 preItem 插件 SDK）
+# Radar 插件开发指南（radar-plugin-api 4.0，FeatureProcessor 契约）
+
+> **v3.x → v4.0 迁移**：`Plugin`→`FeatureProcessor`、`@PluginMeta`→`@FeatureMeta`、
+> `PluginRequest/Context/Result/Exception`→`Feature*`（新增 `request.getFeatures()` 链式视图），
+> SPI 文件名同步改为 `META-INF/services/com.radar.plugin.api.FeatureProcessor`。
+> v4.1 引擎仍可加载 v3 插件（legacy 桥，启动告警，v5 移除）；插件消费路径统一为
+> `features.<featureName>[.<列名>]`。
 
 preItem 插件在事件进入规则运算前执行：把外部数据（归属地、数据服务结果、业务风控数据等）
 以 `destField -> 结果` 的形式挂载进事件上下文，供抽象（abstraction）/规则（rules）以
-`preItems.<destField>[.<列名>]` 消费。
+`features.<featureName>[.<列名>]` 消费。
 
 - 契约模块：`radar-plugin-api`（零第三方依赖，仅 slf4j-api provided）
-- 测试工件：`radar-plugin-testkit`（PluginRequestBuilder / MockHttpTool / RecordingCache，test scope 引用）
+- 测试工件：`radar-plugin-testkit`（FeatureRequestBuilder / MockHttpTool / RecordingCache，test scope 引用）
 - 示例工程：`samples/radar-plugin-demo`（本地形态：SENSITIVE_DATA 基础版 + v3.5 三件套——
   ID_CARD_VALIDATE 纯算法 / USER_AGENT_PARSE 正则规则表 / BANK_CARD_CHECK 前缀映射表，含单测）、
   `samples/radar-plugin-remote-demo`（远程形态：汇率换算——remote/options/缓存/多列输出，v3.1）
@@ -20,7 +26,7 @@ mvn -f radar-plugin-api/pom.xml install -s .mvn/settings.xml -Dgpg.skip=true
 mvn -f radar-plugin-testkit/pom.xml install -s .mvn/settings.xml
 
 # 2) 参照 samples/radar-plugin-demo（本地）或 samples/radar-plugin-remote-demo（远程）建工程，
-#    实现 Plugin 接口并标注 @PluginMeta
+#    实现 Plugin 接口并标注 @FeatureMeta
 
 # 3) 打包上传生效（二选一）：
 #    a. 管理端「插件管理」页上传 jar —— 默认热重载，无需重启（v3.1 推荐）
@@ -32,10 +38,10 @@ cp target/your-plugin.jar /your/workdir/plugins/
 
 ```java
 // version / provider 为 v3.1 新增可选属性：插件管理页展示（缺省空串，存量插件无需改动）
-@PluginMeta(key = "YOUR_PLUGIN", name = "YOUR_PLUGIN", desc = "你的插件描述",
+@FeatureMeta(key = "YOUR_PLUGIN", name = "YOUR_PLUGIN", desc = "你的插件描述",
             type = "JSON", remote = false,          // remote=true 表示会外呼，受 HTTP 超时与出访管控约束
             version = "1.0.0", provider = "your-company")
-public class YourPlugin implements Plugin {
+public class YourPlugin implements FeatureProcessor {
 
     /** 可配置参数描述（管理端据此动态渲染表单；空列表 = 无参数，管理端回退自由文本 args） */
     public List<ParamDescriptor> paramSchema() {
@@ -54,7 +60,7 @@ public class YourPlugin implements Plugin {
                        OutputColumn.of("level", "等级"));
     }
 
-    public PluginResult execute(PluginRequest request, PluginContext context) throws PluginException {
+    public FeatureResponse execute(FeatureRequest request, FeatureContext context) throws FeatureException {
         String field = String.valueOf(request.getSourceValues().get(0));   // 源字段值（按配置顺序）
         Integer days = (Integer) request.getArgs().get("days");            // 已按 schema 解析的类型化参数
 
@@ -62,10 +68,10 @@ public class YourPlugin implements Plugin {
         Map<String, Object> data = context.cache("your_plugin", Duration.ofMinutes(10))
                 .get(field, v -> {
                     HttpResult resp = context.http().get("https://api.example.com/query?key=" + v);
-                    if (!resp.isOk()) throw new PluginException("上游服务 " + resp.getStatus());
+                    if (!resp.isOk()) throw new FeatureException("上游服务 " + resp.getStatus());
                     return parse(resp.getBody());
                 });
-        return PluginResult.of(data);
+        return FeatureResponse.of(data);
     }
 }
 ```
@@ -76,15 +82,15 @@ public class YourPlugin implements Plugin {
 
 ### 2.2 元信息解析顺序
 
-`key()/name()/desc()/type()/remote()` 读取 `@PluginMeta` 注解；未标注时 key 回退为类简名
+`key()/name()/desc()/type()/remote()` 读取 `@FeatureMeta` 注解；未标注时 key 回退为类简名
 （与 v2 习惯一致）。**推荐显式标注**——key 与类名解耦后可自由命名实现类。
 
 ### 2.3 结果约定
 
 | 形态 | 返回 | 管理端/下游 |
 |------|------|-------------|
-| 单值 | `PluginResult.of("abc")` | `preItems.<destField>` 即该值 |
-| 多列 | `PluginResult.of(Map)` | 各列按 `outputMeta` 声明；下游 `preItems.<destField>.<列名>` |
+| 单值 | `FeatureResponse.of("abc")` | `features.<featureName>` 即该值 |
+| 多列 | `FeatureResponse.of(Map)` | 各列按 `outputMeta` 声明；下游 `features.<featureName>.<列名>` |
 
 ## 3. 引擎侧运行语义（写插件前必读）
 
@@ -103,18 +109,18 @@ public class YourPlugin implements Plugin {
 - 存量 v2 配置（`args="0,7"`、纯 url 等自由字符串）：解析失败时引擎传空 Map，**插件需自行兜底**
   （内置 SUBSTRING/DATEFORMAT/HTTP_UTIL 的兜底写法见其 `execute`）；
 - 必填校验：schema 声明 `required()` 的参数由管理端表单校验；引擎侧不重复拦截（避免存量配置失败），
-  插件对拿不到的关键参数应抛 `PluginException` 给出可读信息。
+  插件对拿不到的关键参数应抛 `FeatureException` 给出可读信息。
 
 ## 5. v2 → v3 迁移对照
 
 | v2（PluginServiceV2） | v3（Plugin） |
 |---|---|
-| `key()` Integer 排序 | `@PluginMeta.key()` 字符串（DB 配置 key=类简名不变即可兼容） |
-| `desc()` / `getType()` | `@PluginMeta.desc / type`（type 传 `""` 表示"多列"旧语义） |
+| `key()` Integer 排序 | `@FeatureMeta.key()` 字符串（DB 配置 key=类简名不变即可兼容） |
+| `desc()` / `getType()` | `@FeatureMeta.desc / type`（type 传 `""` 表示"多列"旧语义） |
 | `getMeta()` JSON 字符串 | `outputMeta()` 结构化 `List<OutputColumn>` |
 | `handle(item, jsonInfo, sourceField)` 裸 Object | `execute(request, context)` 类型化入出参 |
 | 无参数描述，args 语义私有 | `paramSchema()` + JSON args + legacy 兜底 |
-| 无异常/超时契约 | PluginException + 引擎隔离 + 远程超时 |
+| 无异常/超时契约 | FeatureException + 引擎隔离 + 远程超时 |
 
 ## 6. 内置插件清单（v3.0，均可作参考实现）
 
@@ -136,8 +142,8 @@ public class YourPlugin implements Plugin {
 ```java
 MockHttpTool http = new MockHttpTool()
         .stub("https://api.example.com/query", 200, "{\"score\": 72}");
-PluginResult result = new YourPlugin().execute(
-        PluginRequestBuilder.create()
+FeatureResponse result = new YourPlugin().execute(
+        FeatureRequestBuilder.create()
                 .modelId(99L).destField("riskInfo")
                 .sourceField("userIP", "1.2.3.4")
                 .arg("days", 7)
@@ -148,13 +154,13 @@ assertEquals(1, http.calls().size());        // 断言外呼次数
 assertEquals(1, cache.loads().size());       // 断言缓存未命中次数（第二次执行应为 0）
 ```
 
-- `PluginRequestBuilder`：链式构造入参（sourceField/args/event）
+- `FeatureRequestBuilder`：链式构造入参（sourceField/args/event）
 - `MockHttpTool`：按 URL 前缀桩响应 + 调用录制
 - `RecordingCache`：内存缓存 + loader 触发录制
 - `TestContexts.context(...)`：静默 logger 快捷构造
 
 注意 `KeyValueCache.get` 的 loader 是 `Function`（不能抛受检异常）：
-`PluginException` 需在 lambda 内转运行时透传、get 返回后转回（见
+`FeatureException` 需在 lambda 内转运行时透传、get 返回后转回（见
 `samples/radar-plugin-remote-demo` 的 `ExchangeRatePlugin`）。
 
 ## 8. 插件管理运营（v3.1）
@@ -191,8 +197,8 @@ assertEquals(1, cache.loads().size());       // 断言缓存未命中次数（�
 
 ## 10. 调试建议
 
-1. 单元测试直连：`new PluginContext(logger, cacheFactory, httpTool)` 可用 lambda 传空实现，
-   `PluginRequest` 直接构造（见示例工程 `SensitiveDataPluginTest`）；
+1. 单元测试直连：`new FeatureContext(logger, cacheFactory, httpTool)` 可用 lambda 传空实现，
+   `FeatureRequest` 直接构造（见示例工程 `SensitiveDataPluginTest`）；
 2. 引擎日志：插件 logger 名为 `plugin.<key>`，异常会带 destField 与原因打印在 warn 级别；
 3. 指标核对：`/actuator/prometheus` 中 `radar_plugin_executions_total` / `radar_plugin_seconds`；
 4. 注册表核对：`GET /services/v1/common/plugins` 应包含你的插件（source=EXTERNAL）。

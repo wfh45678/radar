@@ -49,7 +49,7 @@ v2.0 已完成工程现代化：Java 17 + Spring Boot 3.5、8 模块合并单模
 | P1-2 | 可观测性 | Micrometer + Prometheus 暴露：事件 QPS、规则命中率、引擎延迟 P99、Groovy 编译耗时。风控是延迟敏感系统，专业度必备 |
 | P1-3 | ES 8 升级 | v2.0 方案明确留作后续（client 已升 7.17）。API 变化较大，单独立项，依赖 P0-1 测试基础 |
 | P1-4 | 事件存储演进（调研） | hitsSort 等聚合报表是 MongoDB/ES 弱项，评估 ClickHouse 作为报表侧可选存储 |
-| P1-5 | ML 评分重接（ONNX） | Estimator 接口已保留、零实现（TensorDnnEstimator 因 TF Java 不兼容 Java 17 移除，2026-11-14 拍板暂缓）。将来重接**选 ONNX Runtime 而非 TF Java**：abstractions 层即特征工程，接入即闭环；`sys.conf.machine-learning` 开关与 EstimatorContainer 注册机制均无需改动 |
+| P1-5 | ML 评分重接（ONNX） | Estimator 接口已保留、零实现（TensorDnnEstimator 因 TF Java 不兼容 Java 17 移除，2026-11-14 拍板暂缓）。将来重接**选 ONNX Runtime 而非 TF Java**：features 特征层即特征工程（v4.1 已统一），接入即闭环；`sys.conf.machine-learning` 开关与 EstimatorContainer 注册机制均无需改动 |
 | P1-6 | 引擎/管理端分离部署 profile | 单体仍为默认形态；增加 profile 使 engine 可独立水平扩展、admin 留单实例。Redis pub/sub 已解耦配置推送，改造成本低 |
 | P1-7 | 前端现代化（radar-web 复活） | 管理端前端源码（2022-08 封存：React 16.8/antd 3/webpack 4，现代 Node 无法安装）合入主仓 `frontend/`（git subtree），迁移 React 18.3 + antd 5 + Vite + router 7；class 组件保留不 hooks 化、UI 不改版；产物继续内嵌 jar。见 [plan-v2.4.md](plan-v2.4.md)（v2.4.0，v2.3 存储演进暂缓顺延） |
 
@@ -81,6 +81,7 @@ v3.3（开源基建）   P2-8              —— 三件事：Dependabot+CodeQL�
 v3.4（模板库）      P2-7 拉伸         —— 官方策略包模板库：3 场景模板 + jar 内置分发 + 在线源（官方地址 riskengine.cn，可覆盖/禁用）+ 一键创建（[方案](plan-v3.4.md)，**已实施**）
 v3.5（生态内容）    P2-9              —— 官方种子插件三件套（身份证/UA/银行卡）+ E2E 扩面（插件管理页/策略包/模板库）（[方案](plan-v3.5.md)）
 v4.0（策略类型化）  —— 破坏性大版本：激活器更名策略（Strategy）+ 策略类型执行器 SPI + 评分卡/决策树落地 + 后端条件求值器（[方案](plan-v4.0.md)/[升级指南](upgrade-guide.md)，**已实施**）
+v4.1（特征工程）    —— 破坏性版本：PreItem+抽象统一特征（Feature）四类型 + 聚合函数注册表 + 衍生/比率 + 插件 SDK 4.0（[方案](plan-v4.1.md)/[升级指南](upgrade-guide.md)，**已实施**）
 ```
 
 ## 6. 如果只做三件事

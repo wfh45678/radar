@@ -10,27 +10,32 @@
 
 ```json
 {
-  "formatVersion": "1.0",
+  "formatVersion": "2.0",
   "exportedAt": "2026-11-21T08:00:00Z",
-  "radarVersion": "3.2.0",
+  "radarVersion": "4.1.0",
   "model":       { "guid": "...", "label": "电商开户", "entityName": "Event", "...": "..." },
   "fields":      [ "..." ],
-  "preItems":    [ "..." ],
   "dataLists":   [ "..." ],
   "dataListMeta":    [ "..." ],
   "dataListRecords": [ "..." ],
-  "abstractions":    [ "..." ],
-  "activations": [ { "activationName": "...", "type": "RULE_SET|SCORECARD|DECISION_TREE", "definition": "类型化定义（JSON 字符串形态，v4.0）", "...": "..." } ],
+  "features":    [ { "featureName": "...", "type": "ENRICH|AGGREGATE|DERIVED|RATIO", "definition": "类型化定义（JSON 字符串形态，v4.1）", "...": "..." } ],
+  "strategies": [ { "strategyName": "...", "type": "RULE_SET|SCORECARD|DECISION_TREE", "definition": "类型化定义（JSON 字符串形态）", "...": "..." } ],
   "rules":       [ "...": { "scripts": "内嵌 Groovy 规则脚本" } ]
 }
 ```
 
-- 范围对齐单实例「复制」：`engine_model` + `engine_field/pre_item/data_lists(+meta/record)/abstraction/strategy/rule`；
+- 范围对齐单实例「复制」：`engine_model` + `engine_field/data_lists(+meta/record)/feature/strategy/rule`；
   事件流水、规则历史**不在包内**（运行数据不随策略分发）；
 - `engine_model_conf(+param)`（ML 特征 feed/expressions 配置）**不入包**——Estimator 自 v2.0 零实现，
   该配置处于休眠状态，待 ML 模块重做后随新方案扩展；
 - 文件内保留原 ID 作为**图内引用键**（`activationId`/`dataListId` 等），导入时整图重映射分配新 ID；
-- `formatVersion` 由导入端协商：不识别的版本会被拒绝并提示所需版本；
+- `formatVersion` 由导入端协商：v4.1 导出 2.0，导入兼容 1.0（v4.0 包自动转换，见下）；
+- **v4.1 兼容性**：v4.0 包（preItems/abstractions 数组）导入时**自动转换**为特征形态
+  （PackageV1Converter），策略 DEFINITION 旧列前缀由条件求值器 alias 兼容；v4.1 导出仅写
+  `features`（ENRICH/AGGREGATE/DERIVED/RATIO，definition/output 字符串形态），v4.0 引擎
+  无法完整导入 v4.1 包（策略仍在但特征丢失），请先升级引擎；
+- **v4.0 说明**（历史）：v4.0 曾承诺信封键 activations 保持原名以兼容 v3.x；v4.1 起统一为
+  strategies/features，单向升级；
 - **v4.0 兼容性**：信封键 `activations` 与条目键 `activationName`/`activationId` **保持 v3.x 原名不变**
   （代码内部已更名"策略 Strategy"），v3.x 导出的包可直接导入 v4.0；v4.0 新增条目字段
   `type`（缺省按 RULE_SET 处理）与 `definition`（评分卡/决策树的 JSON 定义，**字符串形态**，

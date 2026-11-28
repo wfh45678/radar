@@ -2,6 +2,46 @@
 
 本项目所有重要变更记录于此，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [semver](https://semver.org/lang/zh-CN/)。
 
+## [4.1.0] - 2026-11-28
+
+破坏性版本：特征工程重构（[plan-v4.1](docs/plan-v4.1.md)、[升级指南](docs/upgrade-guide.md)）。
+预处理（PreItem）与抽象（Abstraction）统一为**特征（Feature）**体系，首批四类型 + SDK 4.0。
+
+### Added
+- **特征执行器 SPI**：FeatureExecutor + FeatureExecutorRegistry（对齐 v4.0 策略范式），
+  两阶段管线（ENTRY=ENRICH/DERIVED 落库前；ANALYSIS=AGGREGATE/RATIO 落库后），单特征异常隔离
+- **插件加工 ENRICH**（原 PreItem）：支持链式（sourceFields 可引用前序特征，按 ORDER_NO 顺序）
+- **统计聚合 AGGREGATE**（原 Abstraction）：AggregateFunction SPI 注册表（10 种迁移），
+  过滤条件树经 ConditionEvaluator 后端解释（Groovy 脚本退役）；UI 放开全部 10 种聚合
+- **衍生表达式 DERIVED**（新）：DerivedFunction SPI + 13 内置函数（算术/字符串/正则提取/映射表/空值兜底）
+- **组合比率 RATIO**（新）：两特征组合运算（比率/差额），除零策略 ZERO/NULL
+- **radar-plugin-api 4.0.0**：FeatureProcessor/@FeatureMeta/FeatureRequest（新增 features 链式视图）/
+  FeatureContext/FeatureResponse；PluginManager 双契约加载（v4 主 + v3 legacy 告警桥，v5 移除）；
+  testkit 4.0.0；内置 8 插件与两示例工程全部迁移
+- 特征定义变更走 engine_feature 保存即生效（radar_channel_feature 频道）
+- L3 EngineFullChainTest 契约断言迁移 + e2e feature-crud.spec
+
+### Changed
+- **BREAKING｜特征统一**：engine_pre_item + engine_abstraction → engine_feature
+  （TYPE/ORDER_NO/DEFINITION/OUTPUT），存量数据自动搬迁；管理端 API /preitem + /abstraction → /feature；
+  Redis 频道合并 radar_channel_feature；Model.jsx Tab 5→4（特征工程）
+- **BREAKING｜上下文键**：preItems + abstractions → **features**（引擎响应/ES 文档/Mongo 落库；
+  Mongo 仍为 flatten 裸名）；列前缀 preItems./abstractions. → **features.**（升级 SQL 搬迁 +
+  ConditionEvaluator alias 兼容）
+- **BREAKING｜修复历史失配**：引擎响应/ES 决策键 activations → **strategies**
+  （v4.0 写 activations 与报表/导出读 strategies 失配，本次统一为 strategies）
+- 统计口径统一：全部聚合过滤 status='1'（v3.x 仅 COUNT）；AVERAGE/VARIANCE 空数据集不再异常（返回 0）
+
+### 不变（兼容承诺）
+- 策略包：formatVersion 升 2.0（features 统一信封），导入端**兼容 v4.0 包**（preItems/abstractions
+  自动转换 + 策略 DEFINITION 旧列前缀 alias）；v4.1 导出的包不含 v4.0 兼容键（单向升级）
+- 条件求值语义：ConditionEvaluator 对 v4.0 列前缀 alias 透明兼容
+- 插件出访管控/失败隔离（__plugin_error__ 标记）、HTTP 工具、缓存契约不变
+
+### Verification
+- L1/L2：68 例全绿（新增 Feature SPI/求值器/比率/聚合注册表测试；种子脚本 Groovy4 兼容回归）
+- 前端 npm run build 通过；testkit/samples 构建测试全过；L3 与 e2e CI 执行
+
 ## [4.0.0] - 2026-11-27
 
 破坏性大版本：策略板块重构（[plan-v4.0](docs/plan-v4.0.md)、[升级指南](docs/upgrade-guide.md)）。
