@@ -130,8 +130,10 @@ public final class ConditionEvaluator {
     }
 
     /**
-     * 按列路径取上下文值：column 形如 {@code fields.xxx} / {@code preItems.xxx} / {@code abstractions.xxx}；
-     * 无点号时回退 abstractions 再 fields（兼容旧抽象引用写法）。
+     * 按列路径取上下文值（v4.1）：首选 {@code fields.xxx} / {@code features.xxx}
+     * （多列特征支持多级点路径嵌套遍历，如 features.ip.country）；
+     * 旧前缀 preItems./abstractions. 作 alias 映射到 features（兼容 v4.0 策略包/存量 DEFINITION）；
+     * 无点号回退 features 再 fields（兼容旧抽象裸名写法）。
      */
     public static Object resolveColumn(String column, Map<String, Map<String, ?>> data) {
         if (column == null || column.isEmpty() || data == null) {
@@ -139,15 +141,45 @@ public final class ConditionEvaluator {
         }
         int dot = column.indexOf('.');
         if (dot == -1) {
-            Object val = lookup(data, "abstractions", column);
+            Object val = lookup(data, "features", column);
             return val != null ? val : lookup(data, "fields", column);
         }
-        return lookup(data, column.substring(0, dot), column.substring(dot + 1));
+        String scope = column.substring(0, dot);
+        String path = column.substring(dot + 1);
+        if ("preItems".equals(scope) || "abstractions".equals(scope)) {
+            // v4.0 旧前缀 alias → features
+            scope = "features";
+        }
+        return lookupPath(data, scope, path);
     }
 
     private static Object lookup(Map<String, Map<String, ?>> data, String scope, String key) {
         Map<String, ?> scopeMap = data.get(scope);
         return scopeMap == null ? null : scopeMap.get(key);
+    }
+
+    /** 点路径嵌套取值（features.ip.country 类多列特征；支持 Map 链与 JSONObject 风格 get）。 */
+    private static Object lookupPath(Map<String, Map<String, ?>> data, String scope, String path) {
+        Object current = lookup(data, scope, path);
+        if (current != null) {
+            return current;
+        }
+        Map<String, ?> scopeMap = data.get(scope);
+        if (scopeMap == null) {
+            return null;
+        }
+        current = scopeMap;
+        for (String segment : path.split("\\.")) {
+            if (current instanceof Map) {
+                current = ((Map<?, ?>) current).get(segment);
+            } else {
+                return null;
+            }
+            if (current == null) {
+                return null;
+            }
+        }
+        return current;
     }
 
     /** 单操作数运算（InList 类需要 lists） */

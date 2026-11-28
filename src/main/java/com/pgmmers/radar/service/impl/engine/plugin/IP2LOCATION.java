@@ -1,11 +1,11 @@
 package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.radar.plugin.api.OutputColumn;
-import com.radar.plugin.api.Plugin;
+import com.radar.plugin.api.FeatureProcessor;
 import com.radar.plugin.api.ParamDescriptor;
-import com.radar.plugin.api.PluginMeta;
-import com.radar.plugin.api.PluginRequest;
-import com.radar.plugin.api.PluginResult;
+import com.radar.plugin.api.FeatureMeta;
+import com.radar.plugin.api.FeatureRequest;
+import com.radar.plugin.api.FeatureResponse;
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.LinkedHashMap;
@@ -27,8 +27,8 @@ import org.springframework.stereotype.Component;
  * <p>v3 迁移：searcher 启动加载一次并复用（旧实现每次请求重建读盘），结果接入插件缓存。</p>
  */
 @Component
-@PluginMeta(key = "IP2LOCATION", name = "IP2LOCATION", desc = "IP转换成地址", type = "")
-public class IP2LOCATION implements Plugin {
+@FeatureMeta(key = "IP2LOCATION", name = "IP2LOCATION", desc = "IP转换成地址", type = "")
+public class IP2LOCATION implements FeatureProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(IP2LOCATION.class);
 
@@ -61,18 +61,18 @@ public class IP2LOCATION implements Plugin {
     }
 
     @Override
-    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context) {
+    public FeatureResponse execute(FeatureRequest request, com.radar.plugin.api.FeatureContext context) {
         Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
         if (raw == null) {
-            return PluginResult.of(null);
+            return FeatureResponse.of(null);
         }
         String ip = raw.toString();
         if (!Util.isIpAddress(ip)) {
-            return PluginResult.of(null);
+            return FeatureResponse.of(null);
         }
         DbSearcher dbSearcher = this.searcher;
         if (dbSearcher == null) {
-            return PluginResult.of(null);
+            return FeatureResponse.of(null);
         }
         Map<String, Object> location = context.cache("ip2location", Duration.ofHours(1))
                 .get(ip, key -> {
@@ -91,6 +91,6 @@ public class IP2LOCATION implements Plugin {
                         return null;
                     }
                 });
-        return PluginResult.of(location);
+        return FeatureResponse.of(location);
     }
 }

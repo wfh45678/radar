@@ -1,7 +1,7 @@
 package com.pgmmers.radar.service.engine;
 
 
-import com.pgmmers.radar.service.engine.vo.AbstractionResult;
+import com.pgmmers.radar.service.engine.vo.FeatureResult;
 import com.pgmmers.radar.service.engine.vo.StrategyResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 
@@ -14,12 +14,14 @@ import java.util.Map;
 public interface AntiFraudEngine {
 
      /**
-      * 特征/抽象指标的计算提取。
-      * @param modelId
-      * @param data
-      * @return
+      * 特征执行（v4.1 特征工程）：按阶段执行 ENRICH/DERIVED（ENTRY，落库前）
+      * 或 AGGREGATE/RATIO（ANALYSIS，落库后），结果合并进 data 的 features 命名空间。
+      * @param modelId 模型 id
+      * @param data 求值上下文
+      * @param stage 执行阶段
+      * @return 本阶段特征结果
       */
-     AbstractionResult executeAbstraction(Long modelId, Map<String, Map<String, ?>> data);
+     FeatureResult executeFeatures(Long modelId, Map<String, Map<String, ?>> data, com.pgmmers.radar.enums.FeatureStage stage);
 
      /**
       * 机器学习适配器，用于支持机器学习，获取风险评分，此接口预留。

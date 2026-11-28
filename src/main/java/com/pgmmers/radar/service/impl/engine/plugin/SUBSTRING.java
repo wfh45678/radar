@@ -2,11 +2,11 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.radar.plugin.api.ParamDescriptor;
 import com.radar.plugin.api.ParamType;
-import com.radar.plugin.api.Plugin;
-import com.radar.plugin.api.PluginMeta;
-import com.radar.plugin.api.PluginRequest;
-import com.radar.plugin.api.PluginResult;
-import com.radar.plugin.api.PluginException;
+import com.radar.plugin.api.FeatureProcessor;
+import com.radar.plugin.api.FeatureMeta;
+import com.radar.plugin.api.FeatureRequest;
+import com.radar.plugin.api.FeatureResponse;
+import com.radar.plugin.api.FeatureException;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Component;
@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
  * <p>v3 迁移：start/end 进参数 schema；存量配置（args="0,7"）走 legacy 兜底。</p>
  */
 @Component
-@PluginMeta(key = "SUBSTRING", name = "SUBSTRING", desc = "字符串截短", type = "STRING")
-public class SUBSTRING implements Plugin {
+@FeatureMeta(key = "SUBSTRING", name = "SUBSTRING", desc = "字符串截短", type = "STRING")
+public class SUBSTRING implements FeatureProcessor {
 
     @Override
     public List<ParamDescriptor> paramSchema() {
@@ -28,8 +28,8 @@ public class SUBSTRING implements Plugin {
     }
 
     @Override
-    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context)
-            throws PluginException {
+    public FeatureResponse execute(FeatureRequest request, com.radar.plugin.api.FeatureContext context)
+            throws FeatureException {
         int start;
         int end;
         Map<String, Object> args = request.getArgs();
@@ -40,7 +40,7 @@ public class SUBSTRING implements Plugin {
             // 存量兼容：args="start,end"
             String raw = request.getRawArgs();
             if (raw == null || !raw.contains(",")) {
-                throw new PluginException("SUBSTRING 参数格式应为 \"start,end\"");
+                throw new FeatureException("SUBSTRING 参数格式应为 \"start,end\"");
             }
             String[] parts = raw.split(",");
             start = Integer.parseInt(parts[0].trim());
@@ -49,8 +49,8 @@ public class SUBSTRING implements Plugin {
         Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
         String field = raw == null ? null : raw.toString();
         if (field != null && field.length() > end) {
-            return PluginResult.of(field.substring(start, end));
+            return FeatureResponse.of(field.substring(start, end));
         }
-        return PluginResult.of(field);
+        return FeatureResponse.of(field);
     }
 }

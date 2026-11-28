@@ -182,7 +182,7 @@ public class TemplateCatalogService {
     private Map<String, Object> statsOf(ModelPackage pkg) {
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("rules", pkg.getRules().size());
-        stats.put("abstractions", pkg.getAbstractions().size());
+        stats.put("features", pkg.getFeatures().size());
         stats.put("fields", pkg.getFields().size());
         return stats;
     }

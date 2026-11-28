@@ -237,16 +237,16 @@ public class EventServiceImpl implements EventService {
             }
 
             for (int k = 0; k < keyList4Item.size(); k++) {
-                JSONObject preitemsJson = record.getJSONObject("preItems");
+                JSONObject featuresJson = record.getJSONObject("features");
                 Cell cell = row1.createCell(cellCount);
                 cellCount++;
                 Object key = keyList4Item.get(k);
                 if (key instanceof String) {
-                    cell.setCellValue(preitemsJson.get(keyList4Item.get(k)) == null ? " "
-                            : preitemsJson.get(keyList4Item.get(k)).toString());
+                    cell.setCellValue(featuresJson.get(keyList4Item.get(k)) == null ? " "
+                            : featuresJson.get(keyList4Item.get(k)).toString());
                 } else if (key instanceof FieldValueVO) {
                     FieldValueVO fvalue = (FieldValueVO) key;
-                    JSONObject json = preitemsJson.getJSONObject(fvalue
+                    JSONObject json = featuresJson.getJSONObject(fvalue
                             .getKey());
                     String value = json.get(fvalue.getValue()).toString();
                     cell.setCellValue(value == null ? " " : value);

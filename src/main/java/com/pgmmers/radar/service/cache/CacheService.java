@@ -2,13 +2,12 @@ package com.pgmmers.radar.service.cache;
 
 
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.model.vo.model.AbstractionVO;
 import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
 import com.pgmmers.radar.model.vo.model.ModelVO;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
 
 /**
@@ -28,13 +27,9 @@ public interface CacheService {
 
      void subscribeField(SubscribeHandle handler);
 
-     void publishPreItem(PreItemVO preItem);
+     void publishFeature(FeatureVO feature);
 
-     void subscribePreItem(SubscribeHandle handler);
-
-     void publishAbstraction(AbstractionVO model);
-
-     void subscribeAbstraction(SubscribeHandle handler);
+     void subscribeFeature(SubscribeHandle handler);
 
      void publishRule(RuleVO rule);
 

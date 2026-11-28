@@ -8,31 +8,28 @@ import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.model.IndexOptions;
 import com.pgmmers.radar.model.query.ModelQuery;
 import com.pgmmers.radar.model.query.PageResult;
-import com.pgmmers.radar.converter.AbstractionMapping;
+import com.pgmmers.radar.converter.FeatureMapping;
 import com.pgmmers.radar.converter.StrategyMapping;
 import com.pgmmers.radar.converter.FieldMapping;
 import com.pgmmers.radar.converter.ModelMapping;
-import com.pgmmers.radar.converter.PreItemMapping;
 import com.pgmmers.radar.converter.RuleMapping;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.enums.StatusType;
-import com.pgmmers.radar.mapper.AbstractionMapper;
+import com.pgmmers.radar.mapper.FeatureMapper;
 import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
 import com.pgmmers.radar.mapper.DataListRecordMapper;
 import com.pgmmers.radar.mapper.DataListsMapper;
 import com.pgmmers.radar.mapper.FieldMapper;
 import com.pgmmers.radar.mapper.ModelMapper;
-import com.pgmmers.radar.mapper.PreItemMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
-import com.pgmmers.radar.model.entity.AbstractionPO;
+import com.pgmmers.radar.model.entity.FeaturePO;
 import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListMetaPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.DataListsPO;
 import com.pgmmers.radar.model.entity.FieldPO;
 import com.pgmmers.radar.model.entity.ModelPO;
-import com.pgmmers.radar.model.entity.PreItemPO;
 import com.pgmmers.radar.model.entity.RulePO;
 import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
@@ -44,11 +41,10 @@ import com.pgmmers.radar.service.impl.model.transfer.ModelGraphAssembler;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.service.search.SearchEngineService;
 import com.pgmmers.radar.common.util.JsonUtils;
-import com.pgmmers.radar.model.vo.model.AbstractionVO;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
 import com.pgmmers.radar.model.vo.model.ModelVO;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
@@ -81,8 +77,6 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     @Autowired
     private FieldMapper fieldMapper;
     @Autowired
-    private AbstractionMapper abstractionMapper;
-    @Autowired
     private StrategyMapper strategyMapper;
     @Autowired
     private DataListsMapper dataListMapper;
@@ -93,8 +87,6 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     @Autowired
     private RuleMapper ruleMapper;
     @Autowired
-    private PreItemMapper preItemMapper;
-    @Autowired
     private ModelGraphAssembler graphAssembler;
     @Resource
     private ModelMapping modelMapping;
@@ -103,11 +95,8 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     @Resource
     private RuleMapping ruleMapping;
     @Resource
-    private AbstractionMapping abstractionMapping;
-    @Resource
     private StrategyMapping strategyMapping;
     @Resource
-    private PreItemMapping preItemMapping;
 
     @Autowired
     private CacheService cacheService;
@@ -121,6 +110,9 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     @Autowired
     private MongoService mongoService;
 
+    private FeatureMapper featureMapper;
+    @Resource
+    private FeatureMapping featureMapping;
     @Autowired
     private PluginManager pluginManager;
 
@@ -315,9 +307,8 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         int count = modelMapper.delete(
                 new LambdaQueryWrapper<ModelPO>().in(ModelPO::getId, Arrays.asList(ids)));
         fieldMapper.delete(new LambdaQueryWrapper<FieldPO>().in(FieldPO::getModelId, Arrays.asList(ids)));
-        preItemMapper.delete(new LambdaQueryWrapper<PreItemPO>().in(PreItemPO::getModelId, Arrays.asList(ids)));
+        featureMapper.delete(new LambdaQueryWrapper<FeaturePO>().in(FeaturePO::getModelId, Arrays.asList(ids)));
         dataListMapper.delete(new LambdaQueryWrapper<DataListsPO>().in(DataListsPO::getModelId, Arrays.asList(ids)));
-        abstractionMapper.delete(new LambdaQueryWrapper<AbstractionPO>().in(AbstractionPO::getModelId, Arrays.asList(ids)));
         strategyMapper.delete(new LambdaQueryWrapper<StrategyPO>().in(StrategyPO::getModelId, Arrays.asList(ids)));
         ruleMapper.delete(new LambdaQueryWrapper<RulePO>().in(RulePO::getModelId, Arrays.asList(ids)));
 
@@ -333,15 +324,15 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     public CommonResult build(Long id) throws IOException {
         CommonResult result = new CommonResult();
         ModelVO modelVO = getModelById(id);
-        // 原 ModelDalImpl.listField / listPreItem 逻辑下沉
+        // 原 ModelDalImpl.listField / listPreItem 逻辑下沉（v4.1：统一特征）
         List<FieldPO> fieldPOList = fieldMapper.selectList(
                 new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, id));
         List<FieldVO> fields = CollectionUtils.isEmpty(fieldPOList)
                 ? new ArrayList<>() : fieldMapping.sourceToTarget(fieldPOList);
-        List<PreItemPO> itemPOList = preItemMapper.selectList(
-                new LambdaQueryWrapper<PreItemPO>().eq(PreItemPO::getModelId, id));
-        List<PreItemVO> items = CollectionUtils.isEmpty(itemPOList)
-                ? new ArrayList<>() : preItemMapping.sourceToTarget(itemPOList);
+        List<FeaturePO> featurePOList = featureMapper.selectList(
+                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getModelId, id));
+        List<FeatureVO> features = CollectionUtils.isEmpty(featurePOList)
+                ? new ArrayList<>() : featureMapping.sourceToTarget(featurePOList);
         String collectionName = "entity_" + id;
         mongoService.getCollection(collectionName).drop();
         mongoService.getMongoTemplate().createCollection(collectionName);
@@ -378,7 +369,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
 //
 
         // 重建es index
-        JSONObject total = buildEsMappingJson(fields, items);
+        JSONObject total = buildEsMappingJson(fields, features);
 
         // execute
         boolean isCreated = searchService
@@ -402,7 +393,7 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
     /**
      * recreate elastic mapping
      */
-    private JSONObject buildEsMappingJson(List<FieldVO> fields, List<PreItemVO> items) {
+    private JSONObject buildEsMappingJson(List<FieldVO> fields, List<FeatureVO> features) {
         //
         JSONObject total = new JSONObject();
 
@@ -416,46 +407,40 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
             fieldJson.put(field.getFieldName(), JSON.parseObject(tmp));
         }
 
-        // pre item mapping
-        JSONObject preItemJson = new JSONObject();
-        for (PreItemVO item : items) {
-            PluginEntry plugin = pluginManager.entry(item.getPlugin());
-            String columns = plugin == null ? null : plugin.legacyMetaJson();
-            if (columns == null) {
-                String fieldType = plugin == null ? "STRING" : plugin.getType();
-                if ("JSON".equals(fieldType)) {
-                    //TODO: json类型需要另外处理
-                } else {
-                    String elaType = convertFieldType2ElasticType(fieldType);
-                    String tmp = String.format(base, elaType);
-                    preItemJson.put(item.getDestField(), JSON.parseObject(tmp));
-                }
-            } else {
-                List<JSONObject> fieldsJson = JSON.parseArray(columns, JSONObject.class);
+        // feature mapping（v4.1：多列特征展开子 properties，单值特征标量）
+        JSONObject featureJson = new JSONObject();
+        for (FeatureVO feature : features) {
+            com.fasterxml.jackson.databind.JsonNode output = feature.getOutput();
+            if (output != null && output.isArray() && !output.isEmpty()) {
                 JSONObject properties = new JSONObject();
-                for (JSONObject json : fieldsJson) {
-                    String fieldName = json.getString("column");
-                    String fieldType = json.getString("type");
-                    String elaType = convertFieldType2ElasticType(fieldType);
-                    String tmp = String.format(base, elaType);
-                    properties.put(fieldName, JSON.parseObject(tmp));
+                for (com.fasterxml.jackson.databind.JsonNode col : output) {
+                    String fieldName = col.path("column").asText("");
+                    if (fieldName.isEmpty()) {
+                        continue;
+                    }
+                    String colType = col.path("type").asText("STRING");
+                    String elaType = convertFieldType2ElasticType(colType);
+                    properties.put(fieldName, JSON.parseObject(String.format(base, elaType)));
                 }
                 JSONObject prop = new JSONObject();
                 prop.put("properties", properties);
-                preItemJson.put(item.getDestField(), prop);
+                featureJson.put(feature.getFeatureName(), prop);
+            } else {
+                String elaType = "ENRICH".equals(feature.getType()) ? "keyword" : "double";
+                featureJson.put(feature.getFeatureName(), JSON.parseObject(String.format(base, elaType)));
             }
         }
 
         // package
         JSONObject totalProperties = new JSONObject();
         JSONObject fieldsProperties = new JSONObject();
-        JSONObject preitemsProperties = new JSONObject();
+        JSONObject featuresProperties = new JSONObject();
 
         fieldsProperties.put("properties", fieldJson);
-        preitemsProperties.put("properties", preItemJson);
+        featuresProperties.put("properties", featureJson);
 
         totalProperties.put("fields", fieldsProperties);
-        totalProperties.put("preItems", preitemsProperties);
+        totalProperties.put("features", featuresProperties);
         total.put("properties", totalProperties);
         return total;
     }
@@ -477,11 +462,10 @@ public class ModelServiceImpl extends BaseLocalCacheService implements ModelServ
         // 子对象装配（单事务，重映射逻辑与导入一致）
         count += graphAssembler.assemble(newId,
                 fieldMapper.selectList(new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, oldId)),
-                preItemMapper.selectList(new LambdaQueryWrapper<PreItemPO>().eq(PreItemPO::getModelId, oldId)),
+                featureMapper.selectList(new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getModelId, oldId)),
                 dataListMapper.selectList(new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, oldId)),
                 dataListMetaOf(oldId),
                 dataListRecordOf(oldId),
-                abstractionMapper.selectList(new LambdaQueryWrapper<AbstractionPO>().eq(AbstractionPO::getModelId, oldId)),
                 strategyMapper.selectList(new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, oldId)),
                 rulesOf(oldId));
         return count;

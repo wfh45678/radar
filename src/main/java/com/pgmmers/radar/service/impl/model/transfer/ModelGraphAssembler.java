@@ -1,20 +1,18 @@
 package com.pgmmers.radar.service.impl.model.transfer;
 
-import com.pgmmers.radar.mapper.AbstractionMapper;
+import com.pgmmers.radar.mapper.FeatureMapper;
 import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
 import com.pgmmers.radar.mapper.DataListRecordMapper;
 import com.pgmmers.radar.mapper.DataListsMapper;
 import com.pgmmers.radar.mapper.FieldMapper;
-import com.pgmmers.radar.mapper.PreItemMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
-import com.pgmmers.radar.model.entity.AbstractionPO;
+import com.pgmmers.radar.model.entity.FeaturePO;
 import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListMetaPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.DataListsPO;
 import com.pgmmers.radar.model.entity.FieldPO;
-import com.pgmmers.radar.model.entity.PreItemPO;
 import com.pgmmers.radar.model.entity.RulePO;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,15 +38,13 @@ public class ModelGraphAssembler {
     @Autowired
     private FieldMapper fieldMapper;
     @Autowired
-    private PreItemMapper preItemMapper;
-    @Autowired
     private DataListsMapper dataListMapper;
     @Autowired
     private DataListMetaMapper dataListMetaMapper;
     @Autowired
     private DataListRecordMapper dataListRecordMapper;
     @Autowired
-    private AbstractionMapper abstractionMapper;
+    private FeatureMapper featureMapper;
     @Autowired
     private StrategyMapper strategyMapper;
     @Autowired
@@ -62,11 +58,10 @@ public class ModelGraphAssembler {
     @Transactional
     public int assemble(Long newModelId,
                         List<FieldPO> fields,
-                        List<PreItemPO> preItems,
+                        List<FeaturePO> features,
                         List<DataListsPO> dataLists,
                         List<DataListMetaPO> dataListMeta,
                         List<DataListRecordPO> dataListRecords,
-                        List<AbstractionPO> abstractions,
                         List<StrategyPO> strategies,
                         List<RulePO> rules) {
         Date sysDate = new Date();
@@ -82,13 +77,13 @@ public class ModelGraphAssembler {
             count++;
         }
 
-        // preItem
-        for (PreItemPO po : preItems) {
+        // 特征（v4.1 统一 ENRICH/AGGREGATE/DERIVED/RATIO）
+        for (FeaturePO po : features) {
             po.setModelId(newModelId);
             po.setId(null);
             po.setCreateTime(sysDate);
             po.setUpdateTime(sysDate);
-            preItemMapper.insert(po);
+            featureMapper.insert(po);
             count++;
         }
 
@@ -118,16 +113,6 @@ public class ModelGraphAssembler {
             po.setCreateTime(sysDate);
             po.setUpdateTime(sysDate);
             dataListRecordMapper.insert(po);
-            count++;
-        }
-
-        // 抽象
-        for (AbstractionPO po : abstractions) {
-            po.setModelId(newModelId);
-            po.setId(null);
-            po.setCreateTime(sysDate);
-            po.setUpdateTime(sysDate);
-            abstractionMapper.insert(po);
             count++;
         }
 

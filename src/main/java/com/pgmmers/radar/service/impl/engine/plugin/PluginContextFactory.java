@@ -78,6 +78,12 @@ public class PluginContextFactory {
     private final ConcurrentHashMap<String, KeyValueCache> caches = new ConcurrentHashMap<>();
 
     /** 构建指定插件 key 的运行时上下文。 */
+    /** v4 主契约上下文（FeatureProcessor 用），内部机制与 v3 上下文一致。 */
+    public com.radar.plugin.api.FeatureContext createFeature(String pluginKey) {
+        org.slf4j.Logger pluginLogger = org.slf4j.LoggerFactory.getLogger("plugin." + pluginKey);
+        return new com.radar.plugin.api.FeatureContext(pluginLogger, this::createCache, new GuardedHttpTool(pluginKey));
+    }
+
     public PluginContext create(String pluginKey) {
         Logger pluginLogger = LoggerFactory.getLogger("plugin." + pluginKey);
         return new PluginContext(pluginLogger, this::createCache, new GuardedHttpTool(pluginKey));

@@ -11,27 +11,29 @@ import java.util.Map;
 
 public class AntiFraudProcessResult extends CommonResult {
 
-    private Map<String, ?> abstractions;
+    /**
+     * 特征执行结果（v4.1 特征工程：合并原 preItems+abstractions，键 features）。
+     */
+    private Map<String, ?> features;
 
     private Map<String, ?> adaptations;
 
     /**
-     * 策略执行结果（v4.0 起"激活器"更名"策略"；字段名保持 activations 以兼容引擎接口调用方与 ES 报表）。
+     * 策略执行结果（v4.1：响应键由 v4.0 的 activations 更名 strategies，
+     * 同步修复引擎写 ES 与报表/导出读键的历史失配；调用方需按升级指南调整）。
      */
-    @JsonProperty("activations")
-    @JSONField(name = "activations")
     private Map<String, ?> strategies;
     
     private Map<String, List<HitObject>> hitsDetail = new HashMap<>();
     
     private Map<String, Object> respTimes = new HashMap<>();
 
-    public Map<String, ?> getAbstractions() {
-        return abstractions;
+    public Map<String, ?> getFeatures() {
+        return features;
     }
 
-    public void setAbstractions(Map<String, ?> abstractions) {
-        this.abstractions = abstractions;
+    public void setFeatures(Map<String, ?> features) {
+        this.features = features;
     }
 
     public Map<String, ?> getAdaptations() {

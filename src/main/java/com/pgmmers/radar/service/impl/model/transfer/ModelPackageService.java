@@ -5,25 +5,24 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pgmmers.radar.enums.StatusType;
-import com.pgmmers.radar.mapper.AbstractionMapper;
+import com.pgmmers.radar.mapper.FeatureMapper;
 import com.pgmmers.radar.mapper.StrategyMapper;
 import com.pgmmers.radar.mapper.DataListMetaMapper;
 import com.pgmmers.radar.mapper.DataListRecordMapper;
 import com.pgmmers.radar.mapper.DataListsMapper;
 import com.pgmmers.radar.mapper.FieldMapper;
 import com.pgmmers.radar.mapper.ModelMapper;
-import com.pgmmers.radar.mapper.PreItemMapper;
 import com.pgmmers.radar.mapper.RuleMapper;
-import com.pgmmers.radar.model.entity.AbstractionPO;
+import com.pgmmers.radar.model.entity.FeaturePO;
 import com.pgmmers.radar.model.entity.StrategyPO;
 import com.pgmmers.radar.model.entity.DataListMetaPO;
 import com.pgmmers.radar.model.entity.DataListRecordPO;
 import com.pgmmers.radar.model.entity.DataListsPO;
 import com.pgmmers.radar.model.entity.FieldPO;
 import com.pgmmers.radar.model.entity.ModelPO;
-import com.pgmmers.radar.model.entity.PreItemPO;
 import com.pgmmers.radar.model.entity.RulePO;
 import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
+import com.fasterxml.jackson.databind.JsonNode;
 import groovy.lang.GroovyClassLoader;
 import java.io.IOException;
 import java.time.Instant;
@@ -55,11 +54,13 @@ public class ModelPackageService {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelPackageService.class);
 
-    /** 策略包格式版本（import 只接受本版本，演进时随 formatVersion 协商）。 */
-    public static final String FORMAT_VERSION = "1.0";
+    /** 策略包格式版本（v4.1 起为 2.0：features 统一信封；导入兼容 1.0——v4.0 包自动转换为特征形态）。 */
+    public static final String FORMAT_VERSION = "2.0";
+    /** v4.0 及之前的格式版本（导入时自动转换，见 {@link PackageV1Converter}）。 */
+    public static final String FORMAT_VERSION_V1 = "1.0";
 
     /** 引擎版本标记（随发布更新，仅供包接收方参考）。 */
-    public static final String RADAR_VERSION = "3.2.0";
+    public static final String RADAR_VERSION = "4.1.0";
 
     @Value("${model.package.max-upload-size:10485760}")
     private long maxUploadSize;
@@ -73,15 +74,13 @@ public class ModelPackageService {
     @Autowired
     private FieldMapper fieldMapper;
     @Autowired
-    private PreItemMapper preItemMapper;
-    @Autowired
     private DataListsMapper dataListMapper;
     @Autowired
     private DataListMetaMapper dataListMetaMapper;
     @Autowired
     private DataListRecordMapper dataListRecordMapper;
     @Autowired
-    private AbstractionMapper abstractionMapper;
+    private FeatureMapper featureMapper;
     @Autowired
     private StrategyMapper strategyMapper;
     @Autowired
@@ -120,8 +119,6 @@ public class ModelPackageService {
         pkg.setModel(model);
         pkg.setFields(fieldMapper.selectList(
                 new LambdaQueryWrapper<FieldPO>().eq(FieldPO::getModelId, modelId)));
-        pkg.setPreItems(preItemMapper.selectList(
-                new LambdaQueryWrapper<PreItemPO>().eq(PreItemPO::getModelId, modelId)));
         List<DataListsPO> dataLists = dataListMapper.selectList(
                 new LambdaQueryWrapper<DataListsPO>().eq(DataListsPO::getModelId, modelId));
         pkg.setDataLists(dataLists);
@@ -134,8 +131,8 @@ public class ModelPackageService {
                     new LambdaQueryWrapper<DataListRecordPO>()
                             .in(DataListRecordPO::getDataListId, dataListIds)));
         }
-        pkg.setAbstractions(abstractionMapper.selectList(
-                new LambdaQueryWrapper<AbstractionPO>().eq(AbstractionPO::getModelId, modelId)));
+        pkg.setFeatures(featureMapper.selectList(
+                new LambdaQueryWrapper<FeaturePO>().eq(FeaturePO::getModelId, modelId)));
         List<StrategyPO> strategies = strategyMapper.selectList(
                 new LambdaQueryWrapper<StrategyPO>().eq(StrategyPO::getModelId, modelId));
         pkg.setStrategies(strategies);
@@ -164,18 +161,32 @@ public class ModelPackageService {
         if (body.length > maxUploadSize) {
             throw new ModelPackageException("策略包超过大小上限 " + (maxUploadSize / 1024 / 1024) + "MB");
         }
+        com.fasterxml.jackson.databind.JsonNode root;
+        try {
+            root = objectMapper.readTree(body);
+        } catch (IOException e) {
+            throw new ModelPackageException("不是合法的策略包 JSON: " + e.getMessage(), e);
+        }
+        String formatVersion = root.path("formatVersion").asText("");
+        if (FORMAT_VERSION_V1.equals(formatVersion)) {
+            // v4.0 包（preItems/abstractions）自动转换为 v4.1 特征形态
+            boolean converted = PackageV1Converter.convertIfNeeded((com.fasterxml.jackson.databind.node.ObjectNode) root);
+            if (converted) {
+                logger.info("package v1 converted to v2 feature envelope");
+            }
+        }
         ModelPackage pkg;
         try {
-            pkg = objectMapper.readValue(body, ModelPackage.class);
+            pkg = objectMapper.treeToValue(root, ModelPackage.class);
         } catch (IOException e) {
             throw new ModelPackageException("不是合法的策略包 JSON: " + e.getMessage(), e);
         }
         if (pkg.getModel() == null) {
             throw new ModelPackageException("策略包缺少 model 节点");
         }
-        if (!FORMAT_VERSION.equals(pkg.getFormatVersion())) {
+        if (!FORMAT_VERSION.equals(pkg.getFormatVersion()) && !FORMAT_VERSION_V1.equals(pkg.getFormatVersion())) {
             throw new ModelPackageException("策略包格式版本不支持: " + pkg.getFormatVersion()
-                    + "（当前引擎支持 " + FORMAT_VERSION + "）");
+                    + "（当前引擎支持 " + FORMAT_VERSION + "，并兼容 " + FORMAT_VERSION_V1 + "）");
         }
         return pkg;
     }
@@ -188,10 +199,19 @@ public class ModelPackageService {
         List<String> warnings = new ArrayList<>();
         Set<String> installedKeys = pluginManager.entries().stream()
                 .map(e -> e.getKey()).collect(Collectors.toSet());
-        for (PreItemPO preItem : pkg.getPreItems()) {
-            if (preItem.getPlugin() != null && !installedKeys.contains(preItem.getPlugin())) {
-                warnings.add("目标实例未安装插件: " + preItem.getPlugin()
-                        + "（preItem=" + preItem.getDestField() + "，事件执行时该插件将被隔离跳过）");
+        for (FeaturePO feature : pkg.getFeatures()) {
+            if (!"ENRICH".equals(feature.getType()) || feature.getDefinition() == null) {
+                continue;
+            }
+            try {
+                JsonNode definition = objectMapper.readTree(feature.getDefinition());
+                String plugin = definition.path("plugin").asText(null);
+                if (plugin != null && !installedKeys.contains(plugin)) {
+                    warnings.add("目标实例未安装插件: " + plugin
+                            + "（feature=" + feature.getFeatureName() + "，事件执行时该插件将被隔离跳过）");
+                }
+            } catch (IOException ignore) {
+                // definition 解析失败不阻断导入
             }
         }
         for (RulePO rule : pkg.getRules()) {
@@ -274,9 +294,9 @@ public class ModelPackageService {
             modelMapper.updateById(model);
         }
         int count = assembler.assemble(newId,
-                pkg.getFields(), pkg.getPreItems(),
+                pkg.getFields(), pkg.getFeatures(),
                 pkg.getDataLists(), pkg.getDataListMeta(), pkg.getDataListRecords(),
-                pkg.getAbstractions(), pkg.getStrategies(), pkg.getRules());
+                pkg.getStrategies(), pkg.getRules());
         logger.info("model package imported: source label={}, new modelId={}, {} objects",
                 source.getLabel(), newId, count);
         return newId;

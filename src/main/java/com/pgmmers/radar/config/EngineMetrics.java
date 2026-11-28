@@ -27,6 +27,7 @@ public class EngineMetrics {
     private static final String STAGE = "radar_engine_stage_seconds";
     private static final String DECISION = "radar_strategy_decision_total";
     private static final String STRATEGY_EXEC = "radar_strategy_executions_total";
+    private static final String FEATURE_EXEC = "radar_feature_executions_total";
     private static final String RULE_HITS = "radar_rule_hits_total";
     private static final String GROOVY_COMPILES = "radar_groovy_compiles_total";
     private static final String PLUGIN_EXEC = "radar_plugin_executions_total";
@@ -72,6 +73,17 @@ public class EngineMetrics {
     public void recordDecision(String risk) {
         Counter.builder(DECISION).tag("risk", risk)
                 .description("激活器决策分布").register(registry)
+                .increment();
+    }
+
+    /**
+     * 特征执行计数（v4.1 特征 SPI）。
+     *
+     * <p>type: ENRICH/DERIVED/AGGREGATE/RATIO；result: success / error / not_found。</p>
+     */
+    public void recordFeatureExecution(String type, String result) {
+        Counter.builder(FEATURE_EXEC).tag("type", type).tag("result", result)
+                .description("特征执行计数").register(registry)
                 .increment();
     }
 

@@ -3,11 +3,11 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 import com.alibaba.fastjson2.JSONObject;
 import com.radar.plugin.api.ParamDescriptor;
 import com.radar.plugin.api.ParamType;
-import com.radar.plugin.api.Plugin;
-import com.radar.plugin.api.PluginMeta;
-import com.radar.plugin.api.PluginRequest;
-import com.radar.plugin.api.PluginResult;
-import com.radar.plugin.api.PluginException;
+import com.radar.plugin.api.FeatureProcessor;
+import com.radar.plugin.api.FeatureMeta;
+import com.radar.plugin.api.FeatureRequest;
+import com.radar.plugin.api.FeatureResponse;
+import com.radar.plugin.api.FeatureException;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Component;
@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
  * {@code {字段名}} 占位符由源字段值填充；存量配置（args=纯 url、reqType 列）兼容。</p>
  */
 @Component
-@PluginMeta(key = "HTTP_UTIL", name = "HTTP_UTIL", desc = "HttpUtil", type = "JSON", remote = true)
-public class HTTP_UTIL implements Plugin {
+@FeatureMeta(key = "HTTP_UTIL", name = "HTTP_UTIL", desc = "HttpUtil", type = "JSON", remote = true)
+public class HTTP_UTIL implements FeatureProcessor {
 
     @Override
     public List<ParamDescriptor> paramSchema() {
@@ -33,8 +33,8 @@ public class HTTP_UTIL implements Plugin {
     }
 
     @Override
-    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context)
-            throws PluginException {
+    public FeatureResponse execute(FeatureRequest request, com.radar.plugin.api.FeatureContext context)
+            throws FeatureException {
         String url;
         String reqType;
         Map<String, Object> args = request.getArgs();
@@ -45,11 +45,13 @@ public class HTTP_UTIL implements Plugin {
         } else {
             // 存量兼容：args=纯 url，reqType 在 preItem 配置列
             url = request.getRawArgs();
-            reqType = request.getConfig() instanceof com.pgmmers.radar.model.vo.model.PreItemVO item
-                    ? item.getReqType() : "GET";
+            reqType = request.getConfig() instanceof com.pgmmers.radar.model.vo.model.FeatureVO item
+                    && item.getDefinition() != null
+                    && !item.getDefinition().path("reqType").asText("").isEmpty()
+                    ? item.getDefinition().path("reqType").asText("GET") : "GET";
         }
         if (url == null || url.isBlank()) {
-            throw new PluginException("HTTP_UTIL 缺少请求 URL");
+            throw new FeatureException("HTTP_UTIL 缺少请求 URL");
         }
         // {字段名} 占位符用源字段值填充
         for (Map.Entry<String, Object> entry : request.getSourceFields().entrySet()) {
@@ -64,8 +66,8 @@ public class HTTP_UTIL implements Plugin {
             response = context.http().get(url);
         }
         if (!response.isOk()) {
-            throw new PluginException("HTTP " + response.getStatus() + ": " + url);
+            throw new FeatureException("HTTP " + response.getStatus() + ": " + url);
         }
-        return PluginResult.of(JSONObject.parseObject(response.getBody()));
+        return FeatureResponse.of(JSONObject.parseObject(response.getBody()));
     }
 }

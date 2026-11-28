@@ -2,11 +2,11 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.radar.plugin.api.ParamDescriptor;
 import com.radar.plugin.api.ParamType;
-import com.radar.plugin.api.Plugin;
-import com.radar.plugin.api.PluginMeta;
-import com.radar.plugin.api.PluginRequest;
-import com.radar.plugin.api.PluginResult;
-import com.radar.plugin.api.PluginException;
+import com.radar.plugin.api.FeatureProcessor;
+import com.radar.plugin.api.FeatureMeta;
+import com.radar.plugin.api.FeatureRequest;
+import com.radar.plugin.api.FeatureResponse;
+import com.radar.plugin.api.FeatureException;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
  * <p>v3 迁移：format 进参数 schema；存量配置（args=格式串）走 legacy 兜底。</p>
  */
 @Component
-@PluginMeta(key = "DATEFORMAT", name = "DATEFORMAT", desc = "日期时间格式化", type = "STRING")
-public class DATEFORMAT implements Plugin {
+@FeatureMeta(key = "DATEFORMAT", name = "DATEFORMAT", desc = "日期时间格式化", type = "STRING")
+public class DATEFORMAT implements FeatureProcessor {
 
     @Override
     public List<ParamDescriptor> paramSchema() {
@@ -29,8 +29,8 @@ public class DATEFORMAT implements Plugin {
     }
 
     @Override
-    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context)
-            throws PluginException {
+    public FeatureResponse execute(FeatureRequest request, com.radar.plugin.api.FeatureContext context)
+            throws FeatureException {
         String format;
         Map<String, Object> args = request.getArgs();
         if (!args.isEmpty()) {
@@ -40,10 +40,10 @@ public class DATEFORMAT implements Plugin {
             format = request.getRawArgs();
         }
         if (format == null || format.isBlank()) {
-            throw new PluginException("DATEFORMAT 缺少格式化字符串");
+            throw new FeatureException("DATEFORMAT 缺少格式化字符串");
         }
         Object raw = request.getSourceValues().isEmpty() ? null : request.getSourceValues().get(0);
         long millis = Long.parseLong(raw.toString());
-        return PluginResult.of(DateFormatUtils.format(millis, format));
+        return FeatureResponse.of(DateFormatUtils.format(millis, format));
     }
 }

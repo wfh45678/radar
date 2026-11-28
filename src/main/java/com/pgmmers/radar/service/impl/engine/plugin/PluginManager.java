@@ -2,13 +2,16 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 
 import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
-import com.pgmmers.radar.service.engine.PluginServiceV2;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.radar.plugin.api.OutputColumn;
 import com.radar.plugin.api.ParamDescriptor;
+import com.radar.plugin.api.FeatureProcessor;
 import com.radar.plugin.api.Plugin;
+import com.radar.plugin.api.FeatureContext;
 import com.radar.plugin.api.PluginContext;
+import com.radar.plugin.api.FeatureRequest;
 import com.radar.plugin.api.PluginRequest;
+import com.radar.plugin.api.FeatureResponse;
 import com.radar.plugin.api.PluginResult;
 import java.io.File;
 import java.net.URL;
@@ -37,10 +40,14 @@ import org.springframework.stereotype.Service;
  * 插件注册表（v3.0 重构）：归一管理三路插件，引擎执行链只面向 {@link PluginEntry}。
  *
  * <ul>
- *   <li><b>BUILTIN_V2</b>：{@link PluginServiceV2} 旧接口插件（Spring bean，适配保留，存量 key 兼容）；</li>
- *   <li><b>BUILTIN_V3</b>：v3 {@link Plugin} 新接口插件（Spring bean，官方内置实现）；</li>
- *   <li><b>EXTERNAL</b>：plugins/ 目录外置 jar 中的 v3 插件（SPI 发现，子优先类加载器隔离）。</li>
+ *   <li><b>BUILTIN_V3</b>：v3 {@link Plugin} 旧契约插件（Spring bean，{@deprecated} 桥，v5 移除）；</li>
+ *   <li><b>BUILTIN_V4</b>：v4 {@link FeatureProcessor} 主契约插件（Spring bean，官方内置实现）；</li>
+ *   <li><b>EXTERNAL / EXTERNAL_LEGACY</b>：plugins/ 目录外置 jar（SPI 发现，子优先类加载器隔离；
+ *       v4 FeatureProcessor 为主，v3 Plugin 走 legacy 适配并告警）。</li>
  * </ul>
+ *
+ * <p>v4.1：旧 PluginServiceV2 适配路径移除（主工程已无实现）；SDK 4.0 见 radar-plugin-api
+ * （FeatureProcessor 主契约 + 3.x legacy 桥）。</p>
  *
  * <p>注册顺序 = 冲突优先级：内置先注册，外置后注册，同 key 以先注册者为准并告警。</p>
  *
@@ -114,12 +121,15 @@ public class PluginManager implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        // 1) v2 旧接口插件（适配保留，key=类简名，存量 DB 配置兼容）
-        applicationContext.getBeansOfType(PluginServiceV2.class)
-                .forEach((beanName, v2) -> register(v2Entry(v2)));
-        // 2) v3 新接口插件（Spring bean）
+        // 1) v4 主契约插件（Spring bean）
+        applicationContext.getBeansOfType(FeatureProcessor.class)
+                .forEach((beanName, processor) -> register(v4Entry(processor, PluginEntry.Source.BUILTIN_V4)));
+        // 2) v3 旧契约插件（legacy 桥，Spring bean，v5 移除）
         applicationContext.getBeansOfType(Plugin.class)
-                .forEach((beanName, plugin) -> register(v3Entry(plugin, PluginEntry.Source.BUILTIN_V3)));
+                .forEach((beanName, plugin) -> {
+                    logger.warn("legacy v3 plugin '{}' loaded (Source.BUILTIN_V3)——请迁移到 FeatureProcessor（radar-plugin-api 4.0），v5 将移除该桥", plugin.key());
+                    register(v3Entry(plugin, PluginEntry.Source.BUILTIN_V3));
+                });
         // 3) plugins/ 目录外置插件
         loadExternalPlugins();
         logger.info("plugin registry ready: {} plugins {}",
@@ -127,14 +137,37 @@ public class PluginManager implements ApplicationContextAware {
                 entries.values().stream().map(e -> e.getKey() + "(" + e.getSource() + ")").toList());
     }
 
-    private PluginEntry v2Entry(PluginServiceV2 v2) {
-        List<OutputColumn> outputMeta = parseLegacyMeta(v2.getMeta());
+    private PluginEntry v4Entry(FeatureProcessor processor, PluginEntry.Source source) {
+        List<ParamDescriptor> schema = processor.paramSchema();
         return new PluginEntry(
-                v2.pluginName(), v2.pluginName(), v2.desc(),
-                v2.getType() == null ? "" : v2.getType(),
-                false, PluginEntry.Source.BUILTIN_V2,
-                outputMeta, List.of(),
-                (item, jsonInfo, sourceField) -> v2.handle(item, jsonInfo, sourceField));
+                processor.key(), processor.name(), processor.desc(),
+                processor.type(), processor.remote(), source,
+                processor.version(), processor.provider(),
+                processor.outputMeta(), schema,
+                (feature, context, sourceField) -> executeV4(processor, schema, feature, context, sourceField));
+    }
+
+    private Object executeV4(FeatureProcessor processor, List<ParamDescriptor> schema, FeatureVO feature,
+                             Map<String, Map<String, ?>> context, String[] sourceField) throws Exception {
+        Map<String, Object> jsonInfo = (Map<String, Object>) context.get("fields");
+        Map<String, Object> features = (Map<String, Object>) context.get("features");
+        Map<String, Object> sourceMap = new LinkedHashMap<>();
+        List<Object> sourceValues = new ArrayList<>();
+        if (sourceField != null) {
+            for (String f : sourceField) {
+                sourceMap.put(f, jsonInfo == null ? null : jsonInfo.get(f));
+                sourceValues.add(jsonInfo == null ? null : jsonInfo.get(f));
+            }
+        }
+        String rawArgs = feature.getDefinition() == null ? null : feature.getDefinition().path("args").asText(null);
+        Map<String, Object> typedArgs = parseArgs(schema, rawArgs);
+        FeatureContext featureContext = contextFactory.createFeature(processor.key());
+        FeatureRequest request = new FeatureRequest(
+                feature.getModelId(), feature.getFeatureName(),
+                sourceMap, sourceValues, typedArgs, rawArgs, jsonInfo, feature,
+                features == null ? java.util.Map.of() : features);
+        FeatureResponse response = processor.execute(request, featureContext);
+        return response == null ? null : response.getPayload();
     }
 
     private PluginEntry v3Entry(Plugin plugin, PluginEntry.Source source) {
@@ -147,8 +180,10 @@ public class PluginManager implements ApplicationContextAware {
                 (item, jsonInfo, sourceField) -> executeV3(plugin, schema, item, jsonInfo, sourceField));
     }
 
-    private Object executeV3(Plugin plugin, List<ParamDescriptor> schema, PreItemVO item,
-                             Map<String, Object> jsonInfo, String[] sourceField) throws Exception {
+    private Object executeV3(Plugin plugin, List<ParamDescriptor> schema, FeatureVO feature,
+                             Map<String, Map<String, ?>> context, String[] sourceField) throws Exception {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> jsonInfo = (Map<String, Object>) context.get("fields");
         Map<String, Object> sourceMap = new LinkedHashMap<>();
         List<Object> sourceValues = new ArrayList<>();
         if (sourceField != null) {
@@ -157,12 +192,13 @@ public class PluginManager implements ApplicationContextAware {
                 sourceValues.add(jsonInfo.get(f));
             }
         }
-        Map<String, Object> typedArgs = parseArgs(schema, item.getArgs());
-        PluginContext context = contextFactory.create(plugin.key());
+        String rawArgs = feature.getDefinition() == null ? null : feature.getDefinition().path("args").asText(null);
+        Map<String, Object> typedArgs = parseArgs(schema, rawArgs);
+        PluginContext pluginContext = contextFactory.create(plugin.key());
         PluginRequest request = new PluginRequest(
-                item.getModelId(), item.getDestField(),
-                sourceMap, sourceValues, typedArgs, item.getArgs(), jsonInfo, item);
-        PluginResult result = plugin.execute(request, context);
+                feature.getModelId(), feature.getFeatureName(),
+                sourceMap, sourceValues, typedArgs, rawArgs, jsonInfo, feature);
+        PluginResult result = plugin.execute(request, pluginContext);
         return result == null ? null : result.getPayload();
     }
 
@@ -199,27 +235,6 @@ public class PluginManager implements ApplicationContextAware {
             }
         }
         return typed;
-    }
-
-    /** 解析 v2 getMeta() 的 JSON 字符串为 OutputColumn 列表（失败返回空列表）。 */
-    private List<OutputColumn> parseLegacyMeta(String metaJson) {
-        if (metaJson == null || metaJson.isBlank()) {
-            return List.of();
-        }
-        try {
-            List<Map<String, Object>> rows = JSON.parseObject(metaJson, List.class);
-            List<OutputColumn> columns = new ArrayList<>();
-            for (Map<String, Object> row : rows) {
-                columns.add(OutputColumn.of(
-                        String.valueOf(row.get("column")),
-                        String.valueOf(row.get("title")),
-                        String.valueOf(row.getOrDefault("type", "STRING"))));
-            }
-            return columns;
-        } catch (Exception e) {
-            logger.warn("legacy getMeta parse failed", e);
-            return List.of();
-        }
     }
 
     /** 扫描 plugins/ 目录下的 jar，以子优先类加载器 + SPI 发现 v3 插件。 */
@@ -265,7 +280,32 @@ public class PluginManager implements ApplicationContextAware {
         Map<String, PluginEntry> fresh = new LinkedHashMap<>();
         int failed = 0;
         try {
+            // v4 主契约
+            for (FeatureProcessor processor : ServiceLoader.load(FeatureProcessor.class, newLoader)) {
+                try {
+                    PluginEntry entry = v4Entry(processor, PluginEntry.Source.EXTERNAL);
+                    // 与内置 key 冲突：告警并跳过（内置优先，DB 存量配置不受外置 jar 影响）
+                    PluginEntry builtin = entries.get(entry.getKey());
+                    if (builtin != null && builtin.getSource() != PluginEntry.Source.EXTERNAL) {
+                        logger.warn("external plugin key conflicts with builtin, skip: {} ({})",
+                                entry.getKey(), processor.getClass().getName());
+                        failed++;
+                        continue;
+                    }
+                    PluginEntry previous = fresh.putIfAbsent(entry.getKey(), entry);
+                    if (previous != null) {
+                        logger.warn("duplicate external plugin key across jars, keep first: {} ({} vs {})",
+                                entry.getKey(), previous, processor.getClass().getName());
+                        failed++;
+                    }
+                } catch (Exception e) {
+                    logger.warn("external plugin init failed: {}", processor.getClass().getName(), e);
+                    failed++;
+                }
+            }
+            // v3 legacy 契约（deprecated 桥）
             for (Plugin plugin : ServiceLoader.load(Plugin.class, newLoader)) {
+                logger.warn("legacy v3 external plugin '{}' loaded——请迁移到 FeatureProcessor（radar-plugin-api 4.0），v5 将移除该桥", plugin.key());
                 try {
                     PluginEntry entry = v3Entry(plugin, PluginEntry.Source.EXTERNAL);
                     // 与内置 key 冲突：告警并跳过（内置优先，DB 存量配置不受外置 jar 影响）

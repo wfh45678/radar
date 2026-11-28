@@ -3,6 +3,7 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.pgmmers.radar.mapper.PluginRegistryMapper;
 import com.pgmmers.radar.model.entity.PluginRegistryPO;
+import com.radar.plugin.api.FeatureMeta;
 import com.radar.plugin.api.PluginMeta;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -164,7 +165,7 @@ public class PluginAdminService {
             file.transferTo(temp);
             Set<String> keys = scanJar(temp);
             if (keys.isEmpty()) {
-                throw new IllegalArgumentException("jar 中未发现任何插件（缺少 " + SPI_FILE + " 或未标注 @PluginMeta）");
+                throw new IllegalArgumentException("jar 中未发现任何插件（缺少 " + SPI_FILE + " 或未标注 @FeatureMeta）");
             }
             // 与内置 key 冲突：直接拒绝（内置优先，避免管理员误覆盖引擎能力）
             Set<String> builtin = pluginManager.entries().stream()
@@ -357,9 +358,15 @@ public class PluginAdminService {
                     String className = name.substring(0, name.length() - 6).replace('/', '.');
                     try {
                         Class<?> clazz = Class.forName(className, false, loader);
-                        PluginMeta meta = clazz.getAnnotation(PluginMeta.class);
-                        if (meta != null && !meta.key().isEmpty()) {
-                            keys.add(meta.key());
+                        com.radar.plugin.api.FeatureMeta featureMeta = clazz.getAnnotation(com.radar.plugin.api.FeatureMeta.class);
+                        if (featureMeta != null && !featureMeta.key().isEmpty()) {
+                            keys.add(featureMeta.key());
+                        } else {
+                            // v3 legacy 契约（deprecated 桥）
+                            PluginMeta meta = clazz.getAnnotation(PluginMeta.class);
+                            if (meta != null && !meta.key().isEmpty()) {
+                                keys.add(meta.key());
+                            }
                         }
                     } catch (Throwable ignore) {
                         // 非插件类或依赖缺失的类：与本契约无关，跳过

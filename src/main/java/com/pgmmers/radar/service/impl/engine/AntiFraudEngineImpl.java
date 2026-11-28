@@ -1,33 +1,38 @@
 package com.pgmmers.radar.service.impl.engine;
 
 
-import com.pgmmers.radar.enums.AggregateType;
+import com.pgmmers.radar.enums.AggregateKind;
+import com.pgmmers.radar.enums.FeatureStage;
+import com.pgmmers.radar.enums.FeatureType;
 import com.pgmmers.radar.config.EngineMetrics;
 import com.pgmmers.radar.enums.FieldType;
 import com.pgmmers.radar.enums.StatusType;
 import com.pgmmers.radar.enums.StrategyType;
 import com.pgmmers.radar.service.dnn.Estimator;
-import com.pgmmers.radar.service.engine.AggregateCommand;
 import com.pgmmers.radar.service.engine.AntiFraudEngine;
+import com.pgmmers.radar.service.engine.feature.FeatureExecutor;
+import com.pgmmers.radar.service.engine.feature.FeatureOutcome;
 import com.pgmmers.radar.service.engine.strategy.StrategyExecutor;
 import com.pgmmers.radar.service.engine.strategy.StrategyOutcome;
-import com.pgmmers.radar.service.engine.vo.AbstractionResult;
+import com.pgmmers.radar.service.engine.vo.FeatureResult;
 import com.pgmmers.radar.service.engine.vo.StrategyResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.HitObject;
 import com.pgmmers.radar.service.engine.vo.RiskObject;
 import com.pgmmers.radar.service.impl.dnn.EstimatorContainer;
+import com.pgmmers.radar.service.impl.engine.feature.FeatureExecutorRegistry;
 import com.pgmmers.radar.service.impl.engine.strategy.StrategyExecutorRegistry;
 import com.pgmmers.radar.service.impl.util.JsonParserUtil;
-import com.pgmmers.radar.service.model.AbstractionService;
+import com.pgmmers.radar.service.model.FeatureService;
 import com.pgmmers.radar.service.model.StrategyService;
 import com.pgmmers.radar.service.model.DataListsService;
 import com.pgmmers.radar.service.model.EntityService;
 import com.pgmmers.radar.service.model.FieldService;
 import com.pgmmers.radar.service.model.ModelService;
 import com.pgmmers.radar.common.util.DateUtils;
+import com.pgmmers.radar.service.engine.strategy.ConditionEvaluator;
 import com.pgmmers.radar.common.util.GroovyScriptUtil;
-import com.pgmmers.radar.model.vo.model.AbstractionVO;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
@@ -35,6 +40,7 @@ import com.pgmmers.radar.model.vo.model.FieldVO;
 import com.pgmmers.radar.model.vo.model.ModelVO;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,7 +64,10 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     private EntityService entityService;
 
     @Autowired
-    private AbstractionService abstractionService;
+    private FeatureService featureService;
+
+    @Autowired
+    private FeatureExecutorRegistry featureExecutorRegistry;
 
     @Autowired
     private StrategyService strategyService;
@@ -73,9 +82,6 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     private DataListsService dataListsService;
 
     @Autowired
-    private AggregateCommand aggregateCommand;
-
-    @Autowired
     private StrategyExecutorRegistry executorRegistry;
 
     @Autowired
@@ -85,163 +91,54 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
     private EngineMetrics engineMetrics;
 
     @Override
-    public AbstractionResult executeAbstraction(Long modelId, Map<String, Map<String, ?>> data) {
-        AbstractionResult result = new AbstractionResult();
-        // 1. 解析 参数信息
-        //JSONObject entity = (JSONObject) data.get("entity");
-
-        // 2. list abstraction
-        List<AbstractionVO> abstractions = abstractionService.listAbstraction(modelId);
-
-        // 排除没有的定义 abstraction 的情况。
-        if (abstractions == null || abstractions.size() == 0) {
-            data.put("abstractions", result.getAbstractionMap());
-            result.setSuccess(true);
-            return result;
+    public FeatureResult executeFeatures(Long modelId, Map<String, Map<String, ?>> data, FeatureStage stage) {
+        FeatureResult result = new FeatureResult();
+        List<FeatureVO> features = new ArrayList<>();
+        for (FeatureVO feature : featureService.listFeature(modelId)) {
+            if (stage.getTypes().stream().anyMatch(t -> t.name().equals(feature.getType()))) {
+                features.add(feature);
+            }
         }
-        // 3. 按 script 的条件， 分别统计 abstraction
-        for (AbstractionVO abs : abstractions) {
+        features.sort(Comparator.comparingInt(f -> f.getOrderNo() == null ? Integer.MAX_VALUE : f.getOrderNo()));
 
-            if (!abs.getStatus().equals(StatusType.ACTIVE.getKey())) {
+        Map<String, Object> dataCollectionMap = dataListsService.getDataListMap(modelId);
+        for (FeatureVO feature : features) {
+            if (!feature.getStatus().equals(StatusType.ACTIVE.getKey())) {
                 continue;
             }
-
-            // abs get aggregate type
-
-            String searchField = abs.getSearchField();
-            searchField = searchField.replace("fields.", "").replace("preItems.", "");
-
-            Integer aggregateType = abs.getAggregateType();
-
-            Integer dateType = abs.getSearchIntervalType();
-
-            Integer interval = abs.getSearchIntervalValue();
-
-            String funcionField = abs.getFunctionField();
-            funcionField = funcionField.replace("fields.", "").replace("preItems.", "");
-
-            FieldType functionFieldType = null;
-
-            String ruleScript = abs.getRuleScript();
-
-            // 获取预加载的黑/白名单集合
-            Map<String, Object> dataCollectionMap = dataListsService.getDataListMap(modelId);
-            boolean matched = checkAbstractionScript(ruleScript, data, dataCollectionMap);
-            if (!matched) {
-                // 脚本检查不通过，过滤该 abstraction
-                //data.put(abs.getName(), 0);
-                result.getAbstractionMap().put(abs.getName(), -1);
+            FeatureType type = FeatureType.of(feature.getType());
+            FeatureExecutor executor = type == null ? null : featureExecutorRegistry.get(type);
+            if (executor == null) {
+                logger.warn("feature type {} has no executor, skip feature {} (id={})",
+                        type, feature.getFeatureName(), feature.getId());
+                engineMetrics.recordFeatureExecution(String.valueOf(type), "no_executor");
                 continue;
             }
-            ModelVO model = modelService.getModelById(modelId);
-            String refDateFieldName = model.getReferenceDate();
-            Date refDate;
             try {
-                Long refDatetimeMills = (Long) data.get("fields").get(refDateFieldName);
-                Calendar c = Calendar.getInstance();
-                c.setTimeInMillis(refDatetimeMills);
-                refDate = c.getTime();
+                FeatureOutcome outcome = executor.execute(feature, data, dataCollectionMap);
+                if (outcome.isPresent()) {
+                    result.getFeatureMap().put(feature.getFeatureName(), outcome.getValue());
+                }
             } catch (Exception e) {
-                e.printStackTrace();
-                result.setMsg("时间不正确");
-                return result;
+                // 单特征异常隔离（跳过该特征，不影响事件链路）
+                logger.warn("feature execute error, skip feature {} (id={})", feature.getFeatureName(), feature.getId(), e);
+                engineMetrics.recordFeatureExecution(type.name(), "error");
             }
-            if (refDate == null) {
-                result.setMsg("时间不正确");
-                return result;
-            }
-            Date beginDate = DateUtils.addDate(refDate, dateType, interval * -1).getTime();
-            Object calResult = null;
-            Object searchFieldVal = data.get("fields").get(searchField);
-            if (searchFieldVal == null) {
-                searchFieldVal = data.get("preItems").get(searchField);
-                if (searchFieldVal == null) {
-                    searchFieldVal = JsonParserUtil.value(data.get("preItems"), searchField, null);
-                }
-            }
-            if (searchFieldVal == null) {
-                result.setMsg("search field value eq null!");
-                return result;
-            }
-
-            if (!StringUtils.isEmpty(funcionField)) {
-                List<FieldVO> fields = fieldService.listField(modelId);
-                if (fields == null || fields.size() == 0) {
-                    result.setMsg("no field found!");
-                    return result;
-                }
-                for (FieldVO field : fields) {
-                    if (field.getFieldName().equals(funcionField)) {
-                        functionFieldType = FieldType.valueOf(field.getFieldType());
-                        break;
-                    }
-                }
-                if (functionFieldType == null) {
-                    // 因为预处理字段没有字段类型，暂时设置为String
-                    // TODO:  目前只有高级函数使用了 functionFieldType。
-                    //result.setMsg("function field type is null");
-                    //return result;
-                    functionFieldType = FieldType.valueOf("STRING");
-                }
-            }
-
-            switch (aggregateType) {
-            case AggregateType.COUNT:
-                calResult = aggregateCommand.count(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate);
-                break;
-            case AggregateType.DISTINCT_COUNT:
-                calResult = aggregateCommand.distinctCount(modelId.toString(), searchField, searchFieldVal,
-                        refDateFieldName, beginDate, refDate, funcionField);
-                break;
-            case AggregateType.SUM:
-                calResult = aggregateCommand.sum(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            case AggregateType.AVERAGE:
-                calResult = aggregateCommand.average(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            case AggregateType.MAX:
-                calResult = aggregateCommand.max(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            case AggregateType.MIN:
-                calResult = aggregateCommand.min(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            case AggregateType.SD:
-                calResult = aggregateCommand.sd(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField, functionFieldType);
-                break;
-            case AggregateType.VARIANCE:
-                calResult = aggregateCommand.variance(modelId.toString(), searchField, searchFieldVal,
-                        refDateFieldName, beginDate, refDate, funcionField, functionFieldType);
-                break;
-            case AggregateType.DEVIATION:
-                Object val = data.get("fields").get(funcionField);
-                calResult = aggregateCommand.deviation(modelId.toString(), searchField, searchFieldVal,
-                        refDateFieldName, beginDate, refDate, funcionField, functionFieldType,
-                        new BigDecimal(val.toString()));
-                break;
-            case AggregateType.MEDIAN:
-                calResult = aggregateCommand.median(modelId.toString(), searchField, searchFieldVal, refDateFieldName,
-                        beginDate, refDate, funcionField);
-                break;
-            default:
-
-            }
-            if (calResult instanceof BigDecimal) {
-                result.getAbstractionMap().put(abs.getName(), ((BigDecimal) calResult).doubleValue());
-            } else {
-                result.getAbstractionMap().put(abs.getName(), calResult);
-            }
-
         }
-        data.put("abstractions", result.getAbstractionMap());
+        mergeFeatures(data, result.getFeatureMap());
         result.setSuccess(true);
         return result;
+    }
 
+    /** 把本阶段特征产出合并进 context 的 features 命名空间（不覆盖 ENRICH/DERIVED 已产出项以外的键）。 */
+    @SuppressWarnings("unchecked")
+    private void mergeFeatures(Map<String, Map<String, ?>> data, Map<String, Object> featureMap) {
+        Map<String, Object> features = (Map<String, Object>) data.get("features");
+        if (features == null) {
+            features = new HashMap<>();
+            data.put("features", features);
+        }
+        features.putAll(featureMap);
     }
 
     /**
@@ -335,32 +232,10 @@ public class AntiFraudEngineImpl implements AntiFraudEngine {
             riskObj.setScore(outcome.getScore().intValue());
             result.getStrategyMap().put(name, riskObj);
         }
-        // context 键保持 activations（ES 文档与报表检索依赖该键，v4.0 策略更名不改变对外数据形态）
-        data.put("activations", result.getStrategyMap());
+        // v4.1：上下文键统一 strategies（修复 v4.0 写 activations 与报表/导出读 strategies 的失配）
+        data.put("strategies", result.getStrategyMap());
         result.setSuccess(true);
         return result;
     }
 
-    /**
-     *
-     * 检查数据是否符合条件.
-     *
-     * @param ruleScript string
-     * @param entity map of params
-     * @param dataCollectionMap like black list
-     * @return true data is valid, other is false, {@link Boolean}
-     * @author feihu.wang
-     * 2016年8月2日
-     */
-    private Boolean checkAbstractionScript(String ruleScript, Map entity, Map<String, Object> dataCollectionMap) {
-        Object[] args = { entity, dataCollectionMap };
-        Boolean ret = false;
-        try {
-            ret = (Boolean) GroovyScriptUtil.invokeMethod(ruleScript, "check", args);
-        } catch (Exception e) {
-            logger.info("rule:{}", ruleScript);
-            logger.error("", e);
-        }
-        return ret;
-    }
 }

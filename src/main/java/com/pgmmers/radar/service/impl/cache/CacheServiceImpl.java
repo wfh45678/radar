@@ -5,13 +5,12 @@ import com.pgmmers.radar.service.cache.CacheService;
 import com.pgmmers.radar.service.cache.RedisService;
 import com.pgmmers.radar.service.cache.SubscribeHandle;
 import com.pgmmers.radar.service.common.CommonResult;
-import com.pgmmers.radar.model.vo.model.AbstractionVO;
 import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.DataListRecordVO;
 import com.pgmmers.radar.model.vo.model.DataListsVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
 import com.pgmmers.radar.model.vo.model.ModelVO;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +26,7 @@ public class CacheServiceImpl implements CacheService {
 
     public static final String PUB_SUB_MODEL_CHANNEL = "radar_channel_model";
     public static final String PUB_SUB_FIELD_CHANNEL = "radar_channel_field";
-    public static final String PUB_SUB_PREITEM_CHANNEL = "radar_channel_preitem";
-    public static final String PUB_SUB_ABSTRACTION_CHANNEL = "radar_channel_abstraction";
+    public static final String PUB_SUB_FEATURE_CHANNEL = "radar_channel_feature";
     public static final String PUB_SUB_RULE_CHANNEL = "radar_channel_rule";
     public static final String PUB_SUB_STRATEGY_CHANNEL = "radar_channel_strategy";
     public static final String PUB_SUB_LISTRECORD_CHANNEL = "radar_channel_listrecord";
@@ -76,26 +74,14 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public void publishPreItem(PreItemVO preItem) {
-        redisService.publish(PUB_SUB_PREITEM_CHANNEL, JSON.toJSONString(preItem));
+    public void publishFeature(FeatureVO feature) {
+        redisService.publish(PUB_SUB_FEATURE_CHANNEL, JSON.toJSONString(feature));
 
     }
 
     @Override
-    public void subscribePreItem(SubscribeHandle handler) {
-        redisService.subscribe(PUB_SUB_PREITEM_CHANNEL, handler);
-
-    }
-
-    @Override
-    public void publishAbstraction(AbstractionVO model) {
-        redisService.publish(PUB_SUB_ABSTRACTION_CHANNEL, JSON.toJSONString(model));
-
-    }
-
-    @Override
-    public void subscribeAbstraction(SubscribeHandle handler) {
-        redisService.subscribe(PUB_SUB_ABSTRACTION_CHANNEL, handler);
+    public void subscribeFeature(SubscribeHandle handler) {
+        redisService.subscribe(PUB_SUB_FEATURE_CHANNEL, handler);
 
     }
 

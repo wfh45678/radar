@@ -3,11 +3,11 @@ package com.pgmmers.radar.service.impl.engine.plugin;
 import com.alibaba.fastjson2.JSONObject;
 import com.radar.plugin.api.HttpResult;
 import com.radar.plugin.api.OutputColumn;
-import com.radar.plugin.api.Plugin;
+import com.radar.plugin.api.FeatureProcessor;
 import com.radar.plugin.api.ParamDescriptor;
-import com.radar.plugin.api.PluginMeta;
-import com.radar.plugin.api.PluginRequest;
-import com.radar.plugin.api.PluginResult;
+import com.radar.plugin.api.FeatureMeta;
+import com.radar.plugin.api.FeatureRequest;
+import com.radar.plugin.api.FeatureResponse;
 import jakarta.annotation.PostConstruct;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,8 +24,8 @@ import org.springframework.stereotype.Component;
  * （强制超时 + 私网防护 + 连接复用），并声明 remote 型。</p>
  */
 @Component
-@PluginMeta(key = "GPS2LOCATION", name = "GPS2LOCATION", desc = "GPS转换成地址", type = "", remote = true)
-public class GPS2LOCATION implements Plugin {
+@FeatureMeta(key = "GPS2LOCATION", name = "GPS2LOCATION", desc = "GPS转换成地址", type = "", remote = true)
+public class GPS2LOCATION implements FeatureProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(GPS2LOCATION.class);
 
@@ -52,16 +52,16 @@ public class GPS2LOCATION implements Plugin {
     }
 
     @Override
-    public PluginResult execute(PluginRequest request, com.radar.plugin.api.PluginContext context) {
+    public FeatureResponse execute(FeatureRequest request, com.radar.plugin.api.FeatureContext context) {
         List<Object> values = request.getSourceValues();
         if (values.size() < 2 || values.get(0) == null || values.get(1) == null) {
-            return PluginResult.of(null);
+            return FeatureResponse.of(null);
         }
         // 纬度 / 经度
         String latitude = values.get(0).toString();
         String longitude = values.get(1).toString();
         if (latitude.isEmpty() || longitude.isEmpty()) {
-            return PluginResult.of(null);
+            return FeatureResponse.of(null);
         }
         Map<String, Object> location = new LinkedHashMap<>();
         try {
@@ -79,6 +79,6 @@ public class GPS2LOCATION implements Plugin {
         } catch (Exception e) {
             logger.error("GPS2LOCATION error", e);
         }
-        return PluginResult.of(location);
+        return FeatureResponse.of(location);
     }
 }

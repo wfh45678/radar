@@ -4,7 +4,7 @@ public class EventExportQuery extends PageQuery {
 	
 	  private String[] fields;
 	  
-	  private String[] preItems;
+	  private String[] features;
 	  
 	  private String[] rules;
 	  
@@ -18,12 +18,12 @@ public class EventExportQuery extends PageQuery {
 		this.fields = fields;
 	}
 
-	public String[] getPreItems() {
-		return preItems;
+	public String[] getFeatures() {
+		return features;
 	}
 
-	public void setPreItems(String[] preItems) {
-		this.preItems = preItems;
+	public void setFeatures(String[] features) {
+		this.features = features;
 	}
 
 	public String[] getRules() {

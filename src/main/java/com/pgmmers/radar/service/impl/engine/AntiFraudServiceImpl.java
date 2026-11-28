@@ -2,28 +2,32 @@ package com.pgmmers.radar.service.impl.engine;
 
 
 import com.pgmmers.radar.config.EngineMetrics;
+import com.pgmmers.radar.enums.FeatureStage;
+import com.pgmmers.radar.enums.FeatureType;
 import com.pgmmers.radar.enums.StatusType;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.service.common.CommonResult;
 import com.pgmmers.radar.service.engine.AntiFraudEngine;
 import com.pgmmers.radar.service.engine.AntiFraudService;
-import com.pgmmers.radar.service.engine.vo.AbstractionResult;
+import com.pgmmers.radar.service.engine.feature.FeatureExecutor;
+import com.pgmmers.radar.service.engine.feature.FeatureOutcome;
+import com.pgmmers.radar.service.engine.vo.FeatureResult;
 import com.pgmmers.radar.service.engine.vo.StrategyResult;
 import com.pgmmers.radar.service.engine.vo.AdaptationResult;
 import com.pgmmers.radar.service.engine.vo.AntiFraudProcessResult;
-import com.pgmmers.radar.service.impl.engine.plugin.PluginEntry;
-import com.pgmmers.radar.service.impl.engine.plugin.PluginManager;
+import com.pgmmers.radar.service.impl.engine.feature.FeatureExecutorRegistry;
+import com.pgmmers.radar.service.model.FeatureService;
 import com.pgmmers.radar.service.model.ModelService;
-import com.pgmmers.radar.service.model.PreItemService;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 反欺诈主要服务,仅在引擎端启动的时候才需要加载。
@@ -34,23 +38,17 @@ public class AntiFraudServiceImpl implements AntiFraudService {
 
     private static Logger logger = LoggerFactory.getLogger(AntiFraudServiceImpl.class);
 
-    private static final String STRICT = "strict";
-
-    /** 插件失败隔离模式：isolated（默认，失败标记后继续） / strict（旧行为，失败即事件失败）。 */
-    @Value("${plugin.isolation:isolated}")
-    private String isolation;
-
     @Autowired
     private AntiFraudEngine antiFraudEngine;
 
     @Autowired
-    private PreItemService preItemService;
+    private FeatureService featureService;
 
     @Autowired
     private ModelService modelService;
 
     @Autowired
-    private PluginManager pluginManager;
+    private FeatureExecutorRegistry executorRegistry;
 
     @Autowired
     private EngineMetrics engineMetrics;
@@ -62,19 +60,19 @@ public class AntiFraudServiceImpl implements AntiFraudService {
         long start = 0;
         long end = 0;
 
-        // do abstraction
-        logger.info("start abstraction...");
+        // do features（ANALYSIS 阶段：AGGREGATE/RATIO）
+        logger.info("start features(analysis)...");
         start = System.currentTimeMillis();
-        AbstractionResult absResult = antiFraudEngine.executeAbstraction(modelId, context);
+        FeatureResult featResult = antiFraudEngine.executeFeatures(modelId, context, FeatureStage.ANALYSIS);
         end = System.currentTimeMillis();
-        analysisResult.getRespTimes().put("abstractions", end - start);
-        engineMetrics.recordStage("abstractions", end - start);
+        analysisResult.getRespTimes().put("features", end - start);
+        engineMetrics.recordStage("features", end - start);
         logger.info("takes:{}ms", end - start);
-        if (!absResult.isSuccess()) {
-            analysisResult.setMsg("abstraction 异常:" + absResult.getMsg());
+        if (!featResult.isSuccess()) {
+            analysisResult.setMsg("feature 异常:" + featResult.getMsg());
             return analysisResult;
         } else {
-            analysisResult.setAbstractions(context.get("abstractions"));
+            analysisResult.setFeatures(context.get("features"));
         }
 
         // do adaptation
@@ -95,68 +93,72 @@ public class AntiFraudServiceImpl implements AntiFraudService {
         // do strategy
         logger.info("start strategy...");
         start = System.currentTimeMillis();
-        StrategyResult actResult = antiFraudEngine.executeStrategy(modelId, context);
+        StrategyResult strategyResult = antiFraudEngine.executeStrategy(modelId, context);
         end = System.currentTimeMillis();
-        analysisResult.getRespTimes().put("activations", end - start);
-        engineMetrics.recordStage("activations", end - start);
+        analysisResult.getRespTimes().put("strategies", end - start);
+        engineMetrics.recordStage("strategies", end - start);
         logger.info("takes:{}ms", end - start);
-        if (!actResult.isSuccess()) {
+        if (!strategyResult.isSuccess()) {
             analysisResult.setMsg("Strategy 异常");
             return analysisResult;
         } else {
-            // respTimes/context 键保持 activations（响应 JSON 与 ES 文档依赖该键）
-            analysisResult.setStrategies(context.get("activations"));
-            analysisResult.setHitsDetail(actResult.getHitRulesMap());
+            // v4.1：引擎响应/ES 文档键统一为 strategies（修复 v4.0 写 activations 与报表读 strategies 的失配）
+            analysisResult.setStrategies(context.get("strategies"));
+            analysisResult.setHitsDetail(strategyResult.getHitRulesMap());
         }
         // result 与 context 里面的hitDetail 不一样，主要是为了方便 elastic 处理
-        context.put("hitsDetail", actResult.getHitRulesMap2());
+        context.put("hitsDetail", strategyResult.getHitRulesMap2());
         analysisResult.setSuccess(true);
         return analysisResult;
     }
 
     /**
-     * preItems 阶段（v3.0 插件加固）：逐个插件执行，默认失败隔离——
-     * 单个插件异常/配置错误只记指标并写错误标记，事件链路继续；
-     * {@code plugin.isolation=strict} 时保留旧行为（失败即事件失败）。
+     * 入库前特征执行（v4.1 特征工程）：ENTRY 阶段（ENRICH/DERIVED）按 ORDER_NO 顺序分发执行，
+     * 产出合并进事件特征集合随实体落库。失败隔离由各执行器/编排层按特征粒度处理。
      */
     @Override
-    public Map<String, Object> prepare(Long modelId, Map<String, Object> jsonInfo) {
-        List<PreItemVO> preItemList = preItemService.listPreItem(modelId);
+    public Map<String, Object> executeEntryFeatures(Long modelId, Map<String, Object> jsonInfo) {
+        List<FeatureVO> features = new ArrayList<>();
+        for (FeatureVO feature : featureService.listFeature(modelId)) {
+            if (FeatureStage.ENTRY.getTypes().stream()
+                    .anyMatch(t -> t.name().equals(feature.getType()))) {
+                features.add(feature);
+            }
+        }
+        features.sort(Comparator.comparingInt(f -> f.getOrderNo() == null ? Integer.MAX_VALUE : f.getOrderNo()));
+
+        // result 即上下文 features 命名空间的同一引用：前序特征产出对后续特征可见（链式）
         Map<String, Object> result = new HashMap<>();
-        for (PreItemVO item : preItemList) {
-            if (!item.getStatus().equals(StatusType.ACTIVE.getKey())) {
+        Map<String, Map<String, ?>> context = new HashMap<>();
+        context.put("fields", jsonInfo);
+        context.put("features", result);
+
+        for (FeatureVO feature : features) {
+            if (!feature.getStatus().equals(StatusType.ACTIVE.getKey())) {
                 continue;
             }
-            String[] sourceField = item.getSourceField().split(",");
-            String pluginKey = item.getPlugin();
-            PluginEntry entry = pluginManager.entry(pluginKey);
-            long start = System.currentTimeMillis();
-            Object transfer = null;
-            String failReason = null;
-            if (entry == null) {
-                failReason = "plugin not found: " + pluginKey;
-                logger.warn("preItem plugin missing, modelId={}, destField={}, {}", modelId, item.getDestField(), failReason);
-            } else {
-                try {
-                    transfer = entry.execute(item, jsonInfo, sourceField);
-                } catch (Throwable t) {
-                    failReason = t.getMessage() == null ? t.getClass().getSimpleName() : t.getMessage();
-                    logger.warn("preItem plugin failed: {}, destField={}, reason={}", pluginKey, item.getDestField(), failReason);
-                }
+            FeatureType type = FeatureType.of(feature.getType());
+            FeatureExecutor executor = type == null ? null : executorRegistry.get(type);
+            if (executor == null) {
+                logger.warn("feature type {} has no executor, skip feature {} (id={})",
+                        type, feature.getFeatureName(), feature.getId());
+                engineMetrics.recordFeatureExecution(String.valueOf(type), "no_executor");
+                continue;
             }
-            long elapsed = System.currentTimeMillis() - start;
-            String metricResult = failReason == null ? "success"
-                    : (entry == null ? "not_found" : "fail");
-            engineMetrics.recordPluginExecution(entry == null ? "unknown" : pluginKey, metricResult, elapsed);
-            if (failReason != null) {
-                if (STRICT.equals(isolation)) {
-                    throw new RuntimeException("preItem plugin fail: " + pluginKey + " - " + failReason);
+            try {
+                FeatureOutcome outcome = executor.execute(feature, context, Map.of());
+                if (outcome.isPresent()) {
+                    result.put(feature.getFeatureName(), outcome.getValue());
                 }
-                Map<String, Object> errorMarker = new HashMap<>();
-                errorMarker.put("__plugin_error__", failReason);
-                transfer = errorMarker;
+                engineMetrics.recordFeatureExecution(type.name(), "success");
+            } catch (com.pgmmers.radar.service.engine.feature.FeatureIsolationException e) {
+                // strict 隔离模式：失败即事件失败（沿袭旧行为），不做单特征吞并
+                throw e;
+            } catch (Exception e) {
+                // 单特征异常隔离（跳过该特征，不影响事件链路）
+                logger.warn("entry feature failed, skip feature {} (id={})", feature.getFeatureName(), feature.getId(), e);
+                engineMetrics.recordFeatureExecution(type.name(), "error");
             }
-            result.put(item.getDestField(), transfer);
         }
         return result;
     }

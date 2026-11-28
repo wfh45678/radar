@@ -25,12 +25,12 @@ import org.apache.commons.lang3.StringUtils;
 import com.pgmmers.radar.service.logs.EventService;
 import com.pgmmers.radar.service.model.StrategyService;
 import com.pgmmers.radar.service.model.FieldService;
-import com.pgmmers.radar.service.model.PreItemService;
+import com.pgmmers.radar.service.model.FeatureService;
 import com.pgmmers.radar.service.model.RuleService;
 import com.pgmmers.radar.model.vo.common.FieldValueVO;
 import com.pgmmers.radar.model.vo.model.StrategyVO;
 import com.pgmmers.radar.model.vo.model.FieldVO;
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.pgmmers.radar.model.vo.model.RuleVO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -62,7 +62,7 @@ public class EventApiController {
     @Autowired
     private FieldService fieldService;
     @Autowired
-    private PreItemService preItemService;
+    private FeatureService featureService;
 
     @Autowired
     private StrategyService strategyService;
@@ -122,7 +122,7 @@ public class EventApiController {
             return;
         }
         String[] fieldIds = query.getFields();
-        String[] preItems = query.getPreItems();
+        String[] features = query.getFeatures();
         String[] strategies = query.getStrategies();
         String[] rules = query.getRules();
 
@@ -135,8 +135,8 @@ public class EventApiController {
             fieldIdMap.put(fieldIds[i], "");
         }
 
-        for (int i = 0; i < preItems.length; i++) {
-            itemsIdMap.put(preItems[i], "");
+        for (int i = 0; i < features.length; i++) {
+            itemsIdMap.put(features[i], "");
         }
 
         for (int i = 0; i < strategies.length; i++) {
@@ -155,7 +155,7 @@ public class EventApiController {
         List<Object> records = page.getList();
 
         List<FieldVO> fieldList = fieldService.listField(term.getModelId());
-        List<PreItemVO> preitemList = preItemService.listPreItem(term
+        List<FeatureVO> featureList = featureService.listFeature(term
                 .getModelId());
         List<StrategyVO> strategyList = strategyService
                 .listStrategy(term.getModelId());
@@ -184,30 +184,28 @@ public class EventApiController {
             titleList4Field.add(field.getLabel());
         }
 
-        // preitem field
+        // feature fields
         List<Object> keyList4Item = new ArrayList<>();
         List<String> titleList4Item = new ArrayList<>();
-        for (PreItemVO item : preitemList) {
-            if (!itemsIdMap.containsKey(item.getDestField())) {
+        for (FeatureVO feature : featureList) {
+            if (!itemsIdMap.containsKey(feature.getFeatureName())) {
                 continue;
             }
-            PluginEntry plugin = pluginManager.entry(item.getPlugin());
-            String type = plugin == null ? null : plugin.getType();
-            String meta = plugin == null ? null : plugin.legacyMetaJson();
-
-            if (StringUtils.isNotEmpty(type)) {
-                keyList4Item.add(item.getDestField());
-                titleList4Item.add(item.getLabel());
-            } else {
-                List<JSONObject> metaArray = JSONArray.parseArray(meta,
-                        JSONObject.class);
-                for (JSONObject col : metaArray) {
-                    keyList4Item.add(new FieldValueVO(item.getDestField(), col
-                            .getString("column")));
-                    titleList4Item.add(item.getLabel() + "."
-                            + col.getString("title"));
+            com.fasterxml.jackson.databind.JsonNode output = feature.getOutput();
+            if (output != null && output.isArray() && !output.isEmpty()) {
+                // 多列特征：导出列为 features.<name>.<column>
+                for (com.fasterxml.jackson.databind.JsonNode col : output) {
+                    String column = col.path("column").asText("");
+                    if (column.isEmpty()) {
+                        continue;
+                    }
+                    keyList4Item.add(new FieldValueVO(feature.getFeatureName(), column));
+                    titleList4Item.add(feature.getLabel() + "."
+                            + col.path("title").asText(column));
                 }
-
+            } else {
+                keyList4Item.add(feature.getFeatureName());
+                titleList4Item.add(feature.getLabel());
             }
         }
 
@@ -293,13 +291,13 @@ public class EventApiController {
             list.add(ds);
         }
 
-        // 2、PREPARE
-        ds = new DataColumnInfo(DataType.PREITEMS.getDesc(),
-                DataType.PREITEMS.getName());
-        List<PreItemVO> listPreItem = preItemService.listPreItem(modelId);
-        if (listPreItem != null && listPreItem.size() != 0) {
-            for (PreItemVO preItem : listPreItem) {
-                ds.addChildren(preItem.getLabel(), preItem.getDestField(), "");
+        // 2、FEATURES
+        ds = new DataColumnInfo(DataType.FEATURES.getDesc(),
+                DataType.FEATURES.getName());
+        List<FeatureVO> listFeature = featureService.listFeature(modelId);
+        if (listFeature != null && !listFeature.isEmpty()) {
+            for (FeatureVO feature : listFeature) {
+                ds.addChildren(feature.getLabel(), feature.getFeatureName(), "");
             }
             list.add(ds);
         }

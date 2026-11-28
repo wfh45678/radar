@@ -105,10 +105,10 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
                 }
             }
 
-            // 2. pre process
+            // 2. entry features（v4.1 特征工程：ENRICH 插件加工，落库前执行）
             long stageBegin = System.nanoTime();
-            Map<String, Object> preItemMap = antiFraudService.prepare(model.getId(), eventJson);
-            engineMetrics.recordStage("preItems", (System.nanoTime() - stageBegin) / 1_000_000);
+            Map<String, Object> featureMap = antiFraudService.executeEntryFeatures(model.getId(), eventJson);
+            engineMetrics.recordStage("features", (System.nanoTime() - stageBegin) / 1_000_000);
 
             // 3. save to db
             boolean isAllowDuplicate = false;
@@ -117,20 +117,20 @@ public class RiskAnalysisEngineServiceImpl implements RiskAnalysisEngineService 
             }
             stageBegin = System.nanoTime();
             entityService
-                    .save(model.getId(), eventJson.toJSONString(), JSON.toJSONString(preItemMap),
+                    .save(model.getId(), eventJson.toJSONString(), JSON.toJSONString(featureMap),
                             isAllowDuplicate);
             engineMetrics.recordStage("entity", (System.nanoTime() - stageBegin) / 1_000_000);
 
             // 4. 执行分析
             context.put("fields", eventJson);
-            context.put("preItems", preItemMap);
+            context.put("features", featureMap);
             result = antiFraudService.process(model.getId(), context);
 
             // 5. for elastic analysis
             Long eventTimeMillis = (Long) eventJson.get(model.getReferenceDate());
             String timeStr = DateUtils
                     .formatDate(new Date(eventTimeMillis), "yyyy-MM-dd'T'HH:mm:ssZ");
-            preItemMap.put("radar_ref_datetime", timeStr);
+            featureMap.put("radar_ref_datetime", timeStr);
         } catch (Exception e) {
             logger.error("process error", e);
             //result.setMsg("数据异常!" + e.getMessage());

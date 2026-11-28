@@ -1,6 +1,6 @@
 package com.pgmmers.radar.service.impl.engine.plugin;
 
-import com.pgmmers.radar.model.vo.model.PreItemVO;
+import com.pgmmers.radar.model.vo.model.FeatureVO;
 import com.radar.plugin.api.OutputColumn;
 import com.radar.plugin.api.ParamDescriptor;
 import java.util.List;
@@ -16,17 +16,12 @@ public final class PluginEntry {
 
     /** 插件来源。 */
     public enum Source {
-        /** v2 旧接口插件（Spring 内置，适配保留）。 */
-        BUILTIN_V2,
-        /** v3 新接口插件（Spring 内置）。 */
-        BUILTIN_V3,
-        /** v3 新接口插件（plugins/ 目录外置 jar）。 */
-        EXTERNAL
+        BUILTIN_V4, BUILTIN_V3, EXTERNAL
     }
 
     /** 统一执行器签名。 */
     public interface Executor {
-        Object execute(PreItemVO item, Map<String, Object> jsonInfo, String[] sourceField) throws Exception;
+        Object execute(FeatureVO feature, Map<String, Map<String, ?>> context, String[] sourceField) throws Exception;
     }
 
     private final String key;
@@ -110,12 +105,12 @@ public final class PluginEntry {
         return source;
     }
 
-    /** @return 插件版本声明（@PluginMeta.version，可为空串）。@since 3.1.0 */
+    /** @return 插件版本声明（@FeatureMeta.version，可为空串）。@since 3.1.0 */
     public String getVersion() {
         return version;
     }
 
-    /** @return 提供方声明（@PluginMeta.provider，可为空串）。@since 3.1.0 */
+    /** @return 提供方声明（@FeatureMeta.provider，可为空串）。@since 3.1.0 */
     public String getProvider() {
         return provider;
     }
@@ -129,7 +124,7 @@ public final class PluginEntry {
     }
 
     /** 执行插件（由引擎在隔离包装内调用）。 */
-    public Object execute(PreItemVO item, Map<String, Object> jsonInfo, String[] sourceField) throws Exception {
-        return executor.execute(item, jsonInfo, sourceField);
+    public Object execute(FeatureVO feature, Map<String, Map<String, ?>> context, String[] sourceField) throws Exception {
+        return executor.execute(feature, context, sourceField);
     }
 }

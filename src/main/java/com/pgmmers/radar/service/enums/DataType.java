@@ -3,8 +3,7 @@ package com.pgmmers.radar.service.enums;
 public enum DataType {
 
     FIELDS("fields", "基础字段"), //
-    PREITEMS("preItems", "预处理字段"), //
-    ABSTRACTIONS("abstractions", "抽象字段"),
+    FEATURES("features", "特征字段"),
 	STRATEGIES("strategies", "策略字段"),
 	RULES("rules", "规则字段");
 

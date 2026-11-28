@@ -46,9 +46,7 @@ public class StrategyApiController {
     @Autowired
     private FieldService fieldService;
     @Autowired
-    private AbstractionService abstractionService;
-    @Autowired
-    private PreItemService preItemService;
+    private FeatureService featureService;
     @Autowired
     private RuleService ruleService;
     @Autowired
@@ -70,67 +68,76 @@ public class StrategyApiController {
         return strategyService.query(query);
     }
 
+    /**
+     * 变量树（v4.1 统一）：fields + features 两组（原 preItems/abstractions 三组合并）。
+     * @deprecated 见 {@link FeatureApiController#getColumns}（/feature/columns/{modelId}），前端随 v4.1 切换后移除。
+     */
+    @Deprecated
     @GetMapping("/feature/columns/{modelId}")
     public CommonResult getDataColumns(@PathVariable Long modelId) {
-        List<DataColumnInfo> list = new ArrayList<DataColumnInfo>();
-        // 1、Data
-        DataColumnInfo ds = new DataColumnInfo(DataType.FIELDS.getDesc(), DataType.FIELDS.getName());
+        CommonResult result = new CommonResult();
+        result.setSuccess(true);
+        result.getData().put("list", featureColumns(modelId));
+        return result;
+    }
+
+    /** 聚合类特征标量节点（报表页历史图选择用，路径随前端 v4.1 切换）。 */
+    @Deprecated
+    @GetMapping("/abstraction/columns/{modelId}")
+    public CommonResult getAbstractionColumns(@PathVariable Long modelId) {
+        CommonResult result = new CommonResult();
+        result.setSuccess(true);
+        List<com.pgmmers.radar.service.engine.vo.DataColumnInfo> features =
+                featureColumns(modelId);
+        com.pgmmers.radar.service.engine.vo.DataColumnInfo featureGroup = null;
+        for (com.pgmmers.radar.service.engine.vo.DataColumnInfo ds : features) {
+            if (com.pgmmers.radar.service.enums.DataType.FEATURES.getName().equals(ds.getValue())) {
+                featureGroup = ds;
+            }
+        }
+        result.getData().put("columns", featureGroup == null ? java.util.List.of() : featureGroup.getChildren());
+        return result;
+    }
+
+    /** fields + features 统一变量树（与 /services/v1/feature/columns 同源）。 */
+    private List<com.pgmmers.radar.service.engine.vo.DataColumnInfo> featureColumns(Long modelId) {
+        List<com.pgmmers.radar.service.engine.vo.DataColumnInfo> list = new ArrayList<>();
+        com.pgmmers.radar.service.engine.vo.DataColumnInfo ds =
+                new com.pgmmers.radar.service.engine.vo.DataColumnInfo(
+                        com.pgmmers.radar.service.enums.DataType.FIELDS.getDesc(),
+                        com.pgmmers.radar.service.enums.DataType.FIELDS.getName());
         List<FieldVO> listField = fieldService.listField(modelId);
         for (FieldVO field : listField) {
             ds.addChildren(field.getLabel(), field.getFieldName(), field.getFieldType());
         }
         list.add(ds);
 
-        // 2、PREPARE
-        ds = new DataColumnInfo(DataType.PREITEMS.getDesc(), DataType.PREITEMS.getName());
-        List<PreItemVO> listPreItem = preItemService.listPreItem(modelId);
-        for (PreItemVO preItem : listPreItem) {
-            PluginEntry pt = pluginManager.entry(preItem.getPlugin());
-            if (StringUtils.isNotEmpty(pt.getType()) && pt.getType().equals("JSON")) {
-                //load  http request data
-                JsonNode json = preItem.getConfigJson();
-                List<DataColumnInfo> children = new ArrayList<>();
-                extractMetaColumn(ds, preItem, json.toString(), children);
-            } else if (StringUtils.isNotEmpty(pt.getType())) {
-                ds.addChildren(preItem.getLabel(), preItem.getDestField(), pt.getType());
-            } else {
-                List<DataColumnInfo> children = new ArrayList<>();
-                extractMetaColumn(ds, preItem, pt.legacyMetaJson(), children);
+        com.pgmmers.radar.service.engine.vo.DataColumnInfo featureGroup =
+                new com.pgmmers.radar.service.engine.vo.DataColumnInfo(
+                        com.pgmmers.radar.service.enums.DataType.FEATURES.getDesc(),
+                        com.pgmmers.radar.service.enums.DataType.FEATURES.getName());
+        for (FeatureVO feature : featureService.listFeature(modelId)) {
+            com.fasterxml.jackson.databind.JsonNode output = feature.getOutput();
+            if (output != null && output.isArray() && !output.isEmpty()) {
+                List<com.pgmmers.radar.service.engine.vo.DataColumnInfo> children = new ArrayList<>();
+                for (com.fasterxml.jackson.databind.JsonNode col : output) {
+                    String column = col.path("column").asText("");
+                    if (!column.isEmpty()) {
+                        children.add(new com.pgmmers.radar.service.engine.vo.DataColumnInfo(
+                                col.path("title").asText(column), column,
+                                col.path("type").asText("STRING")));
+                    }
+                }
+                if (!children.isEmpty()) {
+                    featureGroup.addChildren(feature.getLabel(), feature.getFeatureName(), children);
+                    continue;
+                }
             }
+            String type = "ENRICH".equals(feature.getType()) ? "STRING" : FieldType.DOUBLE.name();
+            featureGroup.addChildren(feature.getLabel(), feature.getFeatureName(), type);
         }
-        list.add(ds);
-
-        // 3、ABSTRACTION
-        List<AbstractionVO> listAbstract = abstractionService.listAbstraction(modelId);
-        ds = new DataColumnInfo(DataType.ABSTRACTIONS.getDesc(), DataType.ABSTRACTIONS.getName());
-        if (listAbstract != null) {
-            for (AbstractionVO abs : listAbstract) {
-                ds.addChildren(abs.getLabel(), abs.getName(), FieldType.DOUBLE.name());
-            }
-        }
-
-        list.add(ds);
-
-        CommonResult result = new CommonResult();
-        result.setSuccess(true);
-        result.getData().put("list", list);
-        return result;
-    }
-
-    @GetMapping("/abstraction/columns/{modelId}")
-    public CommonResult getAbstractionColumns(@PathVariable Long modelId) {
-        CommonResult result = new CommonResult();
-        result.setSuccess(true);
-        List<AbstractionVO> listAbstract = abstractionService.listAbstraction(modelId);
-        DataColumnInfo ds = new DataColumnInfo(DataType.ABSTRACTIONS.getDesc(), DataType.ABSTRACTIONS.getName());
-        if (listAbstract != null) {
-            for (AbstractionVO abs : listAbstract) {
-                ds.addChildren(abs.getLabel(), abs.getName(), FieldType.DOUBLE.name());
-            }
-        }
-
-        result.getData().put("columns", ds.getChildren());
-        return result;
+        list.add(featureGroup);
+        return list;
     }
 
     @GetMapping("/rule/columns/{modelId}")
@@ -179,15 +186,6 @@ public class StrategyApiController {
 		return strategyService.updateOrder(strategyId,ruleOrder);
 	}
 
-    private void extractMetaColumn(DataColumnInfo ds, PreItemVO preItem, String jsonStr, List<DataColumnInfo> children) {
-        JSONArray array = JSONArray.parseArray(jsonStr);
-        for (int i = 0; i < array.size(); i++) {
-            JSONObject obj = array.getJSONObject(i);
-            children.add(new DataColumnInfo(obj.getString("title"), obj.getString("column"), obj
-                    .getString("type")));
-        }
-        ds.addChildren(preItem.getLabel(), preItem.getDestField(), children);
-    }
 
     @PostMapping("/disable/{strategyId}")
     public CommonResult disable(@PathVariable Long strategyId) {
